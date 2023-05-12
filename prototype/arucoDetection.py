@@ -82,9 +82,27 @@ while cap.isOpened():
         # Find Homography
         src_rect = np.array([[0, 0], [0, height], [width, 0], [width, height]])
         dest_rect = np.array(in_between_rect)
-        print(src_rect)
-        print(dest_rect)
+        print("src_rect", src_rect)
+        print("dest_rect", dest_rect)
         h, status = cv2.findHomography(src_rect, dest_rect, cv2.RANSAC, 5.0)
+        
+        # Get points
+        pattern_image = cv2.imread('pattern.png',0)
+        rows,cols = pattern_image.shape
+        pattern_points = []
+        for i in range(rows):
+            for j in range(cols):
+                if pattern_image[i,j] < 255:
+                    pattern_points.append(np.array([i*width/rows,j*height/cols,0]))
+        print("pattern_points", pattern_points)
+        
+        # Transform points using Homography
+        for p in pattern_points:
+            p_in_img = h @ p
+            ix = int(p_in_img[0] + in_between_rect[0][0])
+            iy = int(p_in_img[1] + in_between_rect[0][1])
+            print("p_in_img", ix, iy)
+            cv2.rectangle(marked_img, (ix, iy), (ix+1, iy+1), (0, 0, 255), 5)
 
     cv2.imshow("Image", marked_img)
 
