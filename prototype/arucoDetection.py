@@ -58,20 +58,14 @@ def aruco_display(corners, ids, rejected, image):
 			
 	return image
 
-
-
-
-aruco_type = "DICT_5X5_100"
-
-arucoDict = cv2.aruco.Dictionary_get(ARUCO_DICT[aruco_type])
-
-arucoParams = cv2.aruco.DetectorParameters_create()
-
+dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+parameters =  cv2.aruco.DetectorParameters()
+detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
 cap = cv2.VideoCapture(0)
 
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
 
 while cap.isOpened():
@@ -84,7 +78,7 @@ while cap.isOpened():
 	height = int(width*(h/w))
 	img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
  
-	corners, ids, rejected = cv2.aruco.detectMarkers(img, arucoDict, parameters=arucoParams)
+	corners, ids, rejected = detector.detectMarkers(img)
 
 	detected_markers = aruco_display(corners, ids, rejected, img)
 
