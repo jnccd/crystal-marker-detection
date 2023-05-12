@@ -25,7 +25,7 @@ def aruco_display(corners, ids, rejected, image):
             cv2.line(image, topRight, bottomRight, (0, 255, 0), 2)
             cv2.line(image, bottomRight, bottomLeft, (0, 255, 0), 2)
             cv2.line(image, bottomLeft, topLeft, (0, 255, 0), 2)
-            verts.append((topLeft, topRight, bottomRight, bottomLeft))
+            verts.append([topLeft, topRight, bottomRight, bottomLeft])
 			
             cX = int((topLeft[0] + bottomRight[0]) / 2.0)
             cY = int((topLeft[1] + bottomRight[1]) / 2.0)
@@ -68,14 +68,23 @@ while cap.isOpened():
         print("Center", ccx, " ", ccy)
         cv2.rectangle(marked_img, (ccx, ccy), (ccx+1, ccy+1), (0, 0, 255), 5)
         
+        # Find inner rectangle
         in_between_rect = []
         for verts in vertss:
             closest_to_center = min(verts, key=lambda v: abs(v[0] - ccx) + abs(v[1] - ccy))
             in_between_rect.append(closest_to_center)
-            
+        # Draw inner rectangle
+        in_between_rect.sort(key=lambda x: x[0]*2 + x[1])
         for i in range(0,4):
-            j = (i+1) % 4
+            j = (i+1)%4
             cv2.line(marked_img, in_between_rect[i], in_between_rect[j], (0, 0, 255), 2)
+        
+        # Find Homography
+        src_rect = np.array([[0, 0], [0, height], [width, 0], [width, height]])
+        dest_rect = np.array(in_between_rect)
+        print(src_rect)
+        print(dest_rect)
+        h, status = cv2.findHomography(src_rect, dest_rect, cv2.RANSAC, 5.0)
 
     cv2.imshow("Image", marked_img)
 
