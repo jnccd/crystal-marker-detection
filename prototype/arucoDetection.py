@@ -49,6 +49,15 @@ cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
+# Get pattern points from image
+pattern_image = cv2.imread('pattern.png',0)
+rows,cols = pattern_image.shape
+pattern_points = []
+for i in range(rows):
+    for j in range(cols):
+        if pattern_image[i,j] < 255:
+            pattern_points.append(np.array([j/cols, i/rows, 1]))
+print("pattern_points", pattern_points)
 
 while cap.isOpened():
     
@@ -104,19 +113,9 @@ while cap.isOpened():
         h, status = cv2.findHomography(src_rect, dest_rect)
         print("status", status)
         
-        # Get points
-        pattern_image = cv2.imread('pattern.png',0)
-        rows,cols = pattern_image.shape
-        pattern_points = []
-        for i in range(rows):
-            for j in range(cols):
-                if pattern_image[i,j] < 255:
-                    pattern_points.append(np.array([i*width/rows,j*height/cols,1]))
-        print("pattern_points", pattern_points)
-        
         # Transform points using Homography
         for p in pattern_points:
-            p_in_img = h @ p
+            p_in_img = h @ (p * np.array([width, height, 1]))
             print("p_in_img", p_in_img)
             ix = int(p_in_img[0] / p_in_img[2])
             iy = int(p_in_img[1] / p_in_img[2])
