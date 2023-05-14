@@ -70,7 +70,7 @@ while cap.isOpened():
     img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
  
     corners, ids, rejected = detector.detectMarkers(img)
-    marked_img, centers, vertss = aruco_display(corners, ids, rejected, img)
+    marked_img, centers, cornerss = aruco_display(corners, ids, rejected, img)
     
     # Found paper
     if len(corners) == 4:
@@ -81,18 +81,18 @@ while cap.isOpened():
         
         # Find inner rectangle
         in_between_rect = [None, None, None, None]
-        for verts in vertss:
+        for corners in cornerss:
             
             min_i = sys.maxsize
             min_v = sys.maxsize
-            for i in range(len(verts)):
-                v = verts[i]
+            for i in range(len(corners)):
+                v = corners[i]
                 cv = abs(v[0] - ccx) + abs(v[1] - ccy)
                 if cv <= min_v:
                     min_i = i
                     min_v = cv
                     
-            min_vert = verts[min_i]
+            min_vert = corners[min_i]
             in_between_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
         # Draw inner rectangle
         print("in_between_rect", in_between_rect)
