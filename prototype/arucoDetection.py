@@ -117,8 +117,8 @@ while cap.isOpened():
         # Transform points using Homography
         for p in pattern_points:
             p_in_img = h @ p
-            ix = int(p_in_img[0] + in_between_rect[0][0])
-            iy = int(p_in_img[1] + in_between_rect[0][1])
+            ix = int(p_in_img[0] + in_between_rect[1][0])
+            iy = int(p_in_img[1] + in_between_rect[1][1])
             print("p_in_img", ix, iy)
             cv2.rectangle(marked_img, (ix, iy), (ix+1, iy+1), (255, 0, 0), 5)
 
