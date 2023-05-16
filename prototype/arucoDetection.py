@@ -40,6 +40,27 @@ def aruco_display(corners, ids, rejected, image):
 			
     return image, centers, out_corners
 
+def find_inner_rect(cornerss):
+        in_between_rect = [None, None, None, None]
+        for corners in cornerss:
+            
+            min_i = sys.maxsize
+            min_v = sys.maxsize
+            for i in range(len(corners)):
+                v = corners[i]
+                cv = abs(v[0] - ccx) + abs(v[1] - ccy)
+                if cv <= min_v:
+                    min_i = i
+                    min_v = cv
+                    
+            min_vert = corners[min_i]
+            while in_between_rect[min_i] is not None:
+                min_i += 1
+                min_i = min_i % 4
+            in_between_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
+            
+        return in_between_rect
+
 dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
 parameters =  cv2.aruco.DetectorParameters()
 detector = cv2.aruco.ArucoDetector(dictionary, parameters)
@@ -64,8 +85,9 @@ while cap.isOpened():
     ret, img = cap.read()
 
     h, w, _ = img.shape
-
-    width = 1000
+    
+    # Resize image
+    width = 1500
     height = int(width*(h/w))
     img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
  
@@ -74,49 +96,25 @@ while cap.isOpened():
     
     # Found paper
     if len(corners) == 4:
+        # Find center
         ccx = int(np.mean([c[0] for c in centers]))
         ccy = int(np.mean([c[1] for c in centers]))
-        print("Center", ccx, " ", ccy)
         cv2.rectangle(marked_img, (ccx, ccy), (ccx+1, ccy+1), (0, 0, 255), 5)
         
         # Find inner rectangle
-        in_between_rect = [None, None, None, None]
-        for corners in cornerss:
-            
-            min_i = sys.maxsize
-            min_v = sys.maxsize
-            for i in range(len(corners)):
-                v = corners[i]
-                cv = abs(v[0] - ccx) + abs(v[1] - ccy)
-                if cv <= min_v:
-                    min_i = i
-                    min_v = cv
-                    
-            min_vert = corners[min_i]
-            in_between_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
-        # Draw inner rectangle
-        print("in_between_rect", in_between_rect)
+        in_between_rect = find_inner_rect(cornerss)
         for i in range(0,4):
             j = (i+1)%4
             cv2.line(marked_img, in_between_rect[i], in_between_rect[j], (0, 0, 255), 2)
-            
-        if in_between_rect.__contains__(None):
-            print('continuing...')
-            continue
-        print('doing stuff')
         
         # Find Homography
         src_rect  = np.array([[0, height, 1], [0, 0, 1], [width, 0, 1], [width, height, 1]])
         dest_rect = np.array([[x,y,1] for (x,y) in in_between_rect])
-        print("src_rect", src_rect)
-        print("dest_rect", dest_rect)
         h, status = cv2.findHomography(src_rect, dest_rect)
-        print("status", status)
         
         # Transform points using Homography
         for p in pattern_points:
             p_in_img = h @ (p * np.array([width, height, 1]))
-            print("p_in_img", p_in_img)
             ix = int(p_in_img[0] / p_in_img[2])
             iy = int(p_in_img[1] / p_in_img[2])
             cv2.rectangle(marked_img, (ix, iy), (ix+1, iy+1), (255, 0, 0), 5)
