@@ -5,7 +5,20 @@ import cv2
 
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
-img = 'https://ultralytics.com/images/zidane.jpg'
+#img = 'https://ultralytics.com/images/zidane.jpg'
 
-results = model(img)
-results.show()
+#results = model(img)
+#results.show()
+
+cap = cv2.VideoCapture(0)
+while cap.isOpened():
+    ret, frame = cap.read()
+
+    result = model(frame)
+    
+    cv2.imshow("YOLO", np.squeeze(result.render()))
+
+    if cv2.waitKey(10) & 0xFF == ord('q'):
+        break
+cap.release()
+cv2.destroyAllWindows()
