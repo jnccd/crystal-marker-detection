@@ -1,3 +1,5 @@
 *.pt
 images/*.*
 labels/*.*
+marker.*
+classes.txt
