@@ -3,4 +3,5 @@ images/*.*
 labels/*.*
 marker.*
 classes.txt
-img*.png
+*img*.png
+*img*.txt
