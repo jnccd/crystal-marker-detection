@@ -1,4 +1,5 @@
 import os
+import sys
 import cv2
 from pathlib import Path
 
@@ -19,6 +20,64 @@ def mouseEvent(action, x, y, flags, *userdata):
         top_left_corner.append(new_top_left)
         bottom_right_corner.append((x,y))
         new_top_left = None
+        
+def aruco_transform_and_display(corners, ids, rejected, image):
+    
+    centers = []
+    out_corners = []
+    
+    if len(corners) > 0:
+		
+        ids = ids.flatten()
+        
+        for (markerCorner, markerID) in zip(corners, ids):
+			
+            corners = markerCorner.reshape((4, 2))
+            (topLeft, topRight, bottomRight, bottomLeft) = corners
+			
+            out_corners.append([topLeft, topRight, bottomRight, bottomLeft])
+            topRight = (int(topRight[0]), int(topRight[1]))
+            bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+            bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+            topLeft = (int(topLeft[0]), int(topLeft[1]))
+
+            cv2.line(image, topLeft, topRight, (0, 255, 0), 2)
+            cv2.line(image, topRight, bottomRight, (0, 255, 0), 2)
+            cv2.line(image, bottomRight, bottomLeft, (0, 255, 0), 2)
+            cv2.line(image, bottomLeft, topLeft, (0, 255, 0), 2)
+            cv2.rectangle(image, topLeft, (topLeft[0]+1, topLeft[1]+1), (0, 0, 255), 5)
+			
+            cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+            cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+            cv2.circle(image, (cX, cY), 4, (0, 0, 255), -1)
+            centers.append((cX, cY))
+			
+            cv2.putText(image, str(markerID),(topLeft[0], topLeft[1] - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (0, 255, 0), 2)
+            print("[Inference] ArUco marker ID: {}".format(markerID))
+			
+    return image, centers, out_corners
+
+def find_inner_rect(cornerss, ccx, ccy):
+        in_between_rect = [None, None, None, None]
+        for corners in cornerss:
+            
+            min_i = sys.maxsize
+            min_v = sys.maxsize
+            for i in range(len(corners)):
+                v = corners[i]
+                cv = abs(v[0] - ccx) + abs(v[1] - ccy)
+                if cv <= min_v:
+                    min_i = i
+                    min_v = cv
+                    
+            min_vert = corners[min_i]
+            while in_between_rect[min_i] is not None:
+                min_i += 1
+                min_i = min_i % 4
+            in_between_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
+            
+        return in_between_rect
 
 root_dir = Path(__file__).resolve().parent
 input_dir = root_dir / 'images'
