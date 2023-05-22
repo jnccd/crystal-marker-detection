@@ -169,12 +169,11 @@ def main():
     detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
     oh, hi, marked_img = find_homography_from_aruco(img, detector, img_w, img_h)
     if hi is None:
+        cv2.imshow(window_name, marked_img)
+        cv2.waitKey(0)
         print("Didn't find the aruco frame in base img :/")
         return
     warped_img = cv2.warpPerspective(img, hi, (img_w, img_h))
-    # Show marked_img for troubleshooting
-    cv2.imshow(window_name, marked_img)
-    cv2.waitKey(0)
     
     # Load window and hook events
     cv2.namedWindow(window_name)
