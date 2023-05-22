@@ -11,6 +11,8 @@ if not os.path.exists(images_path):
     os.makedirs(images_path)
 
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
 i=0
 while True:
