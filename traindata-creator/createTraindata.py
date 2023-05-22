@@ -9,7 +9,7 @@ bottom_right_corner=[]
 new_top_left = None
 cur_m_pos = None
 
-def drawRectangle(action, x, y, flags, *userdata):
+def mouseEvent(action, x, y, flags, *userdata):
     global top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
   
     cur_m_pos = (x,y)
@@ -33,7 +33,7 @@ input_img_paths = sorted(
 image = cv2.imread(input_img_paths[0])
 height, width = image.shape[:2]
 cv2.namedWindow(window_name)
-cv2.setMouseCallback(window_name, drawRectangle)
+cv2.setMouseCallback(window_name, mouseEvent)
 
 while True:
     # Control logic at 60 FPS
