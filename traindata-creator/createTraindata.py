@@ -79,42 +79,53 @@ def find_inner_rect(cornerss, ccx, ccy):
             
         return in_between_rect
 
-root_dir = Path(__file__).resolve().parent
-input_dir = root_dir / 'images'
-input_img_paths = sorted(
-    [
-         os.path.join(input_dir, fname)
-        for fname in os.listdir(input_dir)
-        if fname.endswith(".png")
-    ]
-)
+def main():
+    # Prepare paths
+    root_dir = Path(__file__).resolve().parent
+    input_dir = root_dir / 'images'
+    input_img_paths = sorted(
+        [
+            os.path.join(input_dir, fname)
+            for fname in os.listdir(input_dir)
+            if fname.endswith(".png")
+        ]
+    )
+    
+    # Prepare aruco detector
+    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+    parameters =  cv2.aruco.DetectorParameters()
+    detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
-image = cv2.imread(input_img_paths[0])
-height, width = image.shape[:2]
-cv2.namedWindow(window_name)
-cv2.setMouseCallback(window_name, mouseEvent)
+    # Load image/window and hook events
+    image = cv2.imread(input_img_paths[0])
+    height, width = image.shape[:2]
+    cv2.namedWindow(window_name)
+    cv2.setMouseCallback(window_name, mouseEvent)
+    
+    while True:
+        # Control logic at 60 FPS
+        k = cv2.waitKey(16) & 0xFF
+        if k == ord('q'):
+            break
+        elif k == ord('c'):
+            top_left_corner=[]
+            bottom_right_corner=[]
+            new_top_left = None
+        elif k == ord('z'):
+            top_left_corner.pop()
+            bottom_right_corner.pop()
+        elif k == ord(' '):
+            print("Building...")
 
-while True:
-    # Control logic at 60 FPS
-    k = cv2.waitKey(16) & 0xFF
-    if k == ord('q'):
-        break
-    elif k == ord('c'):
-        top_left_corner=[]
-        bottom_right_corner=[]
-        new_top_left = None
-    elif k == ord('z'):
-        top_left_corner.pop()
-        bottom_right_corner.pop()
-    elif k == ord(' '):
-        print("Building...")
+        # Draw
+        display_image = image.copy()
+        for i in range(0, len(bottom_right_corner)):
+            cv2.rectangle(display_image, top_left_corner[i], bottom_right_corner[i], (0,255,0), 1, 8)
+        if new_top_left is not None:
+            cv2.rectangle(display_image, new_top_left, cur_m_pos, (0,255,0), 1, 8)
+        cv2.imshow(window_name, display_image)
+    
+    cv2.destroyAllWindows()
 
-    # Draw
-    display_image = image.copy()
-    for i in range(0, len(bottom_right_corner)):
-        cv2.rectangle(display_image, top_left_corner[i], bottom_right_corner[i], (0,255,0), 1, 8)
-    if new_top_left is not None:
-        cv2.rectangle(display_image, new_top_left, cur_m_pos, (0,255,0), 1, 8)
-    cv2.imshow(window_name, display_image)
- 
-cv2.destroyAllWindows()
+if __name__ == '__main__':
+    main()
