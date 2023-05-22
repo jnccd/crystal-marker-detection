@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import cv2
 from pathlib import Path
 
@@ -110,7 +111,7 @@ def find_homography_from_aruco(img, detector, width, height):
         hi, status = cv2.findHomography(dest_rect, src_rect)
         return h, hi, marked_img
     else:
-        print("Didn't find the aruco frame :/")
+        return None, None, marked_img
     
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
@@ -125,12 +126,19 @@ def main():
             if fname.endswith(".png")
         ]
     )
+    marked_dir = root_dir / 'images_marked'
+    if not os.path.exists(marked_dir):
+        os.makedirs(marked_dir)
     
     # Load first image and preprocess
     img = cv2.imread(input_img_paths[0])
     img_h, img_w = img.shape[:2]
+    print(img.shape[:2])
     detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
     oh, hi, marked_img = find_homography_from_aruco(img, detector, img_w, img_h)
+    if hi is None:
+        print("Didn't find the aruco frame in base img :/")
+        return
     warped_img = cv2.warpPerspective(img, hi, (img_w, img_h))
     # Show marked_img for troubleshooting
     cv2.imshow(window_name, marked_img)
@@ -154,6 +162,37 @@ def main():
             bottom_right_corner.pop()
         elif k == ord(' '):
             print("Building...")
+            warped_inner_rect_cornerss = []
+            for i in range(0, len(bottom_right_corner)):
+                # Clockwise corner point lists starting at top left for all marked rects
+                warped_inner_rect_cornerss.append([top_left_corner[i], (bottom_right_corner[i][0], top_left_corner[i][1]), bottom_right_corner[i], (top_left_corner[i][0], bottom_right_corner[i][1])])
+            # Flatten
+            warped_inner_rect_corners = [item for sublist in warped_inner_rect_cornerss for item in sublist]
+            # Iterate through other images
+            for other_img_path in input_img_paths[1:]:
+                print(f"Building {other_img_path}...")
+                other_img = cv2.imread(other_img_path)
+                h, hi, marked_img = find_homography_from_aruco(other_img, detector, img_w, img_h)
+                cv2.imshow(window_name, marked_img)
+                if h is None:
+                    print("Didn't find the aruco frame :/")
+                    continue
+                hircs = [h @ (p[0], p[1], 1) for p in warped_inner_rect_corners] # homogeneous_in_other_img_inner_rect_corners
+                ircs = [(int(p[0] / p[2]), int(p[1] / p[2])) for p in hircs]
+                
+                print("hircs", hircs)
+                print("ircs", ircs)
+                
+                draw_other_img = other_img.copy()
+                for i in range(0, len(ircs)):
+                    if i % 4 == 3:
+                        cv2.line(draw_other_img, ircs[i], ircs[i-3], (0,0,255), 2)
+                    else:
+                        cv2.line(draw_other_img, ircs[i], ircs[i+1], (0,0,255), 2)
+                cv2.imshow(window_name, draw_other_img)
+                cv2.waitKey(32)
+                cv2.imwrite(str(marked_dir / (Path(other_img_path).stem + ".png")), draw_other_img)
+                
 
         # Draw
         display_img = warped_img.copy()
