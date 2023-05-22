@@ -81,8 +81,8 @@ def find_inner_rect(cornerss, ccx, ccy):
             
         return in_between_rect
     
-def get_opencv_aruco_detector():
-    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
+def get_opencv_aruco_detector(dict):
+    dictionary = cv2.aruco.getPredefinedDictionary(dict)
     parameters =  cv2.aruco.DetectorParameters()
     return cv2.aruco.ArucoDetector(dictionary, parameters)
     
@@ -98,7 +98,7 @@ def find_homography_from_aruco(img, detector, width, height):
         cv2.rectangle(marked_img, (ccx, ccy), (ccx+1, ccy+1), (0, 0, 255), 5)
         
         # Find inner rectangle
-        in_between_rect = find_inner_rect(cornerss)
+        in_between_rect = find_inner_rect(cornerss, ccx, ccy)
         for i in range(0,4):
             j = (i+1)%4
             cv2.line(marked_img, in_between_rect[i], in_between_rect[j], (0, 0, 255), 2)
@@ -107,8 +107,10 @@ def find_homography_from_aruco(img, detector, width, height):
         src_rect  = np.array([[0, height, 1], [0, 0, 1], [width, 0, 1], [width, height, 1]])
         dest_rect = np.array([[x,y,1] for (x,y) in in_between_rect])
         h, status = cv2.findHomography(src_rect, dest_rect)
-        return h
-    
+        hi, status = cv2.findHomography(dest_rect, src_rect)
+        return h, hi, marked_img
+    else:
+        print("Didn't find the aruco frame :/")
     
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
@@ -127,9 +129,12 @@ def main():
     # Load first image and preprocess
     img = cv2.imread(input_img_paths[0])
     img_h, img_w = img.shape[:2]
-    detector = get_opencv_aruco_detector()
-    hg = find_homography_from_aruco(img, detector, 1, 1)
-    
+    detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
+    oh, hi, marked_img = find_homography_from_aruco(img, detector, img_w, img_h)
+    warped_img = cv2.warpPerspective(img, hi, (img_w, img_h))
+    # Show marked_img for troubleshooting
+    cv2.imshow(window_name, marked_img)
+    cv2.waitKey(0)
     
     # Load window and hook events
     cv2.namedWindow(window_name)
@@ -151,7 +156,7 @@ def main():
             print("Building...")
 
         # Draw
-        display_img = img.copy()
+        display_img = warped_img.copy()
         for i in range(0, len(bottom_right_corner)):
             cv2.rectangle(display_img, top_left_corner[i], bottom_right_corner[i], (0,255,0), 1, 8)
         if new_top_left is not None:
