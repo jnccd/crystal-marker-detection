@@ -143,7 +143,14 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir):
                 cv2.line(draw_other_img, ircs[i], ircs[i+1], (0,0,255), 2)
         cv2.imshow(window_name, draw_other_img)
         cv2.waitKey(32)
-        cv2.imwrite(str(marked_dir / (Path(other_img_path).stem + ".png")), draw_other_img)
+        cv2.imwrite(str(marked_dir / ("marked_" + Path(other_img_path).stem + ".png")), draw_other_img)
+        with open(marked_dir / ("marked_" + Path(other_img_path).stem + ".txt"), "w") as text_file:
+            for i in range(0, len(ircs)):
+                if i % 4 == 3:
+                    text_file.write(f"{ircs[i]}\n")
+                else:
+                    text_file.write(f"{ircs[i]}, ")
+                
     
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
