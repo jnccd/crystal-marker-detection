@@ -48,7 +48,7 @@ def find_inner_rect(cornerss):
             min_v = sys.maxsize
             for i in range(len(corners)):
                 v = corners[i]
-                cv = abs(v[0] - ccx) + abs(v[1] - ccy)
+                cv = (v[0]-ccx)*(v[0]-ccx) + (v[1]-ccy)*(v[1]-ccy)
                 if cv <= min_v:
                     min_i = i
                     min_v = cv
