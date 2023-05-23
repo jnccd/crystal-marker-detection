@@ -181,7 +181,6 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
                 text_file.write(f"{rect[0]}, {rect[1]}, {rect[2]}, {rect[3]}\n")
         # ...and a textfile with the bounds in yolo style (1 x y w h)
         bgnircs = [get_bounds(x) for x in gnircs] #boundsOf-grouped-normalized-inner-rect-corners
-        print(bgnircs)
         with open(train_dir / (Path(other_img_path).stem + "_yolo.txt"), "w") as text_file:
             for bounds in bgnircs:
                 text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
