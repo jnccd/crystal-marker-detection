@@ -122,6 +122,21 @@ def apply_homography(point2D_list, h, convert_to_int = True):
     else:
         return ps
     
+def get_bounds(point2D_list):
+    x = min([p[0] for p in point2D_list])
+    y = min([p[1] for p in point2D_list])
+    xe = max([p[0] for p in point2D_list])
+    ye = max([p[1] for p in point2D_list])
+    w = xe - x
+    h = ye - y
+    return x, y, w, h, xe, ye
+
+def divide_by_point(point2D_list, d):
+    return [(p[0] / d[0], p[1] / d[1]) for p in point2D_list]
+
+def unflatten(list, chunk_size):
+    return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
+    
 def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir):
     warped_inner_rect_cornerss = []
     for i in range(0, len(bottom_right_corner)):
@@ -150,22 +165,31 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
                 cv2.line(draw_img, ircs[i], ircs[i+1], (0,0,255), 2)
         cv2.imshow(window_name, draw_img)
         cv2.imwrite(str(marked_dir / ("marked_" + Path(other_img_path).stem + ".png")), draw_img)
-        cv2.waitKey(32)
+        cv2.waitKey(8) # ~120FPS
         
-        # Write cropped img and a textfile with the corner data of all found rectangles too
-        inner_bounds_x = min([p[0] for p in in_between_rect])
-        inner_bounds_y = min([p[1] for p in in_between_rect])
-        inner_bounds_xe = max([p[0] for p in in_between_rect])
-        inner_bounds_ye = max([p[1] for p in in_between_rect])
+        # Into the traindata folder, write cropped img...
+        inner_bounds_x, inner_bounds_y, _, _, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
         crop_img = other_img[inner_bounds_y:inner_bounds_ye, inner_bounds_x:inner_bounds_xe]
-        cv2.imwrite(str(train_dir / ("cropped_" + Path(other_img_path).stem + ".png")), crop_img)
-        with open(train_dir / ("cropped_" + Path(other_img_path).stem + ".txt"), "w") as text_file:
-            for i in range(0, len(ircs)):
-                if i % 4 == 3:
-                    text_file.write(f"{ircs[i]}\n")
-                else:
-                    text_file.write(f"{ircs[i]}, ")
-                
+        cv2.imwrite(str(train_dir / (Path(other_img_path).stem + ".png")), crop_img)
+        # ...and a textfile with the corner data of all found rectangles...
+        img_size = (img_w, img_h)
+        gircs = unflatten(ircs, 4)
+        nircs = divide_by_point(ircs, img_size)
+        gnircs = unflatten(nircs, 4)
+        with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
+            for rect in gircs:
+                text_file.write(f"{rect[0]}, {rect[1]}, {rect[2]}, {rect[3]}\n")
+        # ...and a textfile with the bounds in yolo style (1 x y w h)
+        bgnircs = [get_bounds(x) for x in gnircs] #boundsOf-grouped-normalized-inner-rect-corners
+        print(bgnircs)
+        with open(train_dir / (Path(other_img_path).stem + "_yolo.txt"), "w") as text_file:
+            for bounds in bgnircs:
+                text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+        # ...and a textfile with the bounds in keras style
+        bgircs = [get_bounds(x) for x in gircs]
+        with open(train_dir / (Path(other_img_path).stem + "_unnormalized.txt"), "w") as text_file:
+            for bounds in bgircs:
+                text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
     
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
