@@ -165,7 +165,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
                 cv2.line(draw_img, ircs[i], ircs[i+1], (0,0,255), 2)
         cv2.imshow(window_name, draw_img)
         cv2.imwrite(str(marked_dir / ("marked_" + Path(other_img_path).stem + ".png")), draw_img)
-        cv2.waitKey(8) # ~120FPS
+        cv2.waitKey(1)
         
         # Into the traindata folder, write cropped img...
         inner_bounds_x, inner_bounds_y, _, _, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
