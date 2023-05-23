@@ -131,9 +131,11 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir):
             print("Didn't find the aruco frame :/")
             continue
         
-        hircs = [h @ (p[0], p[1], 1) for p in warped_inner_rect_corners] # homogeneous_in_other_img_inner_rect_corners
+        # homogeneous_in_other_img_inner_rect_corners
+        hircs = [h @ (p[0], p[1], 1) for p in warped_inner_rect_corners] 
         ircs = [(int(p[0] / p[2]), int(p[1] / p[2])) for p in hircs]
         
+        # Mark found rectangles in inner_rect
         draw_other_img = other_img.copy()
         for i in range(0, len(ircs)):
             if i % 4 == 3:
@@ -143,6 +145,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir):
         cv2.imshow(window_name, draw_other_img)
         cv2.waitKey(32)
         
+        # Write a textfile with the corner data of all found rectangles too
         cv2.imwrite(str(marked_dir / ("marked_" + Path(other_img_path).stem + ".png")), draw_other_img)
         with open(marked_dir / ("marked_" + Path(other_img_path).stem + ".txt"), "w") as text_file:
             for i in range(0, len(ircs)):
