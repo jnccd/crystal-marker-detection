@@ -189,7 +189,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         with open(train_dir / (Path(other_img_path).stem + "_unnormalized.txt"), "w") as text_file:
             for bounds in bgircs:
                 text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
-    
+
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
     
