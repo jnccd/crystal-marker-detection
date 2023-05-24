@@ -168,26 +168,27 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         cv2.waitKey(1)
         
         # Into the traindata folder, write cropped img...
-        inner_bounds_x, inner_bounds_y, _, _, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
+        inner_bounds_x, inner_bounds_y, inner_bounds_w, inner_bounds_h, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
         crop_img = other_img[inner_bounds_y:inner_bounds_ye, inner_bounds_x:inner_bounds_xe]
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + ".png")), crop_img)
         # ...and a textfile with the corner data of all found rectangles...
-        img_size = (img_w, img_h)
-        gircs = unflatten(ircs, 4)
-        nircs = divide_by_point(ircs, img_size)
-        gnircs = unflatten(nircs, 4)
+        bounds_size = (inner_bounds_w, inner_bounds_h)
+        circs = [(x[0] - inner_bounds_x, x[1] - inner_bounds_y) for x in ircs]
+        gcircs = unflatten(circs, 4)
+        ncircs = divide_by_point(circs, bounds_size)
+        gncircs = unflatten(ncircs, 4)
         with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
-            for rect in gircs:
+            for rect in gcircs:
                 text_file.write(f"{rect[0]}, {rect[1]}, {rect[2]}, {rect[3]}\n")
         # ...and a textfile with the bounds in yolo style (1 x y w h)
-        bgnircs = [get_bounds(x) for x in gnircs] #boundsOf-grouped-normalized-inner-rect-corners
+        bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
         with open(train_dir / (Path(other_img_path).stem + "_yolo.txt"), "w") as text_file:
-            for bounds in bgnircs:
+            for bounds in bgncircs:
                 text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
         # ...and a textfile with the bounds in keras style
-        bgircs = [get_bounds(x) for x in gircs]
+        bgcircs = [get_bounds(x) for x in gcircs]
         with open(train_dir / (Path(other_img_path).stem + "_unnormalized.txt"), "w") as text_file:
-            for bounds in bgircs:
+            for bounds in bgcircs:
                 text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
 
 def main():
