@@ -185,7 +185,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         with open(train_dir / (Path(other_img_path).stem + "_yolo.txt"), "w") as text_file:
             for bounds in bgncircs:
                 text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
-        # ...and a textfile with the bounds in keras style
+        # ...and a textfile with the bounds unnormalized
         bgcircs = [get_bounds(x) for x in gcircs]
         with open(train_dir / (Path(other_img_path).stem + "_unnormalized.txt"), "w") as text_file:
             for bounds in bgcircs:
