@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import time
@@ -194,9 +195,13 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
     
+    parser = argparse.ArgumentParser(prog='traindata-creator', description='Creates traindata in bulk for image series on marked planes.')
+    parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
+    args = parser.parse_args()
+    
     # Prepare paths
     root_dir = Path(__file__).resolve().parent
-    input_dir = root_dir / 'images'
+    input_dir = Path(args.input_folder)
     input_img_paths = sorted(
         [
             os.path.join(input_dir, fname)
@@ -204,10 +209,11 @@ def main():
             if fname.endswith(".png")
         ]
     )
-    marked_dir = root_dir / 'images_marked'
+    dataseries_dir = root_dir / f'dataseries--{input_dir.name}'
+    marked_dir = dataseries_dir / 'images_marked'
     if not os.path.exists(marked_dir):
         os.makedirs(marked_dir)
-    train_dir = root_dir / 'images_traindata'
+    train_dir = dataseries_dir / 'images_traindata'
     if not os.path.exists(train_dir):
         os.makedirs(train_dir)
     
