@@ -1,3 +1,4 @@
+import uuid
 from matplotlib import pyplot as plt
 import numpy as np
 import cv2
@@ -6,7 +7,7 @@ import os
 import time
 
 root_dir = Path(__file__).resolve().parent
-images_path = root_dir / 'images'
+images_path = root_dir / f'webcam-images-{str(uuid.uuid4())}'
 if not os.path.exists(images_path):
     os.makedirs(images_path)
 
