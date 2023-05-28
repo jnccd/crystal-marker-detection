@@ -3,5 +3,3 @@ images/*.*
 labels/*.*
 marker.*
 classes.txt
-*img*.png
-*img*.txt
