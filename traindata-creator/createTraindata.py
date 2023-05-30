@@ -132,13 +132,16 @@ def get_bounds(point2D_list):
     h = ye - y
     return x, y, w, h, xe, ye
 
+def mult_by_point(point2D_list, m):
+    return [(p[0] * m[0], p[1] * m[1]) for p in point2D_list]
+
 def divide_by_point(point2D_list, d):
     return [(p[0] / d[0], p[1] / d[1]) for p in point2D_list]
 
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
     
-def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir):
+def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, resize_size):
     warped_inner_rect_cornerss = []
     for i in range(0, len(bottom_right_corner)):
         # Clockwise corner point lists starting at top left for all marked rects
@@ -171,12 +174,19 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         # Into the traindata folder, write cropped img...
         inner_bounds_x, inner_bounds_y, inner_bounds_w, inner_bounds_h, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
         crop_img = other_img[inner_bounds_y:inner_bounds_ye, inner_bounds_x:inner_bounds_xe]
+        if resize_size > 0:
+            crop_img = cv2.resize(crop_img, (resize_size, resize_size))
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + ".png")), crop_img)
         # ...and a textfile with the corner data of all found rectangles...
         bounds_size = (inner_bounds_w, inner_bounds_h)
         circs = [(x[0] - inner_bounds_x, x[1] - inner_bounds_y) for x in ircs]
+        if resize_size > 0:
+            circs = mult_by_point(circs, (resize_size / inner_bounds_w, resize_size / inner_bounds_h))
         gcircs = unflatten(circs, 4)
-        ncircs = divide_by_point(circs, bounds_size)
+        if resize_size > 0:
+            ncircs = divide_by_point(circs, (resize_size, resize_size))
+        else:
+            ncircs = divide_by_point(circs, bounds_size)
         gncircs = unflatten(ncircs, 4)
         with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
             for rect in gcircs:
@@ -197,6 +207,7 @@ def main():
     
     parser = argparse.ArgumentParser(prog='traindata-creator', description='Creates traindata in bulk for image series on marked planes.')
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
+    parser.add_argument('-s','--size', type=int, default=-1, help='The width and height of the traindata images.')
     args = parser.parse_args()
     
     # Prepare paths
@@ -209,7 +220,7 @@ def main():
             if fname.endswith(".png")
         ]
     )
-    dataseries_dir = root_dir / f'dataseries--{input_dir.name}'
+    dataseries_dir = root_dir / f'dataseries-{str(args.size)}-{input_dir.name}'
     marked_dir = dataseries_dir / 'images_marked'
     if not os.path.exists(marked_dir):
         os.makedirs(marked_dir)
@@ -248,7 +259,7 @@ def main():
             bottom_right_corner.pop()
         elif k == ord(' '):
             print("Building...")
-            build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir)
+            build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, args.size)
 
         # Draw
         display_img = warped_img.copy()
