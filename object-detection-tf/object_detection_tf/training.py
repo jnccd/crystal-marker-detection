@@ -1,7 +1,6 @@
 import os
 import math
 import random
-from typing import List
 from pathlib import Path
 
 import numpy as np
@@ -17,16 +16,9 @@ from object_detection_tf.runconfigs import RunConfig, configs, load_runconfig
 
 num_classes = 1
 
-def startswith_any(filename: str, prefs: List[str]):
-    for pref in prefs:
-        if filename.startswith(pref):
-            return True
-    return False
-
 def fit(
     batch_size: int = 32, 
     num_epochs: int = 1, 
-    val_prefixes: List[str] = ["A-", "C-"], 
     run: str = 'default', 
     data_folder: str = 'renders', 
     size: int = 160,
@@ -76,7 +68,6 @@ def fit(
     print("Number of samples:", num_samples)
     print("Batch Size:", batch_size)
     print("Epochs:", num_epochs)
-    print("Validation Prefixes:", val_prefixes)
     print("Run Name:", run)
     print("Run-Config:", cur_conf.name)
     print("Loss:", cur_conf.loss)
@@ -85,8 +76,7 @@ def fit(
     print()
 
     print("Build model...")
-    # Free up RAM in case the model definition cells were run multiple times
-    keras.backend.clear_session()
+    keras.backend.clear_session() # Free up RAM in case the model definition cells were run multiple times
 
     if not use_multi_gpu_strategy:
         strategy = tf.distribute.get_strategy()
@@ -95,7 +85,7 @@ def fit(
     with strategy.scope():
         
         # Build model
-        model = get_model(img_size, num_classes, cur_conf)
+        model = cur_conf.model
         if print_model:
             model.summary()
             tf.keras.utils.plot_model(model, to_file=run_dir / "model.png", show_shapes=True)
@@ -140,9 +130,6 @@ def fit(
         metrics = [tf.keras.metrics.BinaryAccuracy(),
                     tf.keras.metrics.Recall(),
                     tf.keras.metrics.Precision(),
-                    dice_coef,
-                    BinaryCrossEntropyLoss,
-                    #mean_iou(num_classes=num_classes),
                     ]
         model.compile(optimizer=cur_conf.optimizer, 
                     loss=cur_conf.loss,
@@ -150,7 +137,7 @@ def fit(
         
         # Set callbacks
         cur_conf.callbacks.append(
-            keras.callbacks.ModelCheckpoint(weights_dir / "pipe_segmentation.h5", save_best_only=True)
+            keras.callbacks.ModelCheckpoint(weights_dir / "weights.h5", save_best_only=True)
         )
         callbacks = cur_conf.callbacks
 
