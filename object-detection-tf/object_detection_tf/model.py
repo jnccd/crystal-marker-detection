@@ -152,7 +152,7 @@ class DecodePredictions(tf.keras.layers.Layer):
 
         self._anchor_box = AnchorBox()
         self._box_variance = tf.convert_to_tensor(
-            [0.1, 0.1, 0.2, 0.2], dtype=tf.float32
+            box_variance, dtype=tf.float32
         )
 
     def _decode_box_predictions(self, anchor_boxes, box_predictions):
