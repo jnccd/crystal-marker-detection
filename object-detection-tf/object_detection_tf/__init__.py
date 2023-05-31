@@ -1,9 +1,7 @@
 import argparse
 from pathlib import Path
 
-from ml_segmentation.training import fit
-from ml_segmentation.build_trainigdata import build_data
-from ml_segmentation.analyze_valdata import analyze
+from object_detection_tf.training import fit
 
 def main():
     parser = argparse.ArgumentParser(prog='ml-segmentation', description='Trains a sample network on the synthetic generated data.')
