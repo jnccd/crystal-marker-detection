@@ -13,6 +13,7 @@ from tensorflow import keras
 from tensorflow.keras.utils import load_img, array_to_img
 
 from object_detection_tf.runconfigs import RunConfig, configs, load_runconfig
+from object_detection_tf.batchgen import ResnetBatchgen
 
 num_classes = 1
 
@@ -40,7 +41,8 @@ def fit(
     input_dir = render_dir / 'images'
     target_dir = render_dir / 'segmentations'
     # Set Run Paths
-    run_dir = root_dir / f'run-{run}'
+    runs_dir = root_dir / 'runs'
+    run_dir = runs_dir / f'run-{run}'
     val_dir = run_dir / 'validation'
     weights_dir = run_dir / 'weights'
     # Prepare Training Data Img Paths
@@ -122,8 +124,8 @@ def fit(
         print()
 
         # Instantiate data Sequences for each split
-        train_gen = PipeDreams(batch_size, img_size, train_input_img_paths, train_target_img_paths, cur_conf)
-        val_gen = PipeDreams(batch_size, img_size, val_input_img_paths, val_target_img_paths, cur_conf)
+        train_gen = ResnetBatchgen(batch_size, img_size, train_input_img_paths, train_target_img_paths, cur_conf)
+        val_gen = ResnetBatchgen(batch_size, img_size, val_input_img_paths, val_target_img_paths, cur_conf)
 
 
         print("Compile model...")
@@ -155,7 +157,7 @@ def fit(
 
         print("Write evaluation...")
         # First eval textfile
-        val_gen = PipeDreams(batch_size, img_size, val_input_img_paths, val_target_img_paths, cur_conf)
+        val_gen = ResnetBatchgen(batch_size, img_size, val_input_img_paths, val_target_img_paths, cur_conf)
         eval_results = model.evaluate(val_gen)
         eval_file = run_dir / 'evals'
         i = 0
@@ -196,7 +198,7 @@ def fit(
         
         print("Write validation...")
         # Generate predictions for all images in the validation set
-        val_gen = PipeDreams(batch_size, img_size, val_input_img_paths, val_target_img_paths, cur_conf)
+        val_gen = ResnetBatchgen(batch_size, img_size, val_input_img_paths, val_target_img_paths, cur_conf)
         val_preds = model.predict(val_gen)
         
         if not os.path.exists(val_dir):
