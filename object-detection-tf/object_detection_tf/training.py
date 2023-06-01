@@ -35,7 +35,7 @@ def fit(
     render_dir = root_dir / data_folder
     # Server Base Paths
     if not os.path.isdir(render_dir):
-        root_dir = Path("/data/pdml")
+        root_dir = Path("/data/odtf")
         render_dir = root_dir / data_folder
     # Training Data Paths
     input_dir = render_dir / 'images'
