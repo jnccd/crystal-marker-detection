@@ -23,10 +23,10 @@ class ResnetBatchgen(keras.utils.Sequence):
         x = np.zeros((self.batch_size,) + self.img_size + (3,), dtype="float32")
         for j, path in enumerate(batch_input_img_paths):
             x[j] = load_img(path, target_size=self.img_size)
-        y = np.zeros((self.batch_size,) + self.img_size, dtype="uint8")
+        y = np.zeros((self.batch_size,) + 5, dtype="uint8")
         for j, path in enumerate(batch_target_paths):
             
             
             
-            y[j] = 
+            y[j] = load_img(path, target_size=self.img_size)
         return x, y
