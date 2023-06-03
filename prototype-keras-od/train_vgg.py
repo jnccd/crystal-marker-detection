@@ -18,48 +18,14 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.preprocessing.image import load_img
-from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import os
 
-def unflatten(list, chunk_size):
-    return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
-
-def load_dataset(file_paths):
-    data = []
-    targets = []
-    filenames = []
-
-    for img_spath in data_img_paths:
-        img_path = Path(img_spath)
-        txt_path = img_path.parent / (str(img_path.stem)+'_yolo.txt')
-        
-        print((txt_path, img_path))
-        boxes = []
-        with open(txt_path) as f:
-            for row in f.readlines():
-                (class_label, x, y, w, h) = row.removesuffix("\n").split(" ")
-                boxes.extend((x, y, w, h))
-        
-        image = load_img(img_path, target_size=(img_size[0], img_size[1]))
-        image = img_to_array(image)
-        
-        data.append(image)
-        targets.append(boxes)
-        filenames.append(Path(img_path).stem)
-
-    data = np.array(data, dtype="float32") / 255.0
-    targets = np.array(targets, dtype="float32")
-    
-    return data, targets, filenames
-
-
-
 img_size = (320, 320)
 boxes_per_image = 4
-epochs = 20
+epochs = 75
 
 root_dir = Path(__file__).resolve().parent
 dataseries_t1_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae'/'images_traindata'
@@ -89,20 +55,72 @@ val_img_paths = sorted(
     ]
 )
 
-trainImages, trainTargets, trainFilenames = load_dataset(data_img_paths)
-testImages, testTargets, testFilenames = load_dataset(val_img_paths)
+def unflatten(list, chunk_size):
+    return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
+
+def load_dataset(file_paths, img_size):
+    data = []
+    targets = []
+    filenames = []
+
+    for img_spath in file_paths:
+        img_path = Path(img_spath)
+        txt_path = img_path.parent / (str(img_path.stem)+'_yolo.txt')
+        
+        #print((txt_path, img_path))
+        boxes = []
+        with open(txt_path) as f:
+            for row in f.readlines():
+                (class_label, x, y, w, h) = row.removesuffix("\n").split(" ")
+                boxes.extend((x, y, w, h))
+        
+        image = load_img(img_path, target_size=(img_size[0], img_size[1]))
+        image = img_to_array(image)
+        
+        data.append(image)
+        targets.append(boxes)
+        filenames.append(Path(img_path).stem)
+
+    data = np.array(data, dtype="float32") / 255.0
+    targets = np.array(targets, dtype="float32")
+    
+    return data, targets, filenames
+
+trainImages, trainTargets, trainFilenames = load_dataset(data_img_paths, img_size)
+testImages, testTargets, testFilenames = load_dataset(val_img_paths, img_size)
+
+# Test traindata
+for data_img_path, data_target, data_filename in zip(data_img_paths, trainTargets, trainFilenames):
+    image = cv2.imread(data_img_path)
+    
+    rects = unflatten(data_target, 4)
+    #print("rects", rects)
+    for rect in rects:
+        x = int(rect[0] * img_size[0])
+        y = int(rect[1] * img_size[1])
+        w = int(rect[2] * img_size[0])
+        h = int(rect[3] * img_size[1])
+        #print(x, y, w, h)
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    
+    print(f"Traindata {data_filename}")
+    cv2.imshow("Traindata", image)
+    k = cv2.waitKey(0)
+    if k == ord('q'):
+            break
 
 # Model
-
 vgg = VGG16(weights="imagenet", include_top=False,
 	input_tensor=Input(shape=(img_size[0], img_size[1], 3)))
+vgg.trainable = False
 
 flatten = vgg.output
+print(vgg.output)
 flatten = Flatten()(flatten)
 
-bboxHead = Dense(128, activation="relu")(flatten)
+bboxHead = Dense(256, activation="relu")(flatten)
+bboxHead = Dense(128, activation="relu")(bboxHead)
 bboxHead = Dense(64, activation="relu")(bboxHead)
-bboxHead = Dense(32, activation="relu")(bboxHead)
 bboxHead = Dense(4*boxes_per_image, activation="sigmoid")(bboxHead)
 
 model = Model(inputs=vgg.input, outputs=bboxHead)
@@ -114,7 +132,7 @@ print(model.summary())
 H = model.fit(
 	trainImages, trainTargets,
 	validation_data=(testImages, testTargets),
-	batch_size=16,
+	batch_size=8,
 	epochs=epochs,
 	verbose=1)
 
@@ -145,7 +163,13 @@ for val_img in val_img_paths:
     image = cv2.imread(val_img)
     
     for rect in rects:
-        cv2.rectangle(image, (int(rect[0] * img_size[0]), int(rect[1] * img_size[1])), (int(rect[2] * img_size[0]), int(rect[3] * img_size[1])), (0, 255, 0), 2)
+        x = int(rect[0] * img_size[0])
+        y = int(rect[1] * img_size[1])
+        w = int(rect[2] * img_size[0])
+        h = int(rect[3] * img_size[1])
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
     
-    cv2.imshow("Output", image)
-    cv2.waitKey(0)
+    cv2.imshow("Model Prediction", image)
+    k = cv2.waitKey(0)
+    if k == ord('q'):
+            break
