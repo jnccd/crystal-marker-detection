@@ -119,8 +119,8 @@ print(vgg.output)
 flatten = Flatten()(flatten)
 
 bboxHead = Dense(256, activation="relu")(flatten)
-bboxHead = Dense(128, activation="relu")(bboxHead)
 bboxHead = Dense(64, activation="relu")(bboxHead)
+bboxHead = Dense(32, activation="relu")(bboxHead)
 bboxHead = Dense(4*boxes_per_image, activation="sigmoid")(bboxHead)
 
 model = Model(inputs=vgg.input, outputs=bboxHead)
