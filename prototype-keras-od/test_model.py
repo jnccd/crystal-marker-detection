@@ -45,7 +45,11 @@ for val_img in val_img_paths:
     image = cv2.imread(val_img)
     
     for rect in rects:
-        cv2.rectangle(image, (int(rect[0] * img_size[0]), int(rect[1] * img_size[1])), (int(rect[2] * img_size[0]), int(rect[3] * img_size[1])), (0, 255, 0), 2)
+        x = int(rect[0] * img_size[0])
+        y = int(rect[1] * img_size[1])
+        w = int(rect[2] * img_size[0])
+        h = int(rect[3] * img_size[1])
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
     
     cv2.imshow("Output", image)
     cv2.waitKey(0)
