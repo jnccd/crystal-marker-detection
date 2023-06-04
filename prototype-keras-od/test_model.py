@@ -21,7 +21,7 @@ img_size = (320, 320)
 boxes_per_image = 4
 
 root_dir = Path(__file__).resolve().parent
-dataseries_v1_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0'/'images_traindata'
+dataseries_v1_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf'/'images_traindata'
 
 model = load_model(root_dir / 'model.h5')
 
