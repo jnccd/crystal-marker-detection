@@ -4,6 +4,7 @@ import sys
 import time
 import cv2
 from pathlib import Path
+from cv2 import Mat
 
 import numpy as np
 
@@ -132,6 +133,9 @@ def get_bounds(point2D_list):
     h = ye - y
     return x, y, w, h, xe, ye
 
+def add_by_point(point2D_list, a):
+    return [(p[0] + a[0], p[1] + a[1]) for p in point2D_list]
+
 def mult_by_point(point2D_list, m):
     return [(p[0] * m[0], p[1] * m[1]) for p in point2D_list]
 
@@ -140,6 +144,27 @@ def divide_by_point(point2D_list, d):
 
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
+
+def resize_and_pad(img: Mat, desired_size: int):
+    old_size = img.shape[:2]
+
+    ratio = float(desired_size)/max(old_size)
+    new_size = tuple([int(x*ratio) for x in old_size])
+
+    # new_size should be in (width, height) format
+
+    rimg = cv2.resize(img, (new_size[1], new_size[0]))
+
+    delta_w = desired_size - new_size[1]
+    delta_h = desired_size - new_size[0]
+    top, bottom = delta_h//2, delta_h-(delta_h//2)
+    left, right = delta_w//2, delta_w-(delta_w//2)
+
+    color = [0, 0, 0]
+    brimg = cv2.copyMakeBorder(rimg, top, bottom, left, right, cv2.BORDER_CONSTANT,
+        value=color)
+    
+    return brimg, new_size, top, left
     
 def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, resize_size):
     warped_inner_rect_cornerss = []
@@ -175,13 +200,14 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         inner_bounds_x, inner_bounds_y, inner_bounds_w, inner_bounds_h, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
         crop_img = other_img[inner_bounds_y:inner_bounds_ye, inner_bounds_x:inner_bounds_xe]
         if resize_size > 0:
-            crop_img = cv2.resize(crop_img, (resize_size, resize_size))
+            crop_img, new_size, top, left = resize_and_pad(crop_img, resize_size)
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + ".png")), crop_img)
         # ...and a textfile with the corner data of all found rectangles...
         bounds_size = (inner_bounds_w, inner_bounds_h)
         circs = [(x[0] - inner_bounds_x, x[1] - inner_bounds_y) for x in ircs]
         if resize_size > 0:
-            circs = mult_by_point(circs, (resize_size / inner_bounds_w, resize_size / inner_bounds_h))
+            circs = mult_by_point(circs, (new_size[1] / inner_bounds_w, new_size[0] / inner_bounds_h))
+            circs = add_by_point(circs, (left, top))
         gcircs = unflatten(circs, 4)
         if resize_size > 0:
             ncircs = divide_by_point(circs, (resize_size, resize_size))
