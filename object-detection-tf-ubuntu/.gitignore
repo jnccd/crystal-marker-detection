@@ -1,0 +1,12 @@
+images/
+segmentations/
+validation/
+pipe_segmentation.h5
+*.index
+*.data-00000-of-00001
+checkpoint
+epochs
+evals*
+model.png
+cmds.txt
+__pycache__/
