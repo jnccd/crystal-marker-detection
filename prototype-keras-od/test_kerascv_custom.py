@@ -16,6 +16,43 @@ IMG_H = 320
 
 class_mapping = { 1: '1' }
 
+# --- Implementing Smooth L1 loss and Focal Loss as keras custom losses ---
+class MySmoothL1Loss(keras.losses.Loss):
+    """Implements Smooth L1 loss.
+
+    SmoothL1Loss implements the SmoothL1 function, where values less than
+    `l1_cutoff` contribute to the overall loss based on their squared
+    difference, and values greater than l1_cutoff contribute based on their raw
+    difference.
+
+    Args:
+        l1_cutoff: differences between y_true and y_pred that are larger than
+            `l1_cutoff` are treated as `L1` values
+    """
+
+    def __init__(self, l1_cutoff=1.0, **kwargs):
+        super().__init__(**kwargs)
+        self.l1_cutoff = l1_cutoff
+
+    def call(self, y_true, y_pred):
+        
+        difference = y_true - y_pred
+        absolute_difference = tf.abs(difference)
+        squared_difference = difference**2
+        loss = tf.where(
+            absolute_difference < self.l1_cutoff,
+            0.5 * squared_difference,
+            absolute_difference - 0.5,
+        )
+        return keras.backend.mean(loss, axis=-1)
+
+    def get_config(self):
+        config = {
+            "l1_cutoff": self.l1_cutoff,
+        }
+        base_config = super().get_config()
+        return dict(list(base_config.items()) + list(config.items()))
+
 def visualize_dataset(inputs, value_range, rows, cols, bounding_box_format):
     inputs = next(iter(inputs.take(1)))
     images, bounding_boxes = inputs["images"], inputs["bounding_boxes"]
@@ -126,6 +163,8 @@ eval_ds = eval_ds.map(dict_to_tuple, num_parallel_calls=tf.data.AUTOTUNE)
 train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
 eval_ds = eval_ds.prefetch(tf.data.AUTOTUNE)
 
+print(next(iter(train_ds.take(1))))
+
 base_lr = 0.005
 # including a global_clipnorm is extremely important in object detection tasks
 optimizer = tf.keras.optimizers.SGD(
@@ -145,9 +184,11 @@ def print_metrics(result):
     
 model = keras_cv.models.RetinaNet.from_preset(
     "resnet50_imagenet",
-    num_classes=len(class_mapping),
+    num_classes=1,
     bounding_box_format="xywh",
 )
+
+model.summary()
 
 model.compile(
     classification_loss="focal",
