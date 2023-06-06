@@ -265,8 +265,6 @@ def main():
     if not os.path.exists(train_dir):
         os.makedirs(train_dir)
     
-    print(input_img_paths)
-    
     # Load first image and preprocess
     img = cv2.imread(input_img_paths[0])
     img_h, img_w = img.shape[:2]
