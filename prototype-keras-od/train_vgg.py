@@ -115,7 +115,7 @@ vgg = VGG16(weights="imagenet", include_top=False,
 vgg.trainable = False
 
 flatten = vgg.output
-print(vgg.output)
+#print(vgg.output)
 flatten = Flatten()(flatten)
 
 bboxHead = Dense(256, activation="relu")(flatten)
