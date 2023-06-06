@@ -1,0 +1,2 @@
+python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn -s 320
+
