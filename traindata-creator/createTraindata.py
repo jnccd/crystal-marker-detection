@@ -15,6 +15,8 @@ bottom_right_corner=[]
 new_top_left = None
 cur_m_pos = None
 
+max_img_width = 1280
+
 def mouseEvent(action, x, y, flags, *userdata):
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
   
@@ -165,6 +167,12 @@ def resize_and_pad(img: Mat, desired_size: int):
         value=color)
     
     return brimg, new_size, top, left
+
+def set_max_img_size(img, max_width):
+    img_h, img_w = img.shape[:2]
+    r = float(max_width) / img_w
+    dim = (max_width, int(img_h * r))
+    return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
     
 def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, resize_size):
     warped_inner_rect_cornerss = []
@@ -178,6 +186,9 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
     for other_img_path in input_img_paths[1:]:
         print(f"Building {other_img_path}...")
         other_img = cv2.imread(other_img_path)
+        oimg_h, oimg_w = other_img.shape[:2]
+        if oimg_w > max_img_width:
+            other_img = set_max_img_size(other_img, max_img_width)
         h, hi, marked_img, in_between_rect = find_homography_from_aruco(other_img.copy(), detector, img_w, img_h)
         if h is None:
             print("Didn't find the aruco frame :/")
@@ -243,7 +254,7 @@ def main():
         [
             os.path.join(input_dir, fname)
             for fname in os.listdir(input_dir)
-            if fname.endswith(".png")
+            if fname.lower().endswith((".png", ".jpg"))
         ]
     )
     dataseries_dir = root_dir / f'dataseries-{str(args.size)}-{input_dir.name}'
@@ -254,10 +265,15 @@ def main():
     if not os.path.exists(train_dir):
         os.makedirs(train_dir)
     
+    print(input_img_paths)
+    
     # Load first image and preprocess
     img = cv2.imread(input_img_paths[0])
     img_h, img_w = img.shape[:2]
-    print(img.shape[:2])
+    if img_w > max_img_width:
+        img = set_max_img_size(img, max_img_width)
+        img_h, img_w = img.shape[:2]
+    print(img_w, img_h)
     detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
     oh, hi, marked_img, in_between_rect = find_homography_from_aruco(img, detector, img_w, img_h)
     if hi is None:
