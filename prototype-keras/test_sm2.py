@@ -167,13 +167,11 @@ class Dataloder(keras.utils.Sequence):
 # Lets look at data we have
 dataset = Dataset(train_x_paths, train_y_paths, classes=['marker'])
 
-#image, mask = dataset[5] # get some sample
-#visualize(
-#    image=image, 
-#    cars_mask=mask[..., 0].squeeze(),
-#    sky_mask=mask[..., 1].squeeze(),
-#    background_mask=mask[..., 2].squeeze(),
-#)
+image, mask = dataset[5] # get some sample
+visualize(
+    image=image, 
+    markers_mask=mask[..., 0].squeeze(),
+)
 
 def round_clip_0_1(x, **kwargs):
     return x.round().clip(0, 1)
@@ -248,13 +246,11 @@ def get_preprocessing(preprocessing_fn):
 # Lets look at augmented data we have
 dataset = Dataset(train_x_paths, train_y_paths, classes=['marker'])#, augmentation=get_training_augmentation())
 
-#image, mask = dataset[12] # get some sample
-#visualize(
-#    image=image, 
-#    cars_mask=mask[..., 0].squeeze(),
-#    sky_mask=mask[..., 1].squeeze(),
-#    background_mask=mask[..., 2].squeeze(),
-#)
+image, mask = dataset[12] # get some sample
+visualize(
+    image=image, 
+    markers_mask=mask[..., 0].squeeze(),
+)
 
 
 BACKBONE = 'efficientnetb3'
@@ -293,7 +289,7 @@ train_dataset = Dataset(
     train_x_paths, 
     train_y_paths, 
     classes=CLASSES, 
-#    augmentation=get_training_augmentation(),
+    augmentation=get_training_augmentation(),
     preprocessing=get_preprocessing(preprocess_input),
 )
 
@@ -302,7 +298,7 @@ valid_dataset = Dataset(
     val_x_paths, 
     val_y_paths, 
     classes=CLASSES, 
-#    augmentation=get_validation_augmentation(),
+    augmentation=get_validation_augmentation(),
     preprocessing=get_preprocessing(preprocess_input),
 )
 
@@ -315,7 +311,7 @@ assert train_dataloader[0][1].shape == (BATCH_SIZE, 320, 320, n_classes)
 
 # define callbacks for learning rate scheduling and best checkpoints saving
 callbacks = [
-    keras.callbacks.ModelCheckpoint('./best_model.h5', save_weights_only=True, save_best_only=True, mode='min'),
+    keras.callbacks.ModelCheckpoint(root_dir / 'best_model.h5', save_weights_only=True, save_best_only=True, mode='min'),
     keras.callbacks.ReduceLROnPlateau(),
 ]
 
@@ -360,7 +356,7 @@ test_dataset = Dataset(
 test_dataloader = Dataloder(test_dataset, batch_size=1, shuffle=False)
 
 # load best weights
-model.load_weights('best_model.h5') 
+model.load_weights(root_dir / 'best_model.h5') 
 
 scores = model.evaluate_generator(test_dataloader)
 
