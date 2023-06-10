@@ -279,7 +279,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
             #print(seg_vertecies)
             cv2.fillPoly(seg_image, pts=[seg_vertecies], color=(255, 255, 255))
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_seg.png")), seg_image)
-        # ...and a textfile with the bounds in (x y w h) style 
+        # ...and a textfile with the bounds in (x y w h) style
         bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
         with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
             for bounds in bgncircs:
