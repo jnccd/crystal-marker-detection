@@ -269,7 +269,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
             for rect in gcircs:
                 text_file.write(f"{rect[0]}, {rect[1]}, {rect[2]}, {rect[3]}\n")
         # ...and write a segmentation image
-        final_img_size = (new_size[1],new_size[0]) if resize_size > 0 else (inner_bounds_h,inner_bounds_w)
+        final_img_size = (resize_size, resize_size) if resize_size > 0 else (inner_bounds_h, inner_bounds_w)
         seg_image = np.zeros(final_img_size + (3,), dtype = np.uint8)
         lircs = [[int(x[0]), int(x[1])] for x in circs]
         glircs = unflatten(lircs, 4)
