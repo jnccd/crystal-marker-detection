@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 import tensorflow as tf
 from tensorflow import optimizers as optis
 from keras import losses as loss
@@ -24,13 +25,13 @@ class RunConfig:
     loss: any
     optimizer: any = "adam"
     model: any = None
-    callbacks: list[tf.keras.callbacks.Callback] = []
+    callbacks: list[tf.keras.callbacks.Callback] = None
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
 configs = [
-    RunConfig( name="xunet-dice", loss=flat_dice_coef_loss, model=get_xunet_model((320, 320), 1)),
-    RunConfig( name="bcross", loss="binary_crossentropy"),
+    RunConfig( name="xunet-dice", loss=flat_dice_coef_loss, model=get_xunet_model((320, 320), 1) ),
+#    RunConfig( name="bcross", loss="binary_crossentropy", ),
     ]
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
