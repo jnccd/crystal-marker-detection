@@ -121,7 +121,7 @@ class Dataset:
         return image, mask
         
     def __len__(self):
-        return len(self.ids)
+        return len(self.images_fps)
     
     
 class Dataloder(keras.utils.Sequence):
@@ -246,15 +246,15 @@ def get_preprocessing(preprocessing_fn):
     return A.Compose(_transform)
 
 # Lets look at augmented data we have
-dataset = Dataset(train_x_paths, train_y_paths, classes=['marker'], augmentation=get_training_augmentation())
+dataset = Dataset(train_x_paths, train_y_paths, classes=['marker'])#, augmentation=get_training_augmentation())
 
-image, mask = dataset[12] # get some sample
-visualize(
-    image=image, 
-    cars_mask=mask[..., 0].squeeze(),
-    sky_mask=mask[..., 1].squeeze(),
-    background_mask=mask[..., 2].squeeze(),
-)
+#image, mask = dataset[12] # get some sample
+#visualize(
+#    image=image, 
+#    cars_mask=mask[..., 0].squeeze(),
+#    sky_mask=mask[..., 1].squeeze(),
+#    background_mask=mask[..., 2].squeeze(),
+#)
 
 
 BACKBONE = 'efficientnetb3'
@@ -293,7 +293,7 @@ train_dataset = Dataset(
     train_x_paths, 
     train_y_paths, 
     classes=CLASSES, 
-    augmentation=get_training_augmentation(),
+#    augmentation=get_training_augmentation(),
     preprocessing=get_preprocessing(preprocess_input),
 )
 
@@ -302,7 +302,7 @@ valid_dataset = Dataset(
     val_x_paths, 
     val_y_paths, 
     classes=CLASSES, 
-    augmentation=get_validation_augmentation(),
+#    augmentation=get_validation_augmentation(),
     preprocessing=get_preprocessing(preprocess_input),
 )
 
