@@ -271,7 +271,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         # ...and write a segmentation image
         final_img_size = (resize_size, resize_size) if resize_size > 0 else (inner_bounds_h, inner_bounds_w)
         seg_image = np.zeros(final_img_size + (3,), dtype = np.uint8)
-        lircs = [[int(x[0]), int(x[1])] for x in circs]
+        lircs = [[int(x[0]), int(x[1])] for x in circs] # listed
         glircs = unflatten(lircs, 4)
         #print(glircs)
         for seg_rect in glircs:
@@ -279,16 +279,16 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
             #print(seg_vertecies)
             cv2.fillPoly(seg_image, pts=[seg_vertecies], color=(255, 255, 255))
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_seg.png")), seg_image)
-        # ...and a textfile with the bounds in yolo style (1 x y w h)
+        # ...and a textfile with the bounds in (x y w h) style 
         bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
-        with open(train_dir / (Path(other_img_path).stem + "_yolo.txt"), "w") as text_file:
+        with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
             for bounds in bgncircs:
-                text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
         # ...and a textfile with the bounds unnormalized
         bgcircs = [get_bounds(x) for x in gcircs]
-        with open(train_dir / (Path(other_img_path).stem + "_unnormalized.txt"), "w") as text_file:
+        with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
             for bounds in bgcircs:
-                text_file.write(f"1 {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
 
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
