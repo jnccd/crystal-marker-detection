@@ -85,6 +85,15 @@ def dice_coef(y_true, y_pred, smooth=100):
 def dice_coef_loss(y_true, y_pred, smooth=100):
     y_true_f = tf.cast(y_true, tf.float32)
     return 1 - dice_coef(y_true_f, y_pred, smooth)
+def dice_coef2(y_true, y_pred, smooth=1):
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    union = K.sum(y_true_f) + K.sum(y_pred_f)
+    return ((2. * intersection + smooth) / (union + smooth)) / 2
+def dice_coef2_loss(y_true, y_pred):
+    y_true = tf.cast(y_true, tf.float32) # dice_coef() requires uniform typings
+    return 1 - dice_coef(y_true, y_pred)
 
 # Data loading
 BACKBONE = 'resnet34'
@@ -101,7 +110,7 @@ model = sm.Unet(BACKBONE, encoder_weights='imagenet')
 print("Compile model...")
 model.compile(
     'Adam',
-    loss=sm.losses.bce_jaccard_loss,
+    loss=dice_coef2_loss,
     metrics=[sm.metrics.iou_score],
 )
 
