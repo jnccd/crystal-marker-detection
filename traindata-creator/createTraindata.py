@@ -66,32 +66,69 @@ def aruco_transform_and_display(corners, ids, rejected, image):
     return image, centers, out_corners
 
 def find_inner_rect(cornerss, ccx, ccy):
-        in_between_rect = [None, None, None, None]
-        for corners in cornerss:
-            
-            min_i = sys.maxsize
-            min_v = sys.maxsize
-            for i in range(len(corners)):
-                v = corners[i]
-                cv = (v[0]-ccx)*(v[0]-ccx) + (v[1]-ccy)*(v[1]-ccy)
-                if cv <= min_v:
-                    min_i = i
-                    min_v = cv
-                    
-            min_vert = corners[min_i]
-            while in_between_rect[min_i] is not None:
-                min_i += 1
-                min_i = min_i % 4
-            in_between_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
-            
-        return in_between_rect
+    in_between_rect = [None, None, None, None]
+    for corners in cornerss:
+        
+        # Get closest corner to middle
+        min_i = sys.maxsize
+        min_v = sys.maxsize
+        for i in range(len(corners)):
+            v = corners[i]
+            cv = (v[0]-ccx)*(v[0]-ccx) + (v[1]-ccy)*(v[1]-ccy)
+            if cv <= min_v:
+                min_i = i
+                min_v = cv
+                
+        # The corner closest to the middle is the min_i'th vertex of the inner rect
+        min_vert = corners[min_i]
+        while in_between_rect[min_i] is not None:
+            min_i += 1
+            min_i = min_i % 4
+        in_between_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
+        
+    return in_between_rect
+    
+def find_inner_rect_legacy(cornerss, ccx, ccy):
+    in_between_rect = [None, None, None, None]
+    for corners in cornerss:
+        
+        # Get closest corner to middle
+        min_i = sys.maxsize
+        min_v = sys.maxsize
+        for i in range(len(corners)):
+            v = corners[i]
+            cv = (v[0]-ccx)*(v[0]-ccx) + (v[1]-ccy)*(v[1]-ccy)
+            if cv <= min_v:
+                min_i = i
+                min_v = cv
+                
+        # Sort markers into in_between_rect based on pos relative to center's center
+        min_vert = corners[min_i]
+        ibr_index = -1
+        if min_vert[0] < ccx:
+            if min_vert[1] < ccy:
+                ibr_index = 1
+            else:
+                ibr_index = 0
+        else:
+            if min_vert[1] < ccy:
+                ibr_index = 2
+            else:
+                ibr_index = 3
+        
+        while in_between_rect[ibr_index] is not None:
+            ibr_index += 1
+            ibr_index = ibr_index % 4
+        in_between_rect[ibr_index] = (int(min_vert[0]), int(min_vert[1]))
+        
+    return in_between_rect
     
 def get_opencv_aruco_detector(dict):
     dictionary = cv2.aruco.getPredefinedDictionary(dict)
     parameters =  cv2.aruco.DetectorParameters()
     return cv2.aruco.ArucoDetector(dictionary, parameters)
     
-def find_homography_from_aruco(img, detector, width, height):
+def find_homography_from_aruco(img, detector, width, height, use_legacy_rect_finding=False):
     corners, ids, rejected = detector.detectMarkers(img)
     marked_img, centers, cornerss = aruco_transform_and_display(corners, ids, rejected, img.copy())
     
@@ -103,7 +140,10 @@ def find_homography_from_aruco(img, detector, width, height):
         cv2.rectangle(marked_img, (ccx, ccy), (ccx+1, ccy+1), (0, 0, 255), 5)
         
         # Find inner rectangle
-        in_between_rect = find_inner_rect(cornerss, ccx, ccy)
+        if (use_legacy_rect_finding):
+            in_between_rect = find_inner_rect_legacy(cornerss, ccx, ccy)
+        else:
+            in_between_rect = find_inner_rect(cornerss, ccx, ccy)
         for i in range(0,4):
             j = (i+1)%4
             cv2.line(marked_img, in_between_rect[i], in_between_rect[j], (0, 0, 255), 2)
@@ -174,7 +214,7 @@ def set_max_img_size(img, max_width):
     dim = (max_width, int(img_h * r))
     return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
     
-def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, resize_size):
+def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, resize_size, use_legacy_rect_finding=False):
     warped_inner_rect_cornerss = []
     for i in range(0, len(bottom_right_corner)):
         # Clockwise corner point lists starting at top left for all marked rects
@@ -189,7 +229,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         oimg_h, oimg_w = other_img.shape[:2]
         if oimg_w > max_img_width:
             other_img = set_max_img_size(other_img, max_img_width)
-        h, hi, marked_img, in_between_rect = find_homography_from_aruco(other_img.copy(), detector, img_w, img_h)
+        h, hi, marked_img, in_between_rect = find_homography_from_aruco(other_img.copy(), detector, img_w, img_h, use_legacy_rect_finding)
         if h is None:
             print("Didn't find the aruco frame :/")
             cv2.imwrite(str(marked_dir / ("marked_error_" + Path(other_img_path).stem + ".png")), marked_img)
@@ -245,6 +285,7 @@ def main():
     parser = argparse.ArgumentParser(prog='traindata-creator', description='Creates traindata in bulk for image series on marked planes.')
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
     parser.add_argument('-s','--size', type=int, default=-1, help='The width and height of the traindata images.')
+    parser.add_argument('-lirf','--legacy-rect-finding', action='store_true', default=False, help='Use old rect finding based on aruco marker pos relative to the center point.')
     args = parser.parse_args()
     
     # Prepare paths
@@ -273,7 +314,7 @@ def main():
         img_h, img_w = img.shape[:2]
     print(img_w, img_h)
     detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
-    oh, hi, marked_img, in_between_rect = find_homography_from_aruco(img, detector, img_w, img_h)
+    oh, hi, marked_img, in_between_rect = find_homography_from_aruco(img, detector, img_w, img_h, args.legacy_rect_finding)
     if hi is None:
         cv2.imshow(window_name, marked_img)
         print("Didn't find the aruco frame in base img :/")
@@ -299,7 +340,7 @@ def main():
             bottom_right_corner.pop()
         elif k == ord(' '):
             print("Building...")
-            build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, args.size)
+            build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, args.size, use_legacy_rect_finding=args.legacy_rect_finding)
 
         # Draw
         display_img = warped_img.copy()
