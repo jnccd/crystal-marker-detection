@@ -186,7 +186,7 @@ def fit(
             os.makedirs(val_dir)
 
         # Display some results for validation images
-        for i in range(0, min(50, num_val_samples)):
+        for i in range(0, min(50, num_val_samples, batch_size)):
             # Display input image
             inimg = ImageOps.autocontrast(load_img(val_x_paths[i]))
             inimg.save(val_dir / f'{i}_input.png')
