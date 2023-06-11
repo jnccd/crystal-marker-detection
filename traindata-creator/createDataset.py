@@ -1,5 +1,6 @@
 import argparse
 import os
+import random
 import shutil
 import sys
 import time
@@ -19,7 +20,7 @@ def main():
     parser.add_argument('-t','--type', type=str, help='Defines the type of dataset to be build, either "seg" for segmentation or "yolov5" for yolov5 object detection.')
     parser.add_argument('-tf','--traindata-folders', type=str, help='The folders containing train data, separated by a #.')
     parser.add_argument('-vf','--valdata-folders', type=str, help='The folders containing validation data, separated by a #.')
-#    parser.add_argument('-r','--ratio', type=str, help='Ratio of traindata to be assigned to valdata.')
+    parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     args = parser.parse_args()
     
     dataset_name = f'dataset-{args.type}-{args.name}'
@@ -27,10 +28,23 @@ def main():
     
     # --- Get Folders ---
     td_folders = args.traindata_folders.split('#')
-    vd_folders = args.valdata_folders.split('#')
     
-    td_in_paths = get_files_from_folders_with_ending(td_folders, '_in.png')
-    vd_in_paths = get_files_from_folders_with_ending(vd_folders, '_in.png')
+    if args.ratio is None:
+        vd_folders = args.valdata_folders.split('#')
+        
+        td_in_paths = get_files_from_folders_with_ending(td_folders, '_in.png')
+        vd_in_paths = get_files_from_folders_with_ending(vd_folders, '_in.png')
+    else:
+        full_td_in_paths = get_files_from_folders_with_ending(td_folders, '_in.png')
+        random.Random(42).shuffle(full_td_in_paths)
+        
+        n = len(full_td_in_paths)
+        nt = int(n * (1-args.ratio))
+        
+        td_in_paths = full_td_in_paths[:nt]
+        vd_in_paths = full_td_in_paths[nt:]
+        #print(len(td_in_paths))
+        #print(len(vd_in_paths))
     
     root_dir = Path(__file__).resolve().parent
     dataset_dir = create_dir_if_not_exists(root_dir / dataset_name, clear=True)
@@ -51,12 +65,12 @@ def build_seg_dataset(td_in_paths, vd_in_paths):
     for i, (td_in, td_seg) in enumerate(zip(td_in_paths, td_seg_paths)):
         shutil.copyfile(td_in, train_dir / f'{i}_in.png')
         shutil.copyfile(td_seg, train_dir / f'{i}_seg.png')
-    print(f'Built {i} traindata!')
+    print(f'Built {i+1} traindata!')
     
     for i, (vd_in, vd_seg) in enumerate(zip(vd_in_paths, vd_seg_paths)):
         shutil.copyfile(vd_in, val_dir / f'{i}_in.png')
         shutil.copyfile(vd_seg, val_dir / f'{i}_seg.png')
-    print(f'Built {i} valdata!')
+    print(f'Built {i+1} valdata!')
     
 def build_yolov5_dataset(td_in_paths, vd_in_paths):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
@@ -113,7 +127,7 @@ def get_adjacet_files_with_ending(file_paths: list[Path], ending):
     for fpath in file_paths:
         if type(fpath) is str:
             fpath = Path(fpath)
-        paths.append(fpath.with_name(f'{fpath.stem.split("_")[0]}{ending}'))
+        paths.append(fpath.with_name(f'{"_".join(fpath.stem.split("_")[:-1])}{ending}'))
     return paths   
 
 def get_files_from_folders_with_ending(folders, ending):
