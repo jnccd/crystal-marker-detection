@@ -15,17 +15,13 @@ def main():
 #    parser.add_argument('-r','--ratio', type=str, help='Ratio of traindata to be assigned to valdata.')
     args = parser.parse_args()
     
+    print(f'Creating dataset-{args.name}...')
+    
     td_folders = args.traindata_folders.split('#')
     vd_folders = args.valdata_folders.split('#')
     
-    print("Traindata folders: ", td_folders)
-    print("Valdata folders: ", vd_folders)
-    
     td_in_paths = get_files_from_folders_with_ending(td_folders, '_in.png')
     vd_in_paths = get_files_from_folders_with_ending(vd_folders, '_in.png')
-    
-    print("Found Traindata: ", td_in_paths)
-    print("Found Valdata: ", vd_in_paths)
     
     root_dir = Path(__file__).resolve().parent
     dataset_dir = create_dir_if_not_exists(root_dir / ('dataset-' + args.name), clear=True)
@@ -40,10 +36,12 @@ def main():
         for i, (td_in, td_seg) in enumerate(zip(td_in_paths, td_seg_paths)):
             shutil.copyfile(td_in, train_dir / f'{i}_in.png')
             shutil.copyfile(td_seg, train_dir / f'{i}_seg.png')
+        print(f'Built {i} traindata!')
             
         for i, (vd_in, vd_seg) in enumerate(zip(vd_in_paths, vd_seg_paths)):
             shutil.copyfile(vd_in, val_dir / f'{i}_in.png')
             shutil.copyfile(vd_seg, val_dir / f'{i}_seg.png')
+        print(f'Built {i} valdata!')
     
 def get_files_from_folders_with_ending(folders, ending):
     paths = []
