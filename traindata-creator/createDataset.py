@@ -37,7 +37,7 @@ def main():
             shutil.copyfile(td_in, train_dir / f'{i}_in.png')
             shutil.copyfile(td_seg, train_dir / f'{i}_seg.png')
         print(f'Built {i} traindata!')
-            
+        
         for i, (vd_in, vd_seg) in enumerate(zip(vd_in_paths, vd_seg_paths)):
             shutil.copyfile(vd_in, val_dir / f'{i}_in.png')
             shutil.copyfile(vd_seg, val_dir / f'{i}_seg.png')
