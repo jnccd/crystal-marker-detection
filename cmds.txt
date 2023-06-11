@@ -1,8 +1,9 @@
 python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn -s 320 -lirf
-
 python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf/ -s 320 && python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae/ -s 320 && python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0/ -s 320
 
 python traindata-creator/createDataset.py -n red-rects -t seg -tf traindata-creator/dataseries-320-webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae/images_traindata/#traindata-creator/dataseries-320-webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0/images_traindata/ -vf traindata-creator/dataseries-320-webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf/images_traindata/
-
+python traindata-creator/createDataset.py -n good-pics-ratio-val -t yolov5 -r 0.15 -tf traindata-creator/dataseries-320-the_good_pics_for_nn/images_traindata/
 
 python -m cmd_tf -df traindata-creator/dataset-red-rects/ -r xunet-red-rects -e 75
+
+python repos/yolov5/train.py --img 320 --batch 16 --epochs 50 --data traindata-creator/dataset-yolov5-red-rects/dataset-yolov5-red-rects.yaml --weights yolov5s.pt
