@@ -5,8 +5,7 @@ from tensorflow import optimizers as optis
 from keras import losses as loss
 from keras.callbacks import LearningRateScheduler
 
-from cmd_tf.loss import flat_dice_coef_loss
-from cmd_tf.model import get_xunet_model
+from cmd_tf.model_xunet import flat_dice_coef_loss, get_xunet_model
 
 exp_decay_learning_rate = tf.keras.optimizers.schedules.ExponentialDecay(
     initial_learning_rate=1e-3,
