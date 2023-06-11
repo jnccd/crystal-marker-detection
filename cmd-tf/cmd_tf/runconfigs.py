@@ -30,7 +30,7 @@ class RunConfig:
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
 configs = [
-    RunConfig( name="xunet-dice", loss=flat_dice_coef_loss, model=get_xunet_model((320, 320), 1) ),
+    RunConfig( name="xunet", loss=flat_dice_coef_loss, model=get_xunet_model((320, 320), 1) ),
 #    RunConfig( name="bcross", loss="binary_crossentropy", ),
     ]
 
