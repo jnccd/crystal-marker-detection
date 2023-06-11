@@ -11,11 +11,15 @@ import albumentations as A
 
 import segmentation_models as sm
 
+BACKBONE = 'efficientnetb3'
+BATCH_SIZE = 8
+CLASSES = ['marker']
+LR = 0.0001
+EPOCHS = 3
+
 root_dir = Path(__file__).resolve().parent
-val_dir = root_dir / 'xception_val'
-dataseries_t1_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae'/'images_traindata'
-dataseries_v1_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf'/'images_traindata'
-dataseries_t2_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0'/'images_traindata'
+val_dir = root_dir / 'sm_val'
+dataset_dir = root_dir/'..'/'traindata-creator'/'dataset-seg-red-rects'
 
 def get_files_from_folder_with_ending(folders, ending):
     paths = []
@@ -29,14 +33,16 @@ def get_files_from_folder_with_ending(folders, ending):
         ))
     return paths
 
-train_x_paths = get_files_from_folder_with_ending([dataseries_t1_dir, dataseries_t2_dir], "_in.png")
-train_y_paths = get_files_from_folder_with_ending([dataseries_t1_dir, dataseries_t2_dir], "_seg.png")
-val_x_paths = get_files_from_folder_with_ending([dataseries_v1_dir], "_in.png")
-val_y_paths = get_files_from_folder_with_ending([dataseries_v1_dir], "_seg.png")
+train_x_paths = get_files_from_folder_with_ending([dataset_dir/'train'], "_in.png")
+train_y_paths = get_files_from_folder_with_ending([dataset_dir/'train'], "_seg.png")
+val_x_paths = get_files_from_folder_with_ending([dataset_dir/'val'], "_in.png")
+val_y_paths = get_files_from_folder_with_ending([dataset_dir/'val'], "_seg.png")
 
 # helper function for data visualization
-def visualize(**images):
+vis_counter=0
+def visualize(save=False, show=True, **images):
     """PLot images in one row."""
+    global vis_counter
     n = len(images)
     plt.figure(figsize=(16, 5))
     for i, (name, image) in enumerate(images.items()):
@@ -45,7 +51,11 @@ def visualize(**images):
         plt.yticks([])
         plt.title(' '.join(name.split('_')).title())
         plt.imshow(image)
-    plt.show()
+    if save:
+        plt.savefig(val_dir/f'{name}{vis_counter}.png')
+        vis_counter += 1
+    if show:
+        plt.show()
     
 # helper function for data visualization    
 def denormalize(x):
@@ -169,6 +179,7 @@ dataset = Dataset(train_x_paths, train_y_paths, classes=['marker'])
 
 image, mask = dataset[5] # get some sample
 visualize(
+    show=False, save=True,
     image=image, 
     markers_mask=mask[..., 0].squeeze(),
 )
@@ -187,13 +198,13 @@ def get_training_augmentation():
         A.PadIfNeeded(min_height=320, min_width=320, always_apply=True, border_mode=0),
         A.RandomCrop(height=320, width=320, always_apply=True),
 
-        A.IAAAdditiveGaussianNoise(p=0.2),
-        A.IAAPerspective(p=0.5),
+        A.GaussNoise(p=0.2),
+        A.Perspective(p=0.5),
 
         A.OneOf(
             [
                 A.CLAHE(p=1),
-                A.RandomBrightness(p=1),
+                A.RandomBrightnessContrast(p=1),
                 A.RandomGamma(p=1),
             ],
             p=0.9,
@@ -201,7 +212,7 @@ def get_training_augmentation():
 
         A.OneOf(
             [
-                A.IAASharpen(p=1),
+                A.Sharpen(p=1),
                 A.Blur(blur_limit=3, p=1),
                 A.MotionBlur(blur_limit=3, p=1),
             ],
@@ -210,7 +221,7 @@ def get_training_augmentation():
 
         A.OneOf(
             [
-                A.RandomContrast(p=1),
+                A.RandomBrightnessContrast(p=1),
                 A.HueSaturationValue(p=1),
             ],
             p=0.9,
@@ -248,16 +259,10 @@ dataset = Dataset(train_x_paths, train_y_paths, classes=['marker'])#, augmentati
 
 image, mask = dataset[12] # get some sample
 visualize(
+    show=False, save=True,
     image=image, 
     markers_mask=mask[..., 0].squeeze(),
 )
-
-
-BACKBONE = 'efficientnetb3'
-BATCH_SIZE = 8
-CLASSES = ['marker']
-LR = 0.0001
-EPOCHS = 40
 
 preprocess_input = sm.get_preprocessing(BACKBONE)
 
@@ -311,12 +316,12 @@ assert train_dataloader[0][1].shape == (BATCH_SIZE, 320, 320, n_classes)
 
 # define callbacks for learning rate scheduling and best checkpoints saving
 callbacks = [
-    keras.callbacks.ModelCheckpoint(root_dir / 'best_model.h5', save_weights_only=True, save_best_only=True, mode='min'),
+    keras.callbacks.ModelCheckpoint(val_dir / 'best_model.h5', save_weights_only=True, save_best_only=True, mode='min'),
     keras.callbacks.ReduceLROnPlateau(),
 ]
 
 # train model
-history = model.fit_generator(
+history = model.fit(
     train_dataloader, 
     steps_per_epoch=len(train_dataloader), 
     epochs=EPOCHS, 
@@ -343,6 +348,7 @@ plt.title('Model loss')
 plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
+plt.savefig(val_dir/'fig.png')
 plt.show()
 
 test_dataset = Dataset(
@@ -358,7 +364,7 @@ test_dataloader = Dataloder(test_dataset, batch_size=1, shuffle=False)
 # load best weights
 model.load_weights(root_dir / 'best_model.h5') 
 
-scores = model.evaluate_generator(test_dataloader)
+scores = model.evaluate(test_dataloader)
 
 print("Loss: {:.5}".format(scores[0]))
 for metric, value in zip(metrics, scores[1:]):
@@ -374,6 +380,7 @@ for i in ids:
     pr_mask = model.predict(image).round()
     
     visualize(
+        show=False, save=True,
         image=denormalize(image.squeeze()),
         gt_mask=gt_mask[..., 0].squeeze(),
         pr_mask=pr_mask[..., 0].squeeze(),
