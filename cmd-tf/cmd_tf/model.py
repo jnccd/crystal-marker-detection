@@ -3,8 +3,6 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-
-
 def get_xunet_model(img_size, num_classes):
     inputs = keras.Input(shape=img_size + (3,))
     
