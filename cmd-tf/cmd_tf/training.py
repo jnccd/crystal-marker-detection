@@ -44,12 +44,12 @@ def fit(
     val_dir = run_dir / 'validation'
     weights_dir = run_dir / 'weights'
     # Prepare Training Data Img Paths
-    train_dir = dataset_dir / 'train'
-    val_dir = dataset_dir / 'val'
-    train_x_paths = get_files_from_folders_with_ending([train_dir], "_in.png")
-    train_y_paths = get_files_from_folders_with_ending([train_dir], "_seg.png")
-    val_x_paths = get_files_from_folders_with_ending([val_dir], "_in.png")
-    val_y_paths = get_files_from_folders_with_ending([val_dir], "_seg.png")
+    train_data_dir = dataset_dir / 'train'
+    val_data_dir = dataset_dir / 'val'
+    train_x_paths = get_files_from_folders_with_ending([train_data_dir], "_in.png")
+    train_y_paths = get_files_from_folders_with_ending([train_data_dir], "_seg.png")
+    val_x_paths = get_files_from_folders_with_ending([val_data_dir], "_in.png")
+    val_y_paths = get_files_from_folders_with_ending([val_data_dir], "_seg.png")
     random.Random(1337).shuffle(train_x_paths)
     random.Random(1337).shuffle(train_y_paths)
     random.Random(420).shuffle(val_x_paths)
