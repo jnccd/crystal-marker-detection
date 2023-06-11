@@ -48,4 +48,7 @@ def load_runconfig(runname: str = ""):
     if cur_conf is None:
         cur_conf = configs[-1] # First conf is default
         
+    if cur_conf.callbacks is None:
+        cur_conf.callbacks = []
+        
     return cur_conf
