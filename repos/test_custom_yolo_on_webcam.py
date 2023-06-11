@@ -12,7 +12,7 @@ args = parser.parse_args()
 run = args.run
 
 root_dir = Path(__file__).resolve().parent
-network_file = str(root_dir / f'yolov5/runs/train/{run}/weights/last.pt')
+network_file = str(root_dir / f'yolov5/runs/train/{run}/weights/best.pt')
 
 print("network_file",network_file)
 model = torch.hub.load('ultralytics/yolov5', 'custom', path=network_file, force_reload=True)
