@@ -5,7 +5,7 @@ from cmd_tf.training import fit
 
 def main():
     parser = argparse.ArgumentParser(prog='ml-segmentation', description='Trains a sample network on the synthetic generated data.')
-    parser.add_argument('-bs','--batch-size',       type=int,               default=32,         help='The batch size of the training data.')
+    parser.add_argument('-bs','--batch-size',       type=int,               default=16,         help='The batch size of the training data.')
     parser.add_argument('-e','--epochs',            type=int,               default=1,          help='The number of epochs to learn for.')
     parser.add_argument('-pm','--print-model',      action='store_true',    default=False,      help='Print the model summary of this run.')
     parser.add_argument('-r','--run',               type=str,               default='default',  help='The name of the run to learn in.')
