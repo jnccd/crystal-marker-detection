@@ -114,7 +114,7 @@ def build_yolov5_dataset(td_in_paths, vd_in_paths):
     # Build yolov5 yaml
     yaml_path = dataset_dir / f'{dataset_name}.yaml'
     with open(yaml_path, "w") as text_file:
-        text_file.write(f"path: .\n")
+        text_file.write(f"path: {dataset_dir}\n")
         text_file.write(f"train: ./{train_dir_name}/images\n")
         text_file.write(f"val: ./{val_dir_name}/images\n")
         text_file.write(f"test:\n")
