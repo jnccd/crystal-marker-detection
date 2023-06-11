@@ -13,7 +13,7 @@ from tensorflow import keras
 from tensorflow.keras.utils import load_img, array_to_img
 
 from cmd_tf.runconfigs import RunConfig, configs, load_runconfig
-from cmd_tf.dataloader import ResnetBatchgen
+from cmd_tf.dataloader import XUnetBatchgen
 
 num_classes = 1
 
