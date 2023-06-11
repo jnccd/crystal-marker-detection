@@ -12,8 +12,8 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.utils import load_img, array_to_img
 
-from cmd_tf.runconfigs import RunConfig, configs, load_runconfig
-from cmd_tf.dataloader import XUnetBatchgen
+from cmd_tf.runconfigs import load_runconfig
+from cmd_tf.model_xunet import XUnetBatchgen
 from cmd_tf.utility import get_files_from_folders_with_ending
 
 num_classes = 1
