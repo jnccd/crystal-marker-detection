@@ -33,7 +33,7 @@ def fit(
     # --- Paths ---
     # Base
     root_dir = Path(__file__).resolve().parent
-    dataset_dir = data_folder
+    dataset_dir = Path(data_folder)
     # MIP Server Base Paths
     if not os.path.isdir(dataset_dir):
         root_dir = Path("/data/cmdtf")
@@ -72,6 +72,27 @@ def fit(
     print("Optimizer:", cur_conf.optimizer)
     print("--------------------------------------------------")
     print()
+    
+    print()
+    print("---Train/Val Data Validation---------------------------------")
+    
+    print("Train in imgs:", train_x_paths.__len__(), "| Train target imgs:", train_y_paths.__len__())
+    for input_path, target_path in zip(train_x_paths[:3], train_y_paths[:3]):
+        print(os.path.basename(input_path), "|", os.path.basename(target_path))
+    
+    print("Val in imgs:", val_x_paths.__len__(), "| Val target imgs:", val_y_paths.__len__())
+    for input_path, target_path in zip(val_x_paths[:3], val_y_paths[:3]):
+        print(os.path.basename(input_path), "|", os.path.basename(target_path))
+    
+    epoch_steps = math.floor((num_train_samples - num_val_samples) / batch_size)
+    print("Steps per Epoch:", epoch_steps)
+    
+    print("-------------------------------------------------------------")
+    print()
+
+    # Instantiate data Sequences for each split
+    train_gen = XUnetBatchgen(batch_size, img_size, train_x_paths, train_y_paths)
+    val_gen = XUnetBatchgen(batch_size, img_size, val_x_paths, val_y_paths)
 
     print("Build model...")
     keras.backend.clear_session() # Free up RAM in case the model definition cells were run multiple times
@@ -88,27 +109,6 @@ def fit(
             model.summary()
             tf.keras.utils.plot_model(model, to_file=run_dir / "model.png", show_shapes=True)
         
-        print()
-        print("---Train/Val Data Validation---------------------------------")
-        
-        print("Train in imgs:", train_x_paths.__len__(), "| Train target imgs:", train_y_paths.__len__())
-        for input_path, target_path in zip(train_x_paths[:3], train_y_paths[:3]):
-            print(os.path.basename(input_path), "|", os.path.basename(target_path))
-        
-        print("Val in imgs:", val_x_paths.__len__(), "| Val target imgs:", val_y_paths.__len__())
-        for input_path, target_path in zip(val_x_paths[:3], val_y_paths[:3]):
-            print(os.path.basename(input_path), "|", os.path.basename(target_path))
-        
-        epoch_steps = math.floor((num_train_samples - num_val_samples) / batch_size)
-        print("Steps per Epoch:", epoch_steps)
-        
-        print("-------------------------------------------------------------")
-        print()
-
-        # Instantiate data Sequences for each split
-        train_gen = XUnetBatchgen(batch_size, img_size, train_x_paths, train_y_paths)
-        val_gen = XUnetBatchgen(batch_size, img_size, val_x_paths, val_y_paths)
-
         print("Compile model...")
         metrics = [tf.keras.metrics.BinaryAccuracy(),
                     tf.keras.metrics.Recall(),
