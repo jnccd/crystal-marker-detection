@@ -88,7 +88,7 @@ def main():
             text_file.write(f"test:\n")
             text_file.write(f"\n")
             text_file.write(f"names:\n")
-            text_file.write(f"\t0: marker\n")
+            text_file.write(f"    0: marker\n")
     
 def get_files_from_folders_with_ending(folders, ending):
     paths = []
