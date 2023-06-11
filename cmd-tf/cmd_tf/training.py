@@ -63,7 +63,6 @@ def fit(
     
     print()
     print("---Configuration---------------------------------")
-    print("Number of training samples:", num_train_samples)
     print("Batch Size:", batch_size)
     print("Epochs:", num_epochs)
     print("Run Name:", run)
