@@ -284,6 +284,11 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
             for bounds in bgncircs:
                 text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+        # ...and a textfile with the bounds in (cx cy w h) style
+        bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
+        with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
+            for bounds in bgncircs:
+                text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
         # ...and a textfile with the bounds unnormalized
         bgcircs = [get_bounds(x) for x in gcircs]
         with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
