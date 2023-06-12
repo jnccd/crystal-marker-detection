@@ -13,7 +13,6 @@ from tensorflow import keras
 from tensorflow.keras.utils import load_img, array_to_img
 
 from cmd_tf.runconfigs import load_runconfig
-from cmd_tf.model_xunet import XUnetBatchgen, get_xunet_traindata, get_xunet_valdata
 from cmd_tf.utility import get_files_from_folders_with_ending
 
 num_classes = 1
@@ -46,10 +45,11 @@ def fit(
     
     # Load runconfig
     cur_conf = load_runconfig(run)
+    (get_traindata, get_valdata) = cur_conf.dataset_loader
     
     # Prepare Training and Validation Data
-    train_gen, train_x_paths, _ = get_xunet_traindata(dataset_dir, batch_size, img_size)
-    val_gen, _, _ = get_xunet_valdata(dataset_dir, batch_size, img_size)
+    train_gen, train_x_paths, _ = get_traindata(dataset_dir, batch_size, img_size)
+    val_gen, _, _ = get_valdata(dataset_dir, batch_size, img_size)
     epoch_steps = math.floor(len(train_x_paths) / batch_size)
     
     print()
@@ -108,7 +108,7 @@ def fit(
 
         print("Write evaluation...")
         # First eval textfile
-        val_gen, _, _ = get_xunet_valdata(dataset_dir, batch_size, img_size)
+        val_gen, _, _ = get_valdata(dataset_dir, batch_size, img_size)
         eval_results = model.evaluate(val_gen)
         eval_file = run_dir / 'evals'
         i = 0
@@ -149,7 +149,7 @@ def fit(
         
         print("Write validation...")
         # Generate predictions for all images in the validation set
-        val_gen, val_x_paths, val_y_paths = get_xunet_valdata(dataset_dir, batch_size, img_size)
+        val_gen, val_x_paths, val_y_paths = get_valdata(dataset_dir, batch_size, img_size)
         val_preds = model.predict(val_gen)
         
         if not os.path.exists(val_dir):
