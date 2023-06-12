@@ -1,12 +1,13 @@
 import os
 import random
-from cmd_tf.utility import get_files_from_folders_with_ending
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.utils import load_img
 import keras.backend as K
+
+from cmd_tf.utility import get_files_from_folders_with_ending
 
 # --- Dataloader ---------------------------------------------------------------------------------------
 class XUnetBatchgen(keras.utils.Sequence):
