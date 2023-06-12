@@ -2,10 +2,12 @@ from dataclasses import dataclass
 from typing import List
 import tensorflow as tf
 from tensorflow import optimizers as optis
+import keras
 from keras import losses as loss
 from keras.callbacks import LearningRateScheduler
 
 from cmd_tf.model_xunet import flat_dice_coef_loss, get_xunet_model, get_xunet_traindata, get_xunet_valdata
+from cmd_tf.models_sm import sm_unet_model, sm_dice_x_bfocal_loss, sm_metrics, sm_optim, get_sm_traindata, get_sm_valdata
 
 exp_decay_learning_rate = tf.keras.optimizers.schedules.ExponentialDecay(
     initial_learning_rate=1e-3,
@@ -30,8 +32,21 @@ class RunConfig:
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
 configs = [
-    RunConfig( name="xunet", model=get_xunet_model((320, 320), 1), dataset_loader=(get_xunet_traindata, get_xunet_valdata), loss=flat_dice_coef_loss,  ),
-#    RunConfig( name="bcross", loss="binary_crossentropy", ),
+    RunConfig( 
+              name="xunet", 
+              model=get_xunet_model((320, 320), 1), 
+              dataset_loader=(get_xunet_traindata, 
+                              get_xunet_valdata), 
+              loss=flat_dice_coef_loss,  ),
+    RunConfig( 
+              name="sm-unet", 
+              model=sm_unet_model, 
+              dataset_loader=(get_sm_traindata,
+                              get_sm_valdata),
+              loss=sm_dice_x_bfocal_loss, 
+              optimizer=sm_optim,
+              callbacks=[keras.callbacks.ReduceLROnPlateau(),]
+              ),
     ]
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
