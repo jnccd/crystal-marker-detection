@@ -50,7 +50,7 @@ def get_xunet_traindata(dataset_dir, batch_size, img_size, print_data = False):
     
     train_gen = XUnetBatchgen(batch_size, img_size, train_x_paths, train_y_paths)
     
-    return train_gen, train_x_paths, train_y_paths
+    return train_gen, train_x_paths, train_y_paths, _
     
 def get_xunet_valdata(dataset_dir, batch_size, img_size, print_data = False):
     val_data_dir = dataset_dir / 'val'
@@ -66,7 +66,7 @@ def get_xunet_valdata(dataset_dir, batch_size, img_size, print_data = False):
     
     val_gen = XUnetBatchgen(batch_size, img_size, val_x_paths, val_y_paths)
     
-    return val_gen, val_x_paths, val_y_paths
+    return val_gen, val_x_paths, val_y_paths, _
     
 # --- Loss ---------------------------------------------------------------------------------------
 def flat_dice_coef(y_true, y_pred, smooth=1):
