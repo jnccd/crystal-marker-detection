@@ -5,7 +5,7 @@ from tensorflow import optimizers as optis
 from keras import losses as loss
 from keras.callbacks import LearningRateScheduler
 
-from cmd_tf.model_xunet import flat_dice_coef_loss, get_xunet_model
+from cmd_tf.model_xunet import flat_dice_coef_loss, get_xunet_model, get_xunet_traindata, get_xunet_valdata
 
 exp_decay_learning_rate = tf.keras.optimizers.schedules.ExponentialDecay(
     initial_learning_rate=1e-3,
@@ -22,14 +22,15 @@ constant_decay_learning_rate = tf.optimizers.schedules.PiecewiseConstantDecay(
 class RunConfig:
     name: str
     loss: any
+    model: any
+    dataset_loader: tuple
     optimizer: any = "adam"
-    model: any = None
     callbacks: list[tf.keras.callbacks.Callback] = None
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
 configs = [
-    RunConfig( name="xunet", loss=flat_dice_coef_loss, model=get_xunet_model((320, 320), 1) ),
+    RunConfig( name="xunet", model=get_xunet_model((320, 320), 1), dataset_loader=(get_xunet_traindata, get_xunet_valdata), loss=flat_dice_coef_loss,  ),
 #    RunConfig( name="bcross", loss="binary_crossentropy", ),
     ]
 
