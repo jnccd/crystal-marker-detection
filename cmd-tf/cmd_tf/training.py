@@ -80,13 +80,9 @@ def fit(
             tf.keras.utils.plot_model(model, to_file=run_dir / "model.png", show_shapes=True)
         
         print("Compile model...")
-        metrics = [tf.keras.metrics.BinaryAccuracy(),
-                    tf.keras.metrics.Recall(),
-                    tf.keras.metrics.Precision(),
-                    ]
         model.compile(optimizer=cur_conf.optimizer, 
                     loss=cur_conf.loss,
-                    metrics=metrics)
+                    metrics=cur_conf.metrics)
         
         # Set callbacks
         cur_conf.callbacks.append(
@@ -117,7 +113,7 @@ def fit(
             i+=1
         with open(eval_file, "w") as f:
             f.write(str(model_out.history) + "\n\n")
-            f.write(str(metrics) + "\n")
+            f.write(str(cur_conf.metrics) + "\n")
             f.write(str(eval_results) + "\n")
         # Then eval plots
         xc = range(1, num_epochs+1)

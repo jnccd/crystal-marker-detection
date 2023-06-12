@@ -26,6 +26,7 @@ class RunConfig:
     loss: any
     model: any
     dataset_loader: tuple
+    metrics: any = None
     optimizer: any = "adam"
     callbacks: list[tf.keras.callbacks.Callback] = None
 
@@ -45,6 +46,7 @@ configs = [
                               get_sm_valdata),
               loss=sm_dice_x_bfocal_loss, 
               optimizer=sm_optim,
+              metrics=sm_metrics,
               callbacks=[keras.callbacks.ReduceLROnPlateau(),]
               ),
     ]
@@ -65,5 +67,9 @@ def load_runconfig(runname: str = ""):
         
     if cur_conf.callbacks is None:
         cur_conf.callbacks = []
+    if cur_conf.metrics is None:
+        cur_conf.metrics = [  tf.keras.metrics.BinaryAccuracy(), 
+                        tf.keras.metrics.Recall(),
+                        tf.keras.metrics.Precision(), ]
         
     return cur_conf
