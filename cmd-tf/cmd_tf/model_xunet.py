@@ -1,3 +1,6 @@
+import os
+import random
+from cmd_tf.utility import get_files_from_folders_with_ending
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -31,7 +34,39 @@ class XUnetBatchgen(keras.utils.Sequence):
         for j, path in enumerate(batch_target_img_paths):
             y[j] = load_img(path, target_size=self.img_size, color_mode="grayscale")
         return x, y
-
+    
+def get_xunet_traindata(dataset_dir, batch_size, img_size, print_data = False):
+    train_data_dir = dataset_dir / 'train'
+    train_x_paths = get_files_from_folders_with_ending([train_data_dir], "_in.png")
+    train_y_paths = get_files_from_folders_with_ending([train_data_dir], "_seg.png")
+    random.Random(1337).shuffle(train_x_paths)
+    random.Random(1337).shuffle(train_y_paths)
+    
+    if print_data:
+        print("Train in imgs:", train_x_paths.__len__(), "| Train target imgs:", train_y_paths.__len__())
+        for input_path, target_path in zip(train_x_paths[:3], train_y_paths[:3]):
+            print(os.path.basename(input_path), "|", os.path.basename(target_path))
+    
+    train_gen = XUnetBatchgen(batch_size, img_size, train_x_paths, train_y_paths)
+    
+    return train_gen, train_x_paths, train_y_paths
+    
+def get_xunet_valdata(dataset_dir, batch_size, img_size, print_data = False):
+    val_data_dir = dataset_dir / 'val'
+    val_x_paths = get_files_from_folders_with_ending([val_data_dir], "_in.png")
+    val_y_paths = get_files_from_folders_with_ending([val_data_dir], "_seg.png")
+    random.Random(420).shuffle(val_x_paths)
+    random.Random(420).shuffle(val_y_paths)
+    
+    if print_data:
+        print("Val in imgs:", val_x_paths.__len__(), "| Val target imgs:", val_y_paths.__len__())
+        for input_path, target_path in zip(val_x_paths[:3], val_y_paths[:3]):
+            print(os.path.basename(input_path), "|", os.path.basename(target_path))
+    
+    val_gen = XUnetBatchgen(batch_size, img_size, val_x_paths, val_y_paths)
+    
+    return val_gen, val_x_paths, val_y_paths
+    
 # --- Loss ---------------------------------------------------------------------------------------
 def flat_dice_coef(y_true, y_pred, smooth=1):
     y_true_f = K.flatten(y_true)

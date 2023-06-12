@@ -13,7 +13,7 @@ from tensorflow import keras
 from tensorflow.keras.utils import load_img, array_to_img
 
 from cmd_tf.runconfigs import load_runconfig
-from cmd_tf.model_xunet import XUnetBatchgen
+from cmd_tf.model_xunet import XUnetBatchgen, get_xunet_traindata, get_xunet_valdata
 from cmd_tf.utility import get_files_from_folders_with_ending
 
 num_classes = 1
@@ -43,23 +43,14 @@ def fit(
     run_dir = runs_dir / f'run-{run}'
     val_dir = run_dir / 'validation'
     weights_dir = run_dir / 'weights'
-    # Prepare Training Data Img Paths
-    train_data_dir = dataset_dir / 'train'
-    val_data_dir = dataset_dir / 'val'
-    train_x_paths = get_files_from_folders_with_ending([train_data_dir], "_in.png")
-    train_y_paths = get_files_from_folders_with_ending([train_data_dir], "_seg.png")
-    val_x_paths = get_files_from_folders_with_ending([val_data_dir], "_in.png")
-    val_y_paths = get_files_from_folders_with_ending([val_data_dir], "_seg.png")
-    random.Random(1337).shuffle(train_x_paths)
-    random.Random(1337).shuffle(train_y_paths)
-    random.Random(420).shuffle(val_x_paths)
-    random.Random(420).shuffle(val_y_paths)
-    
-    num_train_samples = len(train_x_paths)
-    num_val_samples = len(val_x_paths)
     
     # Load runconfig
     cur_conf = load_runconfig(run)
+    
+    # Prepare Training and Validation Data
+    train_gen, train_x_paths, _ = get_xunet_traindata(dataset_dir, batch_size, img_size)
+    val_gen, _, _ = get_xunet_valdata(dataset_dir, batch_size, img_size)
+    epoch_steps = math.floor(len(train_x_paths) / batch_size)
     
     print()
     print("---Configuration---------------------------------")
@@ -69,29 +60,9 @@ def fit(
     print("Run-Config:", cur_conf.name)
     print("Loss:", cur_conf.loss)
     print("Optimizer:", cur_conf.optimizer)
+    print("Steps per Epoch:", epoch_steps)
     print("--------------------------------------------------")
     print()
-    
-    print()
-    print("---Train/Val Data Validation---------------------------------")
-    
-    print("Train in imgs:", train_x_paths.__len__(), "| Train target imgs:", train_y_paths.__len__())
-    for input_path, target_path in zip(train_x_paths[:3], train_y_paths[:3]):
-        print(os.path.basename(input_path), "|", os.path.basename(target_path))
-    
-    print("Val in imgs:", val_x_paths.__len__(), "| Val target imgs:", val_y_paths.__len__())
-    for input_path, target_path in zip(val_x_paths[:3], val_y_paths[:3]):
-        print(os.path.basename(input_path), "|", os.path.basename(target_path))
-    
-    epoch_steps = math.floor((num_train_samples - num_val_samples) / batch_size)
-    print("Steps per Epoch:", epoch_steps)
-    
-    print("-------------------------------------------------------------")
-    print()
-
-    # Instantiate data Sequences for each split
-    train_gen = XUnetBatchgen(batch_size, img_size, train_x_paths, train_y_paths)
-    val_gen = XUnetBatchgen(batch_size, img_size, val_x_paths, val_y_paths)
 
     print("Build model...")
     keras.backend.clear_session() # Free up RAM in case the model definition cells were run multiple times
@@ -137,7 +108,7 @@ def fit(
 
         print("Write evaluation...")
         # First eval textfile
-        val_gen = XUnetBatchgen(batch_size, img_size, val_x_paths, val_y_paths)
+        val_gen, _, _ = get_xunet_valdata(dataset_dir, batch_size, img_size)
         eval_results = model.evaluate(val_gen)
         eval_file = run_dir / 'evals'
         i = 0
@@ -178,14 +149,14 @@ def fit(
         
         print("Write validation...")
         # Generate predictions for all images in the validation set
-        val_gen = XUnetBatchgen(batch_size, img_size, val_x_paths, val_y_paths)
+        val_gen, val_x_paths, val_y_paths = get_xunet_valdata(dataset_dir, batch_size, img_size)
         val_preds = model.predict(val_gen)
         
         if not os.path.exists(val_dir):
             os.makedirs(val_dir)
 
         # Display some results for validation images
-        for i in range(0, min(50, num_val_samples, batch_size)):
+        for i in range(0, min(50, len(val_x_paths), batch_size)):
             # Display input image
             inimg = ImageOps.autocontrast(load_img(val_x_paths[i]))
             inimg.save(val_dir / f'{i}_input.png')
