@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import albumentations as A
-import segmentation_models as sm
+import segmentation_models as sm 
 
 from cmd_tf.utility import get_files_from_folders_with_ending
 
@@ -254,6 +254,9 @@ sm_dice_x_bfocal_loss = dice_loss + (1 * focal_loss)
 sm_metrics = [sm.metrics.IOUScore(threshold=0.5), sm.metrics.FScore(threshold=0.5)]
 sm_optim = keras.optimizers.Adam(LR)
 
-# --- Model ---------------------------------------------------------------------------------------
+# --- Models ---------------------------------------------------------------------------------------
+# docs: https://github.com/qubvel/segmentation_models/tree/master 
 sm_unet_model = sm.Unet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
+sm_fpn_model = sm.FPN(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
 sm_linknet_model = sm.Linknet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
+sm_pspnet_model = sm.PSPNet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
