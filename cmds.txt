@@ -5,6 +5,10 @@ python traindata-creator/createDataset.py -n red-rects -t seg -tf traindata-crea
 python traindata-creator/createDataset.py -n good-pics-ratio-val -t yolov5 -r 0.15 -tf traindata-creator/dataseries-320-the_good_pics_for_nn/images_traindata/
 
 python -m cmd_tf -df traindata-creator/dataset-seg-red-rects/ -r xunet-red-rects -e 75
-python -m cmd_tf -df traindata-creator/dataset-seg-red-rects/ -r sm-unet -bs 8 -e 3
+python -m cmd_tf -df traindata-creator/dataset-seg-red-rects/ -r sm-unet-red-rects -bs 8 -e 75
+python -m cmd_tf -df traindata-creator/dataset-seg-good-pics-ratio-val/ -r sm-unet-aruco -bs 8 -e 100
+python -m cmd_tf -df traindata-creator/dataset-seg-good-pics-ratio-val/ -r sm-linknet-aruco -bs 8 -e 100
+python -m cmd_tf -df traindata-creator/dataset-seg-good-pics-ratio-val/ -r sm-fpn-aruco -bs 4 -e 100
+python -m cmd_tf -df traindata-creator/dataset-seg-good-pics-ratio-val/ -r sm-psnet-aruco -bs 8 -e 100
 
 python repos/yolov5/train.py --img 320 --batch 16 --epochs 50 --data traindata-creator/dataset-yolov5-red-rects/dataset-yolov5-red-rects.yaml --weights yolov5s.pt
