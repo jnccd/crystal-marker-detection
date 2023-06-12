@@ -256,4 +256,4 @@ sm_optim = keras.optimizers.Adam(LR)
 
 # --- Model ---------------------------------------------------------------------------------------
 sm_unet_model = sm.Unet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
-
+sm_linknet_model = sm.Linknet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
