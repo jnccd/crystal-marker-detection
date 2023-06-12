@@ -4,7 +4,7 @@ import random
 from pathlib import Path
 
 import numpy as np
-from PIL import ImageOps
+from PIL import ImageOps, Image
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
@@ -13,7 +13,7 @@ from tensorflow import keras
 from tensorflow.keras.utils import load_img, array_to_img
 
 from cmd_tf.runconfigs import load_runconfig
-from cmd_tf.utility import get_files_from_folders_with_ending
+from cmd_tf.utility import denormalize
 
 num_classes = 1
 
@@ -48,8 +48,8 @@ def fit(
     (get_traindata, get_valdata) = cur_conf.dataset_loader
     
     # Prepare Training and Validation Data
-    train_gen, train_x_paths, _ = get_traindata(dataset_dir, batch_size, img_size)
-    val_gen, _, _ = get_valdata(dataset_dir, batch_size, img_size)
+    train_gen, train_x_paths, _, _ = get_traindata(dataset_dir, batch_size, img_size)
+    val_gen, _, _, _ = get_valdata(dataset_dir, batch_size, img_size)
     epoch_steps = math.floor(len(train_x_paths) / batch_size)
     
     print()
@@ -104,7 +104,7 @@ def fit(
 
         print("Write evaluation...")
         # First eval textfile
-        val_gen, _, _ = get_valdata(dataset_dir, batch_size, img_size)
+        val_gen, _, _, _ = get_valdata(dataset_dir, batch_size, img_size)
         eval_results = model.evaluate(val_gen)
         eval_file = run_dir / 'evals'
         i = 0
@@ -145,7 +145,7 @@ def fit(
         
         print("Write validation...")
         # Generate predictions for all images in the validation set
-        val_gen, val_x_paths, val_y_paths = get_valdata(dataset_dir, batch_size, img_size)
+        val_gen, val_x_paths, val_y_paths, aug_data = get_valdata(dataset_dir, batch_size, img_size)
         val_preds = model.predict(val_gen)
         
         if not os.path.exists(val_dir):
@@ -154,16 +154,22 @@ def fit(
         # Display some results for validation images
         for i in range(0, min(50, len(val_x_paths), batch_size)):
             # Display input image
-            inimg = ImageOps.autocontrast(load_img(val_x_paths[i]))
-            inimg.save(val_dir / f'{i}_input.png')
+            if aug_data is None:# or True:
+                in_img = ImageOps.autocontrast(load_img(val_x_paths[i]))
+            else:
+                in_img = ImageOps.autocontrast(array_to_img(aug_data[i][0]))
+            in_img.save(val_dir / f'{i}_input.png')
 
             # Display ground-truth target mask
-            img = ImageOps.autocontrast(load_img(val_y_paths[i]))
-            img.save(val_dir / f'{i}_target_output.png')
+            if aug_data is None:# or True:
+                gt_img = ImageOps.autocontrast(load_img(val_y_paths[i]))
+            else:
+                gt_img = ImageOps.autocontrast(array_to_img(aug_data[i][1]))
+            gt_img.save(val_dir / f'{i}_target_output.png')
 
             # Display mask predicted by our model
-            img = ImageOps.autocontrast(array_to_img(val_preds[i]))
-            img.save(val_dir / f'{i}_network_output.png')
+            out_img = ImageOps.autocontrast(array_to_img(val_preds[i]))
+            out_img.save(val_dir / f'{i}_network_output.png')
         
         print("Increment epoch counter...")
         # Increment run epoch counter file

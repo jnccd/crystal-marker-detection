@@ -218,7 +218,7 @@ def get_sm_traindata(dataset_dir, batch_size, img_size, print_data = False):
     assert train_gen[0][0].shape == (batch_size, 320, 320, 3)
     assert train_gen[0][1].shape == (batch_size, 320, 320, n_classes)
     
-    return train_gen, train_x_paths, train_y_paths
+    return train_gen, train_x_paths, train_y_paths, train_dataset
     
 def get_sm_valdata(dataset_dir, batch_size, img_size, print_data = False):
     val_data_dir = dataset_dir / 'val'
@@ -233,7 +233,7 @@ def get_sm_valdata(dataset_dir, batch_size, img_size, print_data = False):
             print(os.path.basename(input_path), "|", os.path.basename(target_path))
             
     # Dataset for validation images
-    valid_dataset = Dataset(
+    val_dataset = Dataset(
         val_x_paths, 
         val_y_paths, 
         classes=CLASSES, 
@@ -241,9 +241,9 @@ def get_sm_valdata(dataset_dir, batch_size, img_size, print_data = False):
         preprocessing=get_preprocessing(preprocess_input),
     )
     
-    val_gen = Dataloder(valid_dataset, batch_size=1, shuffle=False)
+    val_gen = Dataloder(val_dataset, batch_size=1, shuffle=False)
     
-    return val_gen, val_x_paths, val_y_paths
+    return val_gen, val_x_paths, val_y_paths, val_dataset
 
 # --- Loss ---------------------------------------------------------------------------------------
 dice_loss = sm.losses.DiceLoss()
