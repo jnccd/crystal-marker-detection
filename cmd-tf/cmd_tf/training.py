@@ -2,6 +2,8 @@ import os
 import math
 import random
 from pathlib import Path
+from timeit import default_timer as timer
+from datetime import timedelta
 
 import numpy as np
 from PIL import ImageOps, Image
@@ -84,7 +86,6 @@ def fit(
                     loss=cur_conf.loss,
                     metrics=cur_conf.metrics)
         
-        # Set callbacks
         cur_conf.callbacks.append(
             keras.callbacks.ModelCheckpoint(weights_dir / "weights.h5", save_best_only=True)
         )
@@ -97,8 +98,11 @@ def fit(
         else:
             print("Learning from scratch")
 
-        # Train the model, doing validation at the end of each epoch.
+        # Train
+        train_start_time = timer()
         model_out = model.fit(train_gen, steps_per_epoch=epoch_steps, epochs=num_epochs, validation_data=val_gen, callbacks=callbacks, verbose=1)
+        train_end_time = timer()
+        print('Training took', (timedelta(seconds = train_end_time - train_start_time)))
 
         model.save_weights(weights_dir / 'weights')
 
