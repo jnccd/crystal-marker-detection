@@ -152,7 +152,7 @@ def fit(
             os.makedirs(val_dir)
 
         # Display some results for validation images
-        for i in range(0, min(50, len(val_x_paths), batch_size)):
+        for i in range(0, min(128, len(val_x_paths))):
             # Display input image
             if aug_data is None:# or True:
                 in_img = ImageOps.autocontrast(load_img(val_x_paths[i]))
