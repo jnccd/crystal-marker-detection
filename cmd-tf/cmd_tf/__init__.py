@@ -4,7 +4,7 @@ from pathlib import Path
 from cmd_tf.training import fit
 
 def main():
-    parser = argparse.ArgumentParser(prog='ml-segmentation', description='Trains a sample network on the synthetic generated data.')
+    parser = argparse.ArgumentParser(prog='cmd-tf', description='Trains a sample network on the synthetic generated data.')
     parser.add_argument('-bs','--batch-size',       type=int,               default=16,         help='The batch size of the training data.')
     parser.add_argument('-e','--epochs',            type=int,               default=1,          help='The number of epochs to learn for.')
     parser.add_argument('-s','--size',              type=int,               default=320,        help='The image size the network should read.')
