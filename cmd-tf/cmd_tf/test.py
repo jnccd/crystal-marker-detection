@@ -19,6 +19,8 @@ from tensorflow.keras.utils import load_img, array_to_img
 from cmd_tf.runconfigs import load_runconfig
 from cmd_tf.utility import get_files_from_folders_with_ending
 
+num_classes = 1
+
 def test(
     testdata,
     run: str = 'default', 
@@ -26,6 +28,7 @@ def test(
     ):
     
     print(f'Testing {run}...')
+    img_size = (size, size)
     
     root_dir = Path(__file__).resolve().parent
     runs_dir = root_dir / 'runs'
@@ -45,7 +48,7 @@ def test(
         x[i] = load_img(testdata_paths[i], target_size=(size, size))
     
     cur_conf = load_runconfig(run)
-    model = cur_conf.model
+    model = cur_conf.get_model(img_size, num_classes)
     model.load_weights(weights_dir / 'weights')
     model_preds = model.predict(x)
     
