@@ -34,14 +34,15 @@ def test(
     weights_dir = run_dir / 'weights'
     
     testdata_path = Path(testdata)
-    # if testdata_path.is_dir():
-    #     testdata_paths = get_files_from_folders_with_ending([testdata_path], (".png", ".jpg"))
-    # else:
-    testdata_paths = [testdata_path]
-    # for testdata_p in testdata_paths:
-    img = load_img(testdata_path)
-    x = np.zeros((1,) + (size, size) + (3,), dtype="float32")
-    x[0] = load_img(testdata_path, target_size=(size, size))
+    if testdata_path.is_dir():
+        print(f'Got dir input')
+        testdata_paths = get_files_from_folders_with_ending([testdata_path], (".png", ".jpg"))
+    else:
+        print(f'Got single file input')
+        testdata_paths = [testdata_path]
+    x = np.zeros((len(testdata_paths),) + (size, size) + (3,), dtype="float32")
+    for testdata_p in testdata_paths:
+        x[0] = load_img(testdata_p, target_size=(size, size))
     
     cur_conf = load_runconfig(run)
     model = cur_conf.model
