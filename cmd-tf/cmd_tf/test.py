@@ -41,8 +41,8 @@ def test(
         print(f'Got single file input')
         testdata_paths = [testdata_path]
     x = np.zeros((len(testdata_paths),) + (size, size) + (3,), dtype="float32")
-    for testdata_p in testdata_paths:
-        x[0] = load_img(testdata_p, target_size=(size, size))
+    for i in range(len(testdata_paths)):
+        x[i] = load_img(testdata_paths[i], target_size=(size, size))
     
     cur_conf = load_runconfig(run)
     model = cur_conf.model
@@ -54,7 +54,7 @@ def test(
     if not os.path.exists(test_dir):
             os.makedirs(test_dir)
 
-    for i in range(0, min(len(model_preds), len(testdata_paths))):
+    for i in range(min(len(model_preds), len(testdata_paths))):
         in_img = ImageOps.autocontrast(array_to_img(x[i]))
         in_img.save(test_dir / f'{i}_input.png')
         
