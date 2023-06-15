@@ -54,7 +54,7 @@ configs = [
               model=sm_linknet_model, 
               dataset_loader=(get_sm_traindata,
                               get_sm_valdata),
-              loss=sm_dice_x_bfocal_loss, 
+              loss=sm_dice_x_bfocal_loss,
               optimizer=sm_optim,
               metrics=sm_metrics,
               callbacks=[keras.callbacks.ReduceLROnPlateau(),]
