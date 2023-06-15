@@ -76,7 +76,7 @@ def fit(
     with strategy.scope():
         
         # Build model
-        model = cur_conf.model
+        model = cur_conf.get_model(img_size, num_classes)
         if print_model:
             model.summary()
             tf.keras.utils.plot_model(model, to_file=run_dir / "model.png", show_shapes=True)

@@ -7,7 +7,7 @@ from keras import losses as loss
 from keras.callbacks import LearningRateScheduler
 
 from cmd_tf.model_xunet import flat_dice_coef_loss, get_xunet_model, get_xunet_traindata, get_xunet_valdata
-from cmd_tf.models_sm import sm_unet_model, sm_dice_x_bfocal_loss, sm_metrics, sm_optim, get_sm_traindata, get_sm_valdata, sm_linknet_model, sm_fpn_model, sm_pspnet_model
+from cmd_tf.models_sm import get_sm_unet_model, sm_dice_x_bfocal_loss, sm_metrics, sm_optim, get_sm_traindata, get_sm_valdata, get_sm_linknet_model, get_sm_fpn_model, get_sm_pspnet_model
 
 exp_decay_learning_rate = tf.keras.optimizers.schedules.ExponentialDecay(
     initial_learning_rate=1e-3,
@@ -24,7 +24,7 @@ constant_decay_learning_rate = tf.optimizers.schedules.PiecewiseConstantDecay(
 class RunConfig:
     name: str
     loss: any
-    model: any
+    get_model: any
     dataset_loader: tuple
     metrics: any = None
     optimizer: any = "adam"
@@ -35,13 +35,13 @@ class RunConfig:
 configs = [
     RunConfig( 
               name="xunet", 
-              model=get_xunet_model((320, 320), 1), 
+              get_model=get_xunet_model, 
               dataset_loader=(get_xunet_traindata, 
                               get_xunet_valdata), 
               loss=flat_dice_coef_loss,  ),
-    RunConfig( 
+    RunConfig(
               name="sm-unet", 
-              model=sm_unet_model, 
+              get_model=get_sm_unet_model, 
               dataset_loader=(get_sm_traindata,
                               get_sm_valdata),
               loss=sm_dice_x_bfocal_loss, 
@@ -49,9 +49,9 @@ configs = [
               metrics=sm_metrics,
               callbacks=[keras.callbacks.ReduceLROnPlateau(),]
               ),
-    RunConfig( 
+    RunConfig(
               name="sm-linknet", 
-              model=sm_linknet_model, 
+              get_model=get_sm_linknet_model, 
               dataset_loader=(get_sm_traindata,
                               get_sm_valdata),
               loss=sm_dice_x_bfocal_loss,
@@ -59,9 +59,9 @@ configs = [
               metrics=sm_metrics,
               callbacks=[keras.callbacks.ReduceLROnPlateau(),]
               ),
-    RunConfig( 
+    RunConfig(
               name="sm-fpn", 
-              model=sm_fpn_model, 
+              get_model=get_sm_fpn_model, 
               dataset_loader=(get_sm_traindata,
                               get_sm_valdata),
               loss=sm_dice_x_bfocal_loss, 
@@ -69,9 +69,9 @@ configs = [
               metrics=sm_metrics,
               callbacks=[keras.callbacks.ReduceLROnPlateau(),]
               ),
-    RunConfig( 
+    RunConfig(
               name="sm-psnet", 
-              model=sm_pspnet_model, 
+              get_model=get_sm_pspnet_model, 
               dataset_loader=(get_sm_traindata,
                               get_sm_valdata),
               loss=sm_dice_x_bfocal_loss, 

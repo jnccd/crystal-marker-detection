@@ -256,7 +256,11 @@ sm_optim = keras.optimizers.Adam(LR)
 
 # --- Models ---------------------------------------------------------------------------------------
 # docs: https://github.com/qubvel/segmentation_models/tree/master 
-sm_unet_model = sm.Unet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
-sm_fpn_model = sm.FPN(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
-sm_linknet_model = sm.Linknet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
-sm_pspnet_model = sm.PSPNet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
+def get_sm_unet_model(img_size, num_classes):
+    return sm.Unet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
+def get_sm_fpn_model(img_size, num_classes):
+    return sm.FPN(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
+def get_sm_linknet_model(img_size, num_classes):
+    return sm.Linknet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
+def get_sm_pspnet_model(img_size, num_classes):
+    return sm.PSPNet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
