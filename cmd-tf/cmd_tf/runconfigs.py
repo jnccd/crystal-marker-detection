@@ -83,23 +83,25 @@ configs = [
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
-def load_runconfig(runname: str = ""):
+def load_runconfig(runname: str = "", additional_settings = {}):
     cur_conf: RunConfig = None
     
+    # Choose config
     configs.reverse()
     for conf in configs:
         if runname.startswith(conf.name):
             cur_conf = conf
             break
-            
     if cur_conf is None:
         cur_conf = configs[-1] # First conf is default
         
+    # Fill config none fields
     if cur_conf.callbacks is None:
         cur_conf.callbacks = []
     if cur_conf.metrics is None:
         cur_conf.metrics = [  tf.keras.metrics.BinaryAccuracy(), 
                         tf.keras.metrics.Recall(),
                         tf.keras.metrics.Precision(), ]
-        
+    cur_conf.additional_settings = additional_settings
+    
     return cur_conf
