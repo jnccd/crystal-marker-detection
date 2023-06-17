@@ -63,6 +63,7 @@ def fit(
     print("Loss:", cur_conf.loss)
     print("Optimizer:", cur_conf.optimizer)
     print("Steps per Epoch:", epoch_steps)
+    print("Extra settings:", extra_settings)
     print("--------------------------------------------------")
     print()
 
