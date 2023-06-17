@@ -1,3 +1,5 @@
+import ast
+import json
 import os
 import math
 import random
@@ -108,23 +110,35 @@ def fit(
         model.save_weights(weights_dir / 'weights')
 
         print("Write evaluation...")
-        # First eval textfile
         val_gen, _, _, _ = get_valdata(dataset_dir, batch_size, img_size, extra_settings)
         eval_results = model.evaluate(val_gen)
+        # Parse and combine histories if old history exists
+        history_file = run_dir / 'history'
+        if os.path.exists(history_file) and os.path.isfile(history_file):
+            with open(history_file) as f:
+                history_str = f.read()
+            full_history = ast.literal_eval(history_str)
+            for key, value in full_history.items():
+                full_history[key].extend(model_out.history[key])
+        else:
+            full_history = model_out.history
+        # Write training history textfile
+        with open(history_file, "w") as f:
+            f.write(str(full_history))
+        # Write eval textfile
         eval_file = run_dir / 'evals'
-        i = 0
-        while os.path.exists(eval_file):
-            eval_file = run_dir / ('evals'+str(i))
-            i+=1
         with open(eval_file, "w") as f:
-            f.write(str(model_out.history) + "\n\n")
-            f.write(str(cur_conf.metrics) + "\n")
-            f.write(str(eval_results) + "\n")
-        # Then eval plots
-        xc = range(1, num_epochs+1)
-        for metric in model_out.history:
+            all_metrics = [str(x) for x in cur_conf.metrics]
+            all_metrics.insert(0, "Loss")
+            eval_dict = {}
+            for metric, res in zip(all_metrics, eval_results):
+                eval_dict[metric] = res
+            f.write(json.dumps(eval_dict, indent=4))
+        # Write eval plots
+        xc = range(1, len(list(full_history.values())[0])+1)
+        for metric in full_history:
             if metric == "lr":
-                train = model_out.history[metric]
+                train = full_history[metric]
                 plt.clf()
                 plt.title(f"Learn rate over epochs")
                 plt.xlabel("Epochs")
@@ -135,8 +149,8 @@ def fit(
                 plt.savefig(str(eval_file) + f'_{metric}_plot.pdf', dpi=100)
             else:
                 if not metric.startswith("val_"):
-                    train = model_out.history[metric]
-                    val = model_out.history["val_"+metric]
+                    train = full_history[metric]
+                    val = full_history["val_"+metric]
                     plt.clf()
                     plt.title(f"Train and Validation {metric} over epochs")
                     plt.xlabel("Epochs")
