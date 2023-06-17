@@ -83,7 +83,7 @@ configs = [
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
-def load_runconfig(runname: str = "", additional_settings = {}):
+def load_runconfig(runname: str = ""):
     cur_conf: RunConfig = None
     
     # Choose config
@@ -102,6 +102,5 @@ def load_runconfig(runname: str = "", additional_settings = {}):
         cur_conf.metrics = [  tf.keras.metrics.BinaryAccuracy(), 
                         tf.keras.metrics.Recall(),
                         tf.keras.metrics.Precision(), ]
-    cur_conf.additional_settings = additional_settings
     
     return cur_conf

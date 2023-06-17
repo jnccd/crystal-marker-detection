@@ -203,7 +203,7 @@ def get_sm_traindata(dataset_dir, batch_size, img_size, additional_settings, pri
         for input_path, target_path in zip(train_x_paths[:3], train_y_paths[:3]):
             print(os.path.basename(input_path), "|", os.path.basename(target_path))
             
-    if 'data_aug' in additional_settings:
+    if 'data_aug' in additional_settings and additional_settings['data_aug'] is True:
         data_aug = get_training_augmentation()
     else:
         data_aug = None
@@ -237,7 +237,7 @@ def get_sm_valdata(dataset_dir, batch_size, img_size, additional_settings, print
         for input_path, target_path in zip(val_x_paths[:3], val_y_paths[:3]):
             print(os.path.basename(input_path), "|", os.path.basename(target_path))
             
-    if 'data_aug' in additional_settings:
+    if 'data_aug' in additional_settings and additional_settings['data_aug'] is True:
         data_aug = get_validation_augmentation()
     else:
         data_aug = None
