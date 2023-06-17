@@ -236,12 +236,12 @@ def get_sm_valdata(dataset_dir, batch_size, img_size, extra_settings, print_data
         print("Val in imgs:", val_x_paths.__len__(), "| Val target imgs:", val_y_paths.__len__())
         for input_path, target_path in zip(val_x_paths[:3], val_y_paths[:3]):
             print(os.path.basename(input_path), "|", os.path.basename(target_path))
-            
+    
     if 'data_aug' in extra_settings and extra_settings['data_aug'] is True:
         data_aug = get_validation_augmentation()
     else:
         data_aug = None
-            
+    
     # Dataset for validation images
     val_dataset = Dataset(
         val_x_paths, 
