@@ -24,7 +24,7 @@ def main():
     
     args = parser.parse_args()
     
-    additional_settings = {
+    extra_settings = {
         'data_aug': args.data_augmentation
     }
     
@@ -33,7 +33,7 @@ def main():
             run=args.run,
             size=args.size,
             testdata=args.testdata,
-            additional_settings=additional_settings,
+            extra_settings=extra_settings,
             )
     else:
         fit(
@@ -44,5 +44,5 @@ def main():
             size=args.size,
             print_model=args.print_model,
             use_multi_gpu_strategy=args.multi_gpu_strategy,
-            additional_settings=additional_settings,
+            extra_settings=extra_settings,
             )
