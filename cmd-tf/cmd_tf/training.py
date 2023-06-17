@@ -50,8 +50,8 @@ def fit(
     (get_traindata, get_valdata) = cur_conf.dataset_loader
     
     # Prepare Training and Validation Data
-    train_gen, train_x_paths, _, _ = get_traindata(dataset_dir, batch_size, img_size)
-    val_gen, _, _, _ = get_valdata(dataset_dir, batch_size, img_size)
+    train_gen, train_x_paths, _, _ = get_traindata(dataset_dir, batch_size, img_size, cur_conf.additional_settings)
+    val_gen, _, _, _ = get_valdata(dataset_dir, batch_size, img_size, cur_conf.additional_settings)
     epoch_steps = math.floor(len(train_x_paths) / batch_size)
     
     print()
@@ -76,7 +76,7 @@ def fit(
     with strategy.scope():
         
         # Build model
-        model = cur_conf.get_model(img_size, num_classes)
+        model = cur_conf.get_model(img_size, num_classes, cur_conf.additional_settings)
         if print_model:
             model.summary()
             tf.keras.utils.plot_model(model, to_file=run_dir / "model.png", show_shapes=True)
@@ -108,7 +108,7 @@ def fit(
 
         print("Write evaluation...")
         # First eval textfile
-        val_gen, _, _, _ = get_valdata(dataset_dir, batch_size, img_size)
+        val_gen, _, _, _ = get_valdata(dataset_dir, batch_size, img_size, cur_conf.additional_settings)
         eval_results = model.evaluate(val_gen)
         eval_file = run_dir / 'evals'
         i = 0
@@ -149,7 +149,7 @@ def fit(
         
         print("Write validation...")
         # Generate predictions for all images in the validation set
-        val_gen, val_x_paths, val_y_paths, aug_data = get_valdata(dataset_dir, batch_size, img_size)
+        val_gen, val_x_paths, val_y_paths, aug_data = get_valdata(dataset_dir, batch_size, img_size, cur_conf.additional_settings)
         val_preds = model.predict(val_gen)
         
         if not os.path.exists(val_dir):
