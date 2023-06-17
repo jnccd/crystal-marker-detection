@@ -9,6 +9,8 @@ import keras.backend as K
 
 from cmd_tf.utility import get_files_from_folders_with_ending
 
+# Adapted from: https://keras.io/examples/vision/oxford_pets_image_segmentation/
+
 # --- Dataloader ---------------------------------------------------------------------------------------
 class XUnetBatchgen(keras.utils.Sequence):
     """Helper to iterate over the data (as Numpy arrays)."""
