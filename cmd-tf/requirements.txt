@@ -1,0 +1,8 @@
+matplotlib>=3.3
+numpy>=1.18.5
+opencv-python>=4.1.1
+Pillow>=7.1.2
+albumentations>=1.0.3
+segmentation-models==1.0.1
+tikzplotlib>=0.10.1
+keras>=2.10.0
