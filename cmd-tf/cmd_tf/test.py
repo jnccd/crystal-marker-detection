@@ -25,7 +25,7 @@ def test(
     testdata,
     run: str = 'default', 
     size: int = 320, 
-    additional_settings = {},
+    extra_settings = {},
     ):
     
     print(f'Testing {run}...')
@@ -49,7 +49,7 @@ def test(
         x[i] = load_img(testdata_paths[i], target_size=(size, size))
     
     cur_conf = load_runconfig(run)
-    model = cur_conf.get_model(img_size, num_classes, additional_settings)
+    model = cur_conf.get_model(img_size, num_classes, extra_settings)
     model.load_weights(weights_dir / 'weights')
     model_preds = model.predict(x)
     

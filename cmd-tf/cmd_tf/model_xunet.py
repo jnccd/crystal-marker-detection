@@ -36,7 +36,7 @@ class XUnetBatchgen(keras.utils.Sequence):
             y[j] = load_img(path, target_size=self.img_size, color_mode="grayscale")
         return x, y
     
-def get_xunet_traindata(dataset_dir, batch_size, img_size, additional_settings, print_data = False):
+def get_xunet_traindata(dataset_dir, batch_size, img_size, extra_settings, print_data = False):
     train_data_dir = dataset_dir / 'train'
     train_x_paths = get_files_from_folders_with_ending([train_data_dir], "_in.png")
     train_y_paths = get_files_from_folders_with_ending([train_data_dir], "_seg.png")
@@ -52,7 +52,7 @@ def get_xunet_traindata(dataset_dir, batch_size, img_size, additional_settings, 
     
     return train_gen, train_x_paths, train_y_paths, None
     
-def get_xunet_valdata(dataset_dir, batch_size, img_size, additional_settings, print_data = False):
+def get_xunet_valdata(dataset_dir, batch_size, img_size, extra_settings, print_data = False):
     val_data_dir = dataset_dir / 'val'
     val_x_paths = get_files_from_folders_with_ending([val_data_dir], "_in.png")
     val_y_paths = get_files_from_folders_with_ending([val_data_dir], "_seg.png")
@@ -80,7 +80,7 @@ def flat_dice_coef_loss(y_true, y_pred):
     return 1 - flat_dice_coef(y_true, y_pred)
 
 # --- Model ---------------------------------------------------------------------------------------
-def get_xunet_model(img_size, num_classes, additional_settings):
+def get_xunet_model(img_size, num_classes, extra_settings):
     inputs = keras.Input(shape=img_size + (3,))
     
     ### [First half of the network: downsampling inputs] ###
