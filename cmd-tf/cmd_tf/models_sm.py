@@ -238,10 +238,8 @@ def get_sm_valdata(dataset_dir, batch_size, img_size, extra_settings, print_data
             print(os.path.basename(input_path), "|", os.path.basename(target_path))
             
     if 'data_aug' in extra_settings and extra_settings['data_aug'] is True:
-        print('yes aug')
         data_aug = get_validation_augmentation()
     else:
-        print('no aug')
         data_aug = None
             
     # Dataset for validation images
