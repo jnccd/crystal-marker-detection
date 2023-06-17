@@ -41,7 +41,7 @@ def fit(
         dataset_dir = root_dir / data_folder
     # Set Run Paths
     runs_dir = root_dir / 'runs'
-    run_dir = runs_dir / f'run-{run}'
+    run_dir = runs_dir / f'{run}'
     val_dir = run_dir / 'validation'
     weights_dir = run_dir / 'weights'
     
