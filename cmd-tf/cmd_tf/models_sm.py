@@ -191,7 +191,7 @@ def get_preprocessing(preprocessing_fn):
             
 preprocess_input = sm.get_preprocessing(BACKBONE)
 
-def get_sm_traindata(dataset_dir, batch_size, img_size, print_data = False):
+def get_sm_traindata(dataset_dir, batch_size, img_size, additional_settings, print_data = False):
     train_data_dir = dataset_dir / 'train'
     train_x_paths = get_files_from_folders_with_ending([train_data_dir], "_in.png")
     train_y_paths = get_files_from_folders_with_ending([train_data_dir], "_seg.png")
@@ -220,7 +220,7 @@ def get_sm_traindata(dataset_dir, batch_size, img_size, print_data = False):
     
     return train_gen, train_x_paths, train_y_paths, train_dataset
     
-def get_sm_valdata(dataset_dir, batch_size, img_size, print_data = False):
+def get_sm_valdata(dataset_dir, batch_size, img_size, additional_settings, print_data = False):
     val_data_dir = dataset_dir / 'val'
     val_x_paths = get_files_from_folders_with_ending([val_data_dir], "_in.png")
     val_y_paths = get_files_from_folders_with_ending([val_data_dir], "_seg.png")
@@ -256,11 +256,11 @@ sm_optim = keras.optimizers.Adam(LR)
 
 # --- Models ---------------------------------------------------------------------------------------
 # docs: https://github.com/qubvel/segmentation_models/tree/master 
-def get_sm_unet_model(img_size, num_classes):
+def get_sm_unet_model(img_size, num_classes, additional_settings):
     return sm.Unet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
-def get_sm_fpn_model(img_size, num_classes):
+def get_sm_fpn_model(img_size, num_classes, additional_settings):
     return sm.FPN(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
-def get_sm_linknet_model(img_size, num_classes):
+def get_sm_linknet_model(img_size, num_classes, additional_settings):
     return sm.Linknet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
-def get_sm_pspnet_model(img_size, num_classes):
+def get_sm_pspnet_model(img_size, num_classes, additional_settings):
     return sm.PSPNet(BACKBONE, classes=1, activation=('sigmoid' if n_classes == 1 else 'softmax'))
