@@ -33,12 +33,6 @@ class RunConfig:
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
 configs = [
-    RunConfig( 
-              name="xunet", 
-              get_model=get_xunet_model, 
-              dataset_loader=(get_xunet_traindata, 
-                              get_xunet_valdata), 
-              loss=flat_dice_coef_loss,  ),
     RunConfig(
               name="sm-unet", 
               get_model=get_sm_unet_model, 
@@ -79,6 +73,12 @@ configs = [
               metrics=sm_metrics,
               callbacks=[keras.callbacks.ReduceLROnPlateau(),]
               ),
+    RunConfig( 
+              name="xunet", 
+              get_model=get_xunet_model, 
+              dataset_loader=(get_xunet_traindata, 
+                              get_xunet_valdata), 
+              loss=flat_dice_coef_loss,  ),
     ]
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------
