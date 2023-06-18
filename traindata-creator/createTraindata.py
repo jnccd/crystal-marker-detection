@@ -247,53 +247,49 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         cv2.imwrite(str(marked_dir / ("marked_" + Path(other_img_path).stem + ".png")), draw_img)
         cv2.waitKey(1)
         
-        # Into the traindata folder, write cropped img...
+        # Compute in_between_rect bounds and crop image
         inner_bounds_x, inner_bounds_y, inner_bounds_w, inner_bounds_h, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
         crop_img = other_img[inner_bounds_y:inner_bounds_ye, inner_bounds_x:inner_bounds_xe]
+        
+        # Compute bbox coordinate types
+        out_img_size = (inner_bounds_w, inner_bounds_h)
+        circs = [(x[0] - inner_bounds_x, x[1] - inner_bounds_y) for x in ircs] # cropped-inner-rect-corners
         if resize_size > 0:
+            # Resize and pad image
             crop_img, new_size, top, left = resize_and_pad(crop_img, resize_size)
-        cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_in.png")), crop_img)
-        # ...and a textfile with the corner data of all found rectangles...
-        bounds_size = (inner_bounds_w, inner_bounds_h)
-        circs = [(x[0] - inner_bounds_x, x[1] - inner_bounds_y) for x in ircs]
-        if resize_size > 0:
+            # Resize and pad bbox points with image
             circs = mult_by_point(circs, (new_size[1] / inner_bounds_w, new_size[0] / inner_bounds_h))
             circs = add_by_point(circs, (left, top))
-        gcircs = unflatten(circs, 4)
-        if resize_size > 0:
-            ncircs = divide_by_point(circs, (resize_size, resize_size))
-        else:
-            ncircs = divide_by_point(circs, bounds_size)
+            out_img_size = (resize_size, resize_size)
+        gcircs = unflatten(circs, 4) 
+        bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
+        # Normalize coordinates
+        ncircs = divide_by_point(circs, out_img_size)
         gncircs = unflatten(ncircs, 4)
+        bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
+        # Rasterize Segmentation image
+        seg_image = np.zeros(tuple(reversed(out_img_size)) + (3,), dtype = np.uint8)
+        lircs = [[int(x[0]), int(x[1])] for x in circs]
+        glircs = unflatten(lircs, 4) # grouped-listed-normalized-cropped-inner-rect-corners
+        for seg_rect in glircs:
+            seg_vertecies = np.array(seg_rect)
+            cv2.fillPoly(seg_image, pts=[seg_vertecies], color=(255, 255, 255))
+        
+        # Write out data to files
+        cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_in.png")), crop_img)
+        cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_seg.png")), seg_image)
         with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
             for rect in gcircs:
                 text_file.write(f"{rect[0]}, {rect[1]}, {rect[2]}, {rect[3]}\n")
-        # ...and write a segmentation image
-        final_img_size = (resize_size, resize_size) if resize_size > 0 else (inner_bounds_h, inner_bounds_w)
-        seg_image = np.zeros(final_img_size + (3,), dtype = np.uint8)
-        lircs = [[int(x[0]), int(x[1])] for x in circs] # listed
-        glircs = unflatten(lircs, 4)
-        #print(glircs)
-        for seg_rect in glircs:
-            seg_vertecies = np.array(seg_rect)
-            #print(seg_vertecies)
-            cv2.fillPoly(seg_image, pts=[seg_vertecies], color=(255, 255, 255))
-        cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_seg.png")), seg_image)
-        # ...and a textfile with the bounds in (x y w h) style
-        bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
-        with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
-            for bounds in bgncircs:
-                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
-        # ...and a textfile with the bounds in (cx cy w h) style
-        bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
-        with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
-            for bounds in bgncircs:
-                text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
-        # ...and a textfile with the bounds unnormalized
-        bgcircs = [get_bounds(x) for x in gcircs]
         with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
             for bounds in bgcircs:
                 text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+        with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
+            for bounds in bgncircs:
+                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+        with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
+            for bounds in bgncircs:
+                text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
 
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
