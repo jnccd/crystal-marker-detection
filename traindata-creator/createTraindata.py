@@ -281,12 +281,21 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
             for rect in gcircs:
                 text_file.write(f"{rect[0]}, {rect[1]}, {rect[2]}, {rect[3]}\n")
+        # xywh formats
         with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
             for bounds in bgcircs:
                 text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
         with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
             for bounds in bgncircs:
                 text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+        # xyxy formats
+        with open(train_dir / (Path(other_img_path).stem + "_xyxy.txt"), "w") as text_file:
+            for bounds in bgcircs:
+                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
+        with open(train_dir / (Path(other_img_path).stem + "_xyxy_n.txt"), "w") as text_file:
+            for bounds in bgncircs:
+                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
+        # center xy for coco
         with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
             for bounds in bgncircs:
                 text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
