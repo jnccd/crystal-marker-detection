@@ -15,7 +15,9 @@ bottom_right_corner=[]
 new_top_left = None
 cur_m_pos = None
 
-max_img_width = 1280
+max_img_width = 1920
+max_img_height = 1080
+g_img_resize_factor = 1
 
 def mouseEvent(action, x, y, flags, *userdata):
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
@@ -208,13 +210,37 @@ def resize_and_pad(img: Mat, desired_size: int):
     
     return brimg, new_size, top, left
 
-def set_max_img_size(img, max_width):
+def set_img_width(img, max_width):
     img_h, img_w = img.shape[:2]
-    r = float(max_width) / img_w
-    dim = (max_width, int(img_h * r))
-    return cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    resize_factor = float(max_width) / img_w
+    target_size = (max_width, int(img_h * resize_factor))
+    return cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
+
+def set_img_height(img, max_height):
+    img_h, img_w = img.shape[:2]
+    resize_factor = float(max_height) / img_h
+    target_size = (int(img_w * resize_factor), max_height)
+    return cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
+
+def resize_img_by_factor(img, factor):
+    img_h, img_w = img.shape[:2]
+    target_size = (int(img_w * factor), int(img_h * factor))
+    return cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
+
+def keep_image_size_in_check(img):
+    global max_img_width, max_img_height
+    
+    img_h, img_w = img.shape[:2]
+    if img_w > max_img_width:
+        img = set_img_width(img, max_img_width)
+    if img_h > max_img_height:
+        img = set_img_height(img, max_img_height)
+        
+    return img
     
 def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, resize_size, use_legacy_rect_finding=False):
+    global g_img_resize_factor
+    
     warped_inner_rect_cornerss = []
     for i in range(0, len(bottom_right_corner)):
         # Clockwise corner point lists starting at top left for all marked rects
@@ -226,9 +252,8 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
     for other_img_path in input_img_paths[1:]:
         print(f"Building {other_img_path}...")
         other_img = cv2.imread(other_img_path)
-        oimg_h, oimg_w = other_img.shape[:2]
-        if oimg_w > max_img_width:
-            other_img = set_max_img_size(other_img, max_img_width)
+        other_img = resize_img_by_factor(other_img, g_img_resize_factor)
+        # Get homography if possible
         h, hi, marked_img, in_between_rect = find_homography_from_aruco(other_img.copy(), detector, img_w, img_h, use_legacy_rect_finding)
         if h is None:
             print("Didn't find the aruco frame :/")
@@ -301,7 +326,7 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
                 text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
 
 def main():
-    global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
+    global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos, g_img_resize_factor
     
     parser = argparse.ArgumentParser(prog='traindata-creator', description='Creates traindata in bulk for image series on marked planes.')
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
@@ -329,11 +354,12 @@ def main():
     
     # Load first image and preprocess
     img = cv2.imread(input_img_paths[0])
+    l_img_h, l_img_w = img.shape[:2]
+    # Resize image to displayable sizes if necessary (neural network inputs are so small compared to this that it should not matter and is more convenient for displaying and for performance)
+    img = keep_image_size_in_check(img) 
     img_h, img_w = img.shape[:2]
-    if img_w > max_img_width:
-        img = set_max_img_size(img, max_img_width)
-        img_h, img_w = img.shape[:2]
-    print(img_w, img_h)
+    g_img_resize_factor = img_w / l_img_w
+    print(img_w, img_h, g_img_resize_factor)
     detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
     oh, hi, marked_img, in_between_rect = find_homography_from_aruco(img, detector, img_w, img_h, args.legacy_rect_finding)
     if hi is None:
