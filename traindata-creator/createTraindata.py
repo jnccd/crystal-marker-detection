@@ -239,8 +239,17 @@ def keep_image_size_in_check(img):
         
     return img
     
-def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, resize_size, use_legacy_rect_finding=False):
-    global g_img_resize_factor
+def build_traindata(
+    input_img_paths, 
+    detector, 
+    img_w, img_h, 
+    marked_dir, 
+    train_dir, 
+    resize_size, 
+    show_gui=True,
+    use_legacy_rect_finding=False,
+    ):
+    global g_img_resize_factor, top_left_corner, bottom_right_corner
     
     warped_inner_rect_cornerss = []
     for i in range(0, len(bottom_right_corner)):
@@ -269,9 +278,10 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
                 cv2.line(draw_img, ircs[i], ircs[i-3], (0,0,255), 2)
             else:
                 cv2.line(draw_img, ircs[i], ircs[i+1], (0,0,255), 2)
-        cv2.imshow(window_name, draw_img)
         cv2.imwrite(str(marked_dir / ("marked_" + Path(other_img_path).stem + ".png")), draw_img)
-        cv2.waitKey(1)
+        if show_gui:
+            cv2.imshow(window_name, draw_img)
+            cv2.waitKey(1)
         
         # Compute in_between_rect bounds and crop image
         inner_bounds_x, inner_bounds_y, inner_bounds_w, inner_bounds_h, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
@@ -381,6 +391,11 @@ def main():
         persistence_dict = ast.literal_eval(persistence_str)
         top_left_corner = persistence_dict['top_left_corner']
         bottom_right_corner = persistence_dict['bottom_right_corner']
+        
+    if args.no_gui:
+        print("Building...")
+        build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, args.size, use_legacy_rect_finding=args.legacy_rect_finding, show_gui=False)
+        return
     
     # Load window and hook events
     cv2.namedWindow(window_name)
