@@ -1,4 +1,5 @@
 import argparse
+import ast
 import os
 import sys
 import time
@@ -371,6 +372,15 @@ def main():
         return
     warped_img = cv2.warpPerspective(img, hi, (img_w, img_h))
     
+    # Load markers from last execution
+    persistence_file_path = input_dir / ".traindata_markings"
+    if os.path.exists(persistence_file_path) and os.path.isfile(persistence_file_path):
+        with open(persistence_file_path) as f:
+            persistence_str = f.read()
+        persistence_dict = ast.literal_eval(persistence_str)
+        top_left_corner = persistence_dict['top_left_corner']
+        bottom_right_corner = persistence_dict['bottom_right_corner']
+    
     # Load window and hook events
     cv2.namedWindow(window_name)
     cv2.setMouseCallback(window_name, mouseEvent)
@@ -379,6 +389,10 @@ def main():
         # Control logic at 60 FPS
         k = cv2.waitKey(16) & 0xFF
         if k == ord('q'):
+            # Save marked rects
+            with open(persistence_file_path, "w") as text_file:
+                persistence_dict = { 'top_left_corner': top_left_corner, 'bottom_right_corner': bottom_right_corner }
+                text_file.write(str(persistence_dict))
             break
         elif k == ord('c'):
             top_left_corner=[]
