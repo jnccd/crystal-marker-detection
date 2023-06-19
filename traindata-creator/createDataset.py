@@ -99,7 +99,7 @@ def build_od_csv_dataset(td_in_paths, vd_in_paths):
             td_bbox_lines = file.read().split('\n')
         td_bbox_lines.pop()
         for line in td_bbox_lines:
-            traindata_csv_entries.append(f'/{train_dir_name}/{pic_filename},{",".join([x.split(".")[0] for x in line.split(" ")])},marker') # Low Prio TODO: Add more classes
+            traindata_csv_entries.append(f'{str(train_dir / pic_filename)},{",".join([x.split(".")[0] for x in line.split(" ")])},marker') # Low Prio TODO: Add more classes
     with open(traindata_csv_path, "w") as text_file:
         for entry in traindata_csv_entries:
             text_file.write(f"{entry}\n")
@@ -116,11 +116,15 @@ def build_od_csv_dataset(td_in_paths, vd_in_paths):
             vd_bbox_lines = file.read().split('\n')
         vd_bbox_lines.pop()
         for line in vd_bbox_lines:
-            valdata_csv_entries.append(f'/{val_dir_name}/{pic_filename},{",".join([x.split(".")[0] for x in line.split(" ")])},marker') # Low Prio TODO: Add more classes
+            valdata_csv_entries.append(f'{str(val_dir / pic_filename)},{",".join([x.split(".")[0] for x in line.split(" ")])},marker') # Low Prio TODO: Add more classes
     with open(valdata_csv_path, "w") as text_file:
         for entry in valdata_csv_entries:
             text_file.write(f"{entry}\n")
     print(f'Built {i} valdata!')
+    
+    classes_csv_path = dataset_dir / 'classes.csv'
+    with open(classes_csv_path, "w") as text_file:
+        text_file.write(f"marker,0\n")
     
 def build_yolov5_dataset(td_in_paths, vd_in_paths):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
