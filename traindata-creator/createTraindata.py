@@ -276,6 +276,8 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
         inner_bounds_x, inner_bounds_y, inner_bounds_w, inner_bounds_h, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
         crop_img = other_img[inner_bounds_y:inner_bounds_ye, inner_bounds_x:inner_bounds_xe]
         
+        # TODO: Add augmentation code here?
+        
         # Compute bbox coordinate types
         out_img_size = (inner_bounds_w, inner_bounds_h)
         circs = [(x[0] - inner_bounds_x, x[1] - inner_bounds_y) for x in ircs] # cropped-inner-rect-corners
@@ -286,7 +288,6 @@ def build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_d
             circs = mult_by_point(circs, (new_size[1] / inner_bounds_w, new_size[0] / inner_bounds_h))
             circs = add_by_point(circs, (left, top))
             out_img_size = (resize_size, resize_size)
-        # TODO: Add augmentation code here?
         gcircs = unflatten(circs, 4) 
         bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
         # Normalize coordinates
