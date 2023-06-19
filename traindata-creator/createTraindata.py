@@ -251,6 +251,10 @@ def build_traindata(
     ):
     global g_img_resize_factor, top_left_corner, bottom_right_corner
     
+    if len(top_left_corner) == 0:
+        print("No objects marked!")
+        return
+    
     warped_inner_rect_cornerss = []
     for i in range(0, len(bottom_right_corner)):
         # Clockwise corner point lists starting at top left for all marked rects
