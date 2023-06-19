@@ -263,6 +263,8 @@ def build_traindata(
     warped_inner_rect_corners = [item for sublist in warped_inner_rect_cornerss for item in sublist]
     
     # Iterate through other images
+    num_success_imgs = 0
+    num_fail_imgs = 0
     for other_img_path in input_img_paths[1:]:
         print(f"Building {other_img_path}...")
         other_img = cv2.imread(other_img_path)
@@ -272,7 +274,9 @@ def build_traindata(
         if h is None:
             print("Didn't find the aruco frame :/")
             cv2.imwrite(str(marked_dir / ("marked_error_" + Path(other_img_path).stem + ".png")), marked_img)
+            num_fail_imgs+=1
             continue
+        num_success_imgs+=1
         
         # Mark found rectangles in inner_rect
         ircs = apply_homography(warped_inner_rect_corners, h)
@@ -341,6 +345,8 @@ def build_traindata(
         with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
             for bounds in bgncircs:
                 text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
+                
+    print(f"Successfully vs not successfully annotated imgs: {num_success_imgs}/{num_fail_imgs}")
 
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos, g_img_resize_factor
