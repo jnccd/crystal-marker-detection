@@ -59,19 +59,28 @@ def main():
         #cv2.imwrite(str(out_path), np.squeeze(results.render()))
         
         # Write labels
+        # Rasterize Segmentation image
+        sanity_check_image = np.zeros((img_w, img_h) + (3,), dtype = np.uint8)
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
         vd_bbox_lines.pop()
         with open(out_valdata_path / f'{i}_target_output.txt', "w") as text_file:
             for line in vd_bbox_lines:
                 sc, sx, sy, sw, sh = line.split(' ')
-                min_x = float(sx) * img_w
-                min_y = float(sy) * img_h
+                
                 bbox_w = float(sw) * img_w
                 bbox_h = float(sh) * img_h
+                min_x = float(sx) * img_w - bbox_w / 2
+                min_y = float(sy) * img_h - bbox_h / 2
                 max_x = bbox_w + min_x
                 max_y = bbox_h + min_y
+                
                 text_file.write(f"{min_x} {min_y} {max_x} {max_y}\n")
+                
+                verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
+                #print(verts)
+                cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
+                cv2.imwrite(str(out_valdata_path / f'{i}_target_output.png'), sanity_check_image)
                 
         i+=1
 
