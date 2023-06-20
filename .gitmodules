@@ -1,0 +1,2 @@
+[submodule "keras-retinanet"]
+	ignore = dirty
