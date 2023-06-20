@@ -99,8 +99,8 @@ def load_runconfig(runname: str = ""):
     if cur_conf.callbacks is None:
         cur_conf.callbacks = []
     if cur_conf.metrics is None:
-        cur_conf.metrics = [  tf.keras.metrics.BinaryAccuracy(), 
-                        tf.keras.metrics.Recall(),
-                        tf.keras.metrics.Precision(), ]
+        cur_conf.metrics = [    tf.keras.metrics.BinaryAccuracy(), 
+                                tf.keras.metrics.Recall(),
+                                tf.keras.metrics.Precision(),   ]
     
     return cur_conf
