@@ -52,7 +52,7 @@ def analyze(
         network_bboxes = []
         for network_out in pic_network_outs:
             img = cv2.imread(str(network_out), cv2.IMREAD_GRAYSCALE)
-            network_bboxes.append(cluster_boxes_from_grayscale_img(img,network_out,True))
+            network_bboxes.append(cluster_boxes_from_grayscale_img(img))#,network_out,True))
     else:
         # Read bbox outs
         
@@ -76,8 +76,8 @@ def analyze(
                 bboxes_xyxy.append(tuple([float(x) for x in line.split(' ')]))
             network_bboxes.append(bboxes_xyxy)
             
-    print('target_bboxes',target_bboxes)
-    print('network_bboxes',network_bboxes)
+    #print('target_bboxes',target_bboxes)
+    #print('network_bboxes',network_bboxes)
             
     # TODO: Match target and pred bboxes
     
