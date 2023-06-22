@@ -3,6 +3,7 @@ from pathlib import Path
 
 from cmd_tf.training import fit
 from cmd_tf.test import test
+from cmd_tf.analyze import analyze
 
 def main():
     parser = argparse.ArgumentParser(prog='cmd-tf', description='Trains a sample network on the synthetic generated data.')
@@ -13,14 +14,14 @@ def main():
     parser.add_argument('-pm','--print-model',      action='store_true',    default=False,      help='Print the model summary of this run.')
     parser.add_argument('-r','--run',               type=str,               default='default',  help='The name of the run to learn in.')
     parser.add_argument('-mgs','--multi-gpu-strategy', action='store_true', default=False,      help='Use the tensorflow strategy for multi gpu learning.')
-    parser.add_argument('-df','--dataset-folder',   type=str,               default='renders',  help='The trainings data folder name to learn from or build into.')
+    parser.add_argument('-df','--dataset-folder',   type=str,               default='',         help='The trainings data folder name to learn from or build into.')
     parser.add_argument('-da','--data-augmentation',action='store_true',    default=False,      help='If set will enable data augmentation in the dataloaders if implemented.')
     
-    parser.add_argument('-t','--test',              action='store_true',    default=False,      help='Test run config model on other data.')
-    parser.add_argument('-td','--testdata',         type=str,               default='renders',  help='The test data folder name or file name to get the testdata from.')
+    parser.add_argument('-t','--test',              action='store_true',    default=False,      help='Instead of learning, test run config model on other data.')
+    parser.add_argument('-td','--testdata',         type=str,               default='',         help='The test data folder name or file name to get the testdata from.')
     
-    # TODO: Readd this later
-    #parser.add_argument('-av','--analyze-valdata',  action='store_true',    default=False,      help='Instead of learning, compute metrics for already written validation data.')
+    parser.add_argument('-av','--analyze-valdata-from', type=str, default='',
+                        help='Instead of learning, compute metrics for already written validation data. Set to a run name to analyze the validation data of or to a path to a folder containing validation data')
     
     args = parser.parse_args()
     
@@ -28,7 +29,11 @@ def main():
         'data_aug': args.data_augmentation
     }
     
-    if args.test:
+    if args.analyze_valdata_from != '':
+        analyze(
+            args.analyze_valdata_from
+            )
+    elif args.test:
         test(
             run=args.run,
             size=args.size,
