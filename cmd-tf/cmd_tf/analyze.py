@@ -52,7 +52,7 @@ def analyze(
         network_bboxes = []
         for network_out in pic_network_outs:
             img = cv2.imread(str(network_out), cv2.IMREAD_GRAYSCALE)
-            network_bboxes.append(cluster_boxes_from_grayscale_img(img))
+            network_bboxes.append(cluster_boxes_from_grayscale_img(img,network_out,True))
     else:
         # Read bbox outs
         
@@ -85,12 +85,13 @@ def analyze(
     
     # TODO: Write out said metrics
     
-def cluster_boxes_from_grayscale_img(img):
+def cluster_boxes_from_grayscale_img(img, target_out='', print_bbox_img=False):
     global bbox_inflation
     
     bboxes_xyxy = []
     img_h, img_w = img.shape[:2]
-    #sanity_check_img = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
+    if print_bbox_img:
+        sanity_check_img = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
     assert img is not None, "file could not be read!"
     ret,thresh = cv2.threshold(img,127,255,0)
     contours,_ = cv2.findContours(thresh, 1, 2)
@@ -101,7 +102,9 @@ def cluster_boxes_from_grayscale_img(img):
         w += bbox_inflation*2
         h += bbox_inflation*2
         bboxes_xyxy.append((x,y,x+w,y+h))
-        #cv2.rectangle(sanity_check_img,(x,y),(x+w,y+h),(0,255,0),2)
-    #cv2.imwrite(str(target_out)+'.cluster_test.png', sanity_check_img)
+        if print_bbox_img:
+            cv2.rectangle(sanity_check_img,(x,y),(x+w,y+h),(0,255,0),2)
+    if print_bbox_img:
+        cv2.imwrite(str(target_out)+'.cluster_test.png', sanity_check_img)
     
     return bboxes_xyxy
