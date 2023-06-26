@@ -3,6 +3,7 @@ import os
 import math
 import random
 from pathlib import Path
+import sys
 from timeit import default_timer as timer
 from datetime import timedelta
 import cv2
@@ -43,11 +44,14 @@ testdata_path = Path(args.data_path)
 if testdata_path.is_dir():
     print(f'Got dir input')
     testdata_paths = get_files_from_folders_with_ending([testdata_path], (".png", ".jpg"))
-else:
+elif testdata_path.is_file():
     print(f'Got single file input')
     testdata_paths = [testdata_path]
+else:
+    print("What is that input?")
+    sys.exit()
 
-model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True)
+model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
 
 for img_path in testdata_paths:
     img = cv2.imread(str(img_path))
