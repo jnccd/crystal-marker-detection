@@ -36,6 +36,7 @@ def main():
         vd_in_paths = get_files_from_folders_with_ending(vd_folders, '_in.png')
     else:
         full_td_in_paths = get_files_from_folders_with_ending(td_folders, '_in.png')
+        print(len(full_td_in_paths))
         random.Random(42).shuffle(full_td_in_paths)
         
         n = len(full_td_in_paths)
@@ -56,6 +57,8 @@ def main():
         build_yolov5_dataset(td_in_paths, vd_in_paths)
     elif args.type == 'csv':
         build_od_csv_dataset(td_in_paths, vd_in_paths)
+    else:
+        print('Error: Unsupported dataset type!')
    
 def build_seg_dataset(td_in_paths, vd_in_paths):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
