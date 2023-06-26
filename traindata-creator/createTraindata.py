@@ -390,7 +390,7 @@ def build_traindata(
             circs = add_by_point(circs, (left, top))
             out_img_size = (resize_size, resize_size)
         gcircs = unflatten(circs, 4)
-        # TODO: Add augmentation code here? Polygon intersection? Move before resize?
+        # low prio TODO: Move before resize?
         # --- Augment -------------------------------------------------------------------------
         if collage_augment:
             polys = []
