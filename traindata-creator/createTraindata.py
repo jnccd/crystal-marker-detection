@@ -480,7 +480,7 @@ def main():
             if fname.lower().endswith((".png", ".jpg"))
         ]
     )
-    dataseries_dir = root_dir / f'dataseries-{str(args.size)}-{"aug-" if args.augment else ""}{input_dir.name}'
+    dataseries_dir = root_dir / 'dataseries' / f'{str(args.size)}-{"aug-" if args.augment else ""}{input_dir.name}'
     marked_dir = dataseries_dir / 'images_marked'
     if not os.path.exists(marked_dir):
         os.makedirs(marked_dir)
