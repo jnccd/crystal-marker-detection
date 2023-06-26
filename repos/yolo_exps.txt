@@ -1,0 +1,5 @@
+exp: 50 epochs  aug good pics for nn training
+
+exp6: red rects test
+
+exp8: 50 epochs  good pics for nn training
