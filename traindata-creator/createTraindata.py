@@ -1,6 +1,7 @@
 import argparse
 import ast
 import os
+import random
 import sys
 import time
 import cv2
@@ -8,6 +9,7 @@ from pathlib import Path
 from cv2 import Mat
 
 import numpy as np
+from shapely import LineString, Point, Polygon
 
 window_name = "Window"
 
@@ -247,6 +249,7 @@ def build_traindata(
     train_dir, 
     resize_size, 
     show_gui=True,
+    collage_augment=False,
     use_legacy_rect_finding=False,
     ):
     global g_img_resize_factor, top_left_corner, bottom_right_corner
@@ -294,9 +297,6 @@ def build_traindata(
         # Compute in_between_rect bounds and crop image
         inner_bounds_x, inner_bounds_y, inner_bounds_w, inner_bounds_h, inner_bounds_xe, inner_bounds_ye = get_bounds(in_between_rect)
         crop_img = other_img[inner_bounds_y:inner_bounds_ye, inner_bounds_x:inner_bounds_xe]
-        
-        # TODO: Add augmentation code here?
-        
         # Compute bbox coordinate types
         out_img_size = (inner_bounds_w, inner_bounds_h)
         circs = [(x[0] - inner_bounds_x, x[1] - inner_bounds_y) for x in ircs] # cropped-inner-rect-corners
@@ -307,8 +307,71 @@ def build_traindata(
             circs = mult_by_point(circs, (new_size[1] / inner_bounds_w, new_size[0] / inner_bounds_h))
             circs = add_by_point(circs, (left, top))
             out_img_size = (resize_size, resize_size)
-        gcircs = unflatten(circs, 4) 
+        gcircs = unflatten(circs, 4)
+        # TODO: Add augmentation code here? Polygon intersection? Move before resize?
+        # --- Augment -------------------------------------------------------------------------
+        if collage_augment:
+            collage_padding = 5
+            
+            polys = []
+            for gcirc in gcircs:
+                polys.append(Polygon(gcirc))
+            polys = sorted(polys, key=lambda x: x.centroid.y)
+            
+            segments_y = []
+            for i in range(len(polys)-1):
+                upper_poly_lower_bound = polys[i].bounds[3]
+                lower_poly_upper_bound = polys[i+1].bounds[1]
+                y_distance = lower_poly_upper_bound - upper_poly_lower_bound
+                if y_distance > collage_padding:
+                    if len(segments_y) > 0:
+                        last_i = segments_y[-1]['poly_index']
+                        last_end = segments_y[-1]['end']
+                    else:
+                        last_i = 0
+                        last_end = 0
+                    end = int((upper_poly_lower_bound + lower_poly_upper_bound) / 2)
+                    segments_y.append({ 'end': end,
+                                        'beginning': last_end,
+                                        'size': end - last_end,
+                                        'poly_index': i,
+                                        'corners': list(filter(lambda x: x[0][1] > last_end and x[0][1] < end, gcircs)),
+                                        'img': crop_img[last_end:end, 0:out_img_size[0]],
+                                        })
+            last_end = segments_y[-1]['end']
+            end = out_img_size[1]
+            segments_y.append({ 
+                'end': end,
+                'beginning': last_end,
+                'size': end - last_end,
+                'poly_index': len(polys)-1,
+                'corners': list(filter(lambda x: x[0][1] > last_end and x[0][1] < end, gcircs)),
+                'img': crop_img[last_end:end, 0:out_img_size[0]],
+                })
+            
+            #print(segments_y)
+            
+            random.shuffle(segments_y)
+            aug_image = np.zeros(tuple(reversed(out_img_size)) + (3,), dtype = np.uint8)
+            aug_gcircs = []
+            y_pos = 0
+            for seg in segments_y:
+                aug_image[y_pos:y_pos+seg['size'],0:out_img_size[0]] = seg['img']
+                #print('y_pos',y_pos)
+                #print('seg[beginning]',seg['beginning'])
+                for poly_corners in seg['corners']:
+                    aug_gcircs.append([(x[0], x[1] - seg['beginning'] + y_pos) for x in poly_corners])
+                y_pos += seg['size']
+            #cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_aug.png")), aug_image)
+            #print('aug_gcircs',len(aug_gcircs),aug_gcircs)
+            #print('gcircs',len(gcircs),gcircs)
+            crop_img = aug_image
+            gcircs = aug_gcircs
+            circs = [item for sublist in gcircs for item in sublist] # write aug gcircs back into circs
+            
+        # -------------------------------------------------------------------------------------
         bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
+        
         # Normalize coordinates
         ncircs = divide_by_point(circs, out_img_size)
         gncircs = unflatten(ncircs, 4)
@@ -355,6 +418,7 @@ def main():
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
     parser.add_argument('-s','--size', type=int, default=0, help='The width and height of the traindata images.')
     parser.add_argument('-ng','--no-gui', action='store_true', help='Builds traindata immediately based on cached label data.')
+    parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-lirf','--legacy-rect-finding', action='store_true', default=False, help='Use old rect finding based on aruco marker pos relative to the center point.')
     args = parser.parse_args()
     
@@ -368,7 +432,7 @@ def main():
             if fname.lower().endswith((".png", ".jpg"))
         ]
     )
-    dataseries_dir = root_dir / f'dataseries-{str(args.size)}-{input_dir.name}'
+    dataseries_dir = root_dir / f'dataseries-{str(args.size)}-{"aug-" if args.augment else ""}{input_dir.name}'
     marked_dir = dataseries_dir / 'images_marked'
     if not os.path.exists(marked_dir):
         os.makedirs(marked_dir)
@@ -404,7 +468,17 @@ def main():
         
     if args.no_gui:
         print("Building...")
-        build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, args.size, use_legacy_rect_finding=args.legacy_rect_finding, show_gui=False)
+        build_traindata(
+            input_img_paths, 
+            detector, 
+            img_w, img_h, 
+            marked_dir, 
+            train_dir, 
+            args.size, 
+            use_legacy_rect_finding=args.legacy_rect_finding, 
+            collage_augment=args.augment,
+            show_gui=False,
+            )
         return
     
     # Load window and hook events
@@ -429,7 +503,16 @@ def main():
             bottom_right_corner.pop()
         elif k == ord(' '):
             print("Building...")
-            build_traindata(input_img_paths, detector, img_w, img_h, marked_dir, train_dir, args.size, use_legacy_rect_finding=args.legacy_rect_finding)
+            build_traindata(
+                input_img_paths, 
+                detector, 
+                img_w, img_h, 
+                marked_dir, 
+                train_dir, 
+                args.size, 
+                use_legacy_rect_finding=args.legacy_rect_finding,
+                collage_augment=args.augment,
+                )
 
         # Draw
         display_img = warped_img.copy()
