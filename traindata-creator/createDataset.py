@@ -23,7 +23,7 @@ def main():
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     args = parser.parse_args()
     
-    dataset_name = f'dataset-{args.type}-{args.name}'
+    dataset_name = f'{args.type}-{args.name}'
     print(f'Creating {dataset_name}...')
     
     # --- Get Folders ---
@@ -36,7 +36,6 @@ def main():
         vd_in_paths = get_files_from_folders_with_ending(vd_folders, '_in.png')
     else:
         full_td_in_paths = get_files_from_folders_with_ending(td_folders, '_in.png')
-        print(len(full_td_in_paths))
         random.Random(42).shuffle(full_td_in_paths)
         
         n = len(full_td_in_paths)
@@ -48,7 +47,7 @@ def main():
         #print(len(vd_in_paths))
     
     root_dir = Path(__file__).resolve().parent
-    dataset_dir = create_dir_if_not_exists(root_dir / dataset_name, clear=True)
+    dataset_dir = create_dir_if_not_exists(root_dir / 'dataset' / dataset_name, clear=True)
     
     # --- Build dataset ---
     if args.type == 'seg':
