@@ -4,6 +4,7 @@ import os
 import random
 import sys
 import time
+from typing import Literal
 import cv2
 from pathlib import Path
 from cv2 import Mat
@@ -241,6 +242,87 @@ def keep_image_size_in_check(img):
         
     return img
     
+def segment_img_between_poly_labels(img, polys, dim: Literal[0,1], collage_padding = 5):
+    img_h, img_w = img.shape[:2]
+    
+    if dim == 0:
+        polys = sorted(polys, key=lambda x: x.centroid.x)
+    else:
+        polys = sorted(polys, key=lambda x: x.centroid.y)
+        
+    segments = []
+    for i in range(len(polys)-1):
+        upper_poly_lower_bound = polys[i].bounds[2 if dim == 0 else 3]
+        lower_poly_upper_bound = polys[i+1].bounds[0 if dim == 0 else 1]
+        dim_distance = lower_poly_upper_bound - upper_poly_lower_bound
+        if dim_distance > collage_padding:
+            if len(segments) > 0:
+                last_end = segments[-1]['end']
+            else:
+                last_end = 0
+            end = int((upper_poly_lower_bound + lower_poly_upper_bound) / 2)
+            if dim == 0:
+                corners = list(filter(lambda x: x.exterior.coords[0][0] > last_end and x.exterior.coords[0][0] < end, polys))
+                seg_img = img[0:img_w, last_end:end]
+            else:
+                corners = list(filter(lambda x: x.exterior.coords[0][1] > last_end and x.exterior.coords[0][1] < end, polys))
+                seg_img = img[last_end:end, 0:img_h]
+            segments.append({   'end': end,
+                                'beginning': last_end,
+                                'size': end - last_end,
+                                'poly_index': i,
+                                'corners': corners,
+                                'img': seg_img,
+                                })
+    if len(segments) > 0:
+        last_end = segments[-1]['end']
+    else: 
+        last_end = 0
+    end = img_w
+    if dim == 0:
+        corners = list(filter(lambda x: x.exterior.coords[0][0] > last_end and x.exterior.coords[0][0] < end, polys))
+        seg_img = img[0:img_w, last_end:end]
+    else:
+        corners = list(filter(lambda x: x.exterior.coords[0][1] > last_end and x.exterior.coords[0][1] < end, polys))
+        seg_img = img[last_end:end, 0:img_h]
+    segments.append({ 
+        'end': end,
+        'beginning': last_end,
+        'size': end - last_end,
+        'poly_index': len(polys)-1,
+        'corners': corners,
+        'img': seg_img,
+        })
+    
+    return segments
+
+def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
+    aug_image = np.zeros(tuple(reversed(out_img_size_wh)) + (3,), dtype = np.uint8)
+    aug_polys = []
+    pos = 0
+    for seg in segments:
+        if dim == 0: # x
+            aug_image[0:out_img_size_wh[1],pos:pos+seg['size']] = seg['img']
+        else: # y
+            aug_image[pos:pos+seg['size'],0:out_img_size_wh[0]] = seg['img']
+            
+        #print('y_pos',y_pos)
+        #print('seg[beginning]',seg['beginning'])
+        
+        print(dim, 'seg corners',seg['corners'])
+        for poly_corners in seg['corners']:
+            if dim == 0:
+                aug_polys.append(Polygon([(x[0] - seg['beginning'] + pos, x[1]) for x in poly_corners.exterior.coords]))
+            else:
+                aug_polys.append(Polygon([(x[0], x[1] - seg['beginning'] + pos) for x in poly_corners.exterior.coords]))
+        pos += seg['size']
+    
+    #cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_aug.png")), aug_image)
+    #print('aug_gcircs',len(aug_gcircs),aug_gcircs)
+    #print('gcircs',len(gcircs),gcircs)
+    
+    return aug_image, aug_polys
+    
 def build_traindata(
     input_img_paths, 
     detector, 
@@ -311,63 +393,29 @@ def build_traindata(
         # TODO: Add augmentation code here? Polygon intersection? Move before resize?
         # --- Augment -------------------------------------------------------------------------
         if collage_augment:
-            collage_padding = 5
-            
             polys = []
             for gcirc in gcircs:
                 polys.append(Polygon(gcirc))
-            polys = sorted(polys, key=lambda x: x.centroid.y)
             
-            segments_y = []
-            for i in range(len(polys)-1):
-                upper_poly_lower_bound = polys[i].bounds[3]
-                lower_poly_upper_bound = polys[i+1].bounds[1]
-                y_distance = lower_poly_upper_bound - upper_poly_lower_bound
-                if y_distance > collage_padding:
-                    if len(segments_y) > 0:
-                        last_i = segments_y[-1]['poly_index']
-                        last_end = segments_y[-1]['end']
-                    else:
-                        last_i = 0
-                        last_end = 0
-                    end = int((upper_poly_lower_bound + lower_poly_upper_bound) / 2)
-                    segments_y.append({ 'end': end,
-                                        'beginning': last_end,
-                                        'size': end - last_end,
-                                        'poly_index': i,
-                                        'corners': list(filter(lambda x: x[0][1] > last_end and x[0][1] < end, gcircs)),
-                                        'img': crop_img[last_end:end, 0:out_img_size[0]],
-                                        })
-            last_end = segments_y[-1]['end']
-            end = out_img_size[1]
-            segments_y.append({ 
-                'end': end,
-                'beginning': last_end,
-                'size': end - last_end,
-                'poly_index': len(polys)-1,
-                'corners': list(filter(lambda x: x[0][1] > last_end and x[0][1] < end, gcircs)),
-                'img': crop_img[last_end:end, 0:out_img_size[0]],
-                })
-            
-            #print(segments_y)
-            
+            # segment in y first
+            segments_y = segment_img_between_poly_labels(crop_img, polys, 1)
+            for seg_y in segments_y:
+                segs_x = segment_img_between_poly_labels(seg_y['img'], seg_y['corners'], 0)
+                random.shuffle(segs_x)
+                
+                seg_img_h, seg_img_w = seg_y['img'].shape[:2]
+                segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
+                
+                seg_y['img'] = segs_img
+                seg_y['corners'] = segs_polys
             random.shuffle(segments_y)
-            aug_image = np.zeros(tuple(reversed(out_img_size)) + (3,), dtype = np.uint8)
-            aug_gcircs = []
-            y_pos = 0
-            for seg in segments_y:
-                aug_image[y_pos:y_pos+seg['size'],0:out_img_size[0]] = seg['img']
-                #print('y_pos',y_pos)
-                #print('seg[beginning]',seg['beginning'])
-                for poly_corners in seg['corners']:
-                    aug_gcircs.append([(x[0], x[1] - seg['beginning'] + y_pos) for x in poly_corners])
-                y_pos += seg['size']
-            #cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_aug.png")), aug_image)
-            #print('aug_gcircs',len(aug_gcircs),aug_gcircs)
-            #print('gcircs',len(gcircs),gcircs)
-            crop_img = aug_image
-            gcircs = aug_gcircs
+            aug_img, aug_polys = rebuild_img_from_segments(segments_y, out_img_size, 1)
+            
+            crop_img = aug_img
+            gcircs = [[(point[0], point[1]) for point in poly.exterior.coords[:-1]] for poly in aug_polys] # Convert polys back to corner points list
             circs = [item for sublist in gcircs for item in sublist] # write aug gcircs back into circs
+            
+            print(gcircs)
             
         # -------------------------------------------------------------------------------------
         bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
