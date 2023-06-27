@@ -1,5 +1,11 @@
 exp: 50 epochs  aug good pics for nn training
 
+exp2: 100 epochs  640p  good pics v2
+
+exp3: 100 epochs  320p  good pics v2
+
+exp4: 50 epochs  320p  good pics v2
+
 exp6: red rects test
 
 exp8: 50 epochs  good pics for nn training
