@@ -309,7 +309,7 @@ def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
         #print('y_pos',y_pos)
         #print('seg[beginning]',seg['beginning'])
         
-        print(dim, 'seg corners',seg['corners'])
+        #print(dim, 'seg corners',seg['corners'])
         for poly_corners in seg['corners']:
             if dim == 0:
                 aug_polys.append(Polygon([(x[0] - seg['beginning'] + pos, x[1]) for x in poly_corners.exterior.coords]))
@@ -415,7 +415,7 @@ def build_traindata(
             gcircs = [[(point[0], point[1]) for point in poly.exterior.coords[:-1]] for poly in aug_polys] # Convert polys back to corner points list
             circs = [item for sublist in gcircs for item in sublist] # write aug gcircs back into circs
             
-            print(gcircs)
+            #print(gcircs)
             
         # -------------------------------------------------------------------------------------
         bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
