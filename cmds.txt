@@ -3,6 +3,8 @@ python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBi
 python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf/ -ng -s 320 
 python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae/ -ng -s 320 
 python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0/ -ng -s 320
+python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s1 -lirf
+python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s2 -lirf
 
 # Create augemnted traindata series
 python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn -ng -s 320 -lirf -a
@@ -23,6 +25,9 @@ python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-ps
 
 # Train yolo
 python repos/yolov5/train.py --img 320 --batch 16 --epochs 50 --data traindata-creator/dataset/yolov5-red-rects/dataset/yolov5-red-rects.yaml --weights yolov5s.pt
+
+# Test yolo 
+python prototype-yolov5/test_yolo_on_pics.py -m repos/yolov5/runs/train/exp/weights/best.pt -d N:\\Downloads\\Archives\\FabioBilder\\fPCS_on_skin
 
 # Update run outputs
 python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco -bs 8 -e 0
