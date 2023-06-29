@@ -23,7 +23,7 @@ g_img_resize_factor = 1
 
 def mouseEvent(action, x, y, flags, *userdata):
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
-  
+    
     cur_m_pos = (x,y)
     if action == cv2.EVENT_LBUTTONDOWN:
         new_top_left = (x,y)
@@ -38,11 +38,9 @@ def aruco_transform_and_display(corners, ids, rejected, image):
     out_corners = []
     
     if len(corners) > 0:
-		
         ids = ids.flatten()
         
         for (markerCorner, markerID) in zip(corners, ids):
-			
             corners = markerCorner.reshape((4, 2))
             (topLeft, topRight, bottomRight, bottomLeft) = corners
 			
