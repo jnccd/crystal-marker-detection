@@ -272,8 +272,7 @@ def build_traindata(
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_in.png")), crop_img)
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_seg.png")), seg_image)
         with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
-            for rect in gcircs:
-                text_file.write(f"{rect[0]}, {rect[1]}, {rect[2]}, {rect[3]}\n")
+            text_file.write(str(gcircs))
         # xywh formats
         with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
             for bounds in bgcircs:
