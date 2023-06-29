@@ -31,6 +31,9 @@ def mult_by_point(point2D_list, m):
 def divide_by_point(point2D_list, d):
     return [(p[0] / d[0], p[1] / d[1]) for p in point2D_list]
 
+def flatten(list):
+    return [item for sublist in list for item in sublist]
+
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
 
