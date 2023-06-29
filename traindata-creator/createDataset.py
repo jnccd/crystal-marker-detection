@@ -20,8 +20,8 @@ def main():
     parser = argparse.ArgumentParser(prog='dataset-creator', description='Combines multiple dataseries to a dataset.')
     parser.add_argument('-n','--name', type=str, help='Defines the (folder)name of the dataset.')
     parser.add_argument('-t','--type', type=str, help='Defines the type of dataset to be build, "seg" for segmentation, "yolov5" for yolov5 od (object detection), "csv" for csv od.')
-    parser.add_argument('-tf','--traindata-folders', action='append', nargs='+', type=str, help='The folders containing train data, separated by a #.')
-    parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data, separated by a #.')
+    parser.add_argument('-tf','--traindata-folders', action='append', nargs='+', type=str, help='The folders containing train data.')
+    parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     args = parser.parse_args()
     
