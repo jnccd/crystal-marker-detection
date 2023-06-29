@@ -42,7 +42,7 @@ for img in pyr_imgs[4:]:
     #             cv2.rectangle(img_draw, (x,y,1,1), (0,0,white_ratio))
     # cv2.imshow('pyr',img_draw)
     # cv2.waitKey(0)
-            
+    
     # Hough Transform
     img_edges = cv2.Canny(img, 50, 300, None, 5)
     cv2.imshow('pyr',img_edges)
