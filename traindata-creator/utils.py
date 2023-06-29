@@ -4,10 +4,6 @@ from cv2 import Mat
 import numpy as np
 from sympy import Polygon
 
-# globals that I should probably remove
-max_img_width = 1920
-max_img_height = 1080
-
 def apply_homography(point2D_list, h, convert_to_int = True):
     hps = [h @ (p[0], p[1], 1) for p in point2D_list] 
     ps = [(p[0] / p[2], p[1] / p[2]) for p in hps]
@@ -76,8 +72,7 @@ def resize_img_by_factor(img, factor):
     target_size = (int(img_w * factor), int(img_h * factor))
     return cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
 
-def keep_image_size_in_check(img):
-    global max_img_width, max_img_height
+def keep_image_size_in_check(img, max_img_width=1920, max_img_height=1080):
     
     img_h, img_w = img.shape[:2]
     if img_w > max_img_width:
