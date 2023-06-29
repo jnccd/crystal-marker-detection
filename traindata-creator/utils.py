@@ -9,7 +9,7 @@ from sympy import Polygon
 
 # --- Paths -------------------------------------------------------------------------------------------------------------------------
 
-def get_adjacet_files_with_ending(file_paths: list[Path], ending):
+def get_adjacent_files_with_ending(file_paths: list[Path], ending):
     paths = []
     for fpath in file_paths:
         if type(fpath) is str:
