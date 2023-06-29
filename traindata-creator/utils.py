@@ -5,7 +5,7 @@ from typing import Literal
 import cv2
 from cv2 import Mat
 import numpy as np
-from sympy import Polygon
+from shapely import Polygon, transform
 
 # --- Paths -------------------------------------------------------------------------------------------------------------------------
 
@@ -105,6 +105,15 @@ def resize_and_pad(img: Mat, desired_size: int):
     
     return brimg, new_size, top, left
 
+def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon]):
+    img_h, img_w = img.shape[:2]
+    rp_img, new_size, top, left = resize_and_pad(img, desired_size)
+    
+    # Transform polys into new coordinate system
+    polys = [transform(p, lambda x: x * [new_size[1] / img_w, new_size[0] / img_h] + [left, top]) for p in polys]
+    
+    return rp_img, polys
+
 def set_img_width(img, max_width):
     img_h, img_w = img.shape[:2]
     resize_factor = float(max_width) / img_w
@@ -129,6 +138,15 @@ def keep_image_size_in_check(img, max_img_width=1920, max_img_height=1080):
     if img_h > max_img_height:
         img = set_img_height(img, max_img_height)
     return img
+
+def rasterize_polys(draw_img: Mat, polys: list[Polygon]):
+    vertices_per_obj = [[(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]] for poly in polys]
+    
+    for vertices in vertices_per_obj:
+        np_vertices = np.array(vertices)
+        cv2.fillPoly(draw_img, pts=[np_vertices], color=(255, 255, 255))
+        
+    return draw_img
     
 def segment_img_between_poly_labels(img, polys, dim: Literal[0,1], collage_padding = 5):
     img_h, img_w = img.shape[:2]
