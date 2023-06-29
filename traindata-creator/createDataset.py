@@ -29,7 +29,7 @@ def main():
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     args = parser.parse_args()
     
-    dataset_name = f'{args.type}-{args.name}'
+    dataset_name = f'{args.type}-{args.size}-{args.name}'
     print(f'Creating {dataset_name}...')
     
     # --- Get Paths ---
