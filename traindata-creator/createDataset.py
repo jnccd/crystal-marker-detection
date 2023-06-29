@@ -39,7 +39,7 @@ def main():
     td_folders = flatten(args.traindata_folders)
     if args.ratio is None:
         if args.valdata_folders is None:
-            print('I need valdata!')
+            print('Error: I need valdata!')
             sys.exit(1)
         
         vd_folders = flatten(args.valdata_folders)
@@ -71,15 +71,15 @@ def main():
     
     # --- Build dataset ---
     if args.type == 'seg':
-        build_seg_dataset(td_in_paths, vd_in_paths)
+        build_seg_dataset(td_in_imgs, td_target_polys, vd_in_imgs, vd_target_polys)
     elif args.type == 'yolov5':
-        build_yolov5_dataset(td_in_paths, vd_in_paths)
+        build_yolov5_dataset(td_in_imgs, td_target_polys, vd_in_imgs, vd_target_polys)
     elif args.type == 'csv':
-        build_od_csv_dataset(td_in_paths, vd_in_paths)
+        build_od_csv_dataset(td_in_imgs, td_target_polys, vd_in_imgs, vd_target_polys)
     else:
         print('Error: Unsupported dataset type!')
    
-def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target: Polygon, vd_in_imgs: ndarray[uint8], vd_target: ndarray[uint8]):
+def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, vd_in_imgs: ndarray[uint8], vd_target_polys: ndarray[uint8]):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     train_dir = create_dir_if_not_exists(dataset_dir / train_dir_name)
@@ -99,7 +99,7 @@ def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target: Polygon, vd_in_imgs
     print(f'Built {i+1} valdata!')
     
     
-def build_od_csv_dataset(td_in_paths, vd_in_paths):
+def build_od_csv_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, vd_in_imgs: ndarray[uint8], vd_target_polys: ndarray[uint8]):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     # Create train / val dirs
@@ -148,7 +148,7 @@ def build_od_csv_dataset(td_in_paths, vd_in_paths):
     with open(classes_csv_path, "w") as text_file:
         text_file.write(f"marker,0\n")
     
-def build_yolov5_dataset(td_in_paths, vd_in_paths):
+def build_yolov5_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, vd_in_imgs: ndarray[uint8], vd_target_polys: ndarray[uint8]):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     # Create train / val dirs
