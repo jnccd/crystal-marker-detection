@@ -1,4 +1,5 @@
 import argparse
+import ast
 import os
 import random
 import shutil
@@ -6,8 +7,8 @@ import sys
 import time
 import cv2
 from pathlib import Path
-
 from numpy import ndarray, uint8
+from shapely import LineString, Point, Polygon
 
 from utils import *
 
@@ -30,9 +31,12 @@ def main():
     dataset_name = f'{args.type}-{args.name}'
     print(f'Creating {dataset_name}...')
     
-    # --- Get Folders ---
-    td_folders = flatten(args.traindata_folders)
+    # --- Get Paths ---
+    root_dir = Path(__file__).resolve().parent
+    dataset_dir = create_dir_if_not_exists(root_dir / 'dataset' / dataset_name, clear=True)
     
+    # Get td/vd folders
+    td_folders = flatten(args.traindata_folders)
     if args.ratio is None:
         vd_folders = flatten(args.valdata_folders)
         
@@ -47,14 +51,17 @@ def main():
         
         td_in_paths = full_td_in_paths[:nt]
         vd_in_paths = full_td_in_paths[nt:]
-        #print(len(td_in_paths))
-        #print(len(vd_in_paths))
     
-    root_dir = Path(__file__).resolve().parent
-    dataset_dir = create_dir_if_not_exists(root_dir / 'dataset' / dataset_name, clear=True)
+    # Get target labels
+    
     
     # --- Load dataseries ---
-    # TODO
+    td_in_imgs = [cv2.imread(str(p)) for p in td_in_paths]
+    vd_in_imgs = [cv2.imread(str(p)) for p in vd_in_paths]
+    
+    td_target_corners = [ast.literal_eval(read_textfile(p)) for p in td_in_paths]
+    vd_target_corners = [cv2.imread(str(p)) for p in vd_in_paths]
+    
     
     # --- Augment dataseries ---
     # TODO
@@ -69,7 +76,7 @@ def main():
     else:
         print('Error: Unsupported dataset type!')
    
-def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target: ndarray[uint8], vd_in_imgs: ndarray[uint8], vd_target: ndarray[uint8]):
+def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target: Polygon, vd_in_imgs: ndarray[uint8], vd_target: ndarray[uint8]):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     train_dir = create_dir_if_not_exists(dataset_dir / train_dir_name)
@@ -187,33 +194,6 @@ def build_yolov5_dataset(td_in_paths, vd_in_paths):
         text_file.write(f"\n")
         text_file.write(f"names:\n")
         text_file.write(f"    0: marker\n")
-
-def get_adjacet_files_with_ending(file_paths: list[Path], ending):
-    paths = []
-    for fpath in file_paths:
-        if type(fpath) is str:
-            fpath = Path(fpath)
-        paths.append(fpath.with_name(f'{"_".join(fpath.stem.split("_")[:-1])}{ending}'))
-    return paths   
-
-def get_files_from_folders_with_ending(folders, ending):
-    paths = []
-    for folder in folders:
-        paths.extend(sorted(
-            [
-                os.path.join(folder, fname)
-                for fname in os.listdir(folder)
-                if fname.endswith(ending)
-            ]
-        ))
-    return paths
-
-def create_dir_if_not_exists(dir: Path, clear = False):
-    if clear and os.path.isdir(dir):
-        shutil.rmtree(dir)
-    if not os.path.exists(dir):
-        os.makedirs(dir)
-    return dir
 
 if __name__ == '__main__':
     main()

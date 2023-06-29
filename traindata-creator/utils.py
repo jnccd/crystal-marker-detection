@@ -1,8 +1,53 @@
+import os
+from pathlib import Path
+import shutil
 from typing import Literal
 import cv2
 from cv2 import Mat
 import numpy as np
 from sympy import Polygon
+
+# --- Paths -------------------------------------------------------------------------------------------------------------------------
+
+def get_adjacet_files_with_ending(file_paths: list[Path], ending):
+    paths = []
+    for fpath in file_paths:
+        if type(fpath) is str:
+            fpath = Path(fpath)
+        paths.append(fpath.with_name(f'{"_".join(fpath.stem.split("_")[:-1])}{ending}'))
+    return paths   
+
+def get_files_from_folders_with_ending(folders, ending):
+    paths = []
+    for folder in folders:
+        paths.extend(sorted(
+            [
+                os.path.join(folder, fname)
+                for fname in os.listdir(folder)
+                if fname.endswith(ending)
+            ]
+        ))
+    return paths
+
+def create_dir_if_not_exists(dir: Path, clear = False):
+    if clear and os.path.isdir(dir):
+        shutil.rmtree(dir)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    return dir
+
+# --- Textfiles -------------------------------------------------------------------------------------------------------------------------
+
+def read_textfile(tf_path):
+    with open(tf_path, 'r') as file:
+        file_text = file.read()
+    return file_text
+
+def write_textfile(text, tf_path):
+    with open(tf_path, "w") as text_file:
+        text_file.write(text)
+        
+# --- Math -------------------------------------------------------------------------------------------------------------------------
 
 def apply_homography(point2D_list, h, convert_to_int = True):
     hps = [h @ (p[0], p[1], 1) for p in point2D_list] 
@@ -36,6 +81,8 @@ def flatten(list):
 
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
+
+# --- Imgs -------------------------------------------------------------------------------------------------------------------------
 
 def resize_and_pad(img: Mat, desired_size: int):
     old_size = img.shape[:2]
@@ -76,13 +123,11 @@ def resize_img_by_factor(img, factor):
     return cv2.resize(img, target_size, interpolation=cv2.INTER_AREA)
 
 def keep_image_size_in_check(img, max_img_width=1920, max_img_height=1080):
-    
     img_h, img_w = img.shape[:2]
     if img_w > max_img_width:
         img = set_img_width(img, max_img_width)
     if img_h > max_img_height:
         img = set_img_height(img, max_img_height)
-        
     return img
     
 def segment_img_between_poly_labels(img, polys, dim: Literal[0,1], collage_padding = 5):
