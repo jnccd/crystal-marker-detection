@@ -23,6 +23,7 @@ def main():
     parser = argparse.ArgumentParser(prog='dataset-creator', description='Combines multiple dataseries to a dataset.')
     parser.add_argument('-n','--name', type=str, help='Defines the (folder)name of the dataset.')
     parser.add_argument('-t','--type', type=str, help='Defines the type of dataset to be build, "seg" for segmentation, "yolov5" for yolov5 od (object detection), "csv" for csv od.')
+    parser.add_argument('-s','--size', type=int, help='Defines the image size for the dataset.')
     parser.add_argument('-tf','--traindata-folders', action='append', nargs='+', type=str, help='The folders containing train data.')
     parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
@@ -63,8 +64,18 @@ def main():
     # --- Load dataseries ---
     td_in_imgs = [cv2.imread(str(p)) for p in td_in_paths]
     vd_in_imgs = [cv2.imread(str(p)) for p in vd_in_paths]
-    td_target_polys = [[Polygon(*b) for b in ast.literal_eval(read_textfile(p))] for p in td_poly_paths]
-    vd_target_polys = [[Polygon(*b) for b in ast.literal_eval(read_textfile(p))] for p in vd_poly_paths]
+    td_target_polys = [[Polygon(b) for b in ast.literal_eval(read_textfile(p))] for p in td_poly_paths]
+    vd_target_polys = [[Polygon(b) for b in ast.literal_eval(read_textfile(p))] for p in vd_poly_paths]
+    
+    # Resize and pad imgs and labels
+    for i, (td_in_img, td_target_poly) in enumerate(zip(td_in_imgs, td_target_polys)):
+        img, poly = resize_and_pad_with_labels(td_in_img, args.size, td_target_poly)
+        td_in_imgs[i] = img
+        td_target_polys[i] = poly
+    for i, (vd_in_img, vd_target_poly) in enumerate(zip(vd_in_imgs, vd_target_polys)):
+        img, poly = resize_and_pad_with_labels(vd_in_img, args.size, vd_target_poly)
+        vd_in_imgs[i] = img
+        vd_target_polys[i] = poly
     
     # --- Augment dataseries ---
     # TODO
@@ -79,27 +90,31 @@ def main():
     else:
         print('Error: Unsupported dataset type!')
    
-def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, vd_in_imgs: ndarray[uint8], vd_target_polys: ndarray[uint8]):
+def build_seg_dataset(td_in_imgs: Mat, td_target_polys: Polygon, vd_in_imgs: Mat, vd_target_polys: Polygon):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     train_dir = create_dir_if_not_exists(dataset_dir / train_dir_name)
     val_dir = create_dir_if_not_exists(dataset_dir / val_dir_name)
     
-    td_seg_paths = get_adjacent_files_with_ending(td_in_paths, '_seg.png')
-    vd_seg_paths = get_adjacent_files_with_ending(vd_in_paths, '_seg.png')
-    
-    for i, (td_in, td_seg) in enumerate(zip(td_in_paths, td_seg_paths)):
-        shutil.copyfile(td_in, train_dir / f'{i}_in.png')
-        shutil.copyfile(td_seg, train_dir / f'{i}_seg.png')
+    for i, (td_in, td_polys) in enumerate(zip(td_in_imgs, td_target_polys)):
+        cv2.imwrite(str(train_dir / f'{i}_in.png'), td_in)
+        
+        seg_image = np.zeros(td_in.shape[:2] + (3,), dtype = np.uint8)
+        seg_image = rasterize_polys(seg_image, td_polys)
+        
+        cv2.imwrite(str(train_dir / f'{i}_seg.png'), seg_image)
     print(f'Built {i+1} traindata!')
     
-    for i, (vd_in, vd_seg) in enumerate(zip(vd_in_paths, vd_seg_paths)):
-        shutil.copyfile(vd_in, val_dir / f'{i}_in.png')
-        shutil.copyfile(vd_seg, val_dir / f'{i}_seg.png')
+    for i, (vd_in, vd_polys) in enumerate(zip(vd_in_imgs, vd_target_polys)):
+        cv2.imwrite(str(val_dir / f'{i}_in.png'), vd_in)
+        
+        seg_image = np.zeros(vd_in.shape[:2] + (3,), dtype = np.uint8)
+        seg_image = rasterize_polys(seg_image, vd_polys)
+        
+        cv2.imwrite(str(val_dir / f'{i}_seg.png'), seg_image)
     print(f'Built {i+1} valdata!')
     
-    
-def build_od_csv_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, vd_in_imgs: ndarray[uint8], vd_target_polys: ndarray[uint8]):
+def build_od_csv_dataset(td_in_imgs: Mat, td_target_polys: Polygon, vd_in_imgs: Mat, vd_target_polys: Polygon):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     # Create train / val dirs
@@ -148,7 +163,7 @@ def build_od_csv_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, v
     with open(classes_csv_path, "w") as text_file:
         text_file.write(f"marker,0\n")
     
-def build_yolov5_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, vd_in_imgs: ndarray[uint8], vd_target_polys: ndarray[uint8]):
+def build_yolov5_dataset(td_in_imgs: Mat, td_target_polys: Polygon, vd_in_imgs: Mat, vd_target_polys: Polygon):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     # Create train / val dirs
