@@ -57,8 +57,8 @@ def main():
         vd_in_paths = full_td_in_paths[nt:]
     
     # Get target corners paths
-    td_poly_paths = get_adjacet_files_with_ending(td_in_paths, '_vertices.txt')
-    vd_poly_paths = get_adjacet_files_with_ending(vd_in_paths, '_vertices.txt')
+    td_poly_paths = get_adjacent_files_with_ending(td_in_paths, '_vertices.txt')
+    vd_poly_paths = get_adjacent_files_with_ending(vd_in_paths, '_vertices.txt')
     
     # --- Load dataseries ---
     td_in_imgs = [cv2.imread(str(p)) for p in td_in_paths]
@@ -85,8 +85,8 @@ def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, vd_i
     train_dir = create_dir_if_not_exists(dataset_dir / train_dir_name)
     val_dir = create_dir_if_not_exists(dataset_dir / val_dir_name)
     
-    td_seg_paths = get_adjacet_files_with_ending(td_in_paths, '_seg.png')
-    vd_seg_paths = get_adjacet_files_with_ending(vd_in_paths, '_seg.png')
+    td_seg_paths = get_adjacent_files_with_ending(td_in_paths, '_seg.png')
+    vd_seg_paths = get_adjacent_files_with_ending(vd_in_paths, '_seg.png')
     
     for i, (td_in, td_seg) in enumerate(zip(td_in_paths, td_seg_paths)):
         shutil.copyfile(td_in, train_dir / f'{i}_in.png')
@@ -107,8 +107,8 @@ def build_od_csv_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, v
     val_dir = create_dir_if_not_exists(dataset_dir / val_dir_name)
     
     # Get BBox files
-    td_bbox_paths = get_adjacet_files_with_ending(td_in_paths, '_xyxy.txt')
-    vd_bbox_paths = get_adjacet_files_with_ending(vd_in_paths, '_xyxy.txt')
+    td_bbox_paths = get_adjacent_files_with_ending(td_in_paths, '_xyxy.txt')
+    vd_bbox_paths = get_adjacent_files_with_ending(vd_in_paths, '_xyxy.txt')
     
     # Build traindata
     traindata_csv_entries = []
@@ -156,8 +156,8 @@ def build_yolov5_dataset(td_in_imgs: ndarray[uint8], td_target_polys: Polygon, v
     val_dir = create_dir_if_not_exists(dataset_dir / val_dir_name)
     
     # Get BBox files
-    td_bbox_paths = get_adjacet_files_with_ending(td_in_paths, '_cxcywh_n.txt')
-    vd_bbox_paths = get_adjacet_files_with_ending(vd_in_paths, '_cxcywh_n.txt')
+    td_bbox_paths = get_adjacent_files_with_ending(td_in_paths, '_cxcywh_n.txt')
+    vd_bbox_paths = get_adjacent_files_with_ending(vd_in_paths, '_cxcywh_n.txt')
     
     # Get images and label dirs
     train_images_dir = create_dir_if_not_exists(train_dir / 'images')
