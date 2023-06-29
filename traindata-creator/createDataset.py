@@ -8,7 +8,7 @@ import time
 import cv2
 from pathlib import Path
 from numpy import ndarray, uint8
-from shapely import LineString, Point, Polygon
+from shapely import LineString, Point, Polygon, bounds
 
 from utils import *
 
@@ -121,22 +121,16 @@ def build_od_csv_dataset(td_in_imgs: Mat, td_target_polys: Polygon, vd_in_imgs: 
     train_dir = create_dir_if_not_exists(dataset_dir / train_dir_name)
     val_dir = create_dir_if_not_exists(dataset_dir / val_dir_name)
     
-    # Get BBox files
-    td_bbox_paths = get_adjacent_files_with_ending(td_in_paths, '_xyxy.txt')
-    vd_bbox_paths = get_adjacent_files_with_ending(vd_in_paths, '_xyxy.txt')
-    
     # Build traindata
     traindata_csv_entries = []
     traindata_csv_path = dataset_dir / 'train.csv'
-    for i, (td_in, td_bbox) in enumerate(zip(td_in_paths, td_bbox_paths)):
-        pic_filename = f'{i}.png'
-        pic_path = train_dir / pic_filename
-        shutil.copyfile(td_in, pic_path)
-        with open(td_bbox, 'r') as file:
-            td_bbox_lines = file.read().split('\n')
-        td_bbox_lines.pop()
-        for line in td_bbox_lines:
-            traindata_csv_entries.append(f'{str(train_dir / pic_filename)},{",".join([x.split(".")[0] for x in line.split(" ")])},marker') # Low Prio TODO: Add more classes
+    for i, (td_in, td_polys) in enumerate(zip(td_in_imgs, td_target_polys)):
+        pic_path = train_dir / f'{i}.png'
+        cv2.imwrite(str(pic_path), td_in)
+        
+        bboxes = [[int(x) for x in bounds(poly)] for poly in td_polys]
+        for box in bboxes:
+            traindata_csv_entries.append(f'{str(pic_path)},{",".join([str(x) for x in box])},marker') # Low Prio TODO: Add more classes
     with open(traindata_csv_path, "w") as text_file:
         for entry in traindata_csv_entries:
             text_file.write(f"{entry}\n")
@@ -145,15 +139,13 @@ def build_od_csv_dataset(td_in_imgs: Mat, td_target_polys: Polygon, vd_in_imgs: 
     # Build valdata
     valdata_csv_entries = []
     valdata_csv_path = dataset_dir / 'val.csv'
-    for i, (vd_in, vd_bbox) in enumerate(zip(vd_in_paths, vd_bbox_paths)):
-        pic_filename = f'{i}.png'
-        pic_path = val_dir / pic_filename
-        shutil.copyfile(vd_in, pic_path)
-        with open(vd_bbox, 'r') as file:
-            vd_bbox_lines = file.read().split('\n')
-        vd_bbox_lines.pop()
-        for line in vd_bbox_lines:
-            valdata_csv_entries.append(f'{str(val_dir / pic_filename)},{",".join([x.split(".")[0] for x in line.split(" ")])},marker') # Low Prio TODO: Add more classes
+    for i, (vd_in, vd_polys) in enumerate(zip(vd_in_imgs, vd_target_polys)):
+        pic_path = val_dir / f'{i}.png'
+        cv2.imwrite(str(pic_path), vd_in)
+        
+        bboxes = [[int(x) for x in bounds(poly)] for poly in vd_polys]
+        for box in bboxes:
+            valdata_csv_entries.append(f'{str(pic_path)},{",".join([str(x) for x in box])},marker') # Low Prio TODO: Add more classes
     with open(valdata_csv_path, "w") as text_file:
         for entry in valdata_csv_entries:
             text_file.write(f"{entry}\n")
