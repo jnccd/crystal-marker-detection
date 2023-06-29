@@ -38,6 +38,10 @@ def main():
     # Get td/vd folders
     td_folders = flatten(args.traindata_folders)
     if args.ratio is None:
+        if args.valdata_folders is None:
+            print('I need valdata!')
+            sys.exit(1)
+        
         vd_folders = flatten(args.valdata_folders)
         
         td_in_paths = get_files_from_folders_with_ending(td_folders, '_in.png')
@@ -52,16 +56,15 @@ def main():
         td_in_paths = full_td_in_paths[:nt]
         vd_in_paths = full_td_in_paths[nt:]
     
-    # Get target labels
-    
+    # Get target corners paths
+    td_poly_paths = get_adjacet_files_with_ending(td_in_paths, '_vertices.txt')
+    vd_poly_paths = get_adjacet_files_with_ending(vd_in_paths, '_vertices.txt')
     
     # --- Load dataseries ---
     td_in_imgs = [cv2.imread(str(p)) for p in td_in_paths]
     vd_in_imgs = [cv2.imread(str(p)) for p in vd_in_paths]
-    
-    td_target_corners = [ast.literal_eval(read_textfile(p)) for p in td_in_paths]
-    vd_target_corners = [cv2.imread(str(p)) for p in vd_in_paths]
-    
+    td_target_polys = [[Polygon(*b) for b in ast.literal_eval(read_textfile(p))] for p in td_poly_paths]
+    vd_target_polys = [[Polygon(*b) for b in ast.literal_eval(read_textfile(p))] for p in vd_poly_paths]
     
     # --- Augment dataseries ---
     # TODO
