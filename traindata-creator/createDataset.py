@@ -7,6 +7,8 @@ import time
 import cv2
 from pathlib import Path
 
+from numpy import ndarray, uint8
+
 from utils import *
 
 train_dir_name = 'train'
@@ -51,6 +53,12 @@ def main():
     root_dir = Path(__file__).resolve().parent
     dataset_dir = create_dir_if_not_exists(root_dir / 'dataset' / dataset_name, clear=True)
     
+    # --- Load dataseries ---
+    # TODO
+    
+    # --- Augment dataseries ---
+    # TODO
+    
     # --- Build dataset ---
     if args.type == 'seg':
         build_seg_dataset(td_in_paths, vd_in_paths)
@@ -61,7 +69,7 @@ def main():
     else:
         print('Error: Unsupported dataset type!')
    
-def build_seg_dataset(td_in_paths, vd_in_paths):
+def build_seg_dataset(td_in_imgs: ndarray[uint8], td_target: ndarray[uint8], vd_in_imgs: ndarray[uint8], vd_target: ndarray[uint8]):
     global train_dir_name, val_dir_name, dataset_name, dataset_dir
     
     train_dir = create_dir_if_not_exists(dataset_dir / train_dir_name)
