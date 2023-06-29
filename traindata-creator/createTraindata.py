@@ -226,40 +226,40 @@ def build_traindata(
             circs = add_by_point(circs, (left, top))
             out_img_size = (resize_size, resize_size)
         gcircs = unflatten(circs, 4)
-        # low prio TODO: Move before resize?
-        # --- Augment -------------------------------------------------------------------------
-        if collage_augment:
-            polys = []
-            for gcirc in gcircs:
-                polys.append(Polygon(gcirc))
+        # # low prio TO/DO: Move before resize?
+        # # --- Augment -------------------------------------------------------------------------
+        # if collage_augment:
+        #     polys = []
+        #     for gcirc in gcircs:
+        #         polys.append(Polygon(gcirc))
             
-            # segment in y first
-            segments_y = segment_img_between_poly_labels(crop_img, polys, 1)
-            for seg_y in segments_y:
-                segs_x = segment_img_between_poly_labels(seg_y['img'], seg_y['corners'], 0)
-                random.shuffle(segs_x)
+        #     # segment in y first
+        #     segments_y = segment_img_between_poly_labels(crop_img, polys, 1)
+        #     for seg_y in segments_y:
+        #         segs_x = segment_img_between_poly_labels(seg_y['img'], seg_y['corners'], 0)
+        #         random.shuffle(segs_x)
                 
-                seg_img_h, seg_img_w = seg_y['img'].shape[:2]
-                segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
+        #         seg_img_h, seg_img_w = seg_y['img'].shape[:2]
+        #         segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
                 
-                seg_y['img'] = segs_img
-                seg_y['corners'] = segs_polys
-            random.shuffle(segments_y)
-            aug_img, aug_polys = rebuild_img_from_segments(segments_y, out_img_size, 1)
+        #         seg_y['img'] = segs_img
+        #         seg_y['corners'] = segs_polys
+        #     random.shuffle(segments_y)
+        #     aug_img, aug_polys = rebuild_img_from_segments(segments_y, out_img_size, 1)
             
-            crop_img = aug_img
-            gcircs = [[(point[0], point[1]) for point in poly.exterior.coords[:-1]] for poly in aug_polys] # Convert polys back to corner points list
-            circs = [item for sublist in gcircs for item in sublist] # write aug gcircs back into circs
+        #     crop_img = aug_img
+        #     gcircs = [[(point[0], point[1]) for point in poly.exterior.coords[:-1]] for poly in aug_polys] # Convert polys back to corner points list
+        #     circs = [item for sublist in gcircs for item in sublist] # write aug gcircs back into circs
             
-            #print(gcircs)
+        #     #print(gcircs)
             
-        # -------------------------------------------------------------------------------------
-        bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
+        # # -------------------------------------------------------------------------------------
+        # bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
         
         # Normalize coordinates
-        ncircs = divide_by_point(circs, out_img_size)
-        gncircs = unflatten(ncircs, 4)
-        bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
+        # ncircs = divide_by_point(circs, out_img_size)
+        # gncircs = unflatten(ncircs, 4)
+        # bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
         # Rasterize Segmentation image
         seg_image = np.zeros(tuple(reversed(out_img_size)) + (3,), dtype = np.uint8)
         lircs = [[int(x[0]), int(x[1])] for x in circs]
@@ -273,24 +273,24 @@ def build_traindata(
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_seg.png")), seg_image)
         with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
             text_file.write(str(gcircs))
-        # xywh formats
-        with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
-            for bounds in bgcircs:
-                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
-        with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
-            for bounds in bgncircs:
-                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
-        # xyxy formats
-        with open(train_dir / (Path(other_img_path).stem + "_xyxy.txt"), "w") as text_file:
-            for bounds in bgcircs:
-                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
-        with open(train_dir / (Path(other_img_path).stem + "_xyxy_n.txt"), "w") as text_file:
-            for bounds in bgncircs:
-                text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
-        # center xy for coco
-        with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
-            for bounds in bgncircs:
-                text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
+        # # xywh formats
+        # with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
+        #     for bounds in bgcircs:
+        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+        # with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
+        #     for bounds in bgncircs:
+        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
+        # # xyxy formats
+        # with open(train_dir / (Path(other_img_path).stem + "_xyxy.txt"), "w") as text_file:
+        #     for bounds in bgcircs:
+        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
+        # with open(train_dir / (Path(other_img_path).stem + "_xyxy_n.txt"), "w") as text_file:
+        #     for bounds in bgncircs:
+        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
+        # # center xy for coco
+        # with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
+        #     for bounds in bgncircs:
+        #         text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
                 
     print(f"Successfully vs not successfully annotated imgs: {num_success_imgs}/{num_fail_imgs}")
 
@@ -301,7 +301,7 @@ def main():
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
     parser.add_argument('-s','--size', type=int, default=0, help='The width and height of the traindata images.')
     parser.add_argument('-ng','--no-gui', action='store_true', help='Builds traindata immediately based on cached label data.')
-    parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
+    # parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-lirf','--legacy-rect-finding', action='store_true', default=False, help='Use old rect finding based on aruco marker pos relative to the center point.')
     args = parser.parse_args()
     
