@@ -167,7 +167,6 @@ def build_traindata(
     train_dir, 
     resize_size, 
     show_gui=True,
-    collage_augment=False,
     use_legacy_rect_finding=False,
     ):
     global g_img_resize_factor, top_left_corner, bottom_right_corner
@@ -301,7 +300,6 @@ def main():
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
     parser.add_argument('-s','--size', type=int, default=0, help='The width and height of the traindata images.')
     parser.add_argument('-ng','--no-gui', action='store_true', help='Builds traindata immediately based on cached label data.')
-    # parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-lirf','--legacy-rect-finding', action='store_true', default=False, help='Use old rect finding based on aruco marker pos relative to the center point.')
     args = parser.parse_args()
     
@@ -315,7 +313,7 @@ def main():
             if fname.lower().endswith((".png", ".jpg"))
         ]
     )
-    dataseries_dir = root_dir / 'dataseries' / f'{str(args.size)}-{"aug-" if args.augment else ""}{input_dir.name}'
+    dataseries_dir = root_dir / 'dataseries' / f'{str(args.size)}-{input_dir.name}'
     marked_dir = dataseries_dir / 'images_marked'
     if not os.path.exists(marked_dir):
         os.makedirs(marked_dir)
@@ -359,7 +357,6 @@ def main():
             train_dir, 
             args.size, 
             use_legacy_rect_finding=args.legacy_rect_finding, 
-            collage_augment=args.augment,
             show_gui=False,
             )
         return
@@ -394,7 +391,6 @@ def main():
                 train_dir, 
                 args.size, 
                 use_legacy_rect_finding=args.legacy_rect_finding,
-                collage_augment=args.augment,
                 )
 
         # Draw
