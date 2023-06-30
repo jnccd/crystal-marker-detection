@@ -174,13 +174,14 @@ def segment_img_between_poly_labels(img, polys, dim: Literal[0,1], collage_paddi
             else:
                 corners = list(filter(lambda x: x.exterior.coords[0][1] > last_end and x.exterior.coords[0][1] < end, polys))
                 seg_img = img[last_end:end, 0:img_h]
-            segments.append({   'end': end,
-                                'beginning': last_end,
-                                'size': end - last_end,
-                                'poly_index': i,
-                                'corners': corners,
-                                'img': seg_img,
-                                })
+            segments.append({   
+                'end': end,
+                'beginning': last_end,
+                'size': end - last_end,
+                'poly_index': i,
+                'corners': corners,
+                'img': seg_img,
+                })
     if len(segments) > 0:
         last_end = segments[-1]['end']
     else: 
