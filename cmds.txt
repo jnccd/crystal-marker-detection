@@ -9,9 +9,10 @@ python traindata-creator/createArucoFrameDataseries.py -if N:\\Downloads\\Archiv
 
 # Create datasets from traindata series
 python traindata-creator/createDataset.py -n red-rects -t seg -tf traindata-creator/dataseries/0-webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae/images_traindata/ traindata-creator/dataseries/0-webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0/images_traindata/ -vf traindata-creator/dataseries/0-webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf/images_traindata/
-python traindata-creator/createDataset.py -n good-pics-ratio-val -t yolov5 -r 0.15 -s 640 -a -aim 4 -tf traindata-creator/dataseries/0-the_good_pics_for_nn/images_traindata/
-python traindata-creator/createDataset.py -n good-pics-ratio-val -t csv -r 0.15 -s 640 -a -aim 4 -tf traindata-creator/dataseries/0-the_good_pics_for_nn/images_traindata/
-python traindata-creator/createDataset.py -n good-pics-v2 -t yolov5 -r 0.1 -s 640 -a -aim 4 -tf traindata-creator/dataseries/0-the_good_pics_for_nn2_s1/images_traindata/ traindata-creator/dataseries/0-the_good_pics_for_nn2_s2/images_traindata/
+python traindata-creator/createDataset.py -n good-pics-ratio-val -t yolov5 -r 0.2 -s 640 -a -aim 4 -tf traindata-creator/dataseries/0-the_good_pics_for_nn/images_traindata/
+python traindata-creator/createDataset.py -n good-pics-ratio-val -t csv -r 0.2 -s 640 -a -aim 4 -tf traindata-creator/dataseries/0-the_good_pics_for_nn/images_traindata/
+python traindata-creator/createDataset.py -n good-pics-v2 -t yolov5 -r 0.2 -s 640 -a -aim 4 -tf traindata-creator/dataseries/0-the_good_pics_for_nn2_s1/images_traindata/ traindata-creator/dataseries/0-the_good_pics_for_nn2_s2/images_traindata/
+python traindata-creator/createDataset.py -n good-pics-v2 -t seg -r 0.2 -s 640 -a -aim 4 -tf traindata-creator/dataseries/0-the_good_pics_for_nn2_s1/images_traindata/ traindata-creator/dataseries/0-the_good_pics_for_nn2_s2/images_traindata/
 
 # Ensample run using cmd_tf
 python -m cmd_tf -df traindata-creator/dataset/seg-red-rects/ -r xunet-red-rects -e 75
