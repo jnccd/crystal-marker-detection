@@ -1,11 +1,11 @@
 # Create traindata series
-python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn -ng -s 320 -lirf
-python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf/ -ng -s 320 
-python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae/ -ng -s 320 
-python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0/ -ng -s 320
+python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn -ng -lirf
+python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf/ -ng
+python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae/ -ng
+python traindata-creator/createTraindata.py -if traindata-creator/webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0/ -ng
 python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s1 -lirf
 python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s2 -lirf
-python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s1 -ng -s 640 -lirf && python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s2 -ng -s 640 -lirf
+python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s1 -ng -lirf && python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s2 -ng -lirf
 
 # Create augemnted traindata series
 python traindata-creator/createTraindata.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn -ng -s 320 -lirf -a
