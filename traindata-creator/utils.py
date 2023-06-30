@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import random
 import shutil
 from typing import Literal
 import cv2
@@ -228,3 +229,18 @@ def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
     #print('gcircs',len(gcircs),gcircs)
     
     return aug_image, aug_polys
+
+def smart_grid_shuffle(img, polys, img_size_wh):
+    # segment in y first
+    segments_y = segment_img_between_poly_labels(img, polys, 1)
+    for seg_y in segments_y:
+        segs_x = segment_img_between_poly_labels(seg_y['img'], seg_y['corners'], 0)
+        random.shuffle(segs_x)
+        
+        seg_img_h, seg_img_w = seg_y['img'].shape[:2]
+        segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
+        
+        seg_y['img'] = segs_img
+        seg_y['corners'] = segs_polys
+    random.shuffle(segments_y)
+    return rebuild_img_from_segments(segments_y, img_size_wh, 1)
