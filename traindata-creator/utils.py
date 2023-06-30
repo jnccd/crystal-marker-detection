@@ -85,36 +85,6 @@ def unflatten(list, chunk_size):
 
 # --- Imgs -------------------------------------------------------------------------------------------------------------------------
 
-def resize_and_pad(img: Mat, desired_size: int):
-    old_size = img.shape[:2]
-
-    ratio = float(desired_size)/max(old_size)
-    new_size = tuple([int(x*ratio) for x in old_size])
-
-    # new_size should be in (width, height) format
-
-    rimg = cv2.resize(img, (new_size[1], new_size[0]))
-
-    delta_w = desired_size - new_size[1]
-    delta_h = desired_size - new_size[0]
-    top, bottom = delta_h//2, delta_h-(delta_h//2)
-    left, right = delta_w//2, delta_w-(delta_w//2)
-
-    color = [0, 0, 0]
-    brimg = cv2.copyMakeBorder(rimg, top, bottom, left, right, cv2.BORDER_CONSTANT,
-        value=color)
-    
-    return brimg, new_size, top, left
-
-def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon]):
-    img_h, img_w = img.shape[:2]
-    rp_img, new_size, top, left = resize_and_pad(img, desired_size)
-    
-    # Transform polys into new coordinate system
-    polys = [transform(p, lambda x: x * [new_size[1] / img_w, new_size[0] / img_h] + [left, top]) for p in polys]
-    
-    return rp_img, polys
-
 def set_img_width(img, max_width):
     img_h, img_w = img.shape[:2]
     resize_factor = float(max_width) / img_w
@@ -139,6 +109,38 @@ def keep_image_size_in_check(img, max_img_width=1920, max_img_height=1080):
     if img_h > max_img_height:
         img = set_img_height(img, max_img_height)
     return img
+
+def resize_and_pad(img: Mat, desired_size: int):
+    old_size = img.shape[:2]
+
+    ratio = float(desired_size)/max(old_size)
+    new_size = tuple([int(x*ratio) for x in old_size])
+
+    # new_size should be in (width, height) format
+
+    rimg = cv2.resize(img, (new_size[1], new_size[0]))
+
+    delta_w = desired_size - new_size[1]
+    delta_h = desired_size - new_size[0]
+    top, bottom = delta_h//2, delta_h-(delta_h//2)
+    left, right = delta_w//2, delta_w-(delta_w//2)
+
+    color = [0, 0, 0]
+    brimg = cv2.copyMakeBorder(rimg, top, bottom, left, right, cv2.BORDER_CONSTANT,
+        value=color)
+    
+    return brimg, new_size, top, left
+
+# --- Traindata imgs -------------------------------------------------------------------------------------------------------------------------
+
+def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon]):
+    img_h, img_w = img.shape[:2]
+    rp_img, new_size, top, left = resize_and_pad(img, desired_size)
+    
+    # Transform polys into new coordinate system
+    polys = [transform(p, lambda x: x * [new_size[1] / img_w, new_size[0] / img_h] + [left, top]) for p in polys]
+    
+    return rp_img, polys
 
 def rasterize_polys(draw_img: Mat, polys: list[Polygon]):
     vertices_per_obj = [[(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]] for poly in polys]
@@ -244,3 +246,11 @@ def smart_grid_shuffle(img, polys, img_size_wh):
         seg_y['corners'] = segs_polys
     random.shuffle(segments_y)
     return rebuild_img_from_segments(segments_y, img_size_wh, 1)
+
+def homogeneous_mat_transform(img, polys, img_size_wh, M: Mat):
+    
+    img = cv2.warpPerspective(img, M, img_size_wh)
+    
+    polys = [transform(p, lambda x: np.array(apply_homography(x, M, convert_to_int=False))) for p in polys]
+    
+    return img, polys
