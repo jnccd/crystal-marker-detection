@@ -246,11 +246,11 @@ def smart_grid_shuffle(img, polys, img_size_wh):
     random.shuffle(segments_y)
     return rebuild_img_from_segments(segments_y, img_size_wh, 1)
 
-def homogeneous_mat_transform(img, polys, img_size_wh, M: Mat):
+def homogeneous_mat_transform(img, polys, img_size_wh, M: Mat, background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
     if M.shape[0] == 2:
         M = np.vstack([M, np.array([0, 0, 1])])
     
-    img = cv2.warpPerspective(img, M, img_size_wh)
+    img = cv2.warpPerspective(img, M, img_size_wh, borderMode=border_type, borderValue=background_color)
     polys = [transform(p, lambda x: np.array(apply_homography(x, M, convert_to_int=False))) for p in polys]
     
     return img, polys
