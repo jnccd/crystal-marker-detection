@@ -87,7 +87,14 @@ def main():
         
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
             for m in range(args.augment_img_multiplier):
-                aug_img, aug_polys = smart_grid_shuffle(in_img, target_poly, (args.size, args.size))
+                img_size = (args.size, args.size)
+                
+                aug_img, aug_polys = smart_grid_shuffle(in_img, target_poly, img_size)
+                
+                M = cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(0, 180), 1)
+                M = np.vstack([M, np.array([0, 0, 1])])
+                aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, M)
+                
                 aug_in_imgs.append(aug_img)
                 aug_target_polys.append(aug_polys)
                 
