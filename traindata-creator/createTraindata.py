@@ -300,6 +300,8 @@ def main():
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
     parser.add_argument('-s','--size', type=int, default=0, help='The width and height of the traindata images.')
     parser.add_argument('-ng','--no-gui', action='store_true', help='Builds traindata immediately based on cached label data.')
+    parser.add_argument('-pmw','--preresize-max-width', type=int, default=1920, help='The maximum width for input images.')
+    parser.add_argument('-pmh','--preresize-max-height', type=int, default=1080, help='The maximum height for input images.')
     parser.add_argument('-lirf','--legacy-rect-finding', action='store_true', default=False, help='Use old rect finding based on aruco marker pos relative to the center point.')
     args = parser.parse_args()
     
@@ -323,11 +325,14 @@ def main():
     
     # Load first image and preprocess
     img = cv2.imread(input_img_paths[0])
-    l_img_h, l_img_w = img.shape[:2]
-    # Resize image to displayable sizes if necessary (neural network inputs are so small compared to this that it should not matter and is more convenient for displaying and for performance)
-    img = keep_image_size_in_check(img) 
-    img_h, img_w = img.shape[:2]
-    g_img_resize_factor = img_w / l_img_w
+    if args.preresize_max_width > 0 or args.preresize_max_height > 0:
+        # Resize image to displayable sizes if necessary (neural network inputs are so small compared to this that it should not matter and is more convenient for displaying and for performance)
+        l_img_h, l_img_w = img.shape[:2]
+        img = keep_image_size_in_check(img, args.preresize_max_width, args.preresize_max_height) 
+        img_h, img_w = img.shape[:2]
+        g_img_resize_factor = img_w / l_img_w
+    else:
+        img_h, img_w = img.shape[:2]
     print(img_w, img_h, g_img_resize_factor)
     detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
     oh, hi, marked_img, in_between_rect = find_homography_from_aruco(img, detector, img_w, img_h, args.legacy_rect_finding)
