@@ -162,10 +162,6 @@ def build_yolov5_dataset(td_in_imgs: Mat, td_target_polys: Polygon, vd_in_imgs: 
     train_dir = create_dir_if_not_exists(dataset_dir / train_dir_name)
     val_dir = create_dir_if_not_exists(dataset_dir / val_dir_name)
     
-    # Get BBox files
-    td_bbox_paths = get_adjacent_files_with_ending(td_in_paths, '_cxcywh_n.txt')
-    vd_bbox_paths = get_adjacent_files_with_ending(vd_in_paths, '_cxcywh_n.txt')
-    
     # Get images and label dirs
     train_images_dir = create_dir_if_not_exists(train_dir / 'images')
     train_labels_dir = create_dir_if_not_exists(train_dir / 'labels')
@@ -173,25 +169,35 @@ def build_yolov5_dataset(td_in_imgs: Mat, td_target_polys: Polygon, vd_in_imgs: 
     val_labels_dir = create_dir_if_not_exists(val_dir / 'labels')
     
     # Build traindata
-    for i, (td_in, td_bbox) in enumerate(zip(td_in_paths, td_bbox_paths)):
-        shutil.copyfile(td_in, train_images_dir / f'{i}.png')
-        with open(td_bbox, 'r') as file:
-            td_bbox_lines = file.read().split('\n')
-        td_bbox_lines.pop()
+    for i, (td_in, td_polys) in enumerate(zip(td_in_imgs, td_target_polys)):
+        img_h, img_w = td_in.shape[:2]
+        pic_path = train_images_dir / f'{i}.png'
+        cv2.imwrite(str(pic_path), td_in)
+        
+        xyxy_bboxes = [bounds(poly) for poly in td_polys]
+        xywh_bboxes = [[bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]] for bbox in xyxy_bboxes]
+        xywh_n_bboxes = [[bbox[0] / img_w, bbox[1] / img_h, bbox[2] / img_w, bbox[3] / img_h] for bbox in xywh_bboxes]
+        cxcywh_n_bboxes = [[bbox[0] + bbox[2]/2, bbox[1] + bbox[3]/2, bbox[2], bbox[3]] for bbox in xywh_n_bboxes]
+        
         with open(train_labels_dir / f'{i}.txt', "w") as text_file:
-            for line in td_bbox_lines:
-                text_file.write(f"0 {line}\n")
+            for bbox in cxcywh_n_bboxes:
+                text_file.write(f"0 {bbox[0]} {bbox[1]} {bbox[2]} {bbox[3]}\n")
     print(f'Built {i} traindata!')
     
     # Build valdata
-    for i, (vd_in, vd_bbox) in enumerate(zip(vd_in_paths, vd_bbox_paths)):
-        shutil.copyfile(vd_in, val_images_dir / f'{i}.png')
-        with open(vd_bbox, 'r') as file:
-            vd_bbox_lines = file.read().split('\n')
-        vd_bbox_lines.pop()
+    for i, (vd_in, vd_polys) in enumerate(zip(vd_in_imgs, vd_target_polys)):
+        img_h, img_w = vd_in.shape[:2]
+        pic_path = val_images_dir / f'{i}.png'
+        cv2.imwrite(str(pic_path), vd_in)
+        
+        xyxy_bboxes = [bounds(poly) for poly in vd_polys]
+        xywh_bboxes = [[bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]] for bbox in xyxy_bboxes]
+        xywh_n_bboxes = [[bbox[0] / img_w, bbox[1] / img_h, bbox[2] / img_w, bbox[3] / img_h] for bbox in xywh_bboxes]
+        cxcywh_n_bboxes = [[bbox[0] + bbox[2]/2, bbox[1] + bbox[3]/2, bbox[2], bbox[3]] for bbox in xywh_n_bboxes]
+        
         with open(val_labels_dir / f'{i}.txt', "w") as text_file:
-            for line in vd_bbox_lines:
-                text_file.write(f"0 {line}\n")
+            for bbox in cxcywh_n_bboxes:
+                text_file.write(f"0 {bbox[0]} {bbox[1]} {bbox[2]} {bbox[3]}\n")
     print(f'Built {i} valdata!')
     
     # Build yolov5 yaml
