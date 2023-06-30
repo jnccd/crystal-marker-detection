@@ -16,6 +16,7 @@ from utils import *
 data_groups = ['train', 'val']
 dataset_name = ''
 dataset_dir = None
+background_color = (114, 114, 114)
 
 def main():
     global data_groups, dataset_name, dataset_dir
@@ -30,6 +31,10 @@ def main():
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-aim','--augment-img-multiplier', type=int, default=1, help='When augmenting multiply all images since they are augmented randomly to create more variation.')
     args = parser.parse_args()
+    
+    if args.size is None:
+        print('Please specify a size')
+        sys.exit(1)
     
     dataset_name = f'{args.type}-{args.size}{"-aug" if args.augment else ""}-{args.name}'
     print(f'Creating {dataset_name}...')
@@ -75,7 +80,7 @@ def main():
     # Resize and pad imgs and labels
     for group in data_groups:
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[group], target_polys[group])):
-            img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly)
+            img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, cv2.BORDER_REPLICATE)
             in_imgs[group][i] = img
             target_polys[group][i] = poly
     

@@ -110,7 +110,7 @@ def keep_image_size_in_check(img, max_img_width=1920, max_img_height=1080):
         img = set_img_height(img, max_img_height)
     return img
 
-def resize_and_pad(img: Mat, desired_size: int):
+def resize_and_pad(img: Mat, desired_size: int, background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
     old_size = img.shape[:2]
 
     ratio = float(desired_size)/max(old_size)
@@ -125,17 +125,15 @@ def resize_and_pad(img: Mat, desired_size: int):
     top, bottom = delta_h//2, delta_h-(delta_h//2)
     left, right = delta_w//2, delta_w-(delta_w//2)
 
-    color = [0, 0, 0]
-    brimg = cv2.copyMakeBorder(rimg, top, bottom, left, right, cv2.BORDER_CONSTANT,
-        value=color)
+    brimg = cv2.copyMakeBorder(rimg, top, bottom, left, right, border_type, value=background_color)
     
     return brimg, new_size, top, left
 
 # --- Traindata imgs -------------------------------------------------------------------------------------------------------------------------
 
-def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon]):
+def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon], background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
     img_h, img_w = img.shape[:2]
-    rp_img, new_size, top, left = resize_and_pad(img, desired_size)
+    rp_img, new_size, top, left = resize_and_pad(img, desired_size, background_color, border_type)
     
     # Transform polys into new coordinate system
     polys = [transform(p, lambda x: x * [new_size[1] / img_w, new_size[0] / img_h] + [left, top]) for p in polys]
