@@ -27,9 +27,10 @@ def main():
     parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
+    parser.add_argument('-aim','--augment-img-multiplier', type=int, default=1, help='When augmenting multiply all images since they are augmented randomly to create more variation.')
     args = parser.parse_args()
     
-    dataset_name = f'{args.type}-{args.size}-{args.name}'
+    dataset_name = f'{args.type}-{args.size}{"-aug" if args.augment else ""}-{args.name}'
     print(f'Creating {dataset_name}...')
     
     # --- Get Paths ---
@@ -78,20 +79,19 @@ def main():
             target_polys[group][i] = poly
     
     # --- Augment dataseries ---
-    # if args.augment:
-    #     # segment in y first
-    #     segments_y = segment_img_between_poly_labels(crop_img, polys, 1)
-    #     for seg_y in segments_y:
-    #         segs_x = segment_img_between_poly_labels(seg_y['img'], seg_y['corners'], 0)
-    #         random.shuffle(segs_x)
-            
-    #         seg_img_h, seg_img_w = seg_y['img'].shape[:2]
-    #         segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
-            
-    #         seg_y['img'] = segs_img
-    #         seg_y['corners'] = segs_polys
-    #     random.shuffle(segments_y)
-    #     aug_img, aug_polys = rebuild_img_from_segments(segments_y, out_img_size, 1)
+    aug_group = data_groups[0] # Augment only traindata
+    if args.augment:
+        aug_in_imgs = []
+        aug_target_polys = []
+        
+        for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
+            for m in range(args.augment_img_multiplier):
+                aug_img, aug_polys = smart_grid_shuffle(in_img, target_poly, (args.size, args.size))
+                aug_in_imgs.append(aug_img)
+                aug_target_polys.append(aug_polys)
+                
+        in_imgs[aug_group] = aug_in_imgs
+        target_polys[aug_group] = aug_target_polys
     
     # --- Build dataset ---
     if args.type == 'seg':
