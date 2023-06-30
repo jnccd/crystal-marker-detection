@@ -12,6 +12,7 @@ from shapely import LineString, Point, Polygon, bounds
 
 from utils import *
 
+# low prio TODO: add test data support?
 data_groups = ['train', 'val']
 dataset_name = ''
 dataset_dir = None
