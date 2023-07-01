@@ -272,12 +272,25 @@ def smart_grid_shuffle(img, polys: list[Polygon], img_size_wh):
     random.shuffle(segments_y)
     return rebuild_img_from_segments(segments_y, img_size_wh, 1)
 
-def homogeneous_mat_transform(img, polys: list[Polygon], img_size_wh, M: Mat, background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
+def homogeneous_mat_transform(
+    img: Mat, 
+    polys: list[Polygon], 
+    img_size_wh, M: Mat, 
+    background_color = [0, 0, 0], 
+    border_type = cv2.BORDER_CONSTANT,
+    min_label_visiblity = 0.4,
+    ):
+    # If M is Affine make it homogeneous
     if M.shape[0] == 2:
         M = np.vstack([M, np.array([0, 0, 1])])
     
+    # Transform
     img = cv2.warpPerspective(img, M, img_size_wh, borderMode=border_type, borderValue=background_color)
     polys = [transform(p, lambda x: np.array(apply_homography(x, M, convert_to_int=False))) for p in polys]
+    
+    # Drop low visibility labels
+    img_area = Polygon([[0, 0], [img_size_wh[0], 0], [img_size_wh[0], img_size_wh[1]], [0, img_size_wh[1]]])
+    polys = drop_low_visibility_labels(polys, img_area, min_label_visiblity)
     
     return img, polys
 
@@ -295,6 +308,14 @@ def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     
     return img, polys
 
-def get_poly_label_visibility(label_poly: Polygon, visible_area: Polygon):
-    visible_label_poly: Polygon = intersection(label_poly, visible_area)
-    return visible_label_poly.area / label_poly.area
+def drop_low_visibility_labels(polys: list[Polygon], visible_area: Polygon, min_label_visiblity = 0.4):
+    for i in range(polys):
+        visible_label_poly = intersection(polys[i], visible_area)
+        visibility = visible_label_poly.area / polys[i].area
+        if visibility < min_label_visiblity:
+            del polys[i]
+            i-=1
+        elif visibility < 1:
+            polys[i] = visible_label_poly
+    return polys
+    
