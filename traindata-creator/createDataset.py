@@ -105,7 +105,7 @@ def main():
                         
                     # poly label dropout
                     if random.random() < 0.6:
-                        aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys, background_color)
+                        aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys)
                     
                     # Matrix transform
                     mats = []

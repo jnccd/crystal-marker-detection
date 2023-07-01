@@ -281,9 +281,14 @@ def homogeneous_mat_transform(img, polys: list[Polygon], img_size_wh, M: Mat, ba
     
     return img, polys
 
-def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = (255, 255, 255)):
+def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     
     pi = random.randrange(0, len(polys))
+    
+    if len(draw_color) != 3:
+        c = polys[pi].centroid
+        # Sample color from poly centroid in img
+        draw_color = [int(x) for x in img[int(c.x), int(c.y)]]
     
     img = rasterize_polys(img, [inflate_poly(polys[pi], 0.2)], draw_color)
     polys.pop(pi)
