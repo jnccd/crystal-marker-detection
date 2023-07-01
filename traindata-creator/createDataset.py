@@ -96,13 +96,22 @@ def main():
                 img_size = (args.size, args.size)
                 
                 if m > 0:
+                    aug_img = in_img
+                    aug_polys = target_poly
+                    
                     # smart grid shuffle
-                    aug_img, aug_polys = smart_grid_shuffle(in_img, target_poly, img_size)
+                    if random.random() < 0.6:
+                        aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size)
                     
                     # Matrix transform img
-                    persp_mat = create_random_persp_mat((args.size, args.size))
-                    rot_mat_3d = np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(0, 360), 1), np.array([0, 0, 1])])
-                    final_mat = persp_mat @ rot_mat_3d
+                    mats = []
+                    if random.random() < 0.6:
+                        mats.append(create_random_persp_mat((args.size, args.size)))
+                    if random.random() < 0.9:
+                        mats.append(np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(0, 360), 1), np.array([0, 0, 1])]))
+                    final_mat = np.identity(3)
+                    for mat in mats:
+                        final_mat = final_mat @ mat
                     aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=border_type)
                     
                     aug_in_imgs.append(aug_img)
