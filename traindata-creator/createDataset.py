@@ -102,8 +102,12 @@ def main():
                     # smart grid shuffle
                     if random.random() < 0.6:
                         aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size)
+                        
+                    # poly label dropout
+                    if random.random() < 0.6:
+                        aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys)
                     
-                    # Matrix transform img
+                    # Matrix transform
                     mats = []
                     if random.random() < 0.6:
                         mats.append(create_random_persp_mat((args.size, args.size)))
