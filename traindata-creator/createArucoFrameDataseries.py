@@ -24,7 +24,7 @@ g_img_resize_factor = 1
 def main():
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos, g_img_resize_factor
     
-    parser = argparse.ArgumentParser(prog='traindata-creator', description='Creates traindata in bulk for image series on marked planes.')
+    parser = argparse.ArgumentParser(prog='aruco-frame-dataseries-creator', description='Automatically creates traindata from objects on planes within 3D image space that are spanned by 4 aruco markers.')
     parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
     parser.add_argument('-s','--size', type=int, default=0, help='The width and height of the traindata images.')
     parser.add_argument('-ng','--no-gui', action='store_true', help='Builds traindata immediately based on cached label data.')
