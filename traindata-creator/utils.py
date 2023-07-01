@@ -83,6 +83,10 @@ def flatten(list):
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
 
+def inflate_poly(p: Polygon, amount):
+    centroid = p.centroid
+    return transform(p, lambda x: np.array([(p[0] + (p[0] - centroid.x) * amount, p[1] + (p[1] - centroid.y) * amount) for p in x]))
+
 # --- Imgs -------------------------------------------------------------------------------------------------------------------------
 
 def set_img_width(img, max_width):
@@ -171,7 +175,7 @@ def rasterize_polys(draw_img: Mat, polys: list[Polygon]):
         
     return draw_img
     
-def segment_img_between_poly_labels(img, polys, dim: Literal[0,1], collage_padding = 5):
+def segment_img_between_poly_labels(img: Mat, polys: list[Polygon], dim: Literal[0,1], collage_padding = 5):
     img_h, img_w = img.shape[:2]
     
     if dim == 0:
@@ -253,7 +257,7 @@ def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
     
     return aug_image, aug_polys
 
-def smart_grid_shuffle(img, polys, img_size_wh):
+def smart_grid_shuffle(img, polys: list[Polygon], img_size_wh):
     # segment in y first
     segments_y = segment_img_between_poly_labels(img, polys, 1)
     for seg_y in segments_y:
@@ -268,11 +272,20 @@ def smart_grid_shuffle(img, polys, img_size_wh):
     random.shuffle(segments_y)
     return rebuild_img_from_segments(segments_y, img_size_wh, 1)
 
-def homogeneous_mat_transform(img, polys, img_size_wh, M: Mat, background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
+def homogeneous_mat_transform(img, polys: list[Polygon], img_size_wh, M: Mat, background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
     if M.shape[0] == 2:
         M = np.vstack([M, np.array([0, 0, 1])])
     
     img = cv2.warpPerspective(img, M, img_size_wh, borderMode=border_type, borderValue=background_color)
     polys = [transform(p, lambda x: np.array(apply_homography(x, M, convert_to_int=False))) for p in polys]
+    
+    return img, polys
+
+def poly_label_dropout(img: Mat, polys: list[Polygon]):
+    
+    pi = random.randrange(0, len(polys))
+    
+    img = rasterize_polys(img, [inflate_poly(polys[pi], 0.2)])
+    polys.pop(pi)
     
     return img, polys
