@@ -21,6 +21,121 @@ new_top_left = None
 cur_m_pos = None
 g_img_resize_factor = 1
 
+def main():
+    global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos, g_img_resize_factor
+    
+    parser = argparse.ArgumentParser(prog='traindata-creator', description='Creates traindata in bulk for image series on marked planes.')
+    parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
+    parser.add_argument('-s','--size', type=int, default=0, help='The width and height of the traindata images.')
+    parser.add_argument('-ng','--no-gui', action='store_true', help='Builds traindata immediately based on cached label data.')
+    parser.add_argument('-pmw','--preresize-max-width', type=int, default=1920, help='The maximum width for input images.')
+    parser.add_argument('-pmh','--preresize-max-height', type=int, default=1080, help='The maximum height for input images.')
+    parser.add_argument('-lirf','--legacy-rect-finding', action='store_true', default=False, help='Use old rect finding based on aruco marker pos relative to the center point.')
+    args = parser.parse_args()
+    
+    # Prepare paths
+    root_dir = Path(__file__).resolve().parent
+    input_dir = Path(args.input_folder)
+    input_img_paths = sorted(
+        [
+            os.path.join(input_dir, fname)
+            for fname in os.listdir(input_dir)
+            if fname.lower().endswith((".png", ".jpg"))
+        ]
+    )
+    dataseries_dir = root_dir / 'dataseries' / f'af-{input_dir.name}'
+    marked_dir = dataseries_dir / 'images_marked'
+    if not os.path.exists(marked_dir):
+        os.makedirs(marked_dir)
+    train_dir = dataseries_dir
+    if not os.path.exists(train_dir):
+        os.makedirs(train_dir)
+    
+    # Load first image and preprocess
+    img = cv2.imread(input_img_paths[0])
+    if args.preresize_max_width > 0 or args.preresize_max_height > 0:
+        # Resize image to displayable sizes if necessary (neural network inputs are so small compared to this that it should not matter and is more convenient for displaying and for performance)
+        l_img_h, l_img_w = img.shape[:2]
+        img = keep_image_size_in_check(img, args.preresize_max_width, args.preresize_max_height) 
+        img_h, img_w = img.shape[:2]
+        g_img_resize_factor = img_w / l_img_w
+    else:
+        img_h, img_w = img.shape[:2]
+    print(img_w, img_h, g_img_resize_factor)
+    detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
+    oh, hi, marked_img, in_between_rect = find_homography_from_aruco(img, detector, img_w, img_h, args.legacy_rect_finding)
+    if hi is None:
+        cv2.imshow(window_name, marked_img)
+        print("Didn't find the aruco frame in base img :/")
+        cv2.waitKey(0)
+        return
+    warped_img = cv2.warpPerspective(img, hi, (img_w, img_h))
+    
+    # Load markers from last execution
+    persistence_file_path = input_dir / ".traindata_markings"
+    if os.path.exists(persistence_file_path) and os.path.isfile(persistence_file_path):
+        with open(persistence_file_path) as f:
+            persistence_str = f.read()
+        persistence_dict = ast.literal_eval(persistence_str)
+        top_left_corner = persistence_dict['top_left_corner']
+        bottom_right_corner = persistence_dict['bottom_right_corner']
+        
+    if args.no_gui:
+        print("Building...")
+        build_traindata(
+            input_img_paths, 
+            detector, 
+            img_w, img_h, 
+            marked_dir, 
+            train_dir, 
+            args.size, 
+            use_legacy_rect_finding=args.legacy_rect_finding, 
+            show_gui=False,
+            )
+        return
+    
+    # Load window and hook events
+    cv2.namedWindow(window_name)
+    cv2.setMouseCallback(window_name, mouseEvent)
+    
+    while True:
+        # Control logic at 60 FPS
+        k = cv2.waitKey(16) & 0xFF
+        if k == ord('q'):
+            # Save marked rects
+            with open(persistence_file_path, "w") as text_file:
+                persistence_dict = { 'top_left_corner': top_left_corner, 'bottom_right_corner': bottom_right_corner }
+                text_file.write(str(persistence_dict))
+            break
+        elif k == ord('c'):
+            top_left_corner=[]
+            bottom_right_corner=[]
+            new_top_left = None
+        elif k == ord('z'):
+            top_left_corner.pop()
+            bottom_right_corner.pop()
+        elif k == ord(' '):
+            print("Building...")
+            build_traindata(
+                input_img_paths, 
+                detector, 
+                img_w, img_h, 
+                marked_dir, 
+                train_dir, 
+                args.size, 
+                use_legacy_rect_finding=args.legacy_rect_finding,
+                )
+
+        # Draw
+        display_img = warped_img.copy()
+        for i in range(0, len(bottom_right_corner)):
+            cv2.rectangle(display_img, top_left_corner[i], bottom_right_corner[i], (0,255,0), 1, 8)
+        if new_top_left is not None:
+            cv2.rectangle(display_img, new_top_left, cur_m_pos, (0,255,0), 1, 8)
+        cv2.imshow(window_name, display_img)
+    
+    cv2.destroyAllWindows()
+
 def mouseEvent(action, x, y, flags, *userdata):
     global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos
     
@@ -225,41 +340,6 @@ def build_traindata(
             circs = add_by_point(circs, (left, top))
             out_img_size = (resize_size, resize_size)
         gcircs = unflatten(circs, 4)
-        # # low prio TO/DO: Move before resize?
-        # # --- Augment -------------------------------------------------------------------------
-        # if collage_augment:
-        #     polys = []
-        #     for gcirc in gcircs:
-        #         polys.append(Polygon(gcirc))
-            
-        #     # segment in y first
-        #     segments_y = segment_img_between_poly_labels(crop_img, polys, 1)
-        #     for seg_y in segments_y:
-        #         segs_x = segment_img_between_poly_labels(seg_y['img'], seg_y['corners'], 0)
-        #         random.shuffle(segs_x)
-                
-        #         seg_img_h, seg_img_w = seg_y['img'].shape[:2]
-        #         segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
-                
-        #         seg_y['img'] = segs_img
-        #         seg_y['corners'] = segs_polys
-        #     random.shuffle(segments_y)
-        #     aug_img, aug_polys = rebuild_img_from_segments(segments_y, out_img_size, 1)
-            
-        #     crop_img = aug_img
-        #     gcircs = [[(point[0], point[1]) for point in poly.exterior.coords[:-1]] for poly in aug_polys] # Convert polys back to corner points list
-        #     circs = [item for sublist in gcircs for item in sublist] # write aug gcircs back into circs
-            
-        #     #print(gcircs)
-            
-        # # -------------------------------------------------------------------------------------
-        # bgcircs = [get_bounds(x) for x in gcircs] # boundsOf-grouped-cropped-inner-rect-corners
-        
-        # Normalize coordinates
-        # ncircs = divide_by_point(circs, out_img_size)
-        # gncircs = unflatten(ncircs, 4)
-        # bgncircs = [get_bounds(x) for x in gncircs] #boundsOf-grouped-normalized-cropped-inner-rect-corners
-        # Rasterize Segmentation image
         seg_image = np.zeros(tuple(reversed(out_img_size)) + (3,), dtype = np.uint8)
         lircs = [[int(x[0]), int(x[1])] for x in circs]
         glircs = unflatten(lircs, 4) # grouped-listed-normalized-cropped-inner-rect-corners
@@ -272,141 +352,8 @@ def build_traindata(
         cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_seg.png")), seg_image)
         with open(train_dir / (Path(other_img_path).stem + "_vertices.txt"), "w") as text_file:
             text_file.write(str(gcircs))
-        # # xywh formats
-        # with open(train_dir / (Path(other_img_path).stem + "_xywh.txt"), "w") as text_file:
-        #     for bounds in bgcircs:
-        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
-        # with open(train_dir / (Path(other_img_path).stem + "_xywh_n.txt"), "w") as text_file:
-        #     for bounds in bgncircs:
-        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}\n")
-        # # xyxy formats
-        # with open(train_dir / (Path(other_img_path).stem + "_xyxy.txt"), "w") as text_file:
-        #     for bounds in bgcircs:
-        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
-        # with open(train_dir / (Path(other_img_path).stem + "_xyxy_n.txt"), "w") as text_file:
-        #     for bounds in bgncircs:
-        #         text_file.write(f"{bounds[0]} {bounds[1]} {bounds[4]} {bounds[5]}\n")
-        # # center xy for coco
-        # with open(train_dir / (Path(other_img_path).stem + "_cxcywh_n.txt"), "w") as text_file:
-        #     for bounds in bgncircs:
-        #         text_file.write(f"{bounds[0]+(bounds[2]/2)} {bounds[1]+(bounds[3]/2)} {bounds[2]} {bounds[3]}\n")
                 
     print(f"Successfully vs not successfully annotated imgs: {num_success_imgs}/{num_fail_imgs}")
-
-def main():
-    global window_name, top_left_corner, bottom_right_corner, new_top_left, cur_m_pos, g_img_resize_factor
-    
-    parser = argparse.ArgumentParser(prog='traindata-creator', description='Creates traindata in bulk for image series on marked planes.')
-    parser.add_argument('-if','--input-folder', type=str, help='The path to the folder containing an image series.')
-    parser.add_argument('-s','--size', type=int, default=0, help='The width and height of the traindata images.')
-    parser.add_argument('-ng','--no-gui', action='store_true', help='Builds traindata immediately based on cached label data.')
-    parser.add_argument('-pmw','--preresize-max-width', type=int, default=1920, help='The maximum width for input images.')
-    parser.add_argument('-pmh','--preresize-max-height', type=int, default=1080, help='The maximum height for input images.')
-    parser.add_argument('-lirf','--legacy-rect-finding', action='store_true', default=False, help='Use old rect finding based on aruco marker pos relative to the center point.')
-    args = parser.parse_args()
-    
-    # Prepare paths
-    root_dir = Path(__file__).resolve().parent
-    input_dir = Path(args.input_folder)
-    input_img_paths = sorted(
-        [
-            os.path.join(input_dir, fname)
-            for fname in os.listdir(input_dir)
-            if fname.lower().endswith((".png", ".jpg"))
-        ]
-    )
-    dataseries_dir = root_dir / 'dataseries' / f'af-{input_dir.name}'
-    marked_dir = dataseries_dir / 'images_marked'
-    if not os.path.exists(marked_dir):
-        os.makedirs(marked_dir)
-    train_dir = dataseries_dir / 'images_traindata'
-    if not os.path.exists(train_dir):
-        os.makedirs(train_dir)
-    
-    # Load first image and preprocess
-    img = cv2.imread(input_img_paths[0])
-    if args.preresize_max_width > 0 or args.preresize_max_height > 0:
-        # Resize image to displayable sizes if necessary (neural network inputs are so small compared to this that it should not matter and is more convenient for displaying and for performance)
-        l_img_h, l_img_w = img.shape[:2]
-        img = keep_image_size_in_check(img, args.preresize_max_width, args.preresize_max_height) 
-        img_h, img_w = img.shape[:2]
-        g_img_resize_factor = img_w / l_img_w
-    else:
-        img_h, img_w = img.shape[:2]
-    print(img_w, img_h, g_img_resize_factor)
-    detector = get_opencv_aruco_detector(cv2.aruco.DICT_6X6_50)
-    oh, hi, marked_img, in_between_rect = find_homography_from_aruco(img, detector, img_w, img_h, args.legacy_rect_finding)
-    if hi is None:
-        cv2.imshow(window_name, marked_img)
-        print("Didn't find the aruco frame in base img :/")
-        cv2.waitKey(0)
-        return
-    warped_img = cv2.warpPerspective(img, hi, (img_w, img_h))
-    
-    # Load markers from last execution
-    persistence_file_path = input_dir / ".traindata_markings"
-    if os.path.exists(persistence_file_path) and os.path.isfile(persistence_file_path):
-        with open(persistence_file_path) as f:
-            persistence_str = f.read()
-        persistence_dict = ast.literal_eval(persistence_str)
-        top_left_corner = persistence_dict['top_left_corner']
-        bottom_right_corner = persistence_dict['bottom_right_corner']
-        
-    if args.no_gui:
-        print("Building...")
-        build_traindata(
-            input_img_paths, 
-            detector, 
-            img_w, img_h, 
-            marked_dir, 
-            train_dir, 
-            args.size, 
-            use_legacy_rect_finding=args.legacy_rect_finding, 
-            show_gui=False,
-            )
-        return
-    
-    # Load window and hook events
-    cv2.namedWindow(window_name)
-    cv2.setMouseCallback(window_name, mouseEvent)
-    
-    while True:
-        # Control logic at 60 FPS
-        k = cv2.waitKey(16) & 0xFF
-        if k == ord('q'):
-            # Save marked rects
-            with open(persistence_file_path, "w") as text_file:
-                persistence_dict = { 'top_left_corner': top_left_corner, 'bottom_right_corner': bottom_right_corner }
-                text_file.write(str(persistence_dict))
-            break
-        elif k == ord('c'):
-            top_left_corner=[]
-            bottom_right_corner=[]
-            new_top_left = None
-        elif k == ord('z'):
-            top_left_corner.pop()
-            bottom_right_corner.pop()
-        elif k == ord(' '):
-            print("Building...")
-            build_traindata(
-                input_img_paths, 
-                detector, 
-                img_w, img_h, 
-                marked_dir, 
-                train_dir, 
-                args.size, 
-                use_legacy_rect_finding=args.legacy_rect_finding,
-                )
-
-        # Draw
-        display_img = warped_img.copy()
-        for i in range(0, len(bottom_right_corner)):
-            cv2.rectangle(display_img, top_left_corner[i], bottom_right_corner[i], (0,255,0), 1, 8)
-        if new_top_left is not None:
-            cv2.rectangle(display_img, new_top_left, cur_m_pos, (0,255,0), 1, 8)
-        cv2.imshow(window_name, display_img)
-    
-    cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()
