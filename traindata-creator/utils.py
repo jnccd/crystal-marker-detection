@@ -6,7 +6,7 @@ from typing import Literal
 import cv2
 from cv2 import Mat
 import numpy as np
-from shapely import Polygon, transform
+from shapely import Polygon, transform, intersection
 
 # --- Paths -------------------------------------------------------------------------------------------------------------------------
 
@@ -294,3 +294,7 @@ def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     polys.pop(pi)
     
     return img, polys
+
+def get_poly_label_visibility(label_poly: Polygon, visible_area: Polygon):
+    visible_label_poly: Polygon = intersection(label_poly, visible_area)
+    return visible_label_poly.area / label_poly.area
