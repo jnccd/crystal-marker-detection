@@ -30,7 +30,7 @@ def main():
     parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
-    parser.add_argument('-aim','--augment-img-multiplier', type=int, default=1, help='When augmenting multiply all images since they are augmented randomly to create more variation.')
+    parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.')
     args = parser.parse_args()
     
     if args.size is None:
