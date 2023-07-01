@@ -129,6 +129,28 @@ def resize_and_pad(img: Mat, desired_size: int, background_color = [0, 0, 0], bo
     
     return brimg, new_size, top, left
 
+def create_random_persp_mat(img_size_wh, perspective_strength = 0.3):
+    persp_strength_x = perspective_strength *0.5*img_size_wh[0]
+    persp_strength_y = perspective_strength *0.5*img_size_wh[1]
+    src_points = np.float32([[0, 0], [img_size_wh[0], 0], [img_size_wh[0], img_size_wh[1]], [0, img_size_wh[1]]])
+    dst_points = np.float32([[0, 0], [img_size_wh[0], 0], [img_size_wh[0], img_size_wh[1]], [0, img_size_wh[1]]])
+    persp_side = random.randrange(0, 4)
+    if persp_side == 0:
+        dst_points[0,0] += persp_strength_x
+        dst_points[1,0] -= persp_strength_x
+    elif persp_side == 1:
+        dst_points[1,1] += persp_strength_y
+        dst_points[2,1] -= persp_strength_y
+    elif persp_side == 2:
+        dst_points[3,0] += persp_strength_x
+        dst_points[2,0] -= persp_strength_x
+    elif persp_side == 3:
+        dst_points[0,1] += persp_strength_y
+        dst_points[3,1] -= persp_strength_y
+    else:
+        print('Invalid side!')
+    return cv2.getPerspectiveTransform(src_points, dst_points)
+
 # --- Traindata imgs -------------------------------------------------------------------------------------------------------------------------
 
 def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon], background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
