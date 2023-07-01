@@ -278,7 +278,7 @@ def homogeneous_mat_transform(
     img_size_wh, M: Mat, 
     background_color = [0, 0, 0], 
     border_type = cv2.BORDER_CONSTANT,
-    min_label_visiblity = 0.4,
+    min_label_visiblity = 0.25,
     ):
     # If M is Affine make it homogeneous
     if M.shape[0] == 2:
@@ -308,11 +308,15 @@ def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     
     return img, polys
 
-def drop_low_visibility_labels(polys: list[Polygon], visible_area: Polygon, min_label_visiblity = 0.4):
-    for i in range(polys):
+def drop_low_visibility_labels(polys: list[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
+    for i in range(len(polys)):
+        if i >= len(polys):
+            break
+        
         visible_label_poly = intersection(polys[i], visible_area)
         visibility = visible_label_poly.area / polys[i].area
         if visibility < min_label_visiblity:
+            print('dropping label')
             del polys[i]
             i-=1
         elif visibility < 1:
