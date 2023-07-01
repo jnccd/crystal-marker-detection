@@ -102,7 +102,7 @@ def main():
                     # smart grid shuffle
                     if random.random() < 0.6:
                         aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size)
-                        
+                    
                     # poly label dropout
                     if random.random() < 0.6:
                         aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys)
