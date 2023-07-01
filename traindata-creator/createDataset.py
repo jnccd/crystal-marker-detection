@@ -17,9 +17,10 @@ data_groups = ['train', 'val']
 dataset_name = ''
 dataset_dir = None
 background_color = (114, 114, 114)
+border_type = cv2.BORDER_REPLICATE
 
 def main():
-    global data_groups, dataset_name, dataset_dir
+    global data_groups, dataset_name, dataset_dir, background_color, border_type
     
     parser = argparse.ArgumentParser(prog='dataset-creator', description='Combines multiple dataseries into a dataset.')
     parser.add_argument('-n','--name', type=str, help='Defines the (folder)name of the dataset.')
@@ -80,7 +81,7 @@ def main():
     # Resize and pad imgs and labels
     for group in data_groups:
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[group], target_polys[group])):
-            img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, cv2.BORDER_REPLICATE)
+            img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
             in_imgs[group][i] = img
             target_polys[group][i] = poly
     
@@ -97,28 +98,10 @@ def main():
                 aug_img, aug_polys = smart_grid_shuffle(in_img, target_poly, img_size)
                 
                 # Matrix transform img
-                perspective_strength = 0.3 *0.5*args.size
-                src_points = np.float32([[0, 0], [args.size, 0], [args.size, args.size], [0, args.size]])
-                dst_points = np.float32([[0, 0], [args.size, 0], [args.size, args.size], [0, args.size]])
-                persp_side = random.randrange(0, 4)
-                if persp_side == 0:
-                    dst_points[0,0] += perspective_strength
-                    dst_points[1,0] -= perspective_strength
-                elif persp_side == 1:
-                    dst_points[1,1] += perspective_strength
-                    dst_points[2,1] -= perspective_strength
-                elif persp_side == 2:
-                    dst_points[3,0] += perspective_strength
-                    dst_points[2,0] -= perspective_strength
-                elif persp_side == 3:
-                    dst_points[0,1] += perspective_strength
-                    dst_points[3,1] -= perspective_strength
-                else:
-                    print('Invalid side!')
-                persp_mat = cv2.getPerspectiveTransform(src_points, dst_points)
+                persp_mat = create_random_persp_mat((args.size, args.size))
                 rot_mat_3d = np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(0, 360), 1), np.array([0, 0, 1])])
                 final_mat = persp_mat @ rot_mat_3d
-                aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=cv2.BORDER_REPLICATE)
+                aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=border_type)
                 
                 aug_in_imgs.append(aug_img)
                 aug_target_polys.append(aug_polys)
