@@ -166,12 +166,12 @@ def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon]
     
     return rp_img, polys
 
-def rasterize_polys(draw_img: Mat, polys: list[Polygon]):
+def rasterize_polys(draw_img: Mat, polys: list[Polygon], draw_color: tuple = (255, 255, 255)):
     vertices_per_obj = [[(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]] for poly in polys]
     
     for vertices in vertices_per_obj:
         np_vertices = np.array(vertices)
-        cv2.fillPoly(draw_img, pts=[np_vertices], color=(255, 255, 255))
+        cv2.fillPoly(draw_img, pts=[np_vertices], color=draw_color)
         
     return draw_img
     
@@ -281,11 +281,11 @@ def homogeneous_mat_transform(img, polys: list[Polygon], img_size_wh, M: Mat, ba
     
     return img, polys
 
-def poly_label_dropout(img: Mat, polys: list[Polygon]):
+def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = (255, 255, 255)):
     
     pi = random.randrange(0, len(polys))
     
-    img = rasterize_polys(img, [inflate_poly(polys[pi], 0.2)])
+    img = rasterize_polys(img, [inflate_poly(polys[pi], 0.2)], draw_color)
     polys.pop(pi)
     
     return img, polys
