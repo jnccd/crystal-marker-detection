@@ -96,9 +96,29 @@ def main():
                 
                 aug_img, aug_polys = smart_grid_shuffle(in_img, target_poly, img_size)
                 
-                aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, 
-                    cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(0, 360), 1),
-                    border_type=cv2.BORDER_REPLICATE)
+                # Matrix transform img
+                perspective_strength = 0.3 *0.5*args.size
+                src_points = np.float32([[0, 0], [args.size, 0], [args.size, args.size], [0, args.size]])
+                dst_points = np.float32([[0, 0], [args.size, 0], [args.size, args.size], [0, args.size]])
+                persp_side = random.randrange(0, 4)
+                if persp_side == 0:
+                    dst_points[0,0] += perspective_strength
+                    dst_points[1,0] -= perspective_strength
+                elif persp_side == 1:
+                    dst_points[1,1] += perspective_strength
+                    dst_points[2,1] -= perspective_strength
+                elif persp_side == 2:
+                    dst_points[3,0] += perspective_strength
+                    dst_points[2,0] -= perspective_strength
+                elif persp_side == 3:
+                    dst_points[0,1] += perspective_strength
+                    dst_points[3,1] -= perspective_strength
+                else:
+                    print('Invalid side!')
+                persp_mat = cv2.getPerspectiveTransform(src_points, dst_points)
+                rot_mat_3d = np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(0, 360), 1), np.array([0, 0, 1])])
+                final_mat = persp_mat @ rot_mat_3d
+                aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=cv2.BORDER_REPLICATE)
                 
                 aug_in_imgs.append(aug_img)
                 aug_target_polys.append(aug_polys)
