@@ -10,12 +10,15 @@ from shapely import Polygon, transform, intersection
 
 # --- Paths -------------------------------------------------------------------------------------------------------------------------
 
-def get_adjacent_files_with_ending(file_paths: list[Path], ending):
+def swap_underscore_ending_in_path(p: Path, ending: str):
+    return p.with_name(f'{"_".join(p.stem.split("_")[:-1])}{ending}')
+
+def get_adjacent_files_with_ending(file_paths: list[Path], ending: str):
     paths = []
     for fpath in file_paths:
         if type(fpath) is str:
             fpath = Path(fpath)
-        paths.append(fpath.with_name(f'{"_".join(fpath.stem.split("_")[:-1])}{ending}'))
+        paths.append(swap_underscore_ending_in_path(fpath, ending))
     return paths   
 
 def get_files_from_folders_with_ending(folders, ending):
