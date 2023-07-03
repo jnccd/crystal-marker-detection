@@ -45,7 +45,7 @@ def main():
     dataset_dir = create_dir_if_not_exists(root_dir / 'dataset' / dataset_name, clear=True)
     
     # Get td/vd folders
-    td_folders = flatten(args.traindata_folders)
+    td_folders = flatten(args.traindata_folders) if not args.traindata_folders is None else []
     in_paths = {}
     if args.ratio is None:
         if args.valdata_folders is None:
@@ -202,6 +202,7 @@ def build_yolov5_dataset(in_imgs, target_polys):
     
     # Build groups data
     for group in data_groups:
+        i = 0
         for i, (td_in, td_polys) in enumerate(zip(in_imgs[group], target_polys[group])):
             img_h, img_w = td_in.shape[:2]
             pic_path = images_dir[group] / f'{i}.png'
