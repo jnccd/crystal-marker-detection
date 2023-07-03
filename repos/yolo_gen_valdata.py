@@ -54,7 +54,7 @@ def main():
             res_df = res_df.reset_index()
             for index, row in res_df.iterrows():
                 if row['confidence'] > 0.5:
-                    text_file.write(f"{row['xmin']} {row['ymin']} {row['xmax']} {row['ymax']}\n")
+                    text_file.write(f"{row['xmin']} {row['ymin']} {row['xmax']} {row['ymax']} {row['confidence']}\n")
         #print(out_img_path)
         #cv2.imwrite(str(out_path), np.squeeze(results.render()))
         
