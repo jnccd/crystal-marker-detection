@@ -169,7 +169,7 @@ def analyze(
             'voc2007_mAP':float(voc2007_mAP),
             'voc2010_mAP':float(voc2010_mAP),
             'coco_mAP':float(coco_mAP),
-            }))
+            }, indent=4))
 
 def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
     mAP_table = sorted(mAP_table, key=lambda x: -x['conf'])
