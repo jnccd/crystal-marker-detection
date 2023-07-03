@@ -1,10 +1,6 @@
 import argparse
 from pathlib import Path
 
-from cmd_tf.training import fit
-from cmd_tf.test import test
-from cmd_tf.analyze import analyze
-
 def main():
     parser = argparse.ArgumentParser(prog='cmd-tf', description='Trains a sample network on the synthetic generated data.')
     
@@ -30,10 +26,12 @@ def main():
     }
     
     if args.analyze_valdata_from != '':
+        from cmd_tf.analyze import analyze
         analyze(
             args.analyze_valdata_from
             )
     elif args.test:
+        from cmd_tf.test import test
         test(
             run=args.run,
             size=args.size,
@@ -41,6 +39,7 @@ def main():
             extra_settings=extra_settings,
             )
     else:
+        from cmd_tf.training import fit
         fit(
             batch_size=args.batch_size, 
             num_epochs=args.epochs, 
