@@ -139,6 +139,7 @@ def analyze(
         pr_curves_per_iou.append({'rp':rp,'pp':pp})
         coco_mAPs.append(mAP)
     coco_mAP = np.mean(coco_mAPs)
+    print('coco_mAP:',coco_mAP)
     
     # Plot PR Curves
     for i in range(len(ious)):
