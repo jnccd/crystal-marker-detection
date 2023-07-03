@@ -226,7 +226,7 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
             
             APs.append(AP)
             last_r = rp[i]
-        mAP = np.mean(APs)
+        mAP = np.sum(APs)
     else:
         APs = []
         for i in recall_points:
