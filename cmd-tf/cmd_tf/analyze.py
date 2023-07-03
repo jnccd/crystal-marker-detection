@@ -60,10 +60,10 @@ def analyze(
         for target_out, in_img in zip(bbox_target_outs, ins):
             with open(target_out, 'r') as file:
                 target_out_bbox_lines = file.readlines()
-            target_out_bbox_lines.pop()
             bboxes_xyxy = []
             for line in target_out_bbox_lines:
-                bboxes_xyxy.append(tuple([float(x) for x in line.split(' ')]))
+                if line.__contains__(' '):
+                    bboxes_xyxy.append(tuple([float(x) for x in line.split(' ')]))
             target_bboxes_per_img.append(bboxes_xyxy)
             
             cv2.imwrite(str(target_out)+'.bbox_test.png', draw_bboxes(cv2.imread(str(in_img), cv2.IMREAD_GRAYSCALE), bboxes_xyxy))
@@ -72,32 +72,93 @@ def analyze(
         for network_out in bbox_network_outs:
             with open(network_out, 'r') as file:
                 network_out_bbox_lines = file.readlines()
-            network_out_bbox_lines.pop()
             bboxes_xyxy = []
             for line in network_out_bbox_lines:
-                bboxes_xyxy.append(tuple([float(x) for x in line.split(' ')]))
+                if line.__contains__(' '):
+                    bboxes_xyxy.append(tuple([float(x) for x in line.split(' ')]))
             network_bboxes_per_img.append(bboxes_xyxy)
             
             cv2.imwrite(str(network_out)+'.bbox_test.png', draw_bboxes(cv2.imread(str(in_img), cv2.IMREAD_GRAYSCALE), bboxes_xyxy))
-            
+    
     #print('target_bboxes',target_bboxes)
     #print('network_bboxes',network_bboxes)
-    
     #print(iou_between_bboxes((1,1,5,5), (1,1,5,5)))
     
-    # Match target and pred bboxes for each image
+    # Match target to pred bboxes for each image
     flat_best_iou_matches = []
     for target_boxes, network_boxes in zip(target_bboxes_per_img, network_bboxes_per_img):
         # TODO: Use something better than n^2 matching
-        max_iou_match_for_target_box = []
         for target_box in target_boxes:
             max_iou_match = 0
             for network_box in network_boxes:
                 iou = iou_between_bboxes(network_box, target_box)
                 if iou > max_iou_match:
                     max_iou_match = iou
-            max_iou_match_for_target_box.append(max_iou_match)
             flat_best_iou_matches.append(max_iou_match)
+    
+    # Match pred to target bboxes for each image and build mAP table
+    mAP_table = []
+    for i, (target_boxes, network_boxes) in enumerate(zip(target_bboxes_per_img, network_bboxes_per_img)):
+        for nbi, network_box in enumerate(network_boxes):
+            max_match_iou = 0
+            max_match_target_box = ()
+            max_match_target_box_index = -1
+            for tbi, target_box in enumerate(target_boxes):
+                iou = iou_between_bboxes(network_box, target_box)
+                if iou > max_match_iou:
+                    max_match_iou = iou
+                    max_match_target_box = target_box
+                    max_match_target_box_index = tbi + 1000000*i
+            network_box_index = nbi + 1000000*i # It works
+            
+            # Get pred conf
+            if len(network_box) >= 5:
+                #print('got conf from bbox')
+                conf = network_box[4]
+            else:
+                conf = max_iou_match
+            
+            mAP_table.append({
+                'img_index': i,
+#                'dt': network_box,
+                'dt_index': network_box_index,
+                'conf': conf,
+                'iou': max_match_iou,
+#                'gt': max_match_target_box,
+                'gt_index': max_match_target_box_index,
+                })
+    
+    mAP_table = sorted(mAP_table, key=lambda x: -x['conf'])
+    
+    # Decide TP/FP cases
+    taken_gt_boxes = []
+    for entry in mAP_table:
+        # TODO: Change iou threshold for other mAPs
+        if entry['iou'] > 0.5 and not entry['gt_index'] in taken_gt_boxes:
+            entry['tpfp'] = True
+            taken_gt_boxes.append(entry['gt_index'])
+        else:
+            entry['tpfp'] = False
+            
+    # Get gt count
+    total_gts = sum([len(target_boxes) for target_boxes in target_bboxes_per_img])
+    #print(total_gts)
+    
+    # Build Acc TP, Acc FP, Precision and Recall
+    acc_tp = 0
+    acc_fp = 0
+    for entry in mAP_table:
+        if entry['tpfp']:
+            acc_tp += 1
+        else:
+            acc_fp += 1
+            
+        entry['acc_tp'] = acc_tp
+        entry['acc_fp'] = acc_fp
+        entry['precision'] = acc_tp / (acc_tp + acc_fp)
+        entry['recall'] = acc_tp / total_gts
+    
+    print(mAP_table)
     
     # TODO: Measure performance using other metrics (like voc/coco mAP)
     
