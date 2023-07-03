@@ -149,22 +149,69 @@ def analyze(
         entry['precision'] = acc_tp / (acc_tp + acc_fp)
         entry['recall'] = acc_tp / total_gts
     
+    # Generate PR curve values
     mAP_table = sorted(mAP_table, key=lambda x: x['recall'])
+    rp = [x['recall'] for x in mAP_table]
+    pp = [x['precision'] for x in mAP_table]
     
+    # Add some extra values to make the curve go to 1
+    if rp[-1] < 1:
+        # Append point downwards
+        rp.append(rp[-1])
+        pp.append(0)
+        
+        # Append point at (1, 0)
+        rp.append(1)
+        pp.append(0)
+    
+    # Plot PR Curve
     plt.clf()
     plt.title(f"PR Curve")
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.xlim(0.0, 1.0)
     plt.ylim(0.0, 1.1)
-    xp = [x['recall'] for x in mAP_table]
-    yp = [x['precision'] for x in mAP_table]
-    xp.append(xp[-1])
-    yp.append(0)
-    plt.plot(xp, yp)
+    
+    plt.plot(rp, pp)
     plt.savefig(valdata_path / 'PR_Curve.pdf', dpi=100)
     
+    # Compute VOC 2007 Score
+    voc2007_APs = []
+    for i in [x/10 for x in range(0, 10, 1)]:
+        recall_breakpoint_index = -1
+        for j in range(len(rp)):
+            if rp[j] > i:
+                recall_breakpoint_index = j
+                break
+        
+        if recall_breakpoint_index == -1:
+            AP = 0
+        else:
+            AP = max(pp[j:])
+        
+        voc2007_APs.append(AP)
+    voc2007_mAP = np.mean(voc2007_APs)
+    
+    # Compute VOC 2010 Score
+    voc2010_APs = []
+    last_r = 0
+    for i in range(len(rp)):
+        next_precisions = pp[i:]
+        if len(next_precisions) == 0:
+            max_next_precisions = 0
+        else:
+            max_next_precisions = max(next_precisions)
+            
+        r_diff = rp[i] - last_r
+        AP = max_next_precisions * r_diff
+        #print(rp[i], r_diff, max_next_precisions, AP)
+        
+        voc2010_APs.append(AP)
+        last_r = rp[i]
+    voc2010_mAP = np.mean(voc2010_APs)
+    
     print(mAP_table)
+    print(voc2010_mAP)
     
     # TODO: Measure performance using other metrics (like voc/coco mAP)
     
