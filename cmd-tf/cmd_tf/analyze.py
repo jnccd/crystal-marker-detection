@@ -4,20 +4,11 @@ import math
 import random
 from pathlib import Path
 import shutil
-from timeit import default_timer as timer
-from datetime import timedelta
 import cv2
+from matplotlib import pyplot as plt
 
 import numpy as np
-from PIL import ImageOps, Image
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras.utils import load_img, array_to_img
-
-from cmd_tf.runconfigs import load_runconfig
 from cmd_tf.utility import get_files_from_folders_with_ending
 
 num_classes = 1
@@ -157,6 +148,21 @@ def analyze(
         entry['acc_fp'] = acc_fp
         entry['precision'] = acc_tp / (acc_tp + acc_fp)
         entry['recall'] = acc_tp / total_gts
+    
+    mAP_table = sorted(mAP_table, key=lambda x: x['recall'])
+    
+    plt.clf()
+    plt.title(f"PR Curve")
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.xlim(0.0, 1.0)
+    plt.ylim(0.0, 1.1)
+    xp = [x['recall'] for x in mAP_table]
+    yp = [x['precision'] for x in mAP_table]
+    xp.append(xp[-1])
+    yp.append(0)
+    plt.plot(xp, yp)
+    plt.savefig(valdata_path / 'PR_Curve.pdf', dpi=100)
     
     print(mAP_table)
     
