@@ -152,7 +152,11 @@ def analyze(
         plt.xlim(0.0, 1.0)
         plt.ylim(0.0, 1.1)
         plt.plot(rp, pp)
-        plt.savefig(eval_path / f'eval_PR_Curve_{ious[i]}.pdf', dpi=100)
+        
+        iou_str = str(ious[i])
+        if len(iou_str) <= 3:
+            iou_str = iou_str + '0'
+        plt.savefig(eval_path / f'eval_PR_Curve_{iou_str}.pdf', dpi=100)
     
     # Write out said metrics
     eval_dict_path = eval_path / 'evals.json'
@@ -238,8 +242,8 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
                 AP = max(pp[j:])
             
             APs.append(AP)
-        print('recall_points:',recall_points)
-        print('APs:',APs)
+        #print('recall_points:',recall_points)
+        #print('APs:',APs)
         mAP = np.mean(APs)
     
     return mAP, rp, pp
