@@ -61,15 +61,6 @@ def apply_homography(point2D_list, h, convert_to_int = True):
         return [(int(p[0]), int(p[1])) for p in ps]
     else:
         return ps
-    
-def get_bounds(point2D_list):
-    x = min([p[0] for p in point2D_list])
-    y = min([p[1] for p in point2D_list])
-    xe = max([p[0] for p in point2D_list])
-    ye = max([p[1] for p in point2D_list])
-    w = xe - x
-    h = ye - y
-    return x, y, w, h, xe, ye
 
 def add_by_point(point2D_list, a):
     return [(p[0] + a[0], p[1] + a[1]) for p in point2D_list]
@@ -89,6 +80,24 @@ def unflatten(list, chunk_size):
 def inflate_poly(p: Polygon, amount):
     centroid = p.centroid
     return transform(p, lambda x: np.array([(p[0] + (p[0] - centroid.x) * amount, p[1] + (p[1] - centroid.y) * amount) for p in x]))
+
+def get_bounds(point2D_list):
+    x = min([p[0] for p in point2D_list])
+    y = min([p[1] for p in point2D_list])
+    xe = max([p[0] for p in point2D_list])
+    ye = max([p[1] for p in point2D_list])
+    w = xe - x
+    h = ye - y
+    return x, y, w, h, xe, ye
+
+def keep_box_in_bounds(xyxy_bbox, bounds):
+    for i in range(2):
+        if xyxy_bbox[i] < bounds[i]:
+            xyxy_bbox[i] = bounds[i]
+    for i in range(2,4):
+        if xyxy_bbox[i] > bounds[i]:
+            xyxy_bbox[i] = bounds[i]
+    return xyxy_bbox
 
 # --- Imgs -------------------------------------------------------------------------------------------------------------------------
 
