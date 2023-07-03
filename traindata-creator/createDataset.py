@@ -107,19 +107,19 @@ def main():
                     if random.random() < 0.6:
                         aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys)
                     
-                    # Matrix Transform
-                    mats = []
-                    # -- Perspective
-                    if random.random() < 0.6:
-                        mats.append(create_random_persp_mat((args.size, args.size), perspective_strength=0.08))
-                    # -- Rotation
-                    if random.random() < 0.9:
-                        mats.append(np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(-45, 45), 1), np.array([0, 0, 1])]))
-                    # -- Apply
-                    final_mat = np.identity(3)
-                    for mat in mats:
-                        final_mat = final_mat @ mat
-                    aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=border_type)
+                    # # Matrix Transform
+                    # mats = []
+                    # # -- Perspective
+                    # if random.random() < 0.6:
+                    #     mats.append(create_random_persp_mat((args.size, args.size), perspective_strength=0.08))
+                    # # -- Rotation
+                    # if random.random() < 0.9:
+                    #     mats.append(np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(-45, 45), 1), np.array([0, 0, 1])]))
+                    # # -- Apply
+                    # final_mat = np.identity(3)
+                    # for mat in mats:
+                    #     final_mat = final_mat @ mat
+                    # aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=border_type)
                     
                     aug_in_imgs.append(aug_img)
                     aug_target_polys.append(aug_polys)
