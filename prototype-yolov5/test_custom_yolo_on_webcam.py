@@ -1,11 +1,18 @@
+import argparse
 import torch
 from matplotlib import pyplot as plt
 import numpy as np
 import cv2
 from pathlib import Path
 
+parser = argparse.ArgumentParser(prog='tes-stuff', description='test stuff.')
+parser.add_argument('-r','--run', type=str, default='exp6', help='Yolov5 run foldername.')
+args = parser.parse_args()
+
+run = args.run
+
 root_dir = Path(__file__).resolve().parent
-network_file = str(root_dir / '..' / '..' / 'yolov5/runs/train/exp2/weights/last.pt')
+network_file = str(root_dir / f'../repos/yolov5/runs/train/{run}/weights/best.pt')
 
 print("network_file",network_file)
 model = torch.hub.load('ultralytics/yolov5', 'custom', path=network_file, force_reload=True)
