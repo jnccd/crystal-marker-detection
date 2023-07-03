@@ -15,14 +15,14 @@ if [ "$2" != '' ]; then
 fi
 
 # Set parameter args
-if [[ $run_name == *whyp ]]; then
-    hyp=''
-else
+if [[ $run_name == *nhyp ]]; then
     hyp='--hyp hyp.no-augmentation.yaml'
+else
+    hyp=''
 fi
 echo "hyp is '$hyp'!"
 
-python repos/yolov5/train.py --name $run_name --img 640 --batch 8 --epochs 300 --data traindata-creator/dataset/$dataset_name/$dataset_name.yaml --weights yolov5s.pt $hyp
+python repos/yolov5/train.py --name $run_name --img 640 --batch 8 --epochs 300 --project repos/training --data traindata-creator/dataset/$dataset_name/$dataset_name.yaml --weights yolov5s.pt $hyp
 rm ./yolov5s.pt
 python repos/yolo_gen_evaldata.py -r $run_name -df traindata-creator/dataset/$valset_name/
 python -m cmd_tf -av repos/evaldata/yolov5-$run_name/
