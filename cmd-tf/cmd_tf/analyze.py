@@ -164,9 +164,9 @@ def analyze(
     with open(eval_dict_path, "w") as text_file:
         text_file.write(json.dumps({
             'avg_iou':float(np.average(flat_best_iou_matches)),
-            'voc2007_mAP':voc2007_mAP,
-            'voc2010_mAP':voc2010_mAP,
-            'coco_mAP':coco_mAP,
+            'voc2007_mAP':float(voc2007_mAP),
+            'voc2010_mAP':float(voc2010_mAP),
+            'coco_mAP':float(coco_mAP),
             }))
 
 def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
@@ -202,9 +202,9 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
     pp = [x['precision'] for x in mAP_table]
     
     # Add some extra values to make the curve go to 1
-    if rp[-1] < 1:
+    if len(rp) == 0 or rp[-1] < 1:
         # Append point downwards
-        rp.append(rp[-1])
+        rp.append(rp[-1] if len(rp) > 0 else 0)
         pp.append(0)
         
         # Append point at (1, 0)
