@@ -56,7 +56,7 @@ def main():
                 if row['confidence'] > 0.5:
                     text_file.write(f"{row['xmin']} {row['ymin']} {row['xmax']} {row['ymax']} {row['confidence']}\n")
         #print(out_img_path)
-        #cv2.imwrite(str(out_path), np.squeeze(results.render()))
+        cv2.imwrite(str(out_evaldata_path / f'{i}_result_render.png'), np.squeeze(results.render()))
         
         # Write labels
         # Rasterize Segmentation image
