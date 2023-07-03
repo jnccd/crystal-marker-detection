@@ -29,7 +29,7 @@ python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-ps
 python repos/yolov5/train.py --img 640 --batch 8 --epochs 100 --data traindata-creator/dataset/yolov5-good-pics-v2/yolov5-good-pics-v2.yaml --weights yolov5s.pt --hyp hyp.scratch.yaml 
 
 # Test yolo
-python repos/yolo_gen_evaldata.py -r _old/exp2 -df traindata-creator/dataset/yolov5-640-on-skin-valset/
+python repos/yolov5_gen_evaldata.py -r test_old_aug_gpv2_whyp -df traindata-creator/dataset/yolov5-640-on-skin-valset/
 #python prototype-yolov5/test_yolo_on_pics.py -m repos/yolov5/runs/train/exp/weights/best.pt -d N:\\Downloads\\Archives\\FabioBilder\\fPCS_on_skin
 
 # Update run outputs
@@ -39,4 +39,4 @@ python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-fp
 
 # Analyze valdata
 python -m cmd_tf -av sm-fpn-aruco
-python -m cmd_tf -av repos/valdata/yolov5/
+python -m cmd_tf -av repos/evaldata/yolov5/test_old_aug_gpv2_whyp/
