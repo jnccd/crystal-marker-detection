@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 def main():
-    parser = argparse.ArgumentParser(prog='tes-stuff', description='test stuff.')
+    parser = argparse.ArgumentParser(prog='yolov5-gen-evaluation-data', description='Generate testable evaluation data for yolov5 output on some datasets valdata.')
     parser.add_argument('-r','--run', type=str, default='', help='Yolov5 run foldername.')
     parser.add_argument('-df','--dataset-folder', type=str, default='',  help='The trainings data folder name to learn from or build into.')
     args = parser.parse_args()
@@ -18,7 +18,7 @@ def main():
     # Get chosen or last yolov5 run dir
     root_dir = Path(__file__).resolve().parent
     if args.run == '':
-        train_dir = str(root_dir / f'yolov5/runs/train')
+        train_dir = str(root_dir / f'training/yolov5')
         for dir in glob.iglob(train_dir+'/*', recursive=False):
             last_dir = dir
         last_dir = Path(last_dir)
@@ -26,7 +26,7 @@ def main():
         print(args.run)
         network_file = last_dir / 'weights/best.pt'
     else:
-        network_file = root_dir / f'yolov5/runs/train/{args.run}/weights/best.pt'
+        network_file = root_dir / f'training/yolov5/{args.run}/weights/best.pt'
 
     print("network_file:",network_file)
     model = torch.hub.load('ultralytics/yolov5', 'custom', path=network_file)
@@ -38,7 +38,7 @@ def main():
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
 
     i=0
-    out_evaldata_path = create_dir_if_not_exists(root_dir / f'evaldata/yolov5-{args.run}/')
+    out_evaldata_path = create_dir_if_not_exists(root_dir / f'evaldata/yolov5/{args.run}/')
     for img_path, label_path in zip(valdata_imgs_paths, valdata_labels_paths):
         
         # Write input picture
