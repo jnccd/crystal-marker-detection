@@ -23,4 +23,4 @@ albumentations>=1.0.3
 segmentation-models==1.0.1
 tikzplotlib>=0.10.1
 keras>=2.10.0
-
+shapely 
