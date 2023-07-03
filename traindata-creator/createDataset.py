@@ -99,20 +99,24 @@ def main():
                     aug_img = in_img
                     aug_polys = target_poly
                     
-                    # smart grid shuffle
+                    
+                    # Smart Grid Shuffle
                     if random.random() < 0.6:
                         aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size)
                     
-                    # poly label dropout
+                    # Poly Label Dropout
                     if random.random() < 0.6:
                         aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys)
                     
-                    # Matrix transform
+                    # Matrix Transform
                     mats = []
+                    # -- Perspective
                     if random.random() < 0.6:
-                        mats.append(create_random_persp_mat((args.size, args.size)))
+                        mats.append(create_random_persp_mat((args.size, args.size), perspective_strength=0.08))
+                    # -- Rotation
                     if random.random() < 0.9:
-                        mats.append(np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(0, 360), 1), np.array([0, 0, 1])]))
+                        mats.append(np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(-45, 45), 1), np.array([0, 0, 1])]))
+                    # -- Apply
                     final_mat = np.identity(3)
                     for mat in mats:
                         final_mat = final_mat @ mat
