@@ -100,7 +100,7 @@ def analyze(
                     max_match_iou = iou
                     max_match_target_box = target_box
                     max_match_target_box_index = tbi + 1000000*i
-            network_box_index = nbi + 1000000*i # It works
+            network_box_index = nbi + 1000000*i # It just works
             
             # Get pred conf
             if len(network_box) >= 5:
@@ -119,6 +119,33 @@ def analyze(
                 'gt_index': max_match_target_box_index,
                 })
     
+    total_gts = sum([len(target_boxes) for target_boxes in target_bboxes_per_img])
+    recall_points = [x/10 for x in range(0, 10, 1)]
+    
+    voc2007_mAP         = compute_mAP(mAP_table, total_gts, recall_points)
+    voc2010_mAP, rp, pp = compute_mAP(mAP_table, total_gts)
+    
+    coco_mAPs = []
+    for iou in [x/20 for x in range(10,1,20)]:
+        coco_mAPs.append(compute_mAP(mAP_table, total_gts, recall_points, iou))
+    coco_mAP = np.mean(coco_mAPs)
+    
+    # Plot PR Curve
+    plt.clf()
+    plt.title(f"PR Curve")
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.xlim(0.0, 1.0)
+    plt.ylim(0.0, 1.1)
+    plt.plot(rp, pp)
+    plt.savefig(valdata_path / 'PR_Curve.pdf', dpi=100)
+    
+    # Write out said metrics
+    eval_path = valdata_path / 'evals'
+    with open(eval_path, "w") as text_file:
+        text_file.write(f'Avg IoU: {np.average(flat_best_iou_matches)}')
+
+def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
     mAP_table = sorted(mAP_table, key=lambda x: -x['conf'])
     
     # Decide TP/FP cases
@@ -130,10 +157,6 @@ def analyze(
             taken_gt_boxes.append(entry['gt_index'])
         else:
             entry['tpfp'] = False
-            
-    # Get gt count
-    total_gts = sum([len(target_boxes) for target_boxes in target_bboxes_per_img])
-    #print(total_gts)
     
     # Build Acc TP, Acc FP, Precision and Recall
     acc_tp = 0
@@ -164,61 +187,41 @@ def analyze(
         rp.append(1)
         pp.append(0)
     
-    # Plot PR Curve
-    plt.clf()
-    plt.title(f"PR Curve")
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    plt.xlim(0.0, 1.0)
-    plt.ylim(0.0, 1.1)
-    
-    plt.plot(rp, pp)
-    plt.savefig(valdata_path / 'PR_Curve.pdf', dpi=100)
-    
-    # Compute VOC 2007 Score
-    voc2007_APs = []
-    for i in [x/10 for x in range(0, 10, 1)]:
-        recall_breakpoint_index = -1
-        for j in range(len(rp)):
-            if rp[j] > i:
-                recall_breakpoint_index = j
-                break
-        
-        if recall_breakpoint_index == -1:
-            AP = 0
-        else:
-            AP = max(pp[j:])
-        
-        voc2007_APs.append(AP)
-    voc2007_mAP = np.mean(voc2007_APs)
-    
-    # Compute VOC 2010 Score
-    voc2010_APs = []
-    last_r = 0
-    for i in range(len(rp)):
-        next_precisions = pp[i:]
-        if len(next_precisions) == 0:
-            max_next_precisions = 0
-        else:
-            max_next_precisions = max(next_precisions)
+    if recall_points == None:
+        APs = []
+        last_r = 0
+        for i in range(len(rp)):
+            next_precisions = pp[i:]
+            if len(next_precisions) == 0:
+                max_next_precisions = 0
+            else:
+                max_next_precisions = max(next_precisions)
+                
+            r_diff = rp[i] - last_r
+            AP = max_next_precisions * r_diff
+            #print(rp[i], r_diff, max_next_precisions, AP)
             
-        r_diff = rp[i] - last_r
-        AP = max_next_precisions * r_diff
-        #print(rp[i], r_diff, max_next_precisions, AP)
-        
-        voc2010_APs.append(AP)
-        last_r = rp[i]
-    voc2010_mAP = np.mean(voc2010_APs)
+            APs.append(AP)
+            last_r = rp[i]
+        mAP = np.mean(APs)
+    else:
+        APs = []
+        for i in recall_points:
+            recall_breakpoint_index = -1
+            for j in range(len(rp)):
+                if rp[j] > i:
+                    recall_breakpoint_index = j
+                    break
+            
+            if recall_breakpoint_index == -1:
+                AP = 0
+            else:
+                AP = max(pp[j:])
+            
+            APs.append(AP)
+        mAP = np.mean(APs)
     
-    print(mAP_table)
-    print(voc2010_mAP)
-    
-    # TODO: Measure performance using other metrics (like voc/coco mAP)
-    
-    # Write out said metrics
-    eval_path = valdata_path / 'evals'
-    with open(eval_path, "w") as text_file:
-        text_file.write(f'Avg IoU: {np.average(flat_best_iou_matches)}')
+    return mAP, rp, pp
 
 def iou_between_bboxes(xyxy_bbox_a, xyxy_bbox_b):
     # xyxy_bbox = (0: x_min, 1: y_min, 2: x_max, 3: y_max)
