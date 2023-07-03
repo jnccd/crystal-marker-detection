@@ -30,4 +30,4 @@ python repos/yolov5/train.py --name $run_name --img 640 --batch 8 --epochs 300 -
 rm ./yolov5s.pt
 python repos/yolov5_gen_evaldata.py -r $run_name -df traindata-creator/dataset/$valset_name/
 python -m cmd_tf -av repos/evaldata/yolov5/$run_name/
-cat repos/evaldata/yolov5-$run_name/evals/evals.json
+cat repos/evaldata/yolov5/$run_name/evals/evals.json
