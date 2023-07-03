@@ -208,7 +208,9 @@ def build_yolov5_dataset(in_imgs, target_polys):
             pic_path = images_dir[group] / f'{i}.png'
             cv2.imwrite(str(pic_path), td_in)
             
+            img_bounds = (0,0,img_w,img_h)
             xyxy_bboxes = [bounds(poly) for poly in td_polys]
+            xyxy_bboxes = [keep_box_in_bounds(bbox, img_bounds) for bbox in xyxy_bboxes]
             xywh_bboxes = [[bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]] for bbox in xyxy_bboxes]
             xywh_n_bboxes = [[bbox[0] / img_w, bbox[1] / img_h, bbox[2] / img_w, bbox[3] / img_h] for bbox in xywh_bboxes]
             cxcywh_n_bboxes = [[bbox[0] + bbox[2]/2, bbox[1] + bbox[3]/2, bbox[2], bbox[3]] for bbox in xywh_n_bboxes]
