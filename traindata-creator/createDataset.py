@@ -17,7 +17,7 @@ data_groups = ['train', 'val']
 dataset_name = ''
 dataset_dir = None
 background_color = (114, 114, 114)
-border_type = cv2.BORDER_REPLICATE
+border_type = cv2.BORDER_CONSTANT
 
 def main():
     global data_groups, dataset_name, dataset_dir, background_color, border_type
@@ -99,9 +99,8 @@ def main():
                     aug_img = in_img
                     aug_polys = target_poly
                     
-                    
                     # Smart Grid Shuffle
-                    if random.random() < 0.6:
+                    if random.random() < 0.9:
                         aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size)
                     
                     # Poly Label Dropout
