@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import math
 import random
@@ -9,10 +10,10 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-from cmd_tf.utility import get_files_from_folders_with_ending
+from cmd_tf.utility import get_files_from_folders_with_ending, create_dir_if_not_exists
 
 num_classes = 1
-bbox_inflation = 5
+bbox_inflation = 0
 
 def analyze(
     run_or_valdata: str,
@@ -25,6 +26,7 @@ def analyze(
         runs_dir = root_dir / 'runs'
         run_dir = runs_dir / f'{run_or_valdata}'
         valdata_path = run_dir / 'validation'
+    eval_path =  create_dir_if_not_exists(valdata_path / 'evals')
     
     ins = get_files_from_folders_with_ending([valdata_path], '_input.png')
     bbox_target_outs = get_files_from_folders_with_ending([valdata_path], '_target_output.txt')
@@ -122,28 +124,45 @@ def analyze(
     total_gts = sum([len(target_boxes) for target_boxes in target_bboxes_per_img])
     recall_points = [x/10 for x in range(0, 10, 1)]
     
-    voc2007_mAP         = compute_mAP(mAP_table, total_gts, recall_points)
-    voc2010_mAP, rp, pp = compute_mAP(mAP_table, total_gts)
+    # Compute VOC mAPs
+    voc2007_mAP, _, _ = compute_mAP(mAP_table, total_gts, recall_points)
+    print('voc2007_mAP:',voc2007_mAP)
+    voc2010_mAP, _, _ = compute_mAP(mAP_table, total_gts)
+    print('voc2010_mAP:',voc2010_mAP)
     
+    # Compute COCO mAP
     coco_mAPs = []
-    for iou in [x/20 for x in range(10,1,20)]:
-        coco_mAPs.append(compute_mAP(mAP_table, total_gts, recall_points, iou))
+    ious = [x/20 for x in range(10,20,1)]
+    pr_curves_per_iou = []
+    for iou in ious:
+        mAP, rp, pp = compute_mAP(mAP_table, total_gts, recall_points, iou)
+        pr_curves_per_iou.append({'rp':rp,'pp':pp})
+        coco_mAPs.append(mAP)
     coco_mAP = np.mean(coco_mAPs)
     
-    # Plot PR Curve
-    plt.clf()
-    plt.title(f"PR Curve")
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    plt.xlim(0.0, 1.0)
-    plt.ylim(0.0, 1.1)
-    plt.plot(rp, pp)
-    plt.savefig(valdata_path / 'PR_Curve.pdf', dpi=100)
+    # Plot PR Curves
+    for i in range(len(ious)):
+        rp = pr_curves_per_iou[i]['rp']
+        pp = pr_curves_per_iou[i]['pp']
+        
+        plt.clf()
+        plt.title(f"PR Curve for IoU:{ious[i]}")
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.xlim(0.0, 1.0)
+        plt.ylim(0.0, 1.1)
+        plt.plot(rp, pp)
+        plt.savefig(eval_path / f'eval_PR_Curve_{ious[i]}.pdf', dpi=100)
     
     # Write out said metrics
-    eval_path = valdata_path / 'evals'
-    with open(eval_path, "w") as text_file:
-        text_file.write(f'Avg IoU: {np.average(flat_best_iou_matches)}')
+    eval_dict_path = eval_path / 'evals.json'
+    with open(eval_dict_path, "w") as text_file:
+        text_file.write(json.dumps({
+            'avg_iou':float(np.average(flat_best_iou_matches)),
+            'voc2007_mAP':voc2007_mAP,
+            'voc2010_mAP':voc2010_mAP,
+            'coco_mAP':coco_mAP,
+            }))
 
 def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
     mAP_table = sorted(mAP_table, key=lambda x: -x['conf'])
@@ -152,7 +171,7 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
     taken_gt_boxes = []
     for entry in mAP_table:
         # TODO: Change iou threshold for other mAPs
-        if entry['iou'] > 0.5 and not entry['gt_index'] in taken_gt_boxes:
+        if entry['iou'] > IoU and not entry['gt_index'] in taken_gt_boxes:
             entry['tpfp'] = True
             taken_gt_boxes.append(entry['gt_index'])
         else:
@@ -219,6 +238,8 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
                 AP = max(pp[j:])
             
             APs.append(AP)
+        print('recall_points:',recall_points)
+        print('APs:',APs)
         mAP = np.mean(APs)
     
     return mAP, rp, pp
