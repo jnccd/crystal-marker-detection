@@ -38,7 +38,7 @@ def main():
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
 
     i=0
-    out_evaldata_path = create_dir_if_not_exists(root_dir / f'evaldata/yolov5/{args.run}/')
+    out_evaldata_path = create_dir_if_not_exists(root_dir / f'evaldata/yolov5/{args.run}/data')
     for img_path, label_path in zip(valdata_imgs_paths, valdata_labels_paths):
         
         # Write input picture
