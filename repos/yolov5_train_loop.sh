@@ -26,7 +26,8 @@ else
 fi
 echo "hyp is '$hyp'!"
 
-python repos/yolov5/train.py --name $run_name --img 640 --batch 8 --epochs 300 --project $project_folder --data traindata-creator/dataset/$dataset_name/$dataset_name.yaml --weights yolov5s.pt $hyp
+python repos/yolov5/train.py --name $run_name --img 640 --batch 8 --epochs 3 --project $project_folder --data traindata-creator/dataset/$dataset_name/$dataset_name.yaml --weights yolov5s.pt $hyp
+
 rm ./yolov5s.pt
 python repos/yolov5_gen_evaldata.py -r $run_name -df traindata-creator/dataset/$valset_name/
 python -m cmd_tf -av repos/evaldata/yolov5/$run_name/
