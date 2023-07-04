@@ -12,21 +12,21 @@ SECONDS=0
 # python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco-same2 -bs 8 -e 5
 
 for dir in traindata-creator/dataset/yolov5-*/; do
- dirname=$(basename "$dir")
+    dirname=$(basename "$dir")
 
- if [[ $dirname == *"-valset" ]]; then
-  echo "I wont test $dirname"
-  continue
- fi
- 
- cat traindata-creator/dataset/$dirname/dataset-def.json 
+    if [[ $dirname == *"-valset" ]]; then
+        echo "I wont test $dirname"
+        continue
+    fi
+    
+    cat traindata-creator/dataset/$dirname/dataset-def.json 
 
- python repos/yolov5_train_loop.py -n test-$dirname-1 -d $dirname -e 300 --no-aug
- #python repos/yolov5_train_loop.py -n test-$dirname-2 -d $dirname -e 300 --no-aug
- #python repos/yolov5_train_loop.py -n test-$dirname-3 -d $dirname -e 300 --no-aug
- python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-1 -d $dirname -e 300 --no-aug
- #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-2 -d $dirname -e 300 --no-aug
- #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-3 -d $dirname -e 300 --no-aug
+    python repos/yolov5_train_loop.py -n test-$dirname-1 -d $dirname -e 300 --no-aug
+    #python repos/yolov5_train_loop.py -n test-$dirname-2 -d $dirname -e 300 --no-aug
+    #python repos/yolov5_train_loop.py -n test-$dirname-3 -d $dirname -e 300 --no-aug
+    python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-1 -d $dirname -e 300 --no-aug
+    #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-2 -d $dirname -e 300 --no-aug
+    #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-3 -d $dirname -e 300 --no-aug
  
 done
 
