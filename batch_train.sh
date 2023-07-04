@@ -21,12 +21,12 @@ for dir in traindata-creator/dataset/yolov5-*/; do
     
     cat traindata-creator/dataset/$dirname/dataset-def.json 
 
-    python repos/yolov5_train_loop.py -n test-$dirname-1 -d $dirname -e 300 --no-aug
+    #python repos/yolov5_train_loop.py -n test-$dirname-1 -d $dirname -e 300 --no-aug
     #python repos/yolov5_train_loop.py -n test-$dirname-2 -d $dirname -e 300 --no-aug
     #python repos/yolov5_train_loop.py -n test-$dirname-3 -d $dirname -e 300 --no-aug
-    python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-1 -d $dirname -e 300 --no-aug
-    #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-2 -d $dirname -e 300 --no-aug
-    #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-3 -d $dirname -e 300 --no-aug
+    python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-1 -d $dirname -e 300
+    #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-2 -d $dirname -e 300
+    #python repos/yolov5_train_loop.py -n test-$dirname-yolo5aug-3 -d $dirname -e 300
  
 done
 
