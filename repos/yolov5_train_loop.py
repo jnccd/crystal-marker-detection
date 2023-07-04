@@ -23,8 +23,10 @@ yolov5_args = ''
 if args.no_aug:
     yolov5_args += '--hyp hyp.no-augmentation.yaml'
 
+print('Training...')
 os.system(f'python repos/yolov5/train.py --name {args.run_name} --img 640 --batch 8 --epochs 3 --project {project_folder} --data traindata-creator/dataset/{args.dataset_name}/{args.dataset_name}.yaml --weights {args.model}.pt {yolov5_args}')
 os.system(f'rm {args.model}.pt')
+print('Evaluating...')
 os.system(f'python repos/yolov5_gen_evaldata.py -r {args.run_name} -df traindata-creator/dataset/{args.valset_name}/')
 os.system(f'python -m cmd_tf -av repos/evaldata/yolov5/{args.run_name}/')
 #os.system(f'cat repos/evaldata/yolov5/{args.run_name}/evals/evals.json')
