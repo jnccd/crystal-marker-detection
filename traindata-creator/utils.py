@@ -145,6 +145,19 @@ def resize_and_pad(img: Mat, desired_size: int, background_color = [0, 0, 0], bo
     
     return brimg, new_size, top, left
 
+def center_crop_to_11_aspect_ratio(img: Mat, size: int = -1):
+    width, height = img.shape[1], img.shape[0]
+
+    crop_size = img.shape[0] if img.shape[0] < img.shape[1] else img.shape[1]
+    mid_x, mid_y = int(width/2), int(height/2)
+    cw2, ch2 = int(crop_size/2), int(crop_size/2) 
+    crop_img = img[mid_y-ch2:mid_y+ch2, mid_x-cw2:mid_x+cw2]
+    
+    if size > 0:
+        crop_img = cv2.resize(crop_img, (size, size))
+    
+    return crop_img
+
 def create_random_persp_mat(img_size_wh, perspective_strength = 0.3):
     persp_strength_x = perspective_strength *0.5*img_size_wh[0]
     persp_strength_y = perspective_strength *0.5*img_size_wh[1]
