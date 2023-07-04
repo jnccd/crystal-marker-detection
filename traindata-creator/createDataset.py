@@ -1,5 +1,6 @@
 import argparse
 import ast
+import json
 import os
 import random
 import shutil
@@ -29,8 +30,15 @@ def main():
     parser.add_argument('-tf','--traindata-folders', action='append', nargs='+', type=str, help='The folders containing train data.')
     parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
+    
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.')
+    parser.add_argument('-asgsc','--augment-smart-grid-shuffle-chance', type=float, default=0.9, help='Chance that smart-grid-shuffle is applied to a sample.')
+    parser.add_argument('-apldc','--augment-label-dropout-chance', type=float, default=0.6, help='Chance that label-dropout is applied to a sample.')
+    parser.add_argument('-apc','--augment-perspective-chance', type=float, default=0.6, help='Chance that perspective is applied to a sample.')
+    parser.add_argument('-aps','--augment-perspective-strength', type=float, default=0.08, help='Augment perspective strength in percent, 1 results in the image becoming triangular.')
+    parser.add_argument('-arc','--augment-rotation-chance', type=float, default=0.9, help='Chance that rotation is applied to a sample.')
+    parser.add_argument('-ars','--augment-rotation-strength', type=float, default=45, help='Maximum augment rotation in degrees.')
     args = parser.parse_args()
     
     if args.size is None:
@@ -100,26 +108,32 @@ def main():
                     aug_polys = target_poly
                     
                     # Smart Grid Shuffle
-                    if random.random() < 0.9:
+                    if random.random() < args.augment_smart_grid_shuffle_chance:
                         aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size)
                     
                     # Poly Label Dropout
-                    if random.random() < 0.6:
+                    if random.random() < args.augment_label_dropout_chance:
                         aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys)
                     
                     # # Matrix Transform
-                    # mats = []
-                    # # -- Perspective
-                    # if random.random() < 0.6:
-                    #     mats.append(create_random_persp_mat((args.size, args.size), perspective_strength=0.08))
-                    # # -- Rotation
-                    # if random.random() < 0.9:
-                    #     mats.append(np.vstack([cv2.getRotationMatrix2D((img_size[0]/2, img_size[1]/2), random.randrange(-45, 45), 1), np.array([0, 0, 1])]))
-                    # # -- Apply
-                    # final_mat = np.identity(3)
-                    # for mat in mats:
-                    #     final_mat = final_mat @ mat
-                    # aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=border_type)
+                    mats = []
+                    # -- Perspective
+                    if random.random() < args.augment_perspective_chance:
+                        mats.append(create_random_persp_mat((args.size, args.size), perspective_strength=args.augment_perspective_strength))
+                    # -- Rotation
+                    if random.random() < args.augment_rotation_chance:
+                        mats.append(np.vstack([
+                            cv2.getRotationMatrix2D(
+                                (img_size[0]/2, img_size[1]/2), 
+                                random.randrange(-args.augment_rotation_strength, args.augment_rotation_strength), 
+                                1), 
+                            np.array([0, 0, 1])]))
+                    # -- Apply
+                    final_mat = np.identity(3)
+                    mats.reverse()
+                    for mat in mats:
+                        final_mat = final_mat @ mat
+                    aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=border_type)
                     
                     aug_in_imgs.append(aug_img)
                     aug_target_polys.append(aug_polys)
@@ -140,6 +154,22 @@ def main():
         build_od_csv_dataset(in_imgs, target_polys)
     else:
         print('Error: Unsupported dataset type!')
+        exit()
+    # Add dataset definition dict
+    write_textfile(json.dumps({
+            'name': dataset_name,
+            'type': args.type,
+            'td_series': args.traindata_folders,
+            'vd_series': args.valdata_folders,
+            'augment': args.augment,
+            'augment_img_mult': args.augment_img_multiplier,
+            'smart_grid_shuffle_chance': args.augment_smart_grid_shuffle_chance,
+            'label_dropout_chance': args.augment_label_dropout_chance,
+            'perspective_chance': args.augment_perspective_chance,
+            'perspective_strength': args.augment_perspective_strength,
+            'rotation_chance': args.augment_rotation_chance,
+            'rotation_strength': args.augment_rotation_strength
+        }, indent=4), dataset_dir / 'dataset-def.json')
    
 def build_seg_dataset(in_imgs, target_polys):
     global data_groups, dataset_name, dataset_dir
