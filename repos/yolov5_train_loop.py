@@ -1,6 +1,9 @@
 import argparse
+import ast
+import json
 import os
 from pathlib import Path
+from utils import *
 
 root_dir = Path(__file__).resolve().parent
 os.chdir(root_dir / '../')
@@ -18,6 +21,19 @@ parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the 
 args = parser.parse_args()
 
 project_folder = Path('repos/training/yolov5')
+dataset_def_dict = json.loads(read_textfile(Path(f'traindata-creator/dataset/{args.dataset_name}/dataset-def.json')).replace(" ", "").replace("\n", ""))
+valset_def_dict = json.loads(read_textfile(Path(f'traindata-creator/dataset/{args.valset_name}/dataset-def.json')).replace(" ", "").replace("\n", ""))
+train_def_dict = {
+    'run_name': args.run_name,
+    'disabled_yolo_aug': args.no_aug,
+    'img_size': args.img_size,
+    'batch_size': args.batch_size,
+    'epochs': args.epochs,
+    'model': args.model,
+    'valset': valset_def_dict,
+    'dataset': dataset_def_dict,
+}
+evaldata_run_dir = Path(f'repos/evaldata/yolov5/{args.run_name}/')
 
 yolov5_args = ''
 if args.no_aug:
@@ -28,6 +44,5 @@ os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_
 os.system(f'rm {args.model}.pt')
 print('--- Evaluating...')
 os.system(f'python repos/yolov5_gen_evaldata.py -r {args.run_name} -df traindata-creator/dataset/{args.valset_name}/')
-os.system(f'python -m cmd_tf -av repos/evaldata/yolov5/{args.run_name}/')
-os.system(f'cp traindata-creator/dataset/{args.dataset_name}/')
-#os.system(f'cat repos/evaldata/yolov5/{args.run_name}/evals/evals.json')
+os.system(f'python -m cmd_tf -av {evaldata_run_dir}')
+write_textfile(json.dumps(train_def_dict, indent=4), evaldata_run_dir / 'training-def.json')
