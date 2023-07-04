@@ -162,6 +162,8 @@ def main():
             'type': args.type,
             'td_series': args.traindata_folders,
             'vd_series': args.valdata_folders,
+            'ratio': args.ratio,
+            'command': 'python ' + ' '.join(sys.argv),
             'augment': args.augment,
             'augment_img_mult': args.augment_img_multiplier,
             'smart_grid_shuffle_chance': args.augment_smart_grid_shuffle_chance,
