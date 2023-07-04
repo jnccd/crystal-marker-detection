@@ -220,6 +220,21 @@ def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=Non
 
 	return bg_img
 
+# Taken from https://stackoverflow.com/questions/48979219/opencv-composting-2-images-of-differing-size and modified
+def combine_two_color_images(back_img, fore_img, x = 0, y = 0, alpha = 0.5):
+    back_img = back_img.copy()
+    fore_img_h, fore_img_w = fore_img.shape[:2]
+    
+    # do composite on the upper-left corner of the background image.
+    blended_portion = cv2.addWeighted(fore_img,
+                alpha,
+                back_img[y:fore_img_h+y,x:fore_img_w+x,:],
+                1 - alpha,
+                0,
+                back_img)
+    back_img[y:fore_img_h+y,x:fore_img_w+x,:] = blended_portion
+    return back_img
+
 # --- Traindata imgs -------------------------------------------------------------------------------------------------------------------------
 
 def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon], background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
