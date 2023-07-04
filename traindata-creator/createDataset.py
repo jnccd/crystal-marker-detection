@@ -155,6 +155,7 @@ def main():
     else:
         print('Error: Unsupported dataset type!')
         exit()
+        
     # Add dataset definition dict
     write_textfile(json.dumps({
             'name': dataset_name,
