@@ -45,7 +45,7 @@ def main():
         print('Please specify a size')
         sys.exit(1)
     
-    dataset_name = f'{args.type}-{args.size}{"-aug" if args.augment else ""}-{args.name}'
+    dataset_name = f'{args.type}-{args.size}-{args.name}'
     print(f'Creating {dataset_name}...')
     
     # --- Get Paths ---
