@@ -79,11 +79,12 @@ def main():
             
             cur_verts = imgs_verts[imgs_index]
         elif k == ord('c'):
-            print("c")
+            cur_verts = []
         elif k == ord('z'):
-            print("z")
+            cur_verts.pop()
         elif k == ord('f'):
-            print("f")
+            cur_verts.append(cur_vert_points)
+            cur_vert_points = []
         
         # Draw
         display_img = in_imgs[imgs_index].copy()
@@ -111,7 +112,7 @@ def mouseEvent(action, x, y, flags, *userdata):
     
     cur_m_pos = (x,y)
     if action == cv2.EVENT_LBUTTONDOWN:
-        print('M1 down')
+        print('Vertex created')
     elif action == cv2.EVENT_LBUTTONUP:
         if len(cur_vert_points) > 0:
             sx, sy = cur_vert_points[0]
