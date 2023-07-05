@@ -50,8 +50,9 @@ def main():
     
     # Load imgs
     in_imgs = [keep_image_size_in_check(cv2.imread(str(p)), args.preresize_max_width, args.preresize_max_height) for p in input_img_paths]
-    imgs_verts = [[] for x in range(len(in_imgs))]
+    imgs_verts = [ast.literal_eval(read_textfile(output_vert_paths[i])) if output_vert_paths[i].is_file() else [] for i in range(len(in_imgs))]
     imgs_index = 0
+    cur_verts = imgs_verts[imgs_index]
     #img_h, img_w = img.shape[:2]
 
     # Load window and hook events
