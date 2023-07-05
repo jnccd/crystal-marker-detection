@@ -6,6 +6,7 @@ python traindata-creator/createArucoFrameDataseries.py -if traindata-creator/raw
 python traindata-creator/createArucoFrameDataseries.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s1 -lirf -ng
 python traindata-creator/createArucoFrameDataseries.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s2 -lirf -ng
 python traindata-creator/createArucoFrameDataseries.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s1 -ng -lirf && python traindata-creator/createArucoFrameDataseries.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn2_s2 -ng -lirf
+python traindata-creator/createManualDataseries.py -if N:\\Downloads\\Archives\\FabioBilder\\fPCS_on_skin
 
 # Create datasets from dataseries
 python traindata-creator/createDataset.py -n red-rects -tf traindata-creator/dataseries/af-webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae/ traindata-creator/dataseries/af-webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0/ -vf traindata-creator/dataseries/af-webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf/ -t seg -s 640 -a -aim 4
