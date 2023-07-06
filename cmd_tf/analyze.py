@@ -42,7 +42,7 @@ def analyze(
         target_bboxes_per_img = []
         for target_out in pic_target_outs:
             img = cv2.imread(str(target_out), cv2.IMREAD_GRAYSCALE)
-            target_bboxes_per_img.append(cluster_boxes_from_grayscale_img(img,network_out,True))
+            target_bboxes_per_img.append(cluster_boxes_from_grayscale_img(img,target_out,True))
             
         network_bboxes_per_img = []
         for network_out in pic_network_outs:
