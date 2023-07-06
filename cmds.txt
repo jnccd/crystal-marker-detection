@@ -50,4 +50,4 @@ python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-fp
 
 # Analyze valdata
 python -m cmd_tf -av sm-fpn-aruco
-python -m cmd_tf -av repos/evaldata/yolov5/test_old_aug_gpv2_whyp/
+python -m cmd_tf -av repos/evaldata/yolov5/test-yolov5-640-good-pics-v2-slight-mat-only-1/
