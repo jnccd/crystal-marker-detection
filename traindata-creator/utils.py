@@ -386,7 +386,7 @@ def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     if len(draw_color) != 3:
         c = polys[pi].centroid
         # Sample color from poly centroid in img
-        draw_color = [int(x) for x in img[int(c.x), int(c.y)]]
+        draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
     
     img = rasterize_polys(img, [inflate_poly(polys[pi], 0.2)], draw_color)
     polys.pop(pi)
