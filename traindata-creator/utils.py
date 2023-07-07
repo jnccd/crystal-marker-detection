@@ -380,8 +380,13 @@ def homogeneous_mat_transform(
     return img, polys
 
 def random_crop(img: Mat, polys: list[Polygon], target_size_wh: tuple):
-    crop_pos_x = random.randrange(0, img[1] - target_size_wh[1])
-    crop_pos_y = random.randrange(0, img[0] - target_size_wh[0])
+    if img.shape[1] < target_size_wh[0] + 1 or img.shape[0] < target_size_wh[1] + 1:
+        #print('too small!', img.shape, target_size_wh)
+        return img, polys
+    
+    print(img.shape, target_size_wh)
+    crop_pos_x = random.randrange(0, img.shape[1] - target_size_wh[0])
+    crop_pos_y = random.randrange(0, img.shape[0] - target_size_wh[1])
     crop_img = img[crop_pos_y:crop_pos_y+target_size_wh[0], crop_pos_x:crop_pos_x+target_size_wh[1]]
     
     crop_area = get_poly_from_bounds((crop_pos_x,crop_pos_y,target_size_wh[0],target_size_wh[1]))
