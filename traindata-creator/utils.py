@@ -379,6 +379,16 @@ def homogeneous_mat_transform(
     
     return img, polys
 
+def random_crop(img: Mat, polys: list[Polygon], target_size_wh: tuple):
+    crop_pos_x = random.randrange(0, img[1] - target_size_wh[1])
+    crop_pos_y = random.randrange(0, img[0] - target_size_wh[0])
+    crop_img = img[crop_pos_y:crop_pos_y+target_size_wh[0], crop_pos_x:crop_pos_x+target_size_wh[1]]
+    
+    crop_area = get_poly_from_bounds((crop_pos_x,crop_pos_y,target_size_wh[0],target_size_wh[1]))
+    #print('area', crop_area, crop_pos_x, crop_pos_y, target_size_wh)
+    polys = drop_low_visibility_labels(polys, crop_area)
+    polys = [transform(p, lambda x: np.array([(p[0] - crop_pos_x, p[1] - crop_pos_y) for p in x] )) for p in polys]
+
 def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     
     pi = random.randrange(0, len(polys))
