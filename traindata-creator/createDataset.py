@@ -40,6 +40,7 @@ def main():
     parser.add_argument('-aps','--augment-perspective-strength', type=float, default=0.08, help='Augment perspective strength in percent, 1 results in the image becoming triangular.')
     parser.add_argument('-arc','--augment-rotation-chance', type=float, default=0.9, help='Chance that rotation is applied to a sample.')
     parser.add_argument('-ars','--augment-rotation-strength', type=float, default=45, help='Maximum augment rotation in degrees.')
+    parser.add_argument('-arcc','--augment-random-crop-chance', type=float, default=0.6, help='Chance that image is cropped randomly.')
     args = parser.parse_args()
     
     if args.size is None:
@@ -101,6 +102,10 @@ def main():
                 if m > 0:
                     aug_img = in_img.copy()
                     aug_polys = copy.deepcopy(target_poly)
+                    
+                    # Random Crop
+                    if random.random() < args.augment_random_crop_chance:
+                        aug_img, aug_polys = random_crop(aug_img, aug_polys, (args.size, args.size))
                     
                     # Smart Grid Shuffle
                     if random.random() < args.augment_smart_grid_shuffle_chance:
@@ -173,7 +178,8 @@ def main():
             'perspective_chance': args.augment_perspective_chance,
             'perspective_strength': args.augment_perspective_strength,
             'rotation_chance': args.augment_rotation_chance,
-            'rotation_strength': args.augment_rotation_strength
+            'rotation_strength': args.augment_rotation_strength,
+            'random_crop_chance': args.augment_random_crop_chance,
         }, indent=4), dataset_dir / 'dataset-def.json')
    
 def build_seg_dataset(in_imgs, target_polys):
