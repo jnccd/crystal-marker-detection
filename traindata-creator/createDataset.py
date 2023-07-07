@@ -86,13 +86,6 @@ def main():
         in_imgs[group] = [cv2.imread(str(p)) for p in in_paths[group]]
         target_polys[group] = [[Polygon(b) for b in ast.literal_eval(read_textfile(p))] for p in poly_paths[group]]
     
-    # Resize and pad imgs and labels
-    for group in data_groups:
-        for i, (in_img, target_poly) in enumerate(zip(in_imgs[group], target_polys[group])):
-            img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
-            in_imgs[group][i] = img
-            target_polys[group][i] = poly
-    
     # --- Augment dataseries ---
     aug_group = data_groups[0] # Augment only traindata
     if args.augment:
@@ -100,8 +93,9 @@ def main():
         aug_target_polys = []
         
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
+            #print(f'Augmenting {in_paths[aug_group][i]}...')
             for m in range(args.augment_img_multiplier):
-                img_size = (args.size, args.size)
+                img_size_wh = tuple(reversed(in_img.shape[:2]))
                 
                 if m > 0:
                     aug_img = in_img
@@ -109,7 +103,7 @@ def main():
                     
                     # Smart Grid Shuffle
                     if random.random() < args.augment_smart_grid_shuffle_chance:
-                        aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size)
+                        aug_img, aug_polys = smart_grid_shuffle(aug_img, aug_polys, img_size_wh)
                     
                     # Poly Label Dropout
                     if random.random() < args.augment_label_dropout_chance:
@@ -119,12 +113,12 @@ def main():
                     mats = []
                     # -- Perspective
                     if random.random() < args.augment_perspective_chance:
-                        mats.append(create_random_persp_mat((args.size, args.size), perspective_strength=args.augment_perspective_strength))
+                        mats.append(create_random_persp_mat(img_size_wh, perspective_strength=args.augment_perspective_strength))
                     # -- Rotation
                     if random.random() < args.augment_rotation_chance:
                         mats.append(np.vstack([
                             cv2.getRotationMatrix2D(
-                                (img_size[0]/2, img_size[1]/2), 
+                                (img_size_wh[0]/2, img_size_wh[1]/2), 
                                 random.randrange(-args.augment_rotation_strength, args.augment_rotation_strength), 
                                 1), 
                             np.array([0, 0, 1])]))
@@ -133,7 +127,7 @@ def main():
                     mats.reverse()
                     for mat in mats:
                         final_mat = final_mat @ mat
-                    aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size, final_mat, border_type=border_type)
+                    aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size_wh, final_mat, border_type=border_type)
                     
                     aug_in_imgs.append(aug_img)
                     aug_target_polys.append(aug_polys)
@@ -144,6 +138,13 @@ def main():
                 
         in_imgs[aug_group] = aug_in_imgs
         target_polys[aug_group] = aug_target_polys
+        
+    # Resize and pad imgs and labels
+    for group in data_groups:
+        for i, (in_img, target_poly) in enumerate(zip(in_imgs[group], target_polys[group])):
+            img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
+            in_imgs[group][i] = img
+            target_polys[group][i] = poly
     
     # --- Build dataset ---
     if args.type == 'seg':
