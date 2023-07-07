@@ -276,10 +276,10 @@ def segment_img_between_poly_labels(img: Mat, polys: list[Polygon], dim: Literal
             end = int((upper_poly_lower_bound + lower_poly_upper_bound) / 2)
             if dim == 0:
                 corners = list(filter(lambda x: x.exterior.coords[0][0] > last_end and x.exterior.coords[0][0] < end, polys))
-                seg_img = img[0:img_w, last_end:end]
+                seg_img = img[:, last_end:end]
             else:
                 corners = list(filter(lambda x: x.exterior.coords[0][1] > last_end and x.exterior.coords[0][1] < end, polys))
-                seg_img = img[last_end:end, 0:img_h]
+                seg_img = img[last_end:end, :]
             segments.append({   
                 'end': end,
                 'beginning': last_end,
@@ -292,13 +292,14 @@ def segment_img_between_poly_labels(img: Mat, polys: list[Polygon], dim: Literal
         last_end = segments[-1]['end']
     else: 
         last_end = 0
-    end = img_w
-    if dim == 0:
+    if dim == 0: # x
+        end = img_w
         corners = list(filter(lambda x: x.exterior.coords[0][0] > last_end and x.exterior.coords[0][0] < end, polys))
-        seg_img = img[0:img_w, last_end:end]
-    else:
+        seg_img = img[:, last_end:end]
+    else: # y
+        end = img_h
         corners = list(filter(lambda x: x.exterior.coords[0][1] > last_end and x.exterior.coords[0][1] < end, polys))
-        seg_img = img[last_end:end, 0:img_h]
+        seg_img = img[last_end:end, :]
     segments.append({ 
         'end': end,
         'beginning': last_end,
@@ -316,9 +317,10 @@ def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
     pos = 0
     for seg in segments:
         if dim == 0: # x
-            aug_image[0:out_img_size_wh[1],pos:pos+seg['size']] = seg['img']
+            aug_image[:,pos:pos+seg['size']] = seg['img']
         else: # y
-            aug_image[pos:pos+seg['size'],0:out_img_size_wh[0]] = seg['img']
+            #print('debug', out_img_size_wh, aug_image.shape, seg['img'].shape, pos, seg['size'])
+            aug_image[pos:pos+seg['size'],:] = seg['img']
             
         #print('y_pos',y_pos)
         #print('seg[beginning]',seg['beginning'])
@@ -345,7 +347,9 @@ def smart_grid_shuffle(img, polys: list[Polygon], img_size_wh):
         random.shuffle(segs_x)
         
         seg_img_h, seg_img_w = seg_y['img'].shape[:2]
+        #print('before seg_y rebuild', seg_y['img'].shape, seg_y['size'])
         segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
+        #print('after seg_y rebuild', segs_img.shape)
         
         seg_y['img'] = segs_img
         seg_y['corners'] = segs_polys
@@ -355,7 +359,8 @@ def smart_grid_shuffle(img, polys: list[Polygon], img_size_wh):
 def homogeneous_mat_transform(
     img: Mat, 
     polys: list[Polygon], 
-    img_size_wh, M: Mat, 
+    img_size_wh, 
+    M: Mat, 
     background_color = [0, 0, 0], 
     border_type = cv2.BORDER_CONSTANT,
     min_label_visiblity = 0.25,
@@ -369,7 +374,7 @@ def homogeneous_mat_transform(
     polys = [transform(p, lambda x: np.array(apply_homography(x, M, convert_to_int=False))) for p in polys]
     
     # Drop low visibility labels
-    img_area = Polygon([[0, 0], [img_size_wh[0], 0], [img_size_wh[0], img_size_wh[1]], [0, img_size_wh[1]]])
+    img_area = get_poly_from_bounds((0,0,img_size_wh[0],img_size_wh[1]))
     polys = drop_low_visibility_labels(polys, img_area, min_label_visiblity)
     
     return img, polys
@@ -387,6 +392,9 @@ def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     polys.pop(pi)
     
     return img, polys
+
+def get_poly_from_bounds(bounds_xywh: tuple):
+    return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
 def drop_low_visibility_labels(polys: list[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
     for i in range(len(polys)):
