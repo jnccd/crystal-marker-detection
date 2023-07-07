@@ -6,6 +6,7 @@ import random
 import shutil
 import sys
 import time
+import copy
 import cv2
 from pathlib import Path
 from numpy import ndarray, uint8
@@ -98,8 +99,8 @@ def main():
                 img_size_wh = tuple(reversed(in_img.shape[:2]))
                 
                 if m > 0:
-                    aug_img = in_img
-                    aug_polys = target_poly
+                    aug_img = in_img.copy()
+                    aug_polys = copy.deepcopy(target_poly)
                     
                     # Smart Grid Shuffle
                     if random.random() < args.augment_smart_grid_shuffle_chance:
