@@ -95,7 +95,6 @@ def main():
         aug_target_polys = []
         
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
-            #print(f'Augmenting {in_paths[aug_group][i]}...')
             for m in range(args.augment_img_multiplier):
                 img_size_wh = tuple(reversed(in_img.shape[:2]))
                 
