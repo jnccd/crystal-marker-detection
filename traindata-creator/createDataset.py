@@ -110,7 +110,7 @@ def main():
                     if random.random() < args.augment_label_dropout_chance:
                         aug_img, aug_polys = poly_label_dropout(aug_img, aug_polys)
                     
-                    # # Matrix Transform
+                    # Matrix Transform
                     mats = []
                     # -- Perspective
                     if random.random() < args.augment_perspective_chance:
