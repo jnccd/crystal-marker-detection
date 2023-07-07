@@ -106,6 +106,7 @@ def main():
                     # Random Crop
                     if random.random() < args.augment_random_crop_chance:
                         aug_img, aug_polys = random_crop(aug_img, aug_polys, (args.size, args.size))
+                        img_size_wh = tuple(reversed(aug_img.shape[:2]))
                     
                     # Smart Grid Shuffle
                     if random.random() < args.augment_smart_grid_shuffle_chance:
