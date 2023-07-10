@@ -182,49 +182,6 @@ def create_random_persp_mat(img_size_wh, perspective_strength = 0.3):
         print('Invalid side!')
     return cv2.getPerspectiveTransform(src_points, dst_points)
 
-# Taken from https://gist.github.com/clungzta/b4bbb3e2aa0490b0cfcbc042184b0b4e
-def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=None, blurSize=5):
-    """
-    @brief      Overlays a transparant PNG onto another image using CV2
-	
-    @param      background_img    The background image
-    @param      img_to_overlay_t  The transparent image to overlay (has alpha channel)
-    @param      x                 x location to place the top-left corner of our overlay
-    @param      y                 y location to place the top-left corner of our overlay
-    @param      overlay_size      The size to scale our overlay to (tuple), no scaling if None
-	
-    @return     Background image with overlay on top
-    """
-    
-    bg_img = background_img.copy()
-    
-    if overlay_size is not None:
-        img_to_overlay_t = cv2.resize(img_to_overlay_t.copy(), overlay_size)
-    else:
-        img_to_overlay_t = img_to_overlay_t.copy()
-        
-    # Extract the alpha mask of the RGBA image, convert to RGB 
-    b,g,r,a = cv2.split(img_to_overlay_t)
-    overlay_color = cv2.merge((b,g,r))
-	
-	# Apply some simple filtering to remove edge noise
-    mask = cv2.medianBlur(a,blurSize)
-
-    h, w, _ = overlay_color.shape
-    roi = bg_img[y:y+h, x:x+w]
-
-	# Black-out the area behind the logo in our original ROI
-    img1_bg = cv2.bitwise_and(roi.copy(),roi.copy(),mask = cv2.bitwise_not(mask))
-	
-	# Mask out the logo from the logo image.
-    img2_fg = cv2.bitwise_and(overlay_color,overlay_color,mask = mask)
-
-	# Update the original image with our new ROI
-    bg_img[y:y+h, x:x+w] = cv2.add(img1_bg, img2_fg)
-    # print('overlay_transparent, range', (x,y,w,h))
-
-    return bg_img
-
 # Taken from https://stackoverflow.com/questions/48979219/opencv-composting-2-images-of-differing-size and modified
 def combine_two_color_images(back_img, fore_img, x = 0, y = 0, alpha = 0.5):
     back_img = back_img.copy()
@@ -259,6 +216,61 @@ def rasterize_polys(draw_img: Mat, polys: list[Polygon], draw_color: tuple = (25
         cv2.fillPoly(draw_img, pts=[np_vertices], color=draw_color)
         
     return draw_img
+
+# Taken from https://gist.github.com/clungzta/b4bbb3e2aa0490b0cfcbc042184b0b4e
+def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=None, blurSize=5):
+    """
+    @brief      Overlays a transparant PNG onto another image using CV2
+	
+    @param      background_img    The background image
+    @param      img_to_overlay_t  The transparent image to overlay (has alpha channel)
+    @param      x                 x location to place the top-left corner of our overlay
+    @param      y                 y location to place the top-left corner of our overlay
+    @param      overlay_size      The size to scale our overlay to (tuple), no scaling if None
+	
+    @return     Background image with overlay on top
+    """
+    
+    bg_img = background_img.copy()
+    
+    if overlay_size is not None:
+        img_to_overlay_t = cv2.resize(img_to_overlay_t.copy(), overlay_size)
+    else:
+        img_to_overlay_t = img_to_overlay_t.copy()
+        
+    # Extract the alpha mask of the RGBA image, convert to RGB 
+    b,g,r,a = cv2.split(img_to_overlay_t)
+    overlay_color = cv2.merge((b,g,r))
+	
+	# Apply some simple filtering to remove edge noise
+    mask = cv2.medianBlur(a,blurSize)
+
+    h, w, _ = overlay_color.shape
+    roi = bg_img[y:y+h, x:x+w]
+
+	# Black-out the area behind the logo in our original ROI
+    print('img1_bg, range', roi.shape, mask.shape)
+    img1_bg = cv2.bitwise_and(roi.copy(), roi.copy(), mask=cv2.bitwise_not(mask))
+	
+	# Mask out the logo from the logo image.
+    img2_fg = cv2.bitwise_and(overlay_color,overlay_color,mask = mask)
+
+	# Update the original image with our new ROI
+    print('overlay_transparent, range', (x,y,w,h), bg_img.shape)
+    bg_img[y:y+h, x:x+w] = cv2.add(img1_bg, img2_fg)
+    
+    return bg_img
+
+def overlay_transparent_fore_alpha(background_img, foreground_img):
+    # Create weights
+    bg_channels = background_img.shape[2]
+    weights = foreground_img[:,:,3].astype('float32') / 255
+    weights = np.repeat(weights[:, :, np.newaxis], 3, axis=2)
+    
+    weighted_bg = background_img * (1 - weights)
+    weighted_fg = foreground_img[:,:,:bg_channels] * weights
+    mixed_img = weighted_bg + weighted_fg
+    return mixed_img
     
 def segment_img_between_poly_labels(img: Mat, polys: list[Polygon], dim: Literal[0,1], collage_padding = 5):
     img_h, img_w = img.shape[:2]
