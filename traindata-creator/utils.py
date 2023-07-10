@@ -265,7 +265,7 @@ def overlay_transparent_fore_alpha(background_img, foreground_img):
     # Create weights
     bg_channels = background_img.shape[2]
     weights = foreground_img[:,:,3].astype('float32') / 255
-    weights = np.repeat(weights[:, :, np.newaxis], 3, axis=2)
+    weights = np.repeat(weights[:,:,np.newaxis], bg_channels, axis=2)
     
     weighted_bg = background_img * (1 - weights)
     weighted_fg = foreground_img[:,:,:bg_channels] * weights
