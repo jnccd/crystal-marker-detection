@@ -7,6 +7,7 @@ from typing import Literal
 import cv2
 from cv2 import Mat
 import numpy as np
+from copy import deepcopy
 from shapely import Polygon, transform, intersection
 
 # --- Paths -------------------------------------------------------------------------------------------------------------------------
@@ -182,7 +183,7 @@ def create_random_persp_mat(img_size_wh, perspective_strength = 0.3):
     return cv2.getPerspectiveTransform(src_points, dst_points)
 
 # Taken from https://gist.github.com/clungzta/b4bbb3e2aa0490b0cfcbc042184b0b4e
-def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=None):
+def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=None, blurSize=5):
     """
     @brief      Overlays a transparant PNG onto another image using CV2
 	
@@ -207,7 +208,7 @@ def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=Non
     overlay_color = cv2.merge((b,g,r))
 	
 	# Apply some simple filtering to remove edge noise
-    mask = cv2.medianBlur(a,5)
+    mask = cv2.medianBlur(a,blurSize)
 
     h, w, _ = overlay_color.shape
     roi = bg_img[y:y+h, x:x+w]
@@ -220,6 +221,7 @@ def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=Non
 
 	# Update the original image with our new ROI
     bg_img[y:y+h, x:x+w] = cv2.add(img1_bg, img2_fg)
+    print('overlay_transparent, range', (x,y,w,h))
 
     return bg_img
 
@@ -414,37 +416,47 @@ def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
 
 def poly_label_move(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     img_h, img_w = img.shape[:2]
-    pi = random.randrange(0, len(polys))
+    pi = random.randrange(len(polys))
     
     if len(draw_color) != 3:
         c = polys[pi].centroid
         # Sample color from poly centroid in img
         draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
     
+    # Input debug out
+    cv2.imwrite('./in_img.png', img)
+    debug_seg_img = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
+    debug_seg_img = rasterize_polys(debug_seg_img, polys)
+    debug_seg_img = rasterize_polys(debug_seg_img, [polys[pi]], (0, 255, 0))
+    cv2.imwrite('./in_polys.png', debug_seg_img)
+    
     # Extract the label poly to be moved
     move_poly = polys[pi]
-    move_poly_og_bounds = move_poly.bounds
-    move_poly = transform(move_poly, lambda x: np.array( [(p[0] - move_poly_og_bounds[0], p[1] - move_poly_og_bounds[1]) for p in x] ))
-    move_poly_img = img[move_poly_og_bounds[0]:move_poly_og_bounds[2], move_poly_og_bounds[1]:move_poly_og_bounds[3]]
+    move_poly_og_bounds = [int(x) for x in move_poly.bounds]
+    print(move_poly_og_bounds)
+    move_poly_img = img[move_poly_og_bounds[1]:move_poly_og_bounds[3], move_poly_og_bounds[0]:move_poly_og_bounds[2]].copy()
     cv2.imwrite('./move_poly_img.png', move_poly_img)
-    
-    # Create mask
-    alpha_channel_img = np.zeros((img_h, img_w) + (1,), dtype = np.uint8)
-    alpha_channel_img = rasterize_polys(alpha_channel_img, [inflate_poly(move_poly, 0.2)], (255))
-    cv2.imwrite('./alpha_channel_img.png', alpha_channel_img)
-    
-    # Apply mask
-    move_poly_img = cv2.cvtColor(move_poly_img, cv2.COLOR_RGB2RGBA)
-    move_poly_img[:, :, 3] = alpha_channel_img
     
     # Take out poly label
     img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
     polys.pop(pi)
     
+    # Create mask
+    alpha_channel_img = np.zeros(move_poly_img.shape[:2] + (1,), dtype = np.uint8)
+    move_poly = transform(move_poly, lambda x: np.array( [(p[0] - move_poly_og_bounds[0], p[1] - move_poly_og_bounds[1]) for p in x] ))
+    alpha_channel_img = rasterize_polys(alpha_channel_img, [move_poly], (255))
+    cv2.imwrite('./alpha_channel_img.png', alpha_channel_img)
+    
+    # Apply mask
+    move_poly_img = cv2.cvtColor(move_poly_img, cv2.COLOR_BGR2BGRA)
+    move_poly_img[:, :, 3] = np.squeeze(alpha_channel_img)
+    
     # Reinsert poly label
     new_pos_x = random.randrange(0, img_w - (move_poly_og_bounds[2] - move_poly_og_bounds[0]))
     new_pos_y = random.randrange(0, img_h - (move_poly_og_bounds[3] - move_poly_og_bounds[1]))
-    img = overlay_transparent(img, move_poly_img, new_pos_x, new_pos_y)
+    print((new_pos_x, new_pos_y))
+    cv2.imwrite('./move_poly_img2.png', move_poly_img)
+    img = overlay_transparent(img, move_poly_img, new_pos_x, new_pos_y, blurSize=1)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
     polys.append(move_poly)
     cv2.imwrite('./img.png', img)
