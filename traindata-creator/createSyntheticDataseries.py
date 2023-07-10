@@ -29,7 +29,7 @@ fore_textures = [cv2.imread(str(p), -1) for p in get_files_from_folders_with_end
 # Remapping for curve
 print('Loading remapping curve...')
 half_target_size = target_size / 2
-curvature_height = 256
+curvature_height = 128
 map_x = np.zeros((target_size + curvature_height*2, target_size), np.float32)
 map_y = np.zeros((target_size + curvature_height*2, target_size), np.float32)
 for y in range(target_size + curvature_height*2):
