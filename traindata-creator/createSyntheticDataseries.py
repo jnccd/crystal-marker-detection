@@ -1,3 +1,4 @@
+import math
 import cv2
 from utils import *
 from pathlib import Path
@@ -7,6 +8,7 @@ target_size = 1280
 num_pics_to_gen = 200
 dataseries_name = 'test'
 
+print('Loading paths...')
 root_dir = Path(__file__).resolve().parent
 dataseries_dir = create_dir_if_not_exists(root_dir / 'dataseries' / f'synth-{dataseries_name}', clear=True)
 assets_dir = root_dir / 'raw/synthetic-builder-assets'
@@ -14,15 +16,29 @@ aruco_texture_path = assets_dir / 'in-img-marker.png'
 foreground_textures_dir = assets_dir / 'foreground_textures'
 background_textures_dir = assets_dir / 'background_textures'
 
+print('Loading aruco_img...')
 aruco_img = cv2.imread(str(aruco_texture_path))
 aruco_img = cv2.cvtColor(aruco_img, cv2.COLOR_RGB2RGBA)
 aruco_img_size = int(target_size/15)
 aruco_img = cv2.resize(aruco_img, (aruco_img_size, aruco_img_size), interpolation=cv2.INTER_NEAREST)
 
-back_textures = [cv2.imread(str(p)) for p in get_files_from_folders_with_ending([background_textures_dir][:3], '.jpg')]
-fore_textures = [cv2.imread(str(p), -1) for p in get_files_from_folders_with_ending([foreground_textures_dir][:3], '.jpg')]
+print('Loading textures...')
+back_textures = [cv2.imread(str(p)) for p in get_files_from_folders_with_ending([background_textures_dir], '.jpg')[:3]]
+fore_textures = [cv2.imread(str(p), -1) for p in get_files_from_folders_with_ending([foreground_textures_dir], '.jpg')[:3]]
+
+# Remapping for curve
+print('Loading remapping curve...')
+half_target_size = target_size / 2
+curvature_height = 256
+map_x = np.zeros((target_size + curvature_height*2, target_size), np.float32)
+map_y = np.zeros((target_size + curvature_height*2, target_size), np.float32)
+for y in range(target_size + curvature_height*2):
+    for x in range(target_size):
+        map_x[y, x] = x
+        map_y[y, x] = y + math.sqrt((half_target_size)**2 - (x-half_target_size)**2) / half_target_size * curvature_height #int(128.0 * math.sin(3.14 * x / target_size))
 
 for i in range(num_pics_to_gen):
+    print(f'Generating image {i}...')
     img_size = (target_size, target_size)
     
     # Init pics
@@ -48,7 +64,14 @@ for i in range(num_pics_to_gen):
     fore_img = overlay_transparent_fore_alpha(fore_img, strip_img)
     fore_img = cv2.cvtColor(fore_img, cv2.COLOR_RGB2RGBA)
     fore_img[:, :, 3] = 255
-    #cv2.imwrite(str(root_dir / 'fore_img.png'), fore_img)
+    
+    # Give fore_img extra headroom (literally)
+    extra_embedding_height = curvature_height*2
+    embedding_fore_img = np.zeros((target_size + extra_embedding_height, target_size) + (4,), np.float32)
+    embedding_fore_img[curvature_height:target_size+curvature_height, 0:target_size] = fore_img
+    # Curve fore img
+    fore_img = cv2.remap(embedding_fore_img, map_x, map_y, cv2.INTER_LINEAR)
+    cv2.imwrite(str(root_dir / 'embedding_fore_img.png'), embedding_fore_img)
     
     # Create poly in fore img coord system
     label_poly = Polygon([(aruco_marker_x, aruco_marker_y), (aruco_marker_x + aruco_img_size, aruco_marker_y), (aruco_marker_x + aruco_img_size, aruco_marker_y + aruco_img_size), (aruco_marker_x, aruco_marker_y + aruco_img_size)])
@@ -79,5 +102,3 @@ for i in range(num_pics_to_gen):
     
     vertices_per_obj = [[(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]] for poly in mat_label_polys]
     write_textfile(str(vertices_per_obj), dataseries_dir / f'{i}_vertices.txt')
-    
-    #exit()
