@@ -71,7 +71,7 @@ for i in range(num_pics_to_gen):
     embedding_fore_img[curvature_height:target_size+curvature_height, 0:target_size] = fore_img
     # Curve fore img
     fore_img = cv2.remap(embedding_fore_img, map_x, map_y, cv2.INTER_LINEAR)
-    cv2.imwrite(str(root_dir / 'embedding_fore_img.png'), embedding_fore_img)
+    #cv2.imwrite(str(root_dir / 'embedding_fore_img.png'), embedding_fore_img)
     
     # Create poly in fore img coord system
     label_poly = Polygon([(aruco_marker_x, aruco_marker_y), (aruco_marker_x + aruco_img_size, aruco_marker_y), (aruco_marker_x + aruco_img_size, aruco_marker_y + aruco_img_size), (aruco_marker_x, aruco_marker_y + aruco_img_size)])
@@ -94,8 +94,6 @@ for i in range(num_pics_to_gen):
     fore_img, mat_label_polys = homogeneous_mat_transform(fore_img, [label_poly], img_size, final_mat, border_type=cv2.BORDER_TRANSPARENT)
     # -------------------------------------------------------------------------------------------------------------------------------------------
     
-    print('shapes:', back_img.shape, fore_img.shape)
-    print(int(back_img.shape[1]/2 - fore_img.shape[1]/2), int(back_img.shape[0]/2 - fore_img.shape[0]/2))
     img = overlay_transparent_fore_alpha(back_img, fore_img)
     
     cv2.imwrite(str(dataseries_dir / f'{i}_in.png'), img)
