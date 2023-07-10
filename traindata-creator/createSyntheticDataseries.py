@@ -23,8 +23,8 @@ aruco_img_size = int(target_size/15)
 aruco_img = cv2.resize(aruco_img, (aruco_img_size, aruco_img_size), interpolation=cv2.INTER_NEAREST)
 
 print('Loading textures...')
-back_textures = [cv2.imread(str(p)) for p in get_files_from_folders_with_ending([background_textures_dir], '.jpg')[:3]]
-fore_textures = [cv2.imread(str(p), -1) for p in get_files_from_folders_with_ending([foreground_textures_dir], '.jpg')[:3]]
+back_textures = [cv2.imread(str(p)) for p in get_files_from_folders_with_ending([background_textures_dir], '.jpg')]#[:3]]
+fore_textures = [cv2.imread(str(p), -1) for p in get_files_from_folders_with_ending([foreground_textures_dir], '.jpg')]#[:3]]
 
 # Remapping for curve
 print('Loading remapping curve...')
