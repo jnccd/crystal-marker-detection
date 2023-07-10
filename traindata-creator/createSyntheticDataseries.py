@@ -98,6 +98,9 @@ for i in range(num_pics_to_gen):
     
     cv2.imwrite(str(dataseries_dir / f'{i}_in.png'), img)
     
+    seg_image = np.zeros(img.shape[:2] + (3,), dtype = np.uint8)
+    cv2.imwrite(str(dataseries_dir / f'{i}_seg.png'), rasterize_polys(seg_image, mat_label_polys))
+    
     vertices_per_obj = [[(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]] for poly in mat_label_polys]
     write_textfile(str(vertices_per_obj), dataseries_dir / f'{i}_vertices.txt')
     
