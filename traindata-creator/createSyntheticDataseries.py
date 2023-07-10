@@ -46,8 +46,8 @@ for i in range(num_pics_to_gen):
     fore_img = center_crop_to_11_aspect_ratio(fore_textures[i % len(fore_textures)], target_size)
     
     # Setup aruco marker pos
-    aruco_marker_x = int(fore_img.shape[1]/2 - aruco_img.shape[1]/2) + random.randint(-int(target_size/10), int(target_size/10))
-    aruco_marker_y = int(fore_img.shape[0]/2 - aruco_img.shape[0]/2) + random.randint(-int(target_size/10), int(target_size/10))
+    aruco_marker_x = int(fore_img.shape[1]/2 - aruco_img.shape[1]/2) + random.randint(-int(target_size/5), int(target_size/5))
+    aruco_marker_y = int(fore_img.shape[0]/2 - aruco_img.shape[0]/2) + random.randint(-int(target_size/15), int(target_size/15))
     
     # Build strip image
     strip_brightness = random.randrange(50, 100)
@@ -100,3 +100,4 @@ for i in range(num_pics_to_gen):
     
     vertices_per_obj = [[(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]] for poly in mat_label_polys]
     write_textfile(str(vertices_per_obj), dataseries_dir / f'{i}_vertices.txt')
+    
