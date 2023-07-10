@@ -11,8 +11,8 @@ os.chdir(root_dir / '../')
 
 parser = argparse.ArgumentParser(prog='yolov5-train-loop', description='Takes a dataset and performs a full training loop with yolov5.')
 parser.add_argument('-n','--run-name', type=str, default='default', help='Defines the (folder)name of the run.')
-parser.add_argument('-d','--dataset-name', type=str, default='yolov5-640-aug-good-pics-v2', help='Defines the dataset to train from.')
-parser.add_argument('-v','--valset-name', type=str, default='yolov5-640-on-skin-valset', help='Defines the valset to test against.')
+parser.add_argument('-d','--dataset-path', type=str, default='traindata-creator/dataset/yolov5-640-aug-good-pics-v2', help='Defines the dataset to train from.')
+parser.add_argument('-v','--valset-path', type=str, default='traindata-creator/dataset/yolov5-640-on-skin-valset', help='Defines the valset to test against.')
 parser.add_argument('-na','--no-aug', action='store_true', help='Disables the yolov5 repo augmentations.')
 parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
 parser.add_argument('-b','--batch-size', type=int, default=8, help='Sets the batch size to train with.')
@@ -21,8 +21,10 @@ parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the 
 args = parser.parse_args()
 
 project_folder = Path('repos/training/yolov5')
-dataset_def_dict = json.loads(read_textfile(Path(f'traindata-creator/dataset/{args.dataset_name}/dataset-def.json')).replace(" ", "").replace("\n", ""))
-valset_def_dict = json.loads(read_textfile(Path(f'traindata-creator/dataset/{args.valset_name}/dataset-def.json')).replace(" ", "").replace("\n", ""))
+dataset_path = Path(args.dataset_path)
+valset_path = Path(args.valset_path)
+dataset_def_dict = json.loads(read_textfile(dataset_path / 'dataset-def.json').replace(" ", "").replace("\n", ""))
+valset_def_dict = json.loads(read_textfile(dataset_path / 'dataset-def.json').replace(" ", "").replace("\n", ""))
 train_def_dict = {
     'run_name': args.run_name,
     'disabled_yolo_aug': args.no_aug,
@@ -40,9 +42,9 @@ if args.no_aug:
     yolov5_args += '--hyp hyp.no-augmentation.yaml'
 
 print('--- Training...')
-os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_size} --batch {args.batch_size} --epochs {args.epochs} --project {project_folder} --data traindata-creator/dataset/{args.dataset_name}/{args.dataset_name}.yaml --weights {args.model}.pt {yolov5_args}')
+os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_size} --batch {args.batch_size} --epochs {args.epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml --weights {args.model}.pt {yolov5_args}')
 os.system(f'rm {args.model}.pt')
 print('--- Evaluating...')
-os.system(f'python repos/yolov5_gen_evaldata.py -r {args.run_name} -df traindata-creator/dataset/{args.valset_name}/')
+os.system(f'python repos/yolov5_gen_evaldata.py -r {args.run_name} -df {args.valset_path}/')
 os.system(f'python -m cmd_tf -av {evaldata_run_dir}')
 write_textfile(json.dumps(train_def_dict, indent=4), evaldata_run_dir / 'training-def.json')
