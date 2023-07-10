@@ -1,9 +1,17 @@
-__pycache__
+**/__pycache__
+.vscode
+Dockerfile
+.DS_Store
+**/.gitignore
+README.md
 
-runs/**
+**/runs/**
 
-dataseries/**
-dataset/**
-webcam-images-*/**
+**/dataseries/**
+**/dataset/**
+**/webcam-images-**
 
-prototype-*/**
+**/prototype-**
+
+**/evaldata/**
+**/training/**
