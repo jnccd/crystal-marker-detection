@@ -5,24 +5,22 @@ import numpy as np
 from pathlib import Path
 
 img_img_filename = 'DSC_3741.JPG'
-
 root_dir = Path(__file__).resolve().parent
 test_img_path = root_dir / img_img_filename
-
 test_img = cv2.imread(str(test_img_path), cv2.IMREAD_GRAYSCALE)
 
 # Gen img pyramid
 pyr_imgs = [test_img]
-while pyr_imgs[-1].shape[0] > 64:
+while pyr_imgs[-1].shape[0] > 128:
     pyr_h, pyr_w = pyr_imgs[-1].shape[:2]
     pyr_imgs.append(cv2.pyrDown(pyr_imgs[-1], dstsize=(int(pyr_w/2), int(pyr_h/2))))
 print(len(pyr_imgs))
 
 # Skip the larges images
-for img_i, img in enumerate(pyr_imgs[3:]):
-    img_i = img_img_filename + '_' + str(img_i) # Make index an identifier
-    print(img_i)
+for img in pyr_imgs[3:]:
+    img_i = img_img_filename + '_' + str(pyr_imgs.index(img)) # Make index an identifier
     img_h, img_w = img.shape[:2]
+    rows,cols = img.shape[:2]
     cv2.imwrite(str(root_dir / f'{img_i}_pyr_img.png'), img)
     
     block_size = 50#int(img_w/600*50)
@@ -41,8 +39,8 @@ for img_i, img in enumerate(pyr_imgs[3:]):
     img_draw = cv2.cvtColor(img_draw, cv2.COLOR_GRAY2BGR)
     window_size_div2 = 32
     total_pixs_in_window = (window_size_div2*2)**2
-    for x in range(window_size_div2, img_w-window_size_div2, 2):
-        for y in range(window_size_div2, img_h-window_size_div2, 2):
+    for x in range(window_size_div2, img_w-window_size_div2, 4):
+        for y in range(window_size_div2, img_h-window_size_div2, 4):
             window = img_t[y-window_size_div2:y+window_size_div2, x-window_size_div2:x+window_size_div2]
             #print(window.shape)
             white_pixs = np.sum(window == 255)
@@ -141,13 +139,69 @@ for img_i, img in enumerate(pyr_imgs[3:]):
     kernel = np.asarray([-255,0,255], dtype=np.float32)
     gy_img = cv2.filter2D(img, -1, kernel)
     gy_img = cv2.GaussianBlur(gy_img,(blur_kernel_size,blur_kernel_size),0)
+    ret, gy_img = cv2.threshold(gy_img, 160, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_y_img.png'), gy_img)
+    gy_img = gy_img.astype(np.float32)
+    gy_img = gy_img / 128 - 1
 
     print('Computing gx...')
     kernel = cv2.transpose(kernel)
     gx_img = cv2.filter2D(img, -1, kernel)
     gx_img = cv2.GaussianBlur(gx_img,(blur_kernel_size,blur_kernel_size),0)
+    ret, gx_img = cv2.threshold(gx_img, 160, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_x_img.png'), gx_img)
+    gx_img = gx_img.astype(np.float32)
+    gx_img = gx_img / 128 - 1
     
-    #for ppoint in promising_points:
+    #print('maxmin', np.min(gx_img), np.max(gx_img))
+    
+    print('Computing ang array...')
+    ang_array = np.zeros(shape=(rows,cols), dtype=np.float32)
+    for i in range(rows):
+        for j in range(cols):
+            ang_array[i,j] = math.atan2(gy_img[i,j], gx_img[i,j])
+        
+    #print('maxmin', np.min(ang_array), np.max(ang_array))
+            
+    print('Computing mag array...')
+    mag_array = np.zeros(shape=(rows,cols), dtype=np.float32)
+    for i in range(rows):
+        for j in range(cols):
+            mag_array[i,j] = math.sqrt(gy_img[i,j]**2 + gx_img[i,j]**2)
+    
+    #print(promising_points)
+    for ppoint in promising_points:
+        y_min = ppoint[1] - window_size_div2
+        y_max = ppoint[1] + window_size_div2
+        x_min = ppoint[0] - window_size_div2
+        x_max = ppoint[0] + window_size_div2
+        
+        window_size_div2 = 32
+        img_window = img[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
+        gy_img_window = gy_img[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
+        gx_img_window = gx_img[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
+        ang_array_window = ang_array[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
+        mag_array_window = mag_array[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
+        
+        # hist_min = -math.pi / 2
+        # hist_max = math.pi / 2
+        # hist_range = hist_max - hist_min
+        # num_bins = 20
+        # bin_borders = []
+        # bins = np.zeros((num_bins))
+        # for i in range(num_bins):
+        #     bin_borders.append((i / num_bins) * hist_range + hist_min)
+        # bin_borders.append(hist_max)
+        # #print('borders',bin_borders)
+        # print(np.min(ang_array_window))
+        # print(np.max(ang_array_window))
+        # for x in range(img_window.shape[1]):
+        #     for y in range(img_window.shape[0]):
+        #         for i in range(num_bins):
+        #             if ang_array_window[x, y] <= bin_borders[i]:
+        #                 bins[i] += mag_array_window[x, y]
+        #                 break
+        hist, bin_edges = np.histogram(ang_array_window, bins=20, range=(-math.pi, math.pi))#, weights=mag_array_window)
+        print(f'img_id {img_i}, ppoint {ppoint}, hist {hist}, bin_edges {bin_edges}, bbox, {(x_min, y_min, x_max, y_max)}')
+        
         
