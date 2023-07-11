@@ -4,8 +4,10 @@ import cv2
 import numpy as np
 from pathlib import Path
 
+img_img_filename = 'DSC_3741.JPG'
+
 root_dir = Path(__file__).resolve().parent
-test_img_path = root_dir / 'DSC_3741.JPG'
+test_img_path = root_dir / img_img_filename
 
 test_img = cv2.imread(str(test_img_path), cv2.IMREAD_GRAYSCALE)
 
@@ -17,9 +19,11 @@ while pyr_imgs[-1].shape[0] > 64:
 print(len(pyr_imgs))
 
 # Skip the larges images
-for img in pyr_imgs[3:]:
+for img_i, img in enumerate(pyr_imgs[3:]):
+    img_i = img_img_filename + '_' + str(img_i) # Make index an identifier
+    print(img_i)
     img_h, img_w = img.shape[:2]
-    cv2.imwrite(str(root_dir / f'{pyr_imgs.index(img)}_pyr_img.png'), img)
+    cv2.imwrite(str(root_dir / f'{img_i}_pyr_img.png'), img)
     
     block_size = 50#int(img_w/600*50)
     block_size = block_size if block_size % 2 == 1 else block_size + 1
@@ -32,7 +36,7 @@ for img in pyr_imgs[3:]:
     
     # --------------------------------------------------------------------------------------------------------------------------------------
     
-    # # Pixel neighborhood
+    # Pixel neighborhood
     img_draw = np.copy(img)
     img_draw = cv2.cvtColor(img_draw, cv2.COLOR_GRAY2BGR)
     window_size_div2 = 32
@@ -48,7 +52,7 @@ for img in pyr_imgs[3:]:
             if white_ratio > 220:
                 cv2.rectangle(img_draw, (x,y,1,1), (0,0,white_ratio))
                 promising_points.append((x,y))
-    cv2.imwrite(str(root_dir / f'{pyr_imgs.index(img)}_pyr_img_pixel_neighbors.png'),img_draw)
+    cv2.imwrite(str(root_dir / f'{img_i}_pyr_img_pixel_neighbors.png'),img_draw)
     cv2.waitKey(0)
     # Too many candidates!
     
@@ -113,7 +117,7 @@ for img in pyr_imgs[3:]:
     #                     bins[i] += math.sqrt((l[0][3] - l[0][1])**2 + (l[0][2] - l[0][0])**2)
     #                     break
             
-    #         #print('Bins in:', x_min, y_min, x_max, y_max, 'pyr_index:', pyr_imgs.index(img), 'bins:', bins)
+    #         #print('Bins in:', x_min, y_min, x_max, y_max, 'pyr_index:', img_i, 'bins:', bins)
             
     #         sorted_bins = np.sort(bins, axis=None)
     #         first_two_peaks_diff = abs(sorted_bins[-1] - sorted_bins[-2])
@@ -126,6 +130,24 @@ for img in pyr_imgs[3:]:
             
     #         # print([x[1] for x in window_lines])
     #         # sys.exit(0)
-    # cv2.imwrite(str(root_dir / f'{pyr_imgs.index(img)}_pyr_img_hough_markeryness.png'), img_draw)
+    # cv2.imwrite(str(root_dir / f'{img_i}_pyr_img_hough_markeryness.png'), img_draw)
     
     # --------------------------------------------------------------------------------------------------------------------------------------
+    
+    # Gradient hist
+    blur_kernel_size = 5
+    
+    print('Computing gy...')
+    kernel = np.asarray([-255,0,255], dtype=np.float32)
+    gy_img = cv2.filter2D(img, -1, kernel)
+    gy_img = cv2.GaussianBlur(gy_img,(blur_kernel_size,blur_kernel_size),0)
+    cv2.imwrite(str(root_dir / f'{img_i}_kernelled_y_img.png'), gy_img)
+
+    print('Computing gx...')
+    kernel = cv2.transpose(kernel)
+    gx_img = cv2.filter2D(img, -1, kernel)
+    gx_img = cv2.GaussianBlur(gx_img,(blur_kernel_size,blur_kernel_size),0)
+    cv2.imwrite(str(root_dir / f'{img_i}_kernelled_x_img.png'), gx_img)
+    
+    #for ppoint in promising_points:
+        
