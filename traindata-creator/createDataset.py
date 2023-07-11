@@ -11,6 +11,7 @@ import cv2
 from pathlib import Path
 from numpy import ndarray, uint8
 from shapely import LineString, Point, Polygon, bounds
+import albumentations as A
 
 from utils import *
 
@@ -156,6 +157,15 @@ def main():
             img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
             in_imgs[group][i] = img
             target_polys[group][i] = poly
+    
+    # # Try to apply albumentations pixel level transforms
+    # transform = A.Compose([
+    #     A.RandomCrop(width=256, height=256),
+    #     A.HorizontalFlip(p=0.5),
+    #     A.RandomBrightnessContrast(p=0.2),
+    # ])
+    # print(in_imgs[aug_group])
+    # in_imgs[aug_group] = [transform(image=image)["image"] for image in in_imgs[aug_group]]
     
     # --- Build dataset ---
     if args.type == 'seg':
