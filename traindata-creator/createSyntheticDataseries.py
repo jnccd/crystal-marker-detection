@@ -50,13 +50,20 @@ for i in range(num_pics_to_gen):
     aruco_marker_y = int(fore_img.shape[0]/2 - aruco_img.shape[0]/2) + random.randint(-int(target_size/15), int(target_size/15))
     
     # Build strip image
-    strip_brightness = random.randrange(50, 100)
+    strip_brightness = random.randrange(10, 150)
+    strip_lower_edge_brightness = max(0, strip_brightness - 10)
+    strip_higher_edge_brightness = min(255, strip_brightness + 50)
     strip_width = int(target_size/5)
-    strip_opacity = 100
-    strip_img = np.zeros((target_size, target_size) + (3,), dtype = np.uint8)
-    strip_img = cv2.cvtColor(strip_img, cv2.COLOR_RGB2RGBA)
-    strip_img[:, :, 3] = 0
+    strip_opacity = random.randrange(80, 120)
+    # Create strip img
+    strip_img = np.zeros((target_size, target_size) + (4,), dtype = np.uint8)
+    # Draw strip
     cv2.rectangle(strip_img, (0, int(target_size/2 - strip_width/2)), (target_size, int(target_size/2 + strip_width/2)), (strip_brightness, strip_brightness, strip_brightness, strip_opacity), -1)
+    cv2.rectangle(strip_img, (0, int(target_size/2 - strip_width/2)), (target_size, int(target_size/2 - strip_width/2 + 1)), (strip_lower_edge_brightness, strip_lower_edge_brightness, strip_lower_edge_brightness, strip_opacity), -1)
+    cv2.rectangle(strip_img, (0, int(target_size/2 + strip_width/2 - 1)), (target_size, int(target_size/2 + strip_width/2)), (strip_higher_edge_brightness, strip_higher_edge_brightness, strip_higher_edge_brightness, strip_opacity), -1)
+    # Draw photonic crystal part of strip # TODO: Complete this part
+    #cv2.rectangle(strip_img, (int(target_size/3), int(target_size/2 - strip_width/2)), (int(2 * target_size/3), int(target_size/2 + strip_width/2)), (200, 235, 230, strip_opacity + 20), -1)
+    # Embed strip 
     strip_img[aruco_marker_y:aruco_marker_y+aruco_img.shape[0], aruco_marker_x:aruco_marker_x+aruco_img.shape[1], 3] = aruco_img[:, :, 0].astype('float32') / 255 * strip_opacity
     #cv2.imwrite(str(root_dir / 'strip_img.png'), strip_img)
     
