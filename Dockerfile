@@ -3,7 +3,7 @@ FROM tensorflow/tensorflow:2.12.0-gpu
 WORKDIR /src
 COPY . /src
 
-RUN apt -y update
+RUN apt-get update && apt-get install git ffmpeg libsm6 libxext6 -y
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 RUN pip install -r requirements.txt
 
