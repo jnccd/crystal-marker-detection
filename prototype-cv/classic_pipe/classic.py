@@ -217,8 +217,10 @@ for img in pyr_imgs[3:]:
         peaks.sort(key=lambda x: -x[1])
         
         peak_heights = [x[1] for x in peaks]
-        markeryness = sum(peak_heights[:2]) - sum(peak_heights[2:]) - abs(peak_heights[0] - peak_heights[1])
+        markeryness = sum(peak_heights[:2]) - sum(peak_heights[2:]) * 4 - abs(peak_heights[0] - peak_heights[1]) * 2
         #print(peak_heights[:2], peak_heights[2:], peak_heights)
+        
+        #print(ppoint, peak_heights)
         
         markerynesses.append((ppoint, markeryness))
         
