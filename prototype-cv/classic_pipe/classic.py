@@ -39,8 +39,8 @@ for img in pyr_imgs[3:]:
     img_draw = cv2.cvtColor(img_draw, cv2.COLOR_GRAY2BGR)
     window_size_div2 = 32
     total_pixs_in_window = (window_size_div2*2)**2
-    for x in range(window_size_div2, img_w-window_size_div2, 4):
-        for y in range(window_size_div2, img_h-window_size_div2, 4):
+    for x in range(window_size_div2, img_w-window_size_div2, 2):
+        for y in range(window_size_div2, img_h-window_size_div2, 2):
             window = img_t[y-window_size_div2:y+window_size_div2, x-window_size_div2:x+window_size_div2]
             #print(window.shape)
             white_pixs = np.sum(window == 255)
@@ -138,7 +138,7 @@ for img in pyr_imgs[3:]:
     kernel = np.asarray([-255,0,255], dtype=np.float32)
     gy_img = cv2.filter2D(img, -1, kernel)
     gy_img = cv2.GaussianBlur(gy_img,(blur_kernel_size,blur_kernel_size),0)
-    ret, gy_img = cv2.threshold(gy_img, 160, 255, cv2.THRESH_TOZERO)
+    ret, gy_img = cv2.threshold(gy_img, 60, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_y_img.png'), gy_img)
     gy_img = gy_img.astype(np.float32)
     gy_img = gy_img / 128 - 1
@@ -147,7 +147,7 @@ for img in pyr_imgs[3:]:
     kernel = cv2.transpose(kernel)
     gx_img = cv2.filter2D(img, -1, kernel)
     gx_img = cv2.GaussianBlur(gx_img,(blur_kernel_size,blur_kernel_size),0)
-    ret, gx_img = cv2.threshold(gx_img, 160, 255, cv2.THRESH_TOZERO)
+    ret, gx_img = cv2.threshold(gx_img, 60, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_x_img.png'), gx_img)
     gx_img = gx_img.astype(np.float32)
     gx_img = gx_img / 128 - 1
@@ -217,7 +217,7 @@ for img in pyr_imgs[3:]:
         peaks.sort(key=lambda x: -x[1])
         
         peak_heights = [x[1] for x in peaks]
-        markeryness = sum(peak_heights[:2]) - sum(peak_heights[2:]) * 4 - abs(peak_heights[0] - peak_heights[1]) * 2
+        markeryness = sum(peak_heights[:2]) - sum(peak_heights[2:]) * 4 - abs(peak_heights[0] - peak_heights[1] * 2) * 2
         #print(peak_heights[:2], peak_heights[2:], peak_heights)
         
         #print(ppoint, peak_heights)
