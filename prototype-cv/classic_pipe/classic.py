@@ -51,7 +51,6 @@ for img in pyr_imgs[3:]:
                 cv2.rectangle(img_draw, (x,y,1,1), (0,0,white_ratio))
                 promising_points.append((x,y))
     cv2.imwrite(str(root_dir / f'{img_i}_pyr_img_pixel_neighbors.png'),img_draw)
-    cv2.waitKey(0)
     # Too many candidates!
     
     # --------------------------------------------------------------------------------------------------------------------------------------
@@ -170,11 +169,12 @@ for img in pyr_imgs[3:]:
             mag_array[i,j] = math.sqrt(gy_img[i,j]**2 + gx_img[i,j]**2)
     
     #print(promising_points)
+    markerynesses = []
     for ppoint in promising_points:
-        y_min = ppoint[1] - window_size_div2
-        y_max = ppoint[1] + window_size_div2
         x_min = ppoint[0] - window_size_div2
         x_max = ppoint[0] + window_size_div2
+        y_min = ppoint[1] - window_size_div2
+        y_max = ppoint[1] + window_size_div2
         
         window_size_div2 = 32
         img_window = img[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
@@ -202,6 +202,35 @@ for img in pyr_imgs[3:]:
         #                 bins[i] += mag_array_window[x, y]
         #                 break
         hist, bin_edges = np.histogram(ang_array_window, bins=20, range=(-math.pi, math.pi))#, weights=mag_array_window)
-        print(f'img_id {img_i}, ppoint {ppoint}, hist {hist}, bin_edges {bin_edges}, bbox, {(x_min, y_min, x_max, y_max)}')
+        #print(f'img_id {img_i}, ppoint {ppoint}, hist {hist}, bin_edges {bin_edges}, bbox, {(x_min, y_min, x_max, y_max)}')
         
+        peaks = []
+        hist[2] = 0
+        for i in range(len(hist)):
+            lower_bound = i-2 if i-2 >= 0 else 0
+            higher_bound = i+2 if i+2 < len(hist) else len(hist) - 1
+            hist_window = hist[lower_bound:higher_bound]
+            #print(i, hist_window, hist)
+            if max(hist_window) != hist[i]:
+                continue
+            peaks.append((i, hist[i]))
+        peaks.sort(key=lambda x: -x[1])
         
+        peak_heights = [x[1] for x in peaks]
+        markeryness = sum(peak_heights[:2]) - sum(peak_heights[2:]) - abs(peak_heights[0] - peak_heights[1])
+        #print(peak_heights[:2], peak_heights[2:], peak_heights)
+        
+        markerynesses.append((ppoint, markeryness))
+        
+    split_markerynesses = [x[1] for x in markerynesses]
+    max_markeryness = max(split_markerynesses)
+    min_markeryness = min(split_markerynesses)
+    mm_diff_markeryness = max_markeryness - min_markeryness
+    
+    #print(min_markeryness, max_markeryness)
+    
+    img_draw = np.copy(img)
+    img_draw = cv2.cvtColor(img_draw, cv2.COLOR_GRAY2BGR)
+    for m in markerynesses:
+        cv2.rectangle(img_draw, (m[0][0],m[0][1],1,1), (0,0,((m[1] - min_markeryness) / mm_diff_markeryness) * 255 ))
+    cv2.imwrite(str(root_dir / f'{img_i}_markerynesses.png'), img_draw)
