@@ -63,3 +63,6 @@ python repos/yolov5_train_loop.py -n test-py-loop -d /data/dataset/yolov5-640-go
 
 # Classic
 python prototype-cv/classic_pipe/classic.py 
+
+# Batch train
+python batch_train_yolov5.py -d /data/pcmd/dataset/ -v /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/
