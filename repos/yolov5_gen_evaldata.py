@@ -28,6 +28,10 @@ def main():
     else:
         network_file = root_dir / f'training/yolov5/{args.run}/weights/best.pt'
 
+    # Torch hub cache support on
+    os.system('mkdir ./.cache')
+    os.environ['SENTENCE_TRANSFORMERS_HOME'] = './.cache'
+
     print("network_file:",network_file)
     model = torch.hub.load('ultralytics/yolov5', 'custom', path=network_file)
 
