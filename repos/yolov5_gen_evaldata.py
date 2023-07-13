@@ -1,5 +1,6 @@
 import argparse
 import glob
+from math import isnan
 import os
 import shutil
 import torch
@@ -68,9 +69,14 @@ def main():
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
         vd_bbox_lines.pop()
-        with open(out_evaldata_path / f'{i}_target_output.txt', "w") as text_file:
+        target_output_path = out_evaldata_path / f'{i}_target_output.txt'
+        with open(target_output_path, "w") as text_file:
             for line in vd_bbox_lines:
                 sc, sx, sy, sw, sh = line.split(' ')
+                
+                if any(isnan(float(x)) for x in [sx, sy, sw, sh]):
+                    print(f'Encountered NaN output in {target_output_path}')
+                    continue
                 
                 bbox_w = float(sw) * img_w
                 bbox_h = float(sh) * img_h
