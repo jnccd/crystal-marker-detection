@@ -138,7 +138,7 @@ for img in pyr_imgs[3:]:
     kernel = np.asarray([-255,0,255], dtype=np.float32)
     gy_img = cv2.filter2D(img, -1, kernel)
     gy_img = cv2.GaussianBlur(gy_img,(blur_kernel_size,blur_kernel_size),0)
-    ret, gy_img = cv2.threshold(gy_img, 60, 255, cv2.THRESH_TOZERO)
+    #ret, gy_img = cv2.threshold(gy_img, 60, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_y_img.png'), gy_img)
     gy_img = gy_img.astype(np.float32)
     gy_img = gy_img / 128 - 1
@@ -147,7 +147,7 @@ for img in pyr_imgs[3:]:
     kernel = cv2.transpose(kernel)
     gx_img = cv2.filter2D(img, -1, kernel)
     gx_img = cv2.GaussianBlur(gx_img,(blur_kernel_size,blur_kernel_size),0)
-    ret, gx_img = cv2.threshold(gx_img, 60, 255, cv2.THRESH_TOZERO)
+    #ret, gx_img = cv2.threshold(gx_img, 60, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_x_img.png'), gx_img)
     gx_img = gx_img.astype(np.float32)
     gx_img = gx_img / 128 - 1
@@ -236,3 +236,4 @@ for img in pyr_imgs[3:]:
     for m in markerynesses:
         cv2.rectangle(img_draw, (m[0][0],m[0][1],1,1), (0,0,((m[1] - min_markeryness) / mm_diff_markeryness) * 255 ))
     cv2.imwrite(str(root_dir / f'{img_i}_markerynesses.png'), img_draw)
+    
