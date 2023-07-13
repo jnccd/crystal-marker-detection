@@ -30,7 +30,7 @@ def main():
 
     # Torch hub cache support on
     os.system('mkdir ./.cache')
-    os.environ['SENTENCE_TRANSFORMERS_HOME'] = './.cache'
+    os.environ['TORCH_HOME'] = './.cache'
 
     print("network_file:",network_file)
     model = torch.hub.load('ultralytics/yolov5', 'custom', path=network_file)
