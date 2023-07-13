@@ -14,7 +14,7 @@ SECONDS=0
 for dir in traindata-creator/dataset/yolov5-*/; do
     dirname=$(basename "$dir")
 
-    if [[ $dirname == *"-valset" ]] && [[ $dirname != "yolov5-"* ]]; then
+    if [[ $dirname == *"-valset" ]] || [[ $dirname != "yolov5-"* ]]; then
         echo "I wont test $dirname"
         continue
     fi
