@@ -16,21 +16,13 @@ def main():
     parser.add_argument('-t','--test',              action='store_true',    default=False,      help='Instead of learning, test run config model on other data.')
     parser.add_argument('-td','--testdata',         type=str,               default='',         help='The test data folder name or file name to get the testdata from.')
     
-    parser.add_argument('-av','--analyze-valdata-from', type=str, default='',
-                        help='Instead of learning, compute metrics for already written validation data. Set to a run name to analyze the validation data of or to a path to a folder containing validation data')
-    
     args = parser.parse_args()
     
     extra_settings = {
         'data_aug': args.data_augmentation
     }
     
-    if args.analyze_valdata_from != '':
-        from cmd_tf.analyze import analyze
-        analyze(
-            args.analyze_valdata_from
-            )
-    elif args.test:
+    if args.test:
         from cmd_tf.test import test
         test(
             run=args.run,
