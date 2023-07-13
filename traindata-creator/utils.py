@@ -3,7 +3,7 @@ from pathlib import Path
 import random
 import shutil
 import sys
-from typing import Literal
+from typing import Literal, List
 import cv2
 from cv2 import Mat
 import numpy as np
@@ -15,7 +15,7 @@ from shapely import Polygon, transform, intersection
 def swap_underscore_ending_in_path(p: Path, ending: str):
     return p.with_name(f'{"_".join(p.stem.split("_")[:-1])}{ending}')
 
-def get_adjacent_files_with_ending(file_paths: list[Path], ending: str):
+def get_adjacent_files_with_ending(file_paths: List[Path], ending: str):
     paths = []
     for fpath in file_paths:
         if type(fpath) is str:
@@ -199,7 +199,7 @@ def combine_two_color_images(back_img, fore_img, x = 0, y = 0, alpha = 0.5):
 
 # --- Traindata imgs -------------------------------------------------------------------------------------------------------------------------
 
-def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon], background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
+def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: List[Polygon], background_color = [0, 0, 0], border_type = cv2.BORDER_CONSTANT):
     img_h, img_w = img.shape[:2]
     rp_img, new_size, top, left = resize_and_pad(img, desired_size, background_color, border_type)
     
@@ -208,7 +208,7 @@ def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: list[Polygon]
     
     return rp_img, polys
 
-def rasterize_polys(draw_img: Mat, polys: list[Polygon], draw_color: tuple = (255, 255, 255)):
+def rasterize_polys(draw_img: Mat, polys: List[Polygon], draw_color: tuple = (255, 255, 255)):
     vertices_per_obj = [[(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]] for poly in polys]
     
     for vertices in vertices_per_obj:
@@ -272,7 +272,7 @@ def overlay_transparent_fore_alpha(background_img, foreground_img):
     mixed_img = weighted_bg + weighted_fg
     return mixed_img
     
-def segment_img_between_poly_labels(img: Mat, polys: list[Polygon], dim: Literal[0,1], collage_padding = 5):
+def segment_img_between_poly_labels(img: Mat, polys: List[Polygon], dim: Literal[0,1], collage_padding = 5):
     img_h, img_w = img.shape[:2]
     
     if dim == 0:
@@ -356,7 +356,7 @@ def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
     
     return aug_image, aug_polys
 
-def smart_grid_shuffle(img, polys: list[Polygon], img_size_wh):
+def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
     # segment in y first
     segments_y = segment_img_between_poly_labels(img, polys, 1)
     for seg_y in segments_y:
@@ -375,7 +375,7 @@ def smart_grid_shuffle(img, polys: list[Polygon], img_size_wh):
 
 def homogeneous_mat_transform(
     img: Mat, 
-    polys: list[Polygon], 
+    polys: List[Polygon], 
     img_size_wh, 
     M: Mat, 
     background_color = [0, 0, 0], 
@@ -396,7 +396,7 @@ def homogeneous_mat_transform(
     
     return img, polys
 
-def random_crop(img: Mat, polys: list[Polygon], target_size_wh: tuple):
+def random_crop(img: Mat, polys: List[Polygon], target_size_wh: tuple):
     if img.shape[1] < target_size_wh[0] + 1 or img.shape[0] < target_size_wh[1] + 1:
         #print('too small!', img.shape, target_size_wh)
         return img, polys
@@ -412,7 +412,7 @@ def random_crop(img: Mat, polys: list[Polygon], target_size_wh: tuple):
     
     return crop_img, polys
 
-def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
+def poly_label_dropout(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     
     pi = random.randrange(0, len(polys))
     
@@ -426,7 +426,7 @@ def poly_label_dropout(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
     
     return img, polys
 
-def poly_label_move(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
+def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     img_h, img_w = img.shape[:2]
     pi = random.randrange(len(polys))
     
@@ -480,7 +480,7 @@ def poly_label_move(img: Mat, polys: list[Polygon], draw_color: tuple = ()):
 def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
-def drop_low_visibility_labels(polys: list[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
+def drop_low_visibility_labels(polys: List[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
     for i in range(len(polys)):
         if i >= len(polys):
             break
