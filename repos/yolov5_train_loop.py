@@ -46,5 +46,5 @@ os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_
 os.system(f'rm {args.model}.pt')
 print('--- Evaluating...')
 os.system(f'python repos/yolov5_gen_evaldata.py -r {args.run_name} -df {args.valset_path}/')
-os.system(f'python -m cmd_tf -av {evaldata_run_dir}')
+os.system(f'python evaluation/analyze.py -av {evaldata_run_dir}')
 write_textfile(json.dumps(train_def_dict, indent=4), evaldata_run_dir / 'training-def.json')
