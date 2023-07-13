@@ -17,17 +17,17 @@ python traindata-creator/createDataset.py -n good-pics-v2 -tf traindata-creator/
 # New sets
 python traindata-creator/createDataset.py -n good-pics-v1-no-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640
 python traindata-creator/createDataset.py -n good-pics-v2-no-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640
-python traindata-creator/createDataset.py -n good-pics-v1-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1 -apldc 0 -apc 0 -arc 0 -arcc 0
-python traindata-creator/createDataset.py -n good-pics-v2-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1 -apldc 0 -apc 0 -arc 0 -arcc 0
-python traindata-creator/createDataset.py -n good-pics-v1-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 1 -apc 0 -arc 0 -arcc 0
-python traindata-creator/createDataset.py -n good-pics-v2-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 1 -apc 0 -arc 0 -arcc 0
-python traindata-creator/createDataset.py -n good-pics-v2-slight-mat-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0.4 -aps 0.04 -arc 0.4 -ars 20 -arcc 0
+python traindata-creator/createDataset.py -n good-pics-v1-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1 -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 0
+python traindata-creator/createDataset.py -n good-pics-v2-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1 -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 0
+python traindata-creator/createDataset.py -n good-pics-v1-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 1 -apc 0 -arc 0 -arcc 0 -almc 0
+python traindata-creator/createDataset.py -n good-pics-v2-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 1 -apc 0 -arc 0 -arcc 0 -almc 0
+python traindata-creator/createDataset.py -n good-pics-v2-slight-mat-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0.4 -aps 0.04 -arc 0.4 -ars 20 -arcc 0 -almc 0
 python traindata-creator/createDataset.py -n good-pics-v2-def-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4
+python traindata-creator/createDataset.py -n good-pics-v2-rc-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 1 -almc 0
+python traindata-creator/createDataset.py -n good-pics-v2-lm-only-test -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 1
 # Create Valsets
 python traindata-creator/createDataset.py -n on-skin-valset -vf traindata-creator/dataseries/man-fPCS_on_skin/ -t yolov5 -s 640
 python traindata-creator/createDataset.py -n on-skin-valset-v2 -vf traindata-creator/dataseries/man-fPCS_on_skin/ traindata-creator/dataseries/man-on_skin_v2/ -t yolov5 -s 640
-# Only rand crop
-python traindata-creator/createDataset.py -n good-pics-v2-rc-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 1
 
 # Ensample run using cmd_tf
 python -m cmd_tf -df traindata-creator/dataset/seg-red-rects/ -r xunet-red-rects -e 75
