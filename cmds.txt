@@ -52,8 +52,8 @@ python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-li
 python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-fpn-aruco -bs 4 -e 0
 
 # Analyze valdata
-python -m cmd_tf -av sm-fpn-aruco
-python -m cmd_tf -av repos/evaldata/yolov5/test-yolov5-640-good-pics-v2-slight-mat-only-1/
+python evaluation/analyze.py -av sm-fpn-aruco
+python evaluation/analyze.py -av repos/evaldata/yolov5/test-yolov5-640-good-pics-v2-slight-mat-only-1/
 
 # Docker
 docker build -t pcmd:0.1 .
