@@ -10,9 +10,6 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-if __name__ != '__main__':
-    from cmd_tf.utility import get_files_from_folders_with_ending, create_dir_if_not_exists
-
 num_classes = 1
 bbox_inflation = 0
 
@@ -24,7 +21,7 @@ def analyze(
     if os.path.exists(run_or_valdata) and os.path.isdir(run_or_valdata):
         valdata_path = Path(run_or_valdata)
     else:
-        runs_dir = root_dir / 'runs'
+        runs_dir = root_dir / '../cmd_tf/runs'
         run_dir = runs_dir / f'{run_or_valdata}'
         valdata_path = run_dir / 'validation'
     eval_path =  create_dir_if_not_exists(valdata_path / 'evals')
@@ -301,7 +298,7 @@ def draw_bboxes(img,bboxes):
     return sanity_check_img
 
 if __name__ == '__main__':
-    from utility import get_files_from_folders_with_ending, create_dir_if_not_exists
+    from utils import get_files_from_folders_with_ending, create_dir_if_not_exists
     
     parser = argparse.ArgumentParser(prog='analyze', description='Analyzes object detection and segmentation models by unifying the results as bboxes through pixel clustering.')
     parser.add_argument('-av','--analyze-valdata-from', type=str, default='', help='Set to a run name to analyze the validation data of or to a path to a folder containing validation data')
