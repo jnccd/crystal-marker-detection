@@ -59,3 +59,6 @@ python -m cmd_tf -av repos/evaldata/yolov5/test-yolov5-640-good-pics-v2-slight-m
 docker build -t pcmd:0.1 .
 docker run -it -w /src -v ./traindata-creator:/data -- pcmd:0.1
 python repos/yolov5_train_loop.py -n test-py-loop -d /data/dataset/yolov5-640-good-pics-v2-slight-mat-only/ --no-aug -e 2
+
+# Classic
+python prototype-cv/classic_pipe/classic.py 
