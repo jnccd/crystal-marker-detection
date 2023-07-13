@@ -20,7 +20,7 @@ dataset_dirs = [x for x in Path(args.dataset_path).glob('**/yolov5-*/')
 valset_dir = Path(args.valset_path)
 #print(dataset_dirs)
 
-for dir in dataset_dirs[:1]:
+for dir in dataset_dirs:
     os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-1 -d {dir} -v {valset_dir} -e 300 --no-aug')
     os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-2 -d {dir} -v {valset_dir} -e 300 --no-aug')
     os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-3 -d {dir} -v {valset_dir} -e 300 --no-aug')
