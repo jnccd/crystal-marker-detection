@@ -321,14 +321,16 @@ def segment_img_between_poly_labels(img: Mat, polys: List[Polygon], dim: Literal
         end = img_h
         corners = list(filter(lambda x: x.exterior.coords[0][1] > last_end and x.exterior.coords[0][1] < end, polys))
         seg_img = img[last_end:end, :]
-    segments.append({ 
+    new_segment = { 
         'end': end,
         'beginning': last_end,
         'size': end - last_end,
         'poly_index': len(polys)-1,
         'corners': corners,
         'img': seg_img,
-        })
+        }
+    segments.append(new_segment)
+    assert new_segment['size'] == new_segment['img'].shape[1 - dim]
     
     return segments
 
