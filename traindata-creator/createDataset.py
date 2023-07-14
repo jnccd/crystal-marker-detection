@@ -197,7 +197,7 @@ def main():
             'random_crop_chance': args.augment_random_crop_chance,
             'label_move_chance': args.augment_label_move_chance,
         }, indent=4), dataset_dir / 'dataset-def.json')
-   
+
 def build_seg_dataset(in_imgs, target_polys):
     global data_groups, dataset_name, dataset_dir
     
@@ -207,6 +207,7 @@ def build_seg_dataset(in_imgs, target_polys):
         dir[group] = create_dir_if_not_exists(dataset_dir / group)
     
     # Build groups data
+    i = -1
     for group in data_groups:
         for i, (in_img, polys) in enumerate(zip(in_imgs[group], target_polys[group])):
             cv2.imwrite(str(dir[group] / f'{i}_in.png'), in_img)
@@ -216,7 +217,7 @@ def build_seg_dataset(in_imgs, target_polys):
             
             cv2.imwrite(str(dir[group] / f'{i}_seg.png'), seg_image)
         print(f'Built {i+1} {group}data!')
-    
+
 def build_od_csv_dataset(in_imgs, target_polys):
     global data_groups, dataset_name, dataset_dir
     
