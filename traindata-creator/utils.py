@@ -340,13 +340,8 @@ def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
         if dim == 0: # x
             aug_image[:,pos:pos+seg['size']] = seg['img']
         else: # y
-            #print('debug', out_img_size_wh, aug_image.shape, seg['img'].shape, pos, seg['size'])
             aug_image[pos:pos+seg['size'],:] = seg['img']
             
-        #print('y_pos',y_pos)
-        #print('seg[beginning]',seg['beginning'])
-        
-        #print(dim, 'seg corners',seg['corners'])
         for poly_corners in seg['corners']:
             if dim == 0:
                 aug_polys.append(Polygon([(x[0] - seg['beginning'] + pos, x[1]) for x in poly_corners.exterior.coords]))
@@ -355,8 +350,6 @@ def rebuild_img_from_segments(segments, out_img_size_wh, dim: Literal[0,1]):
         pos += seg['size']
     
     #cv2.imwrite(str(train_dir / (Path(other_img_path).stem + "_aug.png")), aug_image)
-    #print('aug_gcircs',len(aug_gcircs),aug_gcircs)
-    #print('gcircs',len(gcircs),gcircs)
     
     return aug_image, aug_polys
 
@@ -368,9 +361,7 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
         random.shuffle(segs_x)
         
         seg_img_h, seg_img_w = seg_y['img'].shape[:2]
-        #print('before seg_y rebuild', seg_y['img'].shape, seg_y['size'])
         segs_img, segs_polys = rebuild_img_from_segments(segs_x, (seg_img_w, seg_img_h), 0)
-        #print('after seg_y rebuild', segs_img.shape)
         
         seg_y['img'] = segs_img
         seg_y['corners'] = segs_polys
@@ -402,7 +393,6 @@ def homogeneous_mat_transform(
 
 def random_crop(img: Mat, polys: List[Polygon], target_size_wh: tuple):
     if img.shape[1] < target_size_wh[0] + 1 or img.shape[0] < target_size_wh[1] + 1:
-        #print('too small!', img.shape, target_size_wh)
         return img, polys
     
     crop_pos_x = random.randrange(0, img.shape[1] - target_size_wh[0])
@@ -410,7 +400,6 @@ def random_crop(img: Mat, polys: List[Polygon], target_size_wh: tuple):
     crop_img = img[crop_pos_y:crop_pos_y+target_size_wh[1], crop_pos_x:crop_pos_x+target_size_wh[0]]
     
     crop_area = get_poly_from_bounds((crop_pos_x,crop_pos_y,target_size_wh[0],target_size_wh[1]))
-    #print('area', crop_area, crop_pos_x, crop_pos_y, target_size_wh)
     polys = drop_low_visibility_labels(polys, crop_area)
     polys = [transform(p, lambda x: np.array([(p[0] - crop_pos_x, p[1] - crop_pos_y) for p in x] )) for p in polys]
     
@@ -449,7 +438,6 @@ def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     # Extract the label poly to be moved
     move_poly = polys[pi]
     move_poly_og_bounds = [int(x) for x in move_poly.bounds]
-    # print(move_poly_og_bounds)
     move_poly_img = img[move_poly_og_bounds[1]:move_poly_og_bounds[3], move_poly_og_bounds[0]:move_poly_og_bounds[2]].copy()
     # cv2.imwrite('./move_poly_img.png', move_poly_img)
     
@@ -470,7 +458,6 @@ def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     # Reinsert poly label
     new_pos_x = random.randrange(0, img_w - (move_poly_og_bounds[2] - move_poly_og_bounds[0]))
     new_pos_y = random.randrange(0, img_h - (move_poly_og_bounds[3] - move_poly_og_bounds[1]))
-    # print((new_pos_x, new_pos_y))
     # cv2.imwrite('./move_poly_img2.png', move_poly_img)
     img = overlay_transparent(img, move_poly_img, new_pos_x, new_pos_y, blurSize=1)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
@@ -492,7 +479,6 @@ def drop_low_visibility_labels(polys: List[Polygon], visible_area: Polygon, min_
         visible_label_poly = intersection(polys[i], visible_area)
         visibility = visible_label_poly.area / polys[i].area
         if visibility < min_label_visiblity:
-            #print('dropping label')
             del polys[i]
             i-=1
         elif visibility < 1:
