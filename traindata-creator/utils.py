@@ -286,8 +286,8 @@ def segment_img_between_poly_labels(img: Mat, polys: List[Polygon], dim: Literal
         
     segments = []
     for i in range(len(polys)-1):
-        upper_poly_lower_bound = polys[i].bounds[2 if dim == 0 else 3]
-        lower_poly_upper_bound = polys[i+1].bounds[0 if dim == 0 else 1]
+        upper_poly_lower_bound = max(0, polys[i].bounds[2 if dim == 0 else 3])
+        lower_poly_upper_bound = max(0, polys[i+1].bounds[0 if dim == 0 else 1])
         dim_distance = lower_poly_upper_bound - upper_poly_lower_bound
         if dim_distance > collage_padding:
             if len(segments) > 0:
