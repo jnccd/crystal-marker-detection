@@ -14,25 +14,25 @@ num_classes = 1
 bbox_inflation = 0
 
 def analyze(
-    run_or_valdata: str,
+    run_or_testdata: str,
     ):
     
     root_dir = Path(__file__).resolve().parent
-    if os.path.exists(run_or_valdata) and os.path.isdir(run_or_valdata):
-        valdata_path = Path(run_or_valdata)
+    if os.path.exists(run_or_testdata) and os.path.isdir(run_or_testdata):
+        testdata_path = Path(run_or_testdata)
     else:
         runs_dir = root_dir / '../cmd_tf/runs'
-        run_dir = runs_dir / f'{run_or_valdata}'
-        valdata_path = run_dir / 'validation'
-    eval_path =  create_dir_if_not_exists(valdata_path / 'evals')
-    if len(get_files_from_folders_with_ending([valdata_path], '.png')) == 0:
-        valdata_path = valdata_path / 'data'
+        run_dir = runs_dir / f'{run_or_testdata}'
+        testdata_path = run_dir / 'test'
+    eval_path =  create_dir_if_not_exists(testdata_path / 'evals')
+    if len(get_files_from_folders_with_ending([testdata_path], '.png')) == 0:
+        testdata_path = testdata_path / 'data'
     
-    ins = get_files_from_folders_with_ending([valdata_path], '_input.png')
-    bbox_target_outs = get_files_from_folders_with_ending([valdata_path], '_target_output.txt')
-    pic_target_outs = get_files_from_folders_with_ending([valdata_path], '_target_output.png')
-    bbox_network_outs = get_files_from_folders_with_ending([valdata_path], '_network_output.txt')
-    pic_network_outs = get_files_from_folders_with_ending([valdata_path], '_network_output.png')
+    ins = get_files_from_folders_with_ending([testdata_path], '_input.png')
+    bbox_target_outs = get_files_from_folders_with_ending([testdata_path], '_target_output.txt')
+    pic_target_outs = get_files_from_folders_with_ending([testdata_path], '_target_output.png')
+    bbox_network_outs = get_files_from_folders_with_ending([testdata_path], '_network_output.txt')
+    pic_network_outs = get_files_from_folders_with_ending([testdata_path], '_network_output.png')
     
     if len(bbox_network_outs) == 0:
         # Convert pic outs to bbox outs
