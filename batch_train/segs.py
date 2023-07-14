@@ -39,7 +39,7 @@ def main():
 def segmentation_model_train_loop(run_name_prefix, dataset_path, testset_path, epochs = 100, batch_size = 8, img_size = 640):
     run_name = f'{run_name_prefix}-{dataset_path.stem}'
     
-    os.system(f'python -m cmd_tf -df {dataset_path} -r {run_name} -bs 8 -e 2')
+    os.system(f'python -m cmd_tf -df {dataset_path} -r {run_name} -bs {batch_size} -e {epochs} -s {img_size}')
     os.system(f'python -m cmd_tf -t -td {testset_path} -r {run_name}')
     os.system(f'python evaluation/analyze.py -av {run_name}')
     
