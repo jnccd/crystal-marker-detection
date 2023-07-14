@@ -7,14 +7,14 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-# String stuff
+# Strings
 def startswith_any(filename: str, prefs: List[str]):
     for pref in prefs:
         if filename.startswith(pref):
             return True
     return False
 
-# Implementing utility functions
+# Folders
 def get_files_from_folders_with_ending(folders, ending):
     paths = []
     for folder in folders:
@@ -33,6 +33,7 @@ def create_dir_if_not_exists(dir: Path, clear = False):
         os.makedirs(dir)
     return dir
 
+# Other
 def denormalize(x):
     """Scale image to range 0..1 for correct plot"""
     x_max = np.percentile(x, 98)
