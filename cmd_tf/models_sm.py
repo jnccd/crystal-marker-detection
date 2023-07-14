@@ -123,15 +123,15 @@ def round_clip_0_1(x, **kwargs):
     return x.round().clip(0, 1)
 
 # define heavy augmentations
-def get_training_augmentation():
+def get_training_augmentation(img_size_wh):
     train_transform = [
 
         A.HorizontalFlip(p=0.5),
 
         A.ShiftScaleRotate(scale_limit=0.5, rotate_limit=0, shift_limit=0.1, p=1, border_mode=0),
 
-        A.PadIfNeeded(min_height=320, min_width=320, always_apply=True, border_mode=0),
-        A.RandomCrop(height=320, width=320, always_apply=True),
+        A.PadIfNeeded(min_height=img_size_wh[1], min_width=img_size_wh[0], always_apply=True, border_mode=0),
+        A.RandomCrop(height=img_size_wh[1], width=img_size_wh[0], always_apply=True),
 
         A.GaussNoise(p=0.2),
         A.Perspective(p=0.5),
@@ -165,11 +165,19 @@ def get_training_augmentation():
     ]
     return A.Compose(train_transform)
 
+def get_basic_augment(img_size_wh):
+    train_transform = [
+        A.PadIfNeeded(min_height=img_size_wh[1], min_width=img_size_wh[0], always_apply=True, border_mode=0),
+        A.RandomCrop(height=img_size_wh[1], width=img_size_wh[0], always_apply=True),
+        A.Lambda(mask=round_clip_0_1)
+    ]
+    return A.Compose(train_transform)
 
-def get_validation_augmentation():
+
+def get_validation_augmentation(img_size_wh):
     """Add paddings to make image shape divisible by 32"""
     test_transform = [
-        A.PadIfNeeded(384, 480)
+        A.PadIfNeeded(min_height=img_size_wh[1], min_width=img_size_wh[0])
     ]
     return A.Compose(test_transform)
 
@@ -191,7 +199,7 @@ def get_preprocessing(preprocessing_fn):
             
 preprocess_input = sm.get_preprocessing(BACKBONE)
 
-def get_sm_traindata(dataset_dir, batch_size, img_size, extra_settings, print_data = False):
+def get_sm_traindata(dataset_dir, batch_size, img_size_wh, extra_settings, print_data = False):
     train_data_dir = dataset_dir / 'train'
     train_x_paths = get_files_from_folders_with_ending([train_data_dir], "_in.png")
     train_y_paths = get_files_from_folders_with_ending([train_data_dir], "_seg.png")
@@ -204,9 +212,9 @@ def get_sm_traindata(dataset_dir, batch_size, img_size, extra_settings, print_da
             print(os.path.basename(input_path), "|", os.path.basename(target_path))
             
     if 'data_aug' in extra_settings and extra_settings['data_aug'] is True:
-        data_aug = get_training_augmentation()
+        data_aug = get_training_augmentation(img_size_wh)
     else:
-        data_aug = None
+        data_aug = get_basic_augment(img_size_wh)
     
     # Dataset for train images
     train_dataset = Dataset(
@@ -220,12 +228,13 @@ def get_sm_traindata(dataset_dir, batch_size, img_size, extra_settings, print_da
     train_gen = Dataloder(train_dataset, batch_size=batch_size, shuffle=True)
 
     # check shapes for errors
-    assert train_gen[0][0].shape == (batch_size, 320, 320, 3)
-    assert train_gen[0][1].shape == (batch_size, 320, 320, n_classes)
+    #print(train_gen[0][0].shape, img_size_wh)
+    assert train_gen[0][0].shape == (batch_size, img_size_wh[0], img_size_wh[1], 3)
+    assert train_gen[0][1].shape == (batch_size, img_size_wh[0], img_size_wh[1], n_classes)
     
     return train_gen, train_x_paths, train_y_paths, train_dataset
     
-def get_sm_valdata(dataset_dir, batch_size, img_size, extra_settings, print_data = False):
+def get_sm_valdata(dataset_dir, batch_size, img_size_wh, extra_settings, print_data = False):
     val_data_dir = dataset_dir / 'val'
     val_x_paths = get_files_from_folders_with_ending([val_data_dir], "_in.png")
     val_y_paths = get_files_from_folders_with_ending([val_data_dir], "_seg.png")
@@ -238,9 +247,9 @@ def get_sm_valdata(dataset_dir, batch_size, img_size, extra_settings, print_data
             print(os.path.basename(input_path), "|", os.path.basename(target_path))
     
     if 'data_aug' in extra_settings and extra_settings['data_aug'] is True:
-        data_aug = get_validation_augmentation()
+        data_aug = get_validation_augmentation(img_size_wh)
     else:
-        data_aug = None
+        data_aug = get_basic_augment(img_size_wh)
     
     # Dataset for validation images
     val_dataset = Dataset(
