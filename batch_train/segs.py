@@ -31,6 +31,7 @@ def main():
     # Main train loop
     for dir in dataset_dirs:
         segmentation_model_train_loop('sm-unet', dir, testset_path, epochs=2, img_size=320)
+        # TODO: Add more training runs
         
     end_time = time.time()
     diff_time = end_time  - start_time
