@@ -43,25 +43,25 @@ def main():
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
 
     i=0
-    out_evaldata_path = create_dir_if_not_exists(root_dir / f'evaldata/yolov5/{args.run}/data')
+    out_testdata_path = create_dir_if_not_exists(root_dir / f'training/yolov5/{args.run}/test')
     for img_path, label_path in zip(valdata_imgs_paths, valdata_labels_paths):
         
         # Write input picture
-        shutil.copyfile(img_path, out_evaldata_path / f'{i}_input.png')
+        shutil.copyfile(img_path, out_testdata_path / f'{i}_input.png')
         
         # Write model out
         img = cv2.imread(img_path)
         img_h, img_w = img.shape[:2]
         results = model(img)
         res_df = results.pandas().xyxy[0]
-        out_path = out_evaldata_path / f'{i}_network_output.txt'
+        out_path = out_testdata_path / f'{i}_network_output.txt'
         with open(out_path, "w") as text_file:
             res_df = res_df.reset_index()
             for index, row in res_df.iterrows():
                 if row['confidence'] > 0.5:
                     text_file.write(f"{row['xmin']} {row['ymin']} {row['xmax']} {row['ymax']} {row['confidence']}\n")
         #print(out_img_path)
-        cv2.imwrite(str(out_evaldata_path / f'{i}_result_render.png'), np.squeeze(results.render()))
+        cv2.imwrite(str(out_testdata_path / f'{i}_result_render.png'), np.squeeze(results.render()))
         
         # Write labels
         # Rasterize Segmentation image
@@ -69,7 +69,7 @@ def main():
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
         vd_bbox_lines.pop()
-        target_output_path = out_evaldata_path / f'{i}_target_output.txt'
+        target_output_path = out_testdata_path / f'{i}_target_output.txt'
         with open(target_output_path, "w") as text_file:
             for line in vd_bbox_lines:
                 sc, sx, sy, sw, sh = line.split(' ')
@@ -90,7 +90,7 @@ def main():
                 verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
                 #print(verts)
                 cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
-                cv2.imwrite(str(out_evaldata_path / f'{i}_target_output.png'), sanity_check_image)
+                cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
                 
         i+=1
 

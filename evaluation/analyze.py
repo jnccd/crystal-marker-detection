@@ -5,6 +5,7 @@ import math
 import random
 from pathlib import Path
 import shutil
+import sys
 import cv2
 from matplotlib import pyplot as plt
 
@@ -24,10 +25,17 @@ def analyze(
         runs_dir = root_dir / '../cmd_tf/runs'
         run_dir = runs_dir / f'{run_or_testdata}'
         testdata_path = run_dir / 'test'
+    if len(get_files_from_folders_with_ending([testdata_path], '_input.png')) == 0:
+        testdata_path = testdata_path / 'test'
+        if os.path.exists(testdata_path) and \
+            os.path.isdir(testdata_path) and \
+            len(get_files_from_folders_with_ending([testdata_path], '_input.png')) > 0:
+            testdata_path = testdata_path
+        else:
+            print('Couldnt find test data folder!')
+            sys.exit(1)
     eval_path =  create_dir_if_not_exists(testdata_path / 'evals')
-    if len(get_files_from_folders_with_ending([testdata_path], '.png')) == 0:
-        testdata_path = testdata_path / 'data'
-    
+        
     ins = get_files_from_folders_with_ending([testdata_path], '_input.png')
     bbox_target_outs = get_files_from_folders_with_ending([testdata_path], '_target_output.txt')
     pic_target_outs = get_files_from_folders_with_ending([testdata_path], '_target_output.png')
