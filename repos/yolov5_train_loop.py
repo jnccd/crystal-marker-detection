@@ -21,6 +21,8 @@ parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the 
 args = parser.parse_args()
 
 project_folder = Path('repos/training/yolov5')
+training_run_folder = project_folder / args.run_name
+training_run_testdata_folder = training_run_folder / 'test'
 dataset_path = Path(args.dataset_path)
 valset_path = Path(args.valset_path)
 dataset_def_dict = json.loads(read_textfile(dataset_path / 'dataset-def.json').replace(" ", "").replace("\n", ""))
@@ -35,7 +37,6 @@ train_def_dict = {
     'valset': valset_def_dict,
     'dataset': dataset_def_dict,
 }
-evaldata_run_dir = Path(f'repos/evaldata/yolov5/{args.run_name}/')
 
 yolov5_args = ''
 if args.no_aug:
@@ -46,5 +47,5 @@ os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_
 os.system(f'rm {args.model}.pt')
 print('--- Evaluating...')
 os.system(f'python repos/yolov5_gen_evaldata.py -r {args.run_name} -df {args.valset_path}/')
-os.system(f'python evaluation/analyze.py -av {evaldata_run_dir}')
-write_textfile(json.dumps(train_def_dict, indent=4), evaldata_run_dir / 'training-def.json')
+os.system(f'python evaluation/analyze.py -av {training_run_folder}')
+write_textfile(json.dumps(train_def_dict, indent=4), training_run_testdata_folder / 'training-def.json')
