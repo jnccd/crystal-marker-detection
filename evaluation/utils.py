@@ -14,7 +14,7 @@ def startswith_any(filename: str, prefs: List[str]):
             return True
     return False
 
-# Implementing utility functions
+# Paths
 def get_files_from_folders_with_ending(folders, ending):
     paths = []
     for folder in folders:
@@ -32,3 +32,7 @@ def create_dir_if_not_exists(dir: Path, clear = False):
     if not os.path.exists(dir):
         os.makedirs(dir)
     return dir
+
+# Other
+def flatten(list):
+    return [item for sublist in list for item in sublist]
