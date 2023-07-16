@@ -34,7 +34,7 @@ def analyze(
         else:
             print('Couldnt find test data folder!')
             sys.exit(1)
-    eval_path =  create_dir_if_not_exists(testdata_path / 'evals')
+    eval_path = create_dir_if_not_exists(testdata_path / 'evals')
         
     ins = get_files_from_folders_with_ending([testdata_path], '_input.png')
     bbox_target_outs = get_files_from_folders_with_ending([testdata_path], '_target_output.txt')
