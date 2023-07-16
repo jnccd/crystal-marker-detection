@@ -36,3 +36,14 @@ def create_dir_if_not_exists(dir: Path, clear = False):
 # Other
 def flatten(list):
     return [item for sublist in list for item in sublist]
+
+# --- Textfiles -------------------------------------------------------------------------------------------------------------------------
+
+def read_textfile(tf_path):
+    with open(tf_path, 'r') as file:
+        file_text = file.read()
+    return file_text
+
+def write_textfile(text, tf_path):
+    with open(tf_path, "w") as text_file:
+        text_file.write(text)
