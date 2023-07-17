@@ -69,6 +69,7 @@ python batch_train/yolov5.py -d /data/pcmd/dataset/ -v /data/pcmd/dataset/yolov5
 python batch_train/yolov5.py -d traindata-creator/dataset/ -v traindata-creator/dataset/yolov5-640-on-skin-valset-v2/
 
 python -m cmd_tf -t -td traindata-creator/dataset/seg-640-on-skin-valset-v2/ -r sm-unet-aruco
+python evaluation/plot_ensample.py -rf evaluation/from-server/ -n yolov5s-runs
 
 
 # Just train everything a bit
