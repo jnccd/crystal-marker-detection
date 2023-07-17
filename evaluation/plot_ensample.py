@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 import sys
 import cv2
-from matplotlib import pyplot as plt
+from matplotlib import colors, pyplot as plt
 
 from utils import *
 
@@ -52,9 +52,9 @@ bar_chart_coco_mAPs = [round(x, 3) for x in bar_chart_coco_mAPs]
 x = np.arange(len(bar_chart_labels))
 width = 0.6 / 3
 fig, ax = plt.subplots()
-v7_bars = ax.bar(x - width, bar_chart_voc2007_mAPs, width, label='voc2007 mAP')
-v10_bars = ax.bar(x, bar_chart_voc2010_mAPs, width, label='voc2010 mAP')
-coco_bars = ax.bar(x + width, bar_chart_coco_mAPs, width, label='coco mAP')
+v7_bars = ax.bar(x - width, bar_chart_voc2007_mAPs, width, label='voc2007 mAP', color=colors.to_hex((0.15, 0.4, 1)))
+v10_bars = ax.bar(x, bar_chart_voc2010_mAPs, width, label='voc2010 mAP', color=colors.to_hex((0.3, 0.65, 1)))
+coco_bars = ax.bar(x + width, bar_chart_coco_mAPs, width, label='coco mAP', color=colors.to_hex((1, 0.6, 0)))
 ax.set_ylabel('mAP')
 ax.set_title(f'mAP per run in {args.name.replace("-", " ")}')
 ax.set_xticks(x)
