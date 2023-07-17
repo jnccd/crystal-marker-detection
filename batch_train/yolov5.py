@@ -24,12 +24,8 @@ newline_char = "\n" # Python 3.9 :/
 print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
 
 for dir in dataset_dirs:
-    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-1 --no-aug -d {dir} -v {testset_path} -e 300')
-    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-2 --no-aug -d {dir} -v {testset_path} -e 300')
-    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-3 --no-aug -d {dir} -v {testset_path} -e 300')
-    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-yolo5aug-1 -d {dir} -v {testset_path} -e 300')
-    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-yolo5aug-2 -d {dir} -v {testset_path} -e 300')
-    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-yolo5aug-3 -d {dir} -v {testset_path} -e 300')
+    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem} --no-aug -d {dir} -v {testset_path} -e 300')
+    os.system(f'python repos/yolov5_train_loop.py -n {dir.stem}-yolo5aug -d {dir} -v {testset_path} -e 300')
     
 end_time = time.time()
 diff_time = end_time  - start_time
