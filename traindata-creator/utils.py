@@ -481,7 +481,7 @@ def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
 
 def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     img_h, img_w = img.shape[:2]
-    blur_strength = 5
+    blur_strength = 7
     
     # Choose random polygon to be moved
     pi = random.randrange(len(polys))
@@ -491,13 +491,6 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
         # Sample color from poly centroid in img
         draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
     
-    # # Input debug out
-    # cv2.imwrite('./in_img.png', img)
-    # debug_seg_img = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
-    # debug_seg_img = rasterize_polys(debug_seg_img, polys)
-    # debug_seg_img = rasterize_polys(debug_seg_img, [polys[pi]], (0, 255, 0))
-    # cv2.imwrite('./in_polys.png', debug_seg_img)
-    
     # Extract the label poly to be moved
     move_poly = polys[pi]
     move_poly_og_bounds = [int(x) for x in move_poly.bounds]
@@ -506,7 +499,6 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
                            move_poly_og_bounds[2] + blur_strength,
                            move_poly_og_bounds[3] + blur_strength]
     move_poly_img = img[move_poly_og_bounds[1]:move_poly_og_bounds[3], move_poly_og_bounds[0]:move_poly_og_bounds[2]].copy()
-    # cv2.imwrite('./move_poly_img.png', move_poly_img)
     img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
     polys.pop(pi)
     
@@ -529,7 +521,6 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     alpha_channel_img = np.zeros(move_poly_img.shape[:2] + (1,), dtype = np.uint8)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] - move_poly_og_bounds[0], p[1] - move_poly_og_bounds[1]) for p in x] )) # Moved to mask coord system for rasterization
     alpha_channel_img = rasterize_polys(alpha_channel_img, [move_poly], (255))
-    # cv2.imwrite('./alpha_channel_img.png', alpha_channel_img)
     kernel = cv2.getGaussianKernel(blur_strength, 1)
     alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
     kernel = cv2.transpose(kernel)
@@ -541,13 +532,9 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     cv2.imwrite('test2.png', move_poly_img)
     
     # Reinsert poly label
-    # cv2.imwrite('./move_poly_img2.png', move_poly_img)
     img = overlay_transparent_fore_alpha(img, move_poly_img, new_pos_x, new_pos_y)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
     polys.append(move_poly)
-    # cv2.imwrite('./img.png', img)
-    # print(polys)
-    # sys.exit(0)
     
     return img, polys
 
