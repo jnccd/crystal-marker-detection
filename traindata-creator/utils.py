@@ -479,6 +479,69 @@ def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     
     return img, polys
 
+def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
+    img_h, img_w = img.shape[:2]
+    move_poly_bounds_inflation = 5
+    
+    # Choose random polygon to be moved
+    pi = random.randrange(len(polys))
+    
+    if len(draw_color) != 3:
+        c = polys[pi].centroid
+        # Sample color from poly centroid in img
+        draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
+    
+    # # Input debug out
+    # cv2.imwrite('./in_img.png', img)
+    # debug_seg_img = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
+    # debug_seg_img = rasterize_polys(debug_seg_img, polys)
+    # debug_seg_img = rasterize_polys(debug_seg_img, [polys[pi]], (0, 255, 0))
+    # cv2.imwrite('./in_polys.png', debug_seg_img)
+    
+    # Extract the label poly to be moved
+    move_poly = polys[pi]
+    move_poly_og_bounds = [int(x) for x in move_poly.bounds]
+    move_poly_og_bounds = [move_poly_og_bounds[0] - move_poly_bounds_inflation, 
+                           move_poly_og_bounds[1] - move_poly_bounds_inflation,
+                           move_poly_og_bounds[2] + move_poly_bounds_inflation,
+                           move_poly_og_bounds[3] + move_poly_bounds_inflation]
+    move_poly_img = img[move_poly_og_bounds[1]:move_poly_og_bounds[3], move_poly_og_bounds[0]:move_poly_og_bounds[2]].copy()
+    # cv2.imwrite('./move_poly_img.png', move_poly_img)
+    img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
+    polys.pop(pi)
+    cv2.imwrite('test.png', move_poly_img)
+    
+    # Create mask
+    alpha_channel_img = np.zeros(move_poly_img.shape[:2] + (1,), dtype = np.uint8)
+    move_poly = transform(move_poly, lambda x: np.array( [(p[0] - move_poly_og_bounds[0], p[1] - move_poly_og_bounds[1]) for p in x] )) # Moved to mask coord system for rasterization
+    alpha_channel_img = rasterize_polys(alpha_channel_img, [move_poly], (255))
+    # cv2.imwrite('./alpha_channel_img.png', alpha_channel_img)
+    kernel = np.asarray([[0,   0.3, 0],
+                         [0.3, 1,   0.3],
+                         [0,   0.3, 0]], dtype=np.float32)
+    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
+    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
+    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
+    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
+    
+    # Apply mask
+    move_poly_img = cv2.cvtColor(move_poly_img, cv2.COLOR_BGR2BGRA)
+    move_poly_img[:, :, 3] = np.squeeze(alpha_channel_img)
+    cv2.imwrite('test2.png', move_poly_img)
+    
+    # Reinsert poly label
+    new_pos_x = random.randrange(0, img_w - (move_poly_og_bounds[2] - move_poly_og_bounds[0]))
+    new_pos_y = random.randrange(0, img_h - (move_poly_og_bounds[3] - move_poly_og_bounds[1]))
+    # cv2.imwrite('./move_poly_img2.png', move_poly_img)
+    img = overlay_transparent_fore_alpha(img, move_poly_img, new_pos_x, new_pos_y)
+    move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
+    polys.append(move_poly)
+    # cv2.imwrite('./img.png', img)
+    # print(polys)
+    # sys.exit(0)
+    
+    return img, polys
+
 def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
