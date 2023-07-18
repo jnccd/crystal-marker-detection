@@ -481,26 +481,44 @@ def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
 
 def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     img_h, img_w = img.shape[:2]
+    is_fake_poly = False
     blur_strength = 7
     
-    # Choose random polygon to be moved
-    pi = random.randrange(len(polys))
+    if random.random() < 0.05:
+        # Choose random polygon to be moved
+        pi = random.randrange(len(polys))
+        move_poly = polys[pi]
+        polys.remove(move_poly)
+    else:
+        fake_poly_w = 32
+        fake_poly_h = 32
+        while True:
+            fake_poly_x = random.randrange(blur_strength, img_w - fake_poly_w - blur_strength * 2)
+            fake_poly_y = random.randrange(blur_strength, img_h - fake_poly_h - blur_strength * 2)
+            
+            fake_poly = get_poly_from_bounds((fake_poly_x, fake_poly_y, fake_poly_w, fake_poly_h))
+            #fake_poly = Polygon([(point[0] + random.randrange(-5, 5), point[1] + random.randrange(-5, 5)) for point in fake_poly.exterior.coords[:-1]])
+            print('gen fake poly...', fake_poly, img.shape)
+            if not any([x.intersects(fake_poly) for x in polys]):
+                break
+            
+        move_poly = fake_poly
+        is_fake_poly = True
     
     if len(draw_color) != 3:
-        c = polys[pi].centroid
+        c = move_poly.centroid
         # Sample color from poly centroid in img
         draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
     
     # Extract the label poly to be moved
-    move_poly = polys[pi]
     move_poly_og_bounds = [int(x) for x in move_poly.bounds]
+    print('bounds', move_poly_og_bounds)
     move_poly_og_bounds = [move_poly_og_bounds[0] - blur_strength, 
                            move_poly_og_bounds[1] - blur_strength,
                            move_poly_og_bounds[2] + blur_strength,
                            move_poly_og_bounds[3] + blur_strength]
     move_poly_img = img[move_poly_og_bounds[1]:move_poly_og_bounds[3], move_poly_og_bounds[0]:move_poly_og_bounds[2]].copy()
     img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
-    polys.pop(pi)
     
     # Set target position
     og_bounds_width = move_poly_og_bounds[2] - move_poly_og_bounds[0]
@@ -526,6 +544,7 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     
     # Create mask
     alpha_channel_img = np.zeros(move_poly_img.shape[:2] + (1,), dtype = np.uint8)
+    print('shapes', alpha_channel_img.shape, move_poly_img.shape)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] - move_poly_og_bounds[0], p[1] - move_poly_og_bounds[1]) for p in x] )) # Moved to mask coord system for rasterization
     alpha_channel_img = rasterize_polys(alpha_channel_img, [move_poly], (255))
     # Blur mask edges
@@ -542,7 +561,8 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     # Reinsert poly label
     img = overlay_transparent_fore_alpha(img, move_poly_img, new_pos_x, new_pos_y)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
-    polys.append(move_poly)
+    if not is_fake_poly:
+        polys.append(move_poly)
     
     return img, polys
 
