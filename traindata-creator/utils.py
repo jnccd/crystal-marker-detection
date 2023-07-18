@@ -516,12 +516,9 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] - move_poly_og_bounds[0], p[1] - move_poly_og_bounds[1]) for p in x] )) # Moved to mask coord system for rasterization
     alpha_channel_img = rasterize_polys(alpha_channel_img, [move_poly], (255))
     # cv2.imwrite('./alpha_channel_img.png', alpha_channel_img)
-    kernel = np.asarray([[0,   0.3, 0],
-                         [0.3, 1,   0.3],
-                         [0,   0.3, 0]], dtype=np.float32)
+    kernel = cv2.getGaussianKernel(5, 1)
     alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
-    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
-    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
+    kernel = cv2.transpose(kernel)
     alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
     
     # Apply mask
