@@ -43,6 +43,7 @@ def main():
     parser.add_argument('-ars','--augment-rotation-strength', type=float, default=45, help='Maximum augment rotation in degrees.')
     parser.add_argument('-arcc','--augment-random-crop-chance', type=float, default=0.6, help='Chance that image is cropped randomly.')
     parser.add_argument('-almc','--augment-label-move-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image.')
+    parser.add_argument('-alm2c','--augment-label-move-v2-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image. (Improved version)')
     args = parser.parse_args()
     
     if args.size is None:
@@ -120,6 +121,10 @@ def main():
                     # Poly Label Move
                     if random.random() < args.augment_label_move_chance:
                         aug_img, aug_polys = poly_label_move(aug_img, aug_polys)
+                        
+                    # Poly Label Move v2
+                    if random.random() < args.augment_label_move_v2_chance:
+                        aug_img, aug_polys = poly_label_move_v2(aug_img, aug_polys)
                     
                     # Matrix Transform
                     mats = []
@@ -196,6 +201,7 @@ def main():
             'rotation_strength': args.augment_rotation_strength,
             'random_crop_chance': args.augment_random_crop_chance,
             'label_move_chance': args.augment_label_move_chance,
+            'label_move_v2_chance': args.augment_label_move_v2_chance,
         }, indent=4), dataset_dir / 'dataset-def.json')
 
 def build_seg_dataset(in_imgs, target_polys):
