@@ -265,7 +265,16 @@ def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=Non
     
     return bg_img
 
-def overlay_transparent_fore_alpha(background_img, foreground_img):
+def overlay_transparent_fore_alpha(background_img, foreground_img, x = 0, y = 0):
+    if foreground_img.shape[0] != background_img.shape[0] or \
+        foreground_img.shape[1] != background_img.shape[1]:
+        #print('reshaping...')
+        new_foreground_img = np.zeros(background_img.shape[:2] + (foreground_img.shape[2],))
+        new_foreground_img[y:y+foreground_img.shape[0], x:x+foreground_img.shape[1]] = foreground_img
+        #print(new_foreground_img.shape, foreground_img.shape, background_img.shape)
+        
+        foreground_img = new_foreground_img
+    
     # Create weights
     bg_channels = background_img.shape[2]
     weights = foreground_img[:,:,3].astype('float32') / 255
