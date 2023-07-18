@@ -25,8 +25,8 @@ training_run_folder = project_folder / args.run_name
 training_run_testdata_folder = training_run_folder / 'test'
 dataset_path = Path(args.dataset_path)
 valset_path = Path(args.valset_path)
-dataset_def_dict = json.loads(read_textfile(dataset_path / 'dataset-def.json').replace(" ", "").replace("\n", ""))
-valset_def_dict = json.loads(read_textfile(valset_path / 'dataset-def.json').replace(" ", "").replace("\n", ""))
+dataset_def_dict = json.loads(read_textfile(dataset_path / 'dataset-def.json').replace("    ", "").replace("\n", ""))
+valset_def_dict = json.loads(read_textfile(valset_path / 'dataset-def.json').replace("    ", "").replace("\n", ""))
 train_def_dict = {
     'run_name': args.run_name,
     'disabled_yolo_aug': args.no_aug,
