@@ -502,11 +502,18 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
     polys.pop(pi)
     
-    # Adapt colors roughly to target position
+    # Set target position
     og_bounds_width = move_poly_og_bounds[2] - move_poly_og_bounds[0]
     og_bounds_height = move_poly_og_bounds[3] - move_poly_og_bounds[1]
     new_pos_x = random.randrange(0, img_w - og_bounds_width)
     new_pos_y = random.randrange(0, img_h - og_bounds_height)
+    target_pos_poly = get_poly_from_bounds((new_pos_x, new_pos_y, og_bounds_width, og_bounds_height))
+    while any([x.intersects(target_pos_poly) for x in polys]):
+        new_pos_x = random.randrange(0, img_w - og_bounds_width)
+        new_pos_y = random.randrange(0, img_h - og_bounds_height)
+        target_pos_poly = get_poly_from_bounds((new_pos_x, new_pos_y, og_bounds_width, og_bounds_height))
+    
+    # Adapt colors roughly to target position
     target_img_section = img[new_pos_y:new_pos_y+og_bounds_height, new_pos_x:new_pos_x+og_bounds_width]
     target_img_avgs = np.array([np.average(target_img_section[:,:,x]) for x in range(3)])
     move_poly_img_avgs = np.array([np.average(move_poly_img[:,:,x]) for x in range(3)])
