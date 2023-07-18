@@ -509,6 +509,20 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     # cv2.imwrite('./move_poly_img.png', move_poly_img)
     img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
     polys.pop(pi)
+    
+    # Adapt colors roughly to target position
+    og_bounds_width = move_poly_og_bounds[2] - move_poly_og_bounds[0]
+    og_bounds_height = move_poly_og_bounds[3] - move_poly_og_bounds[1]
+    new_pos_x = random.randrange(0, img_w - og_bounds_width)
+    new_pos_y = random.randrange(0, img_h - og_bounds_height)
+    target_img_section = img[new_pos_y:new_pos_y+og_bounds_height, new_pos_x:new_pos_x+og_bounds_width]
+    target_img_avgs = np.array([np.average(target_img_section[:,:,x]) for x in range(3)])
+    move_poly_img_avgs = np.array([np.average(move_poly_img[:,:,x]) for x in range(3)])
+    diff_avgs = target_img_avgs - move_poly_img_avgs
+    for y in range(move_poly_img.shape[0]):
+        for x in range(move_poly_img.shape[1]):
+            for c in range(3):
+                move_poly_img[y, x, c] += diff_avgs[c]
     cv2.imwrite('test.png', move_poly_img)
     
     # Create mask
@@ -527,8 +541,6 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     cv2.imwrite('test2.png', move_poly_img)
     
     # Reinsert poly label
-    new_pos_x = random.randrange(0, img_w - (move_poly_og_bounds[2] - move_poly_og_bounds[0]))
-    new_pos_y = random.randrange(0, img_h - (move_poly_og_bounds[3] - move_poly_og_bounds[1]))
     # cv2.imwrite('./move_poly_img2.png', move_poly_img)
     img = overlay_transparent_fore_alpha(img, move_poly_img, new_pos_x, new_pos_y)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
