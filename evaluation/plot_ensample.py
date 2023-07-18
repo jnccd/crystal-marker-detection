@@ -43,9 +43,7 @@ for eval_path in eval_paths:
     if args.run_name_suffix is not None and not run_name.endswith(args.run_name_suffix):
         continue
     
-    split_end = 0 if args.run_name_suffix is not None else -1
-        
-    bar_chart_labels.append('-'.join(run_name.split('-')[4:split_end]))
+    bar_chart_labels.append('-'.join(run_name.split('-')[2:]))
     bar_chart_voc2007_mAPs.append(float(eval_dict['voc2007_mAP']))
     bar_chart_voc2010_mAPs.append(float(eval_dict['voc2010_mAP']))
     bar_chart_coco_mAPs.append(float(eval_dict['coco_mAP']))
