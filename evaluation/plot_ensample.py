@@ -14,6 +14,7 @@ from utils import *
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-n','--name', type=str, help='.')
 parser.add_argument('-rf','--runs-folders', action='append', nargs='+', type=str, help='.')
+parser.add_argument('-rns','--run-name-suffix', type=str, help='.')
 args = parser.parse_args()
 
 root_dir = Path(__file__).resolve().parent
@@ -38,15 +39,20 @@ for eval_path in eval_paths:
     train_def_dict = json.loads(read_textfile(train_def_path).replace(" ", "").replace("\n", ""))
     
     run_name: str = train_def_dict['run_name']
-    if run_name.endswith('-1'):
-        bar_chart_labels.append('-'.join(run_name.split('-')[4:-1]))
-        bar_chart_voc2007_mAPs.append(float(eval_dict['voc2007_mAP']))
-        bar_chart_voc2010_mAPs.append(float(eval_dict['voc2010_mAP']))
-        bar_chart_coco_mAPs.append(float(eval_dict['coco_mAP']))
+    
+    if args.run_name_suffix is not None and not run_name.endswith(args.run_name_suffix):
+        continue
+        
+    bar_chart_labels.append('-'.join(run_name.split('-')[4:-1]))
+    bar_chart_voc2007_mAPs.append(float(eval_dict['voc2007_mAP']))
+    bar_chart_voc2010_mAPs.append(float(eval_dict['voc2010_mAP']))
+    bar_chart_coco_mAPs.append(float(eval_dict['coco_mAP']))
         
 bar_chart_voc2007_mAPs = [round(x, 3) for x in bar_chart_voc2007_mAPs]
 bar_chart_voc2010_mAPs = [round(x, 3) for x in bar_chart_voc2010_mAPs]
 bar_chart_coco_mAPs = [round(x, 3) for x in bar_chart_coco_mAPs]
+
+#print('debug', list(zip(bar_chart_labels, bar_chart_coco_mAPs)))
 
 # Create barchart
 x = np.arange(len(bar_chart_labels))
