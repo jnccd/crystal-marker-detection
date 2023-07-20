@@ -21,7 +21,7 @@ parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the 
 parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
 args = parser.parse_args()
 
-project_folder = Path('repos/training/yolov5')
+project_folder = Path('training/yolov5')
 training_run_folder = project_folder / args.run_name
 training_run_testdata_folder = training_run_folder / 'test'
 dataset_path = Path(args.dataset_path)
