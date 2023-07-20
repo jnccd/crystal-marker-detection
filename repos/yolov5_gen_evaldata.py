@@ -18,16 +18,19 @@ def main():
 
     # Get chosen or last yolov5 run dir
     root_dir = Path(__file__).resolve().parent
+    train_dir = root_dir / f'../training/yolov5'
     if args.run == '':
-        train_dir = str(root_dir / f'training/yolov5')
-        for dir in glob.iglob(train_dir+'/*', recursive=False):
+        for dir in glob.iglob('training/yolov5/*', recursive=False):
             last_dir = dir
         last_dir = Path(last_dir)
         args.run = last_dir.stem
         print(args.run)
         network_file = last_dir / 'weights/best.pt'
+    elif Path(args.run).is_dir():
+        train_dir = Path(args.run)
+        network_file = Path(args.run) / 'weights/best.pt'
     else:
-        network_file = root_dir / f'training/yolov5/{args.run}/weights/best.pt'
+        network_file = train_dir / f'{args.run}/weights/best.pt'
 
     # Torch hub cache support on
     os.system('mkdir ./.cache')
@@ -43,7 +46,7 @@ def main():
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
 
     i=0
-    out_testdata_path = create_dir_if_not_exists(root_dir / f'training/yolov5/{args.run}/test')
+    out_testdata_path = create_dir_if_not_exists(train_dir / f'{args.run}/test')
     for img_path, label_path in zip(valdata_imgs_paths, valdata_labels_paths):
         
         # Write input picture
