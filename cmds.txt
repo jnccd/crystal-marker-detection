@@ -25,6 +25,7 @@ python traindata-creator/createDataset.py -n good-pics-v2-slight-mat-only -tf tr
 python traindata-creator/createDataset.py -n good-pics-v2-def-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4
 python traindata-creator/createDataset.py -n good-pics-v2-rc-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 1 -almc 0
 python traindata-creator/createDataset.py -n good-pics-v2-lm-only-test -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 1
+python traindata-creator/createDataset.py -n good-pics-v2-lm2-only-test -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 0 -alm2c 1
 # Create Valsets
 python traindata-creator/createDataset.py -n on-skin-valset -vf traindata-creator/dataseries/man-fPCS_on_skin/ -t yolov5 -s 640
 python traindata-creator/createDataset.py -n on-skin-valset-v2 -vf traindata-creator/dataseries/man-fPCS_on_skin/ traindata-creator/dataseries/man-on_skin_v2/ -t yolov5 -s 640
@@ -46,6 +47,7 @@ python repos/yolov5_gen_evaldata.py -r test_old_aug_gpv2_whyp -df traindata-crea
 # Do it all yolo
 python repos/yolov5_train_loop.py -n test-py-loop -d traindata-creator/dataset/yolov5-640-good-pics-v2-slight-mat-only/ --no-aug -e 2
 python repos/yolov5_train_loop.py -n test-py-loop-3 -d /data/pcmd/dataset/yolov5-640-good-pics-v2-slight-mat-only/ -v /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ --no-aug -e 2
+python repos/yolov5_train_loop.py -n test-py-loop-rw -d traindata-creator/dataset/yolov5-640-good-pics-v2-slight-mat-only/ -v traindata-creator/dataset/yolov5-640-on-skin-valset-v2/ --no-aug -e 2 -rw
 
 # Update run outputs
 python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco -bs 8 -e 0
