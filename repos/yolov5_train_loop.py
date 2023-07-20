@@ -18,6 +18,7 @@ parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img
 parser.add_argument('-b','--batch-size', type=int, default=8, help='Sets the batch size to train with.')
 parser.add_argument('-e','--epochs', type=int, default=100, help='Sets the epochs to train for.')
 parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the model to train with.')
+parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
 args = parser.parse_args()
 
 project_folder = Path('repos/training/yolov5')
@@ -39,11 +40,19 @@ train_def_dict = {
 }
 
 yolov5_args = ''
+
+# Random yolov5 weight init
+if args.init_random_weights:
+    yolov5_args += f"--weights '' --cfg {args.model}.yaml "
+else:
+    yolov5_args += f'--weights {args.model}.pt '
+
+# Disable yolov5 augmentation
 if args.no_aug:
-    yolov5_args += '--hyp hyp.no-augmentation.yaml'
+    yolov5_args += '--hyp hyp.no-augmentation.yaml '
 
 print('--- Training...')
-os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_size} --batch {args.batch_size} --epochs {args.epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml --weights {args.model}.pt {yolov5_args}')
+os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_size} --batch {args.batch_size} --epochs {args.epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml {yolov5_args}')
 os.system(f'rm {args.model}.pt')
 print('--- Evaluating...')
 os.system(f'python repos/yolov5_gen_evaldata.py -r {args.run_name} -df {args.valset_path}/')
