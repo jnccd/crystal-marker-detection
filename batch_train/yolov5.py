@@ -13,6 +13,13 @@ def main():
     parser = argparse.ArgumentParser(prog='', description='.')
     parser.add_argument('-d','--dataset-path', type=str, default='', help='.')
     parser.add_argument('-v','--testset-path', type=str, default='', help='.')
+    
+    parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
+    parser.add_argument('-b','--batch-size', type=int, default=8, help='Sets the batch size to train with.')
+    parser.add_argument('-e','--epochs', type=int, default=100, help='Sets the epochs to train for.')
+    parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the model to train with.')
+    parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
+    
     args = parser.parse_args()
 
     # Paths
@@ -34,17 +41,21 @@ def main():
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem,
-                          epochs=2,
-                          model='yolov5s',
-                          init_random_weights=True,
+                          epochs=args.epochs,
+                          img_size=args.img_size,
+                          batch_size=args.batch_size,
+                          model=args.model,
+                          init_random_weights=args.init_random_weights,
                           no_aug=True)
         # With yolov5 aug
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem+'-yolo5aug',
-                          epochs=2,
-                          model='yolov5s',
-                          init_random_weights=True,
+                          epochs=args.epochs,
+                          img_size=args.img_size,
+                          batch_size=args.batch_size,
+                          model=args.model,
+                          init_random_weights=args.init_random_weights,
                           no_aug=False)
         
     end_time = time.time()
