@@ -6,7 +6,7 @@ import sys
 import time
 from pathlib import Path
 
-from utils import read_textfile, write_textfile
+from utils import *
 
 # Segmentation models ensample run
 
