@@ -43,7 +43,7 @@ def main():
     # Train
     start_time = time.time()
 
-    for dataset_dir in datasets_dirs[:1]:
+    for dataset_dir in datasets_dirs:
         yolov8_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem,
