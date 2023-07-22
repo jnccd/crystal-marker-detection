@@ -98,7 +98,7 @@ def yolov8_train_loop(dataset_path,
         name=run_name,
         pretrained=pretrained,
         exist_ok=True,
-        device=list(range(torch.cuda.device_count()))) # Take all GPUs you can find
+        device=[0])#list(range(torch.cuda.device_count()))) # Take all GPUs you can find
     
     os.system('rm *.pt')
     
