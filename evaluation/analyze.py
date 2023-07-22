@@ -202,7 +202,7 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
         entry['acc_tp'] = acc_tp
         entry['acc_fp'] = acc_fp
         entry['precision'] = acc_tp / (acc_tp + acc_fp)
-        entry['recall'] = acc_tp / total_gts
+        entry['recall'] = acc_tp / total_gts if total_gts > 0 else 0
     
     # Generate PR curve values
     mAP_table = sorted(mAP_table, key=lambda x: x['recall'])
