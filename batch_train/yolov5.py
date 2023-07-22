@@ -36,7 +36,7 @@ def main():
     # Train
     start_time = time.time()
 
-    for dataset_dir in dataset_dirs[:1]:
+    for dataset_dir in dataset_dirs:
         # Without yolov5 aug
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
