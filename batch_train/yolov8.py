@@ -17,53 +17,6 @@ from utils import *
 
 i = 0
 
-def main():
-    global i
-    
-    print('Main start no', i)
-    i += 1
-    
-    # Parse
-    parser = argparse.ArgumentParser(prog='', description='.')
-    parser.add_argument('-d','--datasets-path', type=str, default='', help='.')
-    parser.add_argument('-v','--testset-path', type=str, default='', help='.')
-    
-    parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
-    parser.add_argument('-b','--batch-size', type=int, default=-1, help='Sets the batch size to train with, -1 is yolov8 AutoBatch.')
-    parser.add_argument('-e','--epochs', type=int, default=100, help='Sets the epochs to train for.')
-    parser.add_argument('-m','--model', type=str, default='yolov8s', help='Sets the model to train with.')
-    parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
-    
-    args = parser.parse_args()
-
-    # Paths
-    root_dir = Path(__file__).resolve().parent
-    datasets_path = Path(args.datasets_path)
-    datasets_dirs = [x for x in datasets_path.glob('**/yolov5-*/')
-                    if x.is_dir() 
-                        and not str(x).__contains__("_old") 
-                        and not str(x).__contains__("-valset")]
-    testset_path = Path(args.testset_path)
-    newline_char = "\n" # Python 3.9 :/
-    print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
-    
-    # Train
-    start_time = time.time()
-
-    for dataset_dir in datasets_dirs[:1]:
-        yolov8_train_loop(dataset_dir, 
-                          testset_path, 
-                          run_name=dataset_dir.stem,
-                          epochs=args.epochs,
-                          img_size=args.img_size,
-                          batch_size=args.batch_size,
-                          model=args.model,
-                          pretrained=not args.init_random_weights)
-        
-    end_time = time.time()
-    diff_time = end_time  - start_time
-    print(f'Training took: {time.strftime("%H:%M:%S", time.gmtime(diff_time))}')
-
 def yolov8_train_loop(dataset_path, 
                       valset_path, 
                       run_name = 'default', 
@@ -170,5 +123,46 @@ def gen_evaldata(model, valset_path, out_testdata_path):
                 cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
         cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
 
-if __name__ == '__main__':
-    main()
+print('Main start no', i)
+i += 1
+
+# Parse
+parser = argparse.ArgumentParser(prog='', description='.')
+parser.add_argument('-d','--datasets-path', type=str, default='', help='.')
+parser.add_argument('-v','--testset-path', type=str, default='', help='.')
+
+parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
+parser.add_argument('-b','--batch-size', type=int, default=-1, help='Sets the batch size to train with, -1 is yolov8 AutoBatch.')
+parser.add_argument('-e','--epochs', type=int, default=100, help='Sets the epochs to train for.')
+parser.add_argument('-m','--model', type=str, default='yolov8s', help='Sets the model to train with.')
+parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
+
+args = parser.parse_args()
+
+# Paths
+root_dir = Path(__file__).resolve().parent
+datasets_path = Path(args.datasets_path)
+datasets_dirs = [x for x in datasets_path.glob('**/yolov5-*/')
+                if x.is_dir() 
+                    and not str(x).__contains__("_old") 
+                    and not str(x).__contains__("-valset")]
+testset_path = Path(args.testset_path)
+newline_char = "\n" # Python 3.9 :/
+print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
+
+# Train
+start_time = time.time()
+
+for dataset_dir in datasets_dirs[:1]:
+    yolov8_train_loop(dataset_dir, 
+                        testset_path, 
+                        run_name=dataset_dir.stem,
+                        epochs=args.epochs,
+                        img_size=args.img_size,
+                        batch_size=args.batch_size,
+                        model=args.model,
+                        pretrained=not args.init_random_weights)
+    
+end_time = time.time()
+diff_time = end_time  - start_time
+print(f'Training took: {time.strftime("%H:%M:%S", time.gmtime(diff_time))}')
