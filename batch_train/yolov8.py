@@ -129,7 +129,7 @@ def gen_evaldata(model, valset_path, out_testdata_path):
             for box in result.boxes:
                 if box.conf > 0.5:
                     text_line_numbers = [float(x) for x in list(box.xyxy[0]) + [box.conf]]
-                    print(i, text_line_numbers)
+                    #print(i, text_line_numbers)
                     text_file.write(f"{' '.join([str(x) for x in text_line_numbers])}\n")
         cv2.imwrite(str(out_testdata_path / f'{i}_result_plot.png'), np.squeeze(result.plot()))
         
