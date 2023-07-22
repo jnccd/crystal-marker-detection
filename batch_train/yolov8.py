@@ -18,6 +18,8 @@ from utils import *
 i = 0
 
 def main():
+    global i
+    
     print('Main start no', i)
     i += 1
     
