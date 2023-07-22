@@ -113,6 +113,8 @@ def gen_evaldata(model, valset_path, out_testdata_path):
     valdata_imgs_paths = get_files_from_folders_with_ending([valdata_imgs_path], (".png", ".jpg"))
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
     
+    results = model(valdata_imgs_path / '*.png')
+    
     for i, (img_path, label_path) in enumerate(zip(valdata_imgs_paths, valdata_labels_paths)):
         
         # Write input picture
@@ -121,17 +123,17 @@ def gen_evaldata(model, valset_path, out_testdata_path):
         # Write model out
         img = cv2.imread(img_path)
         img_h, img_w = img.shape[:2]
-        results = model(img)[0]
+        result = results[i]
         out_path = out_testdata_path / f'{i}_network_output.txt'
         with open(out_path, "w") as text_file:
-            for box in results.boxes:
+            for box in result.boxes:
                 if box.conf > 0.5:
                     text_line_numbers = [float(x) for x in list(box.xyxy[0]) + [box.conf]]
                     print(i, text_line_numbers)
                     text_file.write(f"{' '.join([str(x) for x in text_line_numbers])}\n")
-        cv2.imwrite(str(out_testdata_path / f'{i}_result_plot.png'), np.squeeze(results.plot()))
+        cv2.imwrite(str(out_testdata_path / f'{i}_result_plot.png'), np.squeeze(result.plot()))
         
-        # Write labels and Rasterize Segmentation image
+        # Write labels and Rasterize label Segmentation image
         sanity_check_image = np.zeros((img_w, img_h) + (3,), dtype = np.uint8)
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
