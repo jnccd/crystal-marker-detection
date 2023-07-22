@@ -1,4 +1,5 @@
 import os
+import torch
 from ultralytics import YOLO
 
 def main():
@@ -12,7 +13,11 @@ def main():
         epochs=2, 
         imgsz=640,
         project='training/yolov8',
-        name='test-yv8')
+        name='test-yv8',
+        device= range(torch.cuda.device_count()))
+    
+    os.system('rm *.pt')
+    
     
 if __name__ == '__main__':
     main()
