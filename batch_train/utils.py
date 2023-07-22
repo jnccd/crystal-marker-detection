@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+import shutil
 
 def read_textfile(tf_path):
     with open(tf_path, 'r') as file:
@@ -20,3 +22,10 @@ def get_files_from_folders_with_ending(folders, ending):
             ]
         ))
     return paths
+
+def create_dir_if_not_exists(dir: Path, clear = False):
+    if clear and os.path.isdir(dir):
+        shutil.rmtree(dir)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    return dir
