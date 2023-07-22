@@ -15,7 +15,12 @@ from ultralytics import YOLO
 
 from utils import *
 
+i = 0
+
 def main():
+    print('Main start no', i)
+    i += 1
+    
     # Parse
     parser = argparse.ArgumentParser(prog='', description='.')
     parser.add_argument('-d','--datasets-path', type=str, default='', help='.')
