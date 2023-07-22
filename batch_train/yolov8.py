@@ -113,8 +113,7 @@ def gen_evaldata(model, valset_path, out_testdata_path):
     valdata_imgs_paths = get_files_from_folders_with_ending([valdata_imgs_path], (".png", ".jpg"))
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
     
-    i=0
-    for img_path, label_path in zip(valdata_imgs_paths, valdata_labels_paths):
+    for i, (img_path, label_path) in enumerate(zip(valdata_imgs_paths, valdata_labels_paths)):
         
         # Write input picture
         shutil.copyfile(img_path, out_testdata_path / f'{i}_input.png')
@@ -128,7 +127,7 @@ def gen_evaldata(model, valset_path, out_testdata_path):
             for box in results.boxes:
                 if box.conf > 0.5:
                     text_line_numbers = [float(x) for x in list(box.xyxy[0]) + [box.conf]]
-                    #print(i, text_line_numbers)
+                    print(i, text_line_numbers)
                     text_file.write(f"{' '.join([str(x) for x in text_line_numbers])}\n")
         cv2.imwrite(str(out_testdata_path / f'{i}_result_plot.png'), np.squeeze(results.plot()))
         
@@ -159,8 +158,6 @@ def gen_evaldata(model, valset_path, out_testdata_path):
                 #print(verts)
                 cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
         cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
-                
-        i+=1
 
 if __name__ == '__main__':
     main()
