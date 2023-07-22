@@ -71,6 +71,7 @@ def yolov8_train_loop(dataset_path,
     training_run_testdata_folder = training_run_folder / 'test'
     dataset_path = Path(dataset_path)
     valset_path = Path(valset_path)
+    print('Training in: ', dataset_path)
     # Gen training def json
     dataset_def_dict = json.loads(read_textfile(dataset_path / 'dataset-def.json').replace("    ", "").replace("\n", ""))
     valset_def_dict = json.loads(read_textfile(valset_path / 'dataset-def.json').replace("    ", "").replace("\n", ""))
