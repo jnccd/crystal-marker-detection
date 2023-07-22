@@ -73,7 +73,7 @@ def main():
         sanity_check_image = np.zeros((img_w, img_h) + (3,), dtype = np.uint8)
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
-        vd_bbox_lines.pop()
+        vd_bbox_lines = filter(lambda s: s and s.isspace(), vd_bbox_lines) # Filter whitespace lines away
         target_output_path = out_testdata_path / f'{i}_target_output.txt'
         with open(target_output_path, "w") as text_file:
             for line in vd_bbox_lines:
