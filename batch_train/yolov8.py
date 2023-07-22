@@ -31,7 +31,7 @@ def main():
 
     # Paths
     root_dir = Path(__file__).resolve().parent
-    datasets_path = root_dir.parent / args.datasets_path
+    datasets_path = Path(args.datasets_path)
     datasets_dirs = [x for x in datasets_path.glob('**/yolov5-*/')
                     if x.is_dir() 
                         and not str(x).__contains__("_old") 
