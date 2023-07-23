@@ -10,7 +10,7 @@ import cv2
 from pathlib import Path
 import pandas as pd
 
-from utils import *
+from utility import *
 
 def main():
     parser = argparse.ArgumentParser(prog='yolov5-gen-evaluation-data', description='Generate testable evaluation data for yolov5 output on some datasets valdata.')
@@ -31,6 +31,7 @@ def main():
     elif Path(args.run).is_dir():
         train_dir = Path(args.run)
         network_file = Path(args.run) / 'weights/best.pt'
+        print('got',train_dir)
     else:
         network_file = train_dir / f'{args.run}/weights/best.pt'
 
