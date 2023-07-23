@@ -89,3 +89,5 @@ python evaluation/plot_ensample.py -rf evaluation/from-server/yolov5m-runs/ -n y
 
 # Create Ensample datasets
 for i in `seq 0 0.05 1`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 0 -taf traindata-creator/dataset/sgss; done
+# Run datasets ensample on remote
+python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -v /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -n yolov5s-sgs-ensample-test
