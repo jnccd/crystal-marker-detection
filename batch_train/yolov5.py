@@ -26,10 +26,9 @@ def main():
     # Paths
     root_dir = Path(__file__).resolve().parent
     dataset_path = root_dir.parent / args.dataset_path
-    dataset_dirs = [x for x in dataset_path.glob('**/yolov5-*/') 
-                    if x.is_dir() 
-                        and not str(x).__contains__("_old") 
-                        and not str(x).__contains__("-valset")]
+    dataset_dirs = [x.parent for x in dataset_path.glob('**/yolov5-*.yaml') 
+                    if not str(x).__contains__("_old") 
+                    and not str(x).__contains__("-valset")]
     testset_path = root_dir.parent / args.testset_path
     newline_char = "\n" # Python 3.9 :/
     print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
