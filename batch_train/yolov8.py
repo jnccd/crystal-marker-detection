@@ -20,6 +20,7 @@ def main():
     parser = argparse.ArgumentParser(prog='', description='.')
     parser.add_argument('-d','--datasets-path', type=str, default='', help='.')
     parser.add_argument('-v','--testset-path', type=str, default='', help='.')
+    parser.add_argument('-n','--name', type=str, default='yolov8', help='.')
     
     parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
     parser.add_argument('-b','--batch-size', type=int, default=-1, help='Sets the batch size to train with, -1 is yolov8 AutoBatch.')
@@ -32,10 +33,9 @@ def main():
     # Paths
     root_dir = Path(__file__).resolve().parent
     datasets_path = Path(args.datasets_path)
-    datasets_dirs = [x for x in datasets_path.glob('**/yolov5-*/')
-                    if x.is_dir() 
-                        and not str(x).__contains__("_old") 
-                        and not str(x).__contains__("-valset")]
+    datasets_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
+                    if not str(x).__contains__("_old") 
+                    and not str(x).__contains__("-valset")]
     testset_path = Path(args.testset_path)
     newline_char = "\n" # Python 3.9 :/
     print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
@@ -59,6 +59,7 @@ def main():
 
 def yolov8_train_loop(dataset_path, 
                       valset_path, 
+                      ensample_name = 'yolov8',
                       run_name = 'default', 
                       img_size = 640, 
                       batch_size = -1, 
@@ -66,7 +67,7 @@ def yolov8_train_loop(dataset_path,
                       model = 'yolov8s',
                       pretrained = True):
     # Set Paths
-    project_folder = Path('training/yolov8')
+    project_folder = Path('training') / ensample_name
     training_run_folder = project_folder / run_name
     training_run_testdata_folder = training_run_folder / 'test'
     dataset_path = Path(dataset_path)
