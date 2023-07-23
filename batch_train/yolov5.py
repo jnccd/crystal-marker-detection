@@ -13,6 +13,7 @@ def main():
     parser = argparse.ArgumentParser(prog='', description='.')
     parser.add_argument('-d','--dataset-path', type=str, default='', help='.')
     parser.add_argument('-v','--testset-path', type=str, default='', help='.')
+    parser.add_argument('-n','--name', type=str, default='yolov5', help='.')
     
     parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
     parser.add_argument('-b','--batch-size', type=int, default=8, help='Sets the batch size to train with.')
@@ -41,6 +42,7 @@ def main():
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem,
+                          ensample_name=args.name,
                           epochs=args.epochs,
                           img_size=args.img_size,
                           batch_size=args.batch_size,
@@ -51,6 +53,7 @@ def main():
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem+'-yolo5aug',
+                          ensample_name=args.name,
                           epochs=args.epochs,
                           img_size=args.img_size,
                           batch_size=args.batch_size,
@@ -64,6 +67,7 @@ def main():
 
 def yolov5_train_loop(dataset_path, 
                       valset_path, 
+                      ensample_name = 'yolov5',
                       run_name = 'default', 
                       img_size = 640, 
                       batch_size = 8, 
@@ -72,7 +76,7 @@ def yolov5_train_loop(dataset_path,
                       init_random_weights = False, 
                       no_aug = False):
     # --- Set Paths
-    project_folder = Path('training/yolov5')
+    project_folder = Path('training') / ensample_name
     training_run_folder = project_folder / run_name
     training_run_testdata_folder = training_run_folder / 'test'
     dataset_path = Path(dataset_path)
@@ -109,7 +113,7 @@ def yolov5_train_loop(dataset_path,
     os.system(f'python repos/yolov5/train.py --name {run_name} --img {img_size} --batch {batch_size} --epochs {epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml {yolov5_args}')
     os.system(f'rm {model}.pt')
     print('--- Evaluating...')
-    os.system(f'python repos/yolov5_gen_evaldata.py -r {run_name} -df {valset_path}/')
+    os.system(f'python repos/yolov5_gen_evaldata.py -r {training_run_folder} -df {valset_path}/')
     os.system(f'python evaluation/analyze.py -av {training_run_folder}')
     write_textfile(json.dumps(train_def_dict, indent=4), training_run_testdata_folder / 'training-def.json')
 
