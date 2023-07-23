@@ -15,12 +15,12 @@ parser.add_argument('-v','--testset-path', type=str, default='', help='.')
 parser.add_argument('-t','--run-type', type=str, default='yolov5', help='.')
 args = parser.parse_args()
 
-run_test_dirs = [x.parent for x in Path(args.runs_path).glob('**/training-def.json')]
+run_dirs = [x.parent.parent for x in Path(args.runs_path).glob('**/training-def.json')]
 
-for training_run_folder in run_test_dirs:
+for training_run_folder in run_dirs:
     if args.run_type == 'yolov5':
-        os.system(f'python repos/yolov5_gen_evaldata.py -r {training_run_folder.parent} -df {args.testset_path}/')
+        os.system(f'python repos/yolov5_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
         os.system(f'python evaluation/analyze.py -av {training_run_folder}')
     elif args.run_type == 'yolov8':
-        # TODO: Import somehow?
+        os.system(f'python batch_train/yolov8_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
         os.system(f'python evaluation/analyze.py -av {training_run_folder}')
