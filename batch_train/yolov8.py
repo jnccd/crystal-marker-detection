@@ -28,6 +28,8 @@ def main():
     parser.add_argument('-m','--model', type=str, default='yolov8s', help='Sets the model to train with.')
     parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
     
+    parser.add_argument('-db','--debug', action='store_true', help='.')
+    
     args = parser.parse_args()
 
     # Paths
@@ -43,7 +45,8 @@ def main():
     # Train
     start_time = time.time()
 
-    for dataset_dir in datasets_dirs:
+    loop_folders = datasets_dirs if not args.debug else datasets_dirs[:1]
+    for dataset_dir in loop_folders:
         yolov8_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem,
