@@ -50,6 +50,7 @@ def main():
         yolov8_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem,
+                          ensample_name=args.name,
                           epochs=args.epochs,
                           img_size=args.img_size,
                           batch_size=args.batch_size,
