@@ -81,9 +81,9 @@ def analyze(
             
             cv2.imwrite(str(network_out)+'.bbox_test.png', draw_bboxes(cv2.imread(str(in_img), cv2.IMREAD_GRAYSCALE), bboxes_xyxy))
     
-    #print('target_bboxes',target_bboxes)
-    #print('network_bboxes',network_bboxes)
-    #print(iou_between_bboxes((1,1,5,5), (1,1,5,5)))
+    # print('target_bboxes',target_bboxes_per_img)
+    # print('network_bboxes',network_bboxes_per_img)
+    # print(iou_between_bboxes((1,1,5,5), (1,1,5,5)))
     
     # Match target to pred bboxes for each image
     flat_best_iou_matches = []
@@ -96,6 +96,7 @@ def analyze(
                 if iou > max_iou_match:
                     max_iou_match = iou
             flat_best_iou_matches.append(max_iou_match)
+    print('flat_best_iou_matches',flat_best_iou_matches)
     
     # Match pred to target bboxes for each image and build mAP table
     mAP_table = []
