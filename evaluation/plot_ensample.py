@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import sys
 import cv2
+import re
 from matplotlib import colors, pyplot as plt
 
 from utils import *
@@ -14,8 +15,10 @@ from utils import *
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-n','--name', type=str, help='.')
 parser.add_argument('-rf','--runs-folders', action='append', nargs='+', type=str, help='.')
-parser.add_argument('-rns','--run-name-suffix', type=str, help='.')
+parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex for run name.')
 args = parser.parse_args()
+
+name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
 
 root_dir = Path(__file__).resolve().parent
 runs_folders = flatten(args.runs_folders)
@@ -40,7 +43,7 @@ for eval_path in eval_paths:
     
     run_name: str = train_def_dict['run_name']
     
-    if args.run_name_suffix is not None and not run_name.endswith(args.run_name_suffix):
+    if name_pattern is not None and not name_pattern.match(run_name):
         continue
     
     bar_chart_labels.append('-'.join(run_name.split('-')[2:]))
