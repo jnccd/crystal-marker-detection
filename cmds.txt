@@ -86,3 +86,6 @@ python evaluation/plot_ensample.py -rf evaluation/from-server/yolov5m-runs/ -n y
 # Test if output stays somewhat the same 
 # python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco-same1 -bs 8 -e 5
 # python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco-same2 -bs 8 -e 5
+
+# Create Ensample datasets
+for i in `seq 0 0.05 1`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 0 -taf traindata-creator/dataset/sgss; done
