@@ -14,7 +14,7 @@ from utility import *
 
 def main():
     parser = argparse.ArgumentParser(prog='yolov5-gen-evaluation-data', description='Generate testable evaluation data for yolov5 output on some datasets valdata.')
-    parser.add_argument('-r','--run', type=str, default='', help='Yolov5 run foldername.')
+    parser.add_argument('-r','--run', type=str, default='', help='Yolov5 run foldername, or path to runfolder.')
     parser.add_argument('-df','--dataset-folder', type=str, default='',  help='The trainings data folder name to learn from or build into.')
     args = parser.parse_args()
 
@@ -29,9 +29,9 @@ def main():
         print(args.run)
         network_file = last_dir / 'weights/best.pt'
     elif Path(args.run).is_dir():
-        train_dir = Path(args.run)
+        train_dir = Path(args.run).parent
         network_file = Path(args.run) / 'weights/best.pt'
-        print('got',train_dir)
+        args.run = Path(args.run).stem
     else:
         network_file = train_dir / f'{args.run}/weights/best.pt'
 
