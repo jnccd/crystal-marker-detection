@@ -74,8 +74,12 @@ def main():
         sanity_check_image = np.zeros((img_w, img_h) + (3,), dtype = np.uint8)
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
-        vd_bbox_lines = filter(lambda s: s and s.isspace(), vd_bbox_lines) # Filter whitespace lines away
+        #print("vd_bbox_lines", vd_bbox_lines)
+        vd_bbox_lines = list(filter(lambda s: s and not s.isspace(), vd_bbox_lines)) # Filter whitespace lines away
         target_output_path = out_testdata_path / f'{i}_target_output.txt'
+        #print("target_output_path", target_output_path)
+        #print("vd_bbox_lines", vd_bbox_lines)
+        #print("label_path", label_path)
         with open(target_output_path, "w") as text_file:
             for line in vd_bbox_lines:
                 sc, sx, sy, sw, sh = line.split(' ')
@@ -92,6 +96,7 @@ def main():
                 max_y = bbox_h + min_y
                 
                 text_file.write(f"{min_x} {min_y} {max_x} {max_y}\n")
+                #print(f"{min_x} {min_y} {max_x} {max_y}")
                 
                 verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
                 #print(verts)
