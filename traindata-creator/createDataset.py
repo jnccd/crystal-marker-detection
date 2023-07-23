@@ -51,6 +51,7 @@ def main():
         print('Please specify a size')
         sys.exit(1)
     
+    args.name = args.name.replace('.','').replace('/','').replace('\\','').replace('>','').replace('<','').replace(':','').replace('|','').replace('?','').replace('*','')
     dataset_name = f'{args.type}-{args.size}-{args.name}'
     print(f'Creating {dataset_name}...')
     
