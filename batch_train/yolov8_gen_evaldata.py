@@ -25,6 +25,8 @@ def main():
     network_file = Path(args.run_folder) / 'weights/best.pt'
     model = YOLO(network_file)
     
+    print("Generating evaldata for:", network_file)
+    
     gen_evaldata(model, args.dataset_folder, create_dir_if_not_exists(train_dir / 'test'))
     
 
@@ -59,6 +61,7 @@ def gen_evaldata(model, valset_path, out_testdata_path):
         sanity_check_image = np.zeros((img_w, img_h) + (3,), dtype = np.uint8)
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
+        vd_bbox_lines_og = vd_bbox_lines
         vd_bbox_lines = filter(lambda s: s and not s.isspace(), vd_bbox_lines) # Filter whitespace lines away
         
         target_output_path = out_testdata_path / f'{i}_target_output.txt'
@@ -67,7 +70,7 @@ def gen_evaldata(model, valset_path, out_testdata_path):
                 sc, sx, sy, sw, sh = line.split(' ')
                 
                 if any(isnan(float(x)) for x in [sx, sy, sw, sh]):
-                    print(f'Encountered NaN output in {target_output_path}')
+                    print(f'Encountered NaN output in {label_path}', list(vd_bbox_lines), vd_bbox_lines_og, sx, sy, sw, sh)
                     continue
                 
                 bbox_w = float(sw) * img_w
