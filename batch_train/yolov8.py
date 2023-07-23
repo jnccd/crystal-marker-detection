@@ -36,7 +36,7 @@ def main():
     root_dir = Path(__file__).resolve().parent
     datasets_path = Path(args.datasets_path)
     datasets_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
-                    if not str(x).__contains__("_old") 
+                    if x.parent.parent == datasets_path
                     and not str(x).__contains__("-valset")]
     testset_path = Path(args.testset_path)
     newline_char = "\n" # Python 3.9 :/
