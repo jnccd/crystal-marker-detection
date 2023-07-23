@@ -103,6 +103,10 @@ def main():
         aug_in_imgs = []
         aug_target_polys = []
         
+        transform = A.Compose([
+            A.GaussNoise(var_limit=(10, 150), p=args.augment_gauss_noise_chance)
+        ])
+        
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
             for m in range(args.augment_img_multiplier):
                 img_size_wh = tuple(reversed(in_img.shape[:2]))
@@ -152,6 +156,9 @@ def main():
                         final_mat = final_mat @ mat
                     aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size_wh, final_mat, border_type=border_type)
                     
+                    # Apply Albumentations transforms
+                    aug_img = transform(image=aug_img)["image"]
+                    
                     aug_in_imgs.append(aug_img)
                     aug_target_polys.append(aug_polys)
                 else:
@@ -168,12 +175,6 @@ def main():
             img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
             in_imgs[group][i] = img
             target_polys[group][i] = poly
-    
-    # # Try to apply albumentations pixel level transforms
-    transform = A.Compose([
-        A.GaussNoise(var_limit=(10, 150), p=args.augment_gauss_noise_chance)
-    ])
-    in_imgs[aug_group] = [transform(image=image)["image"] for image in in_imgs[aug_group]]
     
     # --- Build dataset ---
     if args.type == 'seg':
