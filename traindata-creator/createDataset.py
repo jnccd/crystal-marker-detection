@@ -36,6 +36,7 @@ def main():
     
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.')
+    
     parser.add_argument('-asgsc','--augment-smart-grid-shuffle-chance', type=float, default=0.9, help='Chance that smart-grid-shuffle is applied to a sample.')
     parser.add_argument('-apldc','--augment-label-dropout-chance', type=float, default=0.6, help='Chance that label-dropout is applied to a sample.')
     parser.add_argument('-apc','--augment-perspective-chance', type=float, default=0.6, help='Chance that perspective is applied to a sample.')
@@ -45,6 +46,8 @@ def main():
     parser.add_argument('-arcc','--augment-random-crop-chance', type=float, default=0.6, help='Chance that image is cropped randomly.')
     parser.add_argument('-almc','--augment-label-move-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image.')
     parser.add_argument('-alm2c','--augment-label-move-v2-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image. (Improved version)')
+    
+    parser.add_argument('-agnc','--augment-gauss-noise-chance', type=float, default=0, help='Chance that gauss noise is applied.')
     args = parser.parse_args()
     
     if args.size is None:
@@ -167,13 +170,10 @@ def main():
             target_polys[group][i] = poly
     
     # # Try to apply albumentations pixel level transforms
-    # transform = A.Compose([
-    #     A.RandomCrop(width=256, height=256),
-    #     A.HorizontalFlip(p=0.5),
-    #     A.RandomBrightnessContrast(p=0.2),
-    # ])
-    # print(in_imgs[aug_group])
-    # in_imgs[aug_group] = [transform(image=image)["image"] for image in in_imgs[aug_group]]
+    transform = A.Compose([
+        A.GaussNoise(var_limit=(10, 150), p=args.augment_gauss_noise_chance)
+    ])
+    in_imgs[aug_group] = [transform(image=image)["image"] for image in in_imgs[aug_group]]
     
     # --- Build dataset ---
     if args.type == 'seg':
