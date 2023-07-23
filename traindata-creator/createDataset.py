@@ -31,6 +31,7 @@ def main():
     parser.add_argument('-s','--size', type=int, help='Defines the image size for the dataset.')
     parser.add_argument('-tf','--traindata-folders', action='append', nargs='+', type=str, help='The folders containing train data.')
     parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data.')
+    parser.add_argument('-taf','--target-folder', type=str, help='The folder to build the dataset folder into.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
@@ -55,7 +56,8 @@ def main():
     
     # --- Get Paths ---
     root_dir = Path(__file__).resolve().parent
-    dataset_dir = create_dir_if_not_exists(root_dir / 'dataset' / dataset_name, clear=True)
+    datasets_target_folder = root_dir / 'dataset' if not args.target_folder or args.target_folder.isspace() else Path(args.target_folder)
+    dataset_dir = create_dir_if_not_exists(datasets_target_folder / dataset_name, clear=True)
     
     # Get td/vd folders
     td_folders = flatten(args.traindata_folders) if not args.traindata_folders is None else []
