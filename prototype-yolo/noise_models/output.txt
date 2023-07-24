@@ -1,0 +1,15 @@
+Validating D:\Git\crystal-marker-detection\prototype-yolo\noise_models\test-yv8-noise-0\weights\best.pt...
+Ultralytics YOLOv8.0.125  Python-3.9.16 torch-2.0.1+cu118 CUDA:0 (NVIDIA GeForce RTX 3060 Ti, 8191MiB)
+Model summary (fused): 168 layers, 11125971 parameters, 0 gradients, 28.4 GFLOPs
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 1/1 [00:00<00:00,  4.14it/s]
+                   all          7         83      0.943      0.675      0.827      0.589
+Speed: 0.3ms preprocess, 21.2ms inference, 0.0ms loss, 1.0ms postprocess per image
+Results saved to D:\Git\crystal-marker-detection\prototype-yolo\noise_models\test-yv8-noise-0
+
+Validating D:\Git\crystal-marker-detection\prototype-yolo\noise_models\test-yv8-noise-1\weights\best.pt...
+Ultralytics YOLOv8.0.125  Python-3.9.16 torch-2.0.1+cu118 CUDA:0 (NVIDIA GeForce RTX 3060 Ti, 8191MiB)
+Model summary (fused): 168 layers, 11125971 parameters, 0 gradients, 28.4 GFLOPs
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 1/1 [00:00<00:00,  7.35it/s]
+                   all          7         83      0.973      0.711      0.838      0.577
+Speed: 0.1ms preprocess, 9.1ms inference, 0.0ms loss, 0.9ms postprocess per image
+Results saved to D:\Git\crystal-marker-detection\prototype-yolo\noise_models\test-yv8-noise-1
