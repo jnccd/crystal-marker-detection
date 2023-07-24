@@ -28,6 +28,8 @@ def main():
     parser.add_argument('-m','--model', type=str, default='yolov8s', help='Sets the model to train with.')
     parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
     
+    parser.add_argument('-wn','--weight-noise', type=float, default=0, help='.')
+    
     parser.add_argument('-db','--debug', action='store_true', help='.')
     
     args = parser.parse_args()
@@ -55,6 +57,7 @@ def main():
                           img_size=args.img_size,
                           batch_size=args.batch_size,
                           model_name=args.model,
+                          weight_noise=args.weight_noise,
                           pretrained=not args.init_random_weights)
         
     end_time = time.time()
@@ -69,6 +72,7 @@ def yolov8_train_loop(dataset_path,
                       batch_size = -1, 
                       epochs = 100, 
                       model_name = 'yolov8s',
+                      weight_noise = 0,
                       pretrained = True):
     # Set Paths
     project_folder = Path('training') / ensample_name
@@ -94,6 +98,10 @@ def yolov8_train_loop(dataset_path,
     print('--- Training...')
     
     model = YOLO(f'{model_name}.pt')
+    if weight_noise > 0:
+        with torch.no_grad():
+            for param in model.model.parameters():
+                param.add_(torch.randn(param.size()) * weight_noise)
     model.train(
         data=f'{dataset_path}/{dataset_path.stem}.yaml',
         epochs=epochs, 
