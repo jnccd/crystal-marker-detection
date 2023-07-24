@@ -35,6 +35,8 @@ def main():
     newline_char = "\n" # Python 3.9 :/
     print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
     
+    os.system(f'python traindata-creator/fixYolo5Yamls -df {dataset_path}')
+    
     # Train
     start_time = time.time()
 
