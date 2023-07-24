@@ -10,7 +10,9 @@ def main():
     os.environ['TORCH_HOME'] = './.cache'
 
     for i in range(2):
-        model = YOLO('yolov8s.pt').model
+        model = YOLO('batch_train/models/yolov5s.pt').model
+        #model = torch.hub.load('ultralytics/yolov5', 'custom', path=f'yolov5s.pt')
+        #next(model.parameters()).to(torch.device("cuda:0"))
         with torch.no_grad():
             for param in model.parameters():
                 param.add_(torch.randn(param.size()) * 0.03)
