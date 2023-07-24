@@ -68,6 +68,7 @@ python prototype-cv/classic_pipe/classic.py
 
 # Batch train
 python batch_train/yolov5.py -d /data/pcmd/dataset/ -v /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/
+python batch_train/yolov5.py -d /data/pcmd/dataset/noise-sgss/ -v /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -n noise-sgs-ensample -e 300
 python batch_train/yolov5.py -d traindata-creator/dataset/ -v traindata-creator/dataset/yolov5-640-on-skin-valset-v2/
 
 python -m cmd_tf -t -td traindata-creator/dataset/seg-640-on-skin-valset-v2/ -r sm-unet-aruco
