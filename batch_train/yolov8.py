@@ -54,7 +54,7 @@ def main():
                           epochs=args.epochs,
                           img_size=args.img_size,
                           batch_size=args.batch_size,
-                          model=args.model,
+                          model_name=args.model,
                           pretrained=not args.init_random_weights)
         
     end_time = time.time()
@@ -68,7 +68,7 @@ def yolov8_train_loop(dataset_path,
                       img_size = 640, 
                       batch_size = -1, 
                       epochs = 100, 
-                      model = 'yolov8s',
+                      model_name = 'yolov8s',
                       pretrained = True):
     # Set Paths
     project_folder = Path('training') / ensample_name
@@ -86,14 +86,14 @@ def yolov8_train_loop(dataset_path,
         'img_size': img_size,
         'batch_size': batch_size,
         'epochs': epochs,
-        'model': model,
+        'model': model_name,
         'dataset': dataset_def_dict,
         'valset': valset_def_dict,
     }
 
     print('--- Training...')
     
-    model = YOLO(f'{model}.pt')
+    model = YOLO(f'{model_name}.pt')
     model.train(
         data=f'{dataset_path}/{dataset_path.stem}.yaml',
         epochs=epochs, 
