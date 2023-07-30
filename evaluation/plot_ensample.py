@@ -17,6 +17,7 @@ from utils import *
 
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-n','--name', type=str, help='.')
+parser.add_argument('-t','--title', type=str, help='.')
 parser.add_argument('-rf','--runs-folders', action='append', nargs='+', type=str, help='.')
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run name.')
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the .')
@@ -113,7 +114,7 @@ v10_bars = ax.bar(x, [x['voc2010_mAP'] for x in bar_chart_entries], width, yerr=
 coco_bars = ax.bar(x + width, [x['coco_mAP'] for x in bar_chart_entries], width, yerr=[x['coco_mAP_errors'] for x in bar_chart_entries], label='coco mAP', color=colors.to_hex((1, 0.6, 0)))
 ax.set_ylim((0, max(np.max([x['voc2007_mAP'] for x in bar_chart_entries]), np.max([x['voc2010_mAP'] for x in bar_chart_entries]), np.max([x['coco_mAP'] for x in bar_chart_entries])) * 1.1))
 ax.set_ylabel('mAP')
-ax.set_title(f'mAP per run in {args.name.replace("-", " ")}')
+ax.set_title(f'mAP per run in {args.name.replace("-", " ")}' if args.title is None else args.title)
 ax.set_xticks(x)
 ax.set_xticklabels([x['label'] for x in bar_chart_entries], rotation=30, ha='right')
 ax.legend()
