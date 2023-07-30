@@ -96,6 +96,10 @@ for i in `seq 0 0.1 1`; do for j in `seq 0 1 10`; do python traindata-creator/cr
 # Run datasets ensample on remote
 python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -v /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -n yolov5s-sgs-ensample-test
 
+# Eval plotting
 python evaluation/plot_ensample.py -n yolov5s-sgs-ensample -rf evaluation/from-server/yolov5s-sgs-ensample-test/
 python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-yoloaug -rf evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*yolo5aug$'
 python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-no-yoloaug -rf evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*(?<!yolo5aug)$'
+
+python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample -rf evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*(?<!yolo5aug)$'
+python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -rf evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$'
