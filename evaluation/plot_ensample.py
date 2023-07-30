@@ -83,6 +83,9 @@ for eval_paths_group in eval_paths_grouped:
     
     bar_chart_entry['label'] = '-'.join(eval_name.split('-')[2:])
     bar_chart_entry['run_name'] = run_name
+    if args.config_index is not None:
+        bar_chart_entry['config'] = run_name.split('-')[args.config_index]
+        bar_chart_entry['label'] = f'{float(bar_chart_entry["config"]) * 10}%'
     
     bar_chart_entry['voc2007_mAP'] = round(np.mean(group_voc2007_mAPs), 3) if len(group_voc2007_mAPs) > 0 else 0
     bar_chart_entry['voc2010_mAP'] = round(np.mean(group_voc2010_mAPs), 3) if len(group_voc2010_mAPs) > 0 else 0
@@ -101,9 +104,7 @@ for eval_paths_group in eval_paths_grouped:
 # print('bar_chart_coco_mAP_errors', [x['coco_mAP_errors'] for x in bar_chart_entries])
 
 if args.config_index is not None:
-    print(bar_chart_entries[0])
-    print(args.config_index)
-    bar_chart_entries.sort(key=lambda x: x['run_name'].split('-')[args.config_index])
+    bar_chart_entries.sort(key=lambda x: x['config'])
 
 # Create barchart
 x = np.arange(len(bar_chart_entries))
