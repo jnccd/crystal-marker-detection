@@ -68,10 +68,7 @@ for eval_paths_group in eval_paths_grouped:
         train_def_dict = json.loads(read_textfile(train_def_path).replace("    ", "").replace("\n", ""))
         
         run_name: str = train_def_dict['run_name']
-        print('run_name', run_name)
-        print('m', name_pattern.match(run_name))
         if name_pattern is not None and not name_pattern.match(run_name):
-            print('skipped')
             continue
         
         group_voc2007_mAPs.append(float(eval_dict['voc2007_mAP']))
