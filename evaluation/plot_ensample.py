@@ -20,7 +20,7 @@ parser.add_argument('-n','--name', type=str, help='.')
 parser.add_argument('-rf','--runs-folders', action='append', nargs='+', type=str, help='.')
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run name.')
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the .')
-#parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the .')
+parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the .')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -31,6 +31,7 @@ eval_paths = flatten([[ x for x in Path(run_folders).glob('**/evals.json')
                         if not str(x).__contains__("_old")] 
                         for run_folders in runs_folders])
 
+# Group eval_paths by part_index if it is set, else use one elem lists
 if args.part_index is not None:
     eval_paths_keys = []
     for x in eval_paths:
@@ -46,17 +47,10 @@ else:
 # print(eval_paths_grouped[0])
 # sys.exit(0)
 
-bar_chart_labels = []
-
-bar_chart_voc2007_mAPs = []
-bar_chart_voc2010_mAPs = []
-bar_chart_coco_mAPs = []
-
-bar_chart_voc2007_mAP_errors = []
-bar_chart_voc2010_mAP_errors = []
-bar_chart_coco_mAP_errors = []
-
+# Create Eval database
+bar_chart_entries = []
 for eval_paths_group in eval_paths_grouped:
+    bar_chart_entry = {}
     
     group_voc2007_mAPs = []
     group_voc2010_mAPs = []
@@ -73,54 +67,55 @@ for eval_paths_group in eval_paths_grouped:
         train_def_dict = json.loads(read_textfile(train_def_path).replace("    ", "").replace("\n", ""))
         
         run_name: str = train_def_dict['run_name']
+        print('run_name', run_name)
+        print('m', name_pattern.match(run_name))
         if name_pattern is not None and not name_pattern.match(run_name):
+            print('skipped')
             continue
         
         group_voc2007_mAPs.append(float(eval_dict['voc2007_mAP']))
         group_voc2010_mAPs.append(float(eval_dict['voc2010_mAP']))
         group_coco_mAPs.append(float(eval_dict['coco_mAP']))
         
-    bar_chart_labels.append('-'.join(eval_name.split('-')[2:]))
+    if group_voc2007_mAPs == []:
+        continue
     
-    bar_chart_voc2007_mAPs.append(np.mean(group_voc2007_mAPs))
-    bar_chart_voc2010_mAPs.append(np.mean(group_voc2010_mAPs))
-    bar_chart_coco_mAPs.append(np.mean(group_coco_mAPs))
+    bar_chart_entry['label'] = '-'.join(eval_name.split('-')[2:])
+    bar_chart_entry['run_name'] = run_name
     
-    bar_chart_voc2007_mAP_errors.append(np.std(group_voc2007_mAPs))
-    bar_chart_voc2010_mAP_errors.append(np.std(group_voc2010_mAPs))
-    bar_chart_coco_mAP_errors.append(np.std(group_coco_mAPs))
+    bar_chart_entry['voc2007_mAP'] = round(np.mean(group_voc2007_mAPs), 3) if len(group_voc2007_mAPs) > 0 else 0
+    bar_chart_entry['voc2010_mAP'] = round(np.mean(group_voc2010_mAPs), 3) if len(group_voc2010_mAPs) > 0 else 0
+    bar_chart_entry['coco_mAP'] = round(np.mean(group_coco_mAPs), 3) if len(group_coco_mAPs) > 0 else 0
     
-bar_chart_voc2007_mAPs = [round(x, 3) for x in bar_chart_voc2007_mAPs]
-bar_chart_voc2010_mAPs = [round(x, 3) for x in bar_chart_voc2010_mAPs]
-bar_chart_coco_mAPs = [round(x, 3) for x in bar_chart_coco_mAPs]
+    bar_chart_entry['voc2007_mAP_error'] = np.std(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
+    bar_chart_entry['voc2010_mAP_errors'] = np.std(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
+    bar_chart_entry['coco_mAP_errors'] = np.std(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
+    
+    bar_chart_entries.append(bar_chart_entry)
 
-#print('debug', list(zip(bar_chart_labels, bar_chart_coco_mAPs)))
+# print('bar_chart_voc2007_mAPs', [x['voc2007_mAP'] for x in bar_chart_entries])
+# print('bar_chart_voc2010_mAPs', [x['voc2010_mAP'] for x in bar_chart_entries])
+# print('bar_chart_coco_mAPs', [x['coco_mAP'] for x in bar_chart_entries])
+# print('bar_chart_voc2007_mAP_errors', [x['voc2007_mAP_error'] for x in bar_chart_entries])
+# print('bar_chart_coco_mAP_errors', [x['coco_mAP_errors'] for x in bar_chart_entries])
 
-bar_chart_voc2007_mAPs = np.nan_to_num(bar_chart_voc2007_mAPs, nan=0)
-bar_chart_voc2010_mAPs = np.nan_to_num(bar_chart_voc2010_mAPs, nan=0)
-bar_chart_coco_mAPs = np.nan_to_num(bar_chart_coco_mAPs, nan=0)
-bar_chart_voc2007_mAP_errors = np.nan_to_num(bar_chart_voc2007_mAP_errors, nan=0)
-bar_chart_voc2010_mAP_errors = np.nan_to_num(bar_chart_voc2010_mAP_errors, nan=0)
-bar_chart_coco_mAP_errors = np.nan_to_num(bar_chart_coco_mAP_errors, nan=0)
-
-# print('bar_chart_voc2007_mAPs', bar_chart_voc2007_mAPs)
-# print('bar_chart_voc2010_mAPs', bar_chart_voc2010_mAPs)
-# print('bar_chart_coco_mAPs', bar_chart_coco_mAPs)
-# print('bar_chart_voc2007_mAP_errors', bar_chart_voc2007_mAP_errors)
-# print('bar_chart_coco_mAP_errors', bar_chart_coco_mAP_errors)
+if args.config_index is not None:
+    print(bar_chart_entries[0])
+    print(args.config_index)
+    bar_chart_entries.sort(key=lambda x: x['run_name'].split('-')[args.config_index])
 
 # Create barchart
-x = np.arange(len(bar_chart_labels))
+x = np.arange(len(bar_chart_entries))
 width = 0.6 / 3
 fig, ax = plt.subplots()
-v7_bars = ax.bar(x - width, bar_chart_voc2007_mAPs, width, yerr=bar_chart_voc2007_mAP_errors, label='voc2007 mAP', color=colors.to_hex((0.15, 0.4, 1)))
-v10_bars = ax.bar(x, bar_chart_voc2010_mAPs, width, yerr=bar_chart_voc2010_mAP_errors, label='voc2010 mAP', color=colors.to_hex((0.3, 0.65, 1)))
-coco_bars = ax.bar(x + width, bar_chart_coco_mAPs, width, yerr=bar_chart_coco_mAP_errors, label='coco mAP', color=colors.to_hex((1, 0.6, 0)))
-ax.set_ylim((0, max(np.max(bar_chart_voc2007_mAPs), np.max(bar_chart_voc2010_mAPs), np.max(bar_chart_coco_mAPs)) * 1.1))
+v7_bars = ax.bar(x - width, [x['voc2007_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2007_mAP_error'] for x in bar_chart_entries], label='voc2007 mAP', color=colors.to_hex((0.15, 0.4, 1)))
+v10_bars = ax.bar(x, [x['voc2010_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2010_mAP_errors'] for x in bar_chart_entries], label='voc2010 mAP', color=colors.to_hex((0.3, 0.65, 1)))
+coco_bars = ax.bar(x + width, [x['coco_mAP'] for x in bar_chart_entries], width, yerr=[x['coco_mAP_errors'] for x in bar_chart_entries], label='coco mAP', color=colors.to_hex((1, 0.6, 0)))
+ax.set_ylim((0, max(np.max([x['voc2007_mAP'] for x in bar_chart_entries]), np.max([x['voc2010_mAP'] for x in bar_chart_entries]), np.max([x['coco_mAP'] for x in bar_chart_entries])) * 1.1))
 ax.set_ylabel('mAP')
 ax.set_title(f'mAP per run in {args.name.replace("-", " ")}')
 ax.set_xticks(x)
-ax.set_xticklabels(bar_chart_labels, rotation=30, ha='right')
+ax.set_xticklabels([x['label'] for x in bar_chart_entries], rotation=30, ha='right')
 ax.legend()
 autolabel(v7_bars, ax)
 autolabel(v10_bars, ax)
