@@ -131,20 +131,21 @@ def analyze(
                 })
     
     total_gts = sum([len(target_boxes) for target_boxes in target_bboxes_per_img])
-    recall_points = [x/10 for x in range(0, 10, 1)]
+    voc_2007_recall_points = [x/10 for x in range(0, 11, 1)]
     
     # Compute VOC mAPs
-    voc2007_mAP, _, _ = compute_mAP(mAP_table, total_gts, recall_points)
+    voc2007_mAP, _, _ = compute_mAP(mAP_table, total_gts, voc_2007_recall_points)
     print('voc2007_mAP:',voc2007_mAP)
     voc2010_mAP, _, _ = compute_mAP(mAP_table, total_gts)
     print('voc2010_mAP:',voc2010_mAP)
     
     # Compute COCO mAP
     coco_mAPs = []
-    ious = [x/20 for x in range(10,20,1)]
+    ious = [x/20 for x in range(10, 20, 1)]
+    coco_recall_points = [x/10 for x in range(0, 101, 1)]
     pr_curves_per_iou = []
     for iou in ious:
-        mAP, rp, pp = compute_mAP(mAP_table, total_gts, recall_points, iou)
+        mAP, rp, pp = compute_mAP(mAP_table, total_gts, coco_recall_points, iou)
         pr_curves_per_iou.append({'rp':rp,'pp':pp})
         coco_mAPs.append(mAP)
     coco_mAP = np.mean(coco_mAPs)
@@ -176,6 +177,7 @@ def analyze(
             'voc2007_mAP':float(voc2007_mAP),
             'voc2010_mAP':float(voc2010_mAP),
             'coco_mAP':float(coco_mAP),
+            'version':1.1,
             }, indent=4))
 
 def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
