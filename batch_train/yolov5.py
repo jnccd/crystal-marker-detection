@@ -12,8 +12,8 @@ def main():
     # Parse
     parser = argparse.ArgumentParser(prog='', description='.')
     parser.add_argument('-d','--dataset-path', type=str, default='', help='.')
-    parser.add_argument('-v','--testset-path', type=str, default='', help='.')
-    parser.add_argument('-n','--name', type=str, default='yolov5', help='.')
+    parser.add_argument('-t','--testset-path', type=str, default='', help='.')
+    parser.add_argument('-o','--output-path', type=str, default='training/yolov5', help='.')
     
     parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
     parser.add_argument('-b','--batch-size', type=int, default=8, help='Sets the batch size to train with.')
@@ -53,7 +53,7 @@ def main():
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem,
-                          ensample_name=args.name,
+                          output_path=args.output_path,
                           epochs=args.epochs,
                           img_size=args.img_size,
                           batch_size=args.batch_size,
@@ -64,7 +64,7 @@ def main():
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
                           run_name=dataset_dir.stem+'-yolo5aug',
-                          ensample_name=args.name,
+                          output_path=args.output_path,
                           epochs=args.epochs,
                           img_size=args.img_size,
                           batch_size=args.batch_size,
@@ -78,7 +78,7 @@ def main():
 
 def yolov5_train_loop(dataset_path, 
                       valset_path, 
-                      ensample_name = 'yolov5',
+                      output_path = 'training/yolov5',
                       run_name = 'default', 
                       img_size = 640, 
                       batch_size = 8, 
@@ -87,7 +87,7 @@ def yolov5_train_loop(dataset_path,
                       init_random_weights = False, 
                       no_aug = False):
     # --- Set Paths
-    project_folder = Path('training') / ensample_name
+    project_folder = Path(output_path)
     training_run_folder = project_folder / run_name
     training_run_testdata_folder = training_run_folder / 'test'
     dataset_path = Path(dataset_path)
