@@ -30,9 +30,9 @@ def main():
 
     # Paths
     root_dir = Path(__file__).resolve().parent
-    dataset_path = root_dir.parent / args.dataset_path
-    dataset_dirs = [x.parent for x in dataset_path.glob('**/yolov5-*.yaml') 
-                    if x.parent.parent == dataset_path
+    datasets_path = root_dir.parent / args.dataset_path
+    dataset_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
+                    if x.parent.parent == datasets_path
                     and not str(x).__contains__("-valset")]
     testset_path = root_dir.parent / args.testset_path
     
@@ -42,7 +42,7 @@ def main():
     newline_char = "\n" # Python 3.9 :/
     print(f'Running ensample run on the following {len(dataset_dirs)} datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
     
-    os.system(f'python traindata-creator/fixYolo5Yamls.py -df {dataset_path}')
+    os.system(f'python traindata-creator/fixYolo5Yamls.py -df {datasets_path}')
     
     # Train
     start_time = time.time()
