@@ -33,4 +33,4 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-with_gpu -n $N sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' $IMAGE for (( i = 0; i < $N; i++ )); do $COMMAND -de $i -wi $i -wc $N & done
+with_gpu -n $N sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' $IMAGE $COMMAND -de 0 -wi 0 -wc 2 & $COMMAND -de 1 -wi 1 -wc 2 done
