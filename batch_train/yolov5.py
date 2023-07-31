@@ -21,6 +21,9 @@ def main():
     parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the model to train with.')
     parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
     
+    parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
+    parser.add_argument('-wn','--worker-count', type=int, default=-1, help='.')
+    
     parser.add_argument('-db','--debug', action='store_true', help='.')
     
     args = parser.parse_args()
@@ -29,11 +32,15 @@ def main():
     root_dir = Path(__file__).resolve().parent
     dataset_path = root_dir.parent / args.dataset_path
     dataset_dirs = [x.parent for x in dataset_path.glob('**/yolov5-*.yaml') 
-                    if not str(x).__contains__("_old") 
+                    if x.parent.parent == dataset_path
                     and not str(x).__contains__("-valset")]
     testset_path = root_dir.parent / args.testset_path
+    
+    dd_n = len(dataset_dirs)
+    if args.worker_index >= 0 and args.worker_count > 0:
+        dataset_dirs = dataset_dirs[int((dd_n / args.worker_count) * args.worker_index):int((dd_n / args.worker_count) * (args.worker_index+1))]
     newline_char = "\n" # Python 3.9 :/
-    print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
+    print(f'Running ensample run on the following {len(dataset_dirs)} datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
     
     os.system(f'python traindata-creator/fixYolo5Yamls.py -df {dataset_path}')
     
