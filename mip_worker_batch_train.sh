@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # create docker container with GPUs on MIP-Server (lena)
 # -c | --command:   command to execute
