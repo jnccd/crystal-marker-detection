@@ -38,7 +38,7 @@ def autolabel(rects, ax):
     for rect in rects:
         height = rect.get_height()
         if height > 0:
-            ax.annotate('{}'.format(height),
+            ax.annotate('{}'.format(round(height, 3)),
                         xy=(rect.get_x() + rect.get_width() / 2, height),
                         xytext=(0, 3),  # 3 points vertical offset
                         textcoords="offset points",

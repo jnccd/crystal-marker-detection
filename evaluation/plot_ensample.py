@@ -84,9 +84,9 @@ for eval_paths_group in eval_paths_grouped:
         bar_chart_entry['config'] = run_name.split('-')[args.config_index]
         bar_chart_entry['label'] = f'{float(bar_chart_entry["config"]) * 10}%'
     
-    bar_chart_entry['voc2007_mAP'] = round(np.mean(group_voc2007_mAPs), 3) if len(group_voc2007_mAPs) > 0 else 0
-    bar_chart_entry['voc2010_mAP'] = round(np.mean(group_voc2010_mAPs), 3) if len(group_voc2010_mAPs) > 0 else 0
-    bar_chart_entry['coco_mAP'] = round(np.mean(group_coco_mAPs), 3) if len(group_coco_mAPs) > 0 else 0
+    bar_chart_entry['voc2007_mAP'] = np.mean(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
+    bar_chart_entry['voc2010_mAP'] = np.mean(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
+    bar_chart_entry['coco_mAP'] = np.mean(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
     
     bar_chart_entry['voc2007_mAP_error'] = np.std(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
     bar_chart_entry['voc2010_mAP_errors'] = np.std(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
