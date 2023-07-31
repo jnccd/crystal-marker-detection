@@ -19,6 +19,7 @@ def main():
     parser.add_argument('-b','--batch-size', type=int, default=8, help='Sets the batch size to train with.')
     parser.add_argument('-e','--epochs', type=int, default=100, help='Sets the epochs to train for.')
     parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the model to train with.')
+    parser.add_argument('-de','--device', type=str, default='0', help='Sets the device to train on.')
     parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
     
     parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
@@ -58,6 +59,7 @@ def main():
                           img_size=args.img_size,
                           batch_size=args.batch_size,
                           model=args.model,
+                          device=args.device,
                           init_random_weights=args.init_random_weights,
                           no_aug=True)
         # With yolov5 aug
@@ -69,6 +71,7 @@ def main():
                           img_size=args.img_size,
                           batch_size=args.batch_size,
                           model=args.model,
+                          device=args.device,
                           init_random_weights=args.init_random_weights,
                           no_aug=False)
         
@@ -83,6 +86,7 @@ def yolov5_train_loop(dataset_path,
                       img_size = 640, 
                       batch_size = 8, 
                       epochs = 100, 
+                      device = '0',
                       model = 'yolov5s', 
                       init_random_weights = False, 
                       no_aug = False):
@@ -119,6 +123,10 @@ def yolov5_train_loop(dataset_path,
     if no_aug:
         yolov5_args += '--hyp hyp.no-augmentation.yaml '
         
+    # Set device
+    if device != '0':
+        yolov5_args += f'--device {device} '
+    
     # --- Commands
     print('--- Training...')
     os.system(f'python repos/yolov5/train.py --name {run_name} --img {img_size} --batch {batch_size} --epochs {epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml {yolov5_args}')
