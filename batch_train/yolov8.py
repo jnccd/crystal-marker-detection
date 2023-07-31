@@ -30,6 +30,9 @@ def main():
     
     parser.add_argument('-wn','--weight-noise', type=float, default=0, help='.')
     
+    parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
+    parser.add_argument('-wc','--worker-count', type=int, default=-1, help='.')
+    
     parser.add_argument('-db','--debug', action='store_true', help='.')
     
     args = parser.parse_args()
@@ -41,8 +44,12 @@ def main():
                     if x.parent.parent == datasets_path
                     and not str(x).__contains__("-valset")]
     testset_path = Path(args.testset_path)
+    
+    dd_n = len(datasets_dirs)
+    if args.worker_index >= 0 and args.worker_count > 0:
+        datasets_dirs = datasets_dirs[int((dd_n / args.worker_count) * args.worker_index):int((dd_n / args.worker_count) * (args.worker_index+1))]
     newline_char = "\n" # Python 3.9 :/
-    print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
+    print(f'Running ensample run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
     
     # Train
     start_time = time.time()
