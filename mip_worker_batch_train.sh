@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # create docker container with GPUs on MIP-Server (lena)
 # -c | --command:   command to execute
@@ -33,6 +33,4 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-for (( i = 0; i < $N; i++ )); do 
-    with_gpu -n 1 sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' $IMAGE $COMMAND -wi $i -wc $N &
-done
+with_gpu -n $N sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' $IMAGE for (( i = 0; i < $N; i++ )); do $COMMAND -de $i -wi $i -wc $N & done
