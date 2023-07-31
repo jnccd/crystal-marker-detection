@@ -22,7 +22,7 @@ def main():
     parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
     
     parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
-    parser.add_argument('-wn','--worker-count', type=int, default=-1, help='.')
+    parser.add_argument('-wc','--worker-count', type=int, default=-1, help='.')
     
     parser.add_argument('-db','--debug', action='store_true', help='.')
     
@@ -31,23 +31,23 @@ def main():
     # Paths
     root_dir = Path(__file__).resolve().parent
     datasets_path = root_dir.parent / args.dataset_path
-    dataset_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
+    datasets_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
                     if x.parent.parent == datasets_path
                     and not str(x).__contains__("-valset")]
     testset_path = root_dir.parent / args.testset_path
     
-    dd_n = len(dataset_dirs)
+    dd_n = len(datasets_dirs)
     if args.worker_index >= 0 and args.worker_count > 0:
-        dataset_dirs = dataset_dirs[int((dd_n / args.worker_count) * args.worker_index):int((dd_n / args.worker_count) * (args.worker_index+1))]
+        datasets_dirs = datasets_dirs[int((dd_n / args.worker_count) * args.worker_index):int((dd_n / args.worker_count) * (args.worker_index+1))]
     newline_char = "\n" # Python 3.9 :/
-    print(f'Running ensample run on the following {len(dataset_dirs)} datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
+    print(f'Running ensample run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
     
     os.system(f'python traindata-creator/fixYolo5Yamls.py -df {datasets_path}')
     
     # Train
     start_time = time.time()
 
-    loop_folders = dataset_dirs if not args.debug else dataset_dirs[:1]
+    loop_folders = datasets_dirs if not args.debug else datasets_dirs[:1]
     for dataset_dir in loop_folders:
         # Without yolov5 aug
         yolov5_train_loop(dataset_dir, 
