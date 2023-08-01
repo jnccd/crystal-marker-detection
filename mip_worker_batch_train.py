@@ -9,6 +9,6 @@ parser.add_argument('-i','--image', type=str, default='ncarstensen/pcmd:0.1', he
 args = parser.parse_args()
 
 for i in range(args.num_gpus):
-    print_str = f"Starting run {i} of {args.num_gpus}"
+    print_str = f"Starting run {i} of {args.num_gpus} "
     print(print_str)
     os.system(f"screen -dmS worker{i} with_gpu -n 1 sudo mip-docker-run --rm --gpus '\"device=$CUDA_VISIBLE_DEVICES\"' {args.image} {args.command} -wi {i} -wc {args.num_gpus}")
