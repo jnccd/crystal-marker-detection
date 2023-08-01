@@ -69,7 +69,9 @@ def main():
         
     end_time = time.time()
     diff_time = end_time  - start_time
-    print(f'Training took: {time.strftime("%H:%M:%S", time.gmtime(diff_time))}')
+    parsed_time = time.strftime("%H:%M:%S", time.gmtime(diff_time))
+    write_textfile(f'{diff_time}\n{parsed_time}', Path(args.output_path) / 'train_time.txt')
+    print(f'Training took: {parsed_time}')
 
 def yolov8_train_loop(dataset_path, 
                       valset_path, 
