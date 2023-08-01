@@ -34,6 +34,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 for (( i = 0; i < $N; i++ )); do 
-    echo 'Starting run $i of $N'
+    echo Starting run $i of $N
     screen -dmS worker$i with_gpu -n 1 sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' $IMAGE $COMMAND -wi $i -wc $N
 done
