@@ -206,6 +206,7 @@ def main():
             'random_crop_chance': args.augment_random_crop_chance,
             'label_move_chance': args.augment_label_move_chance,
             'label_move_v2_chance': args.augment_label_move_v2_chance,
+            'augment_gauss_noise_chance': args.augment_gauss_noise_chance,
         }, indent=4), dataset_dir / 'dataset-def.json')
 
 def build_seg_dataset(in_imgs, target_polys):
