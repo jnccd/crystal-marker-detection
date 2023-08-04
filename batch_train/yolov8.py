@@ -111,6 +111,7 @@ def yolov8_train_loop(dataset_path,
     print('--- Training...')
     
     model = YOLO(f'{model_name}.pt')
+    # Add noise to model if arg is set
     if weight_noise > 0:
         with torch.no_grad():
             for param in model.model.parameters():
