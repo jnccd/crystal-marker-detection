@@ -109,3 +109,4 @@ python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -rf ev
 # Worker Ensample
 with_gpu -n 1 sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' ncarstensen/pcmd:0.1 python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/ -wi 0 -wc 2
 python3 mip_worker_batch_train.py -c "python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/"
+python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-rots/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-rot-ensample/"
