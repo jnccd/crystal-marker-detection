@@ -73,10 +73,6 @@ python batch_train/yolov5.py -d traindata-creator/dataset/ -t traindata-creator/
 
 python -m cmd_tf -t -td traindata-creator/dataset/seg-640-on-skin-valset-v2/ -r sm-unet-aruco
 
-# Eval plot building
-python evaluation/plot_ensample.py -rf evaluation/from-server/first-yolov5s-runs/ -n yolov5s-runs -rns -1
-python evaluation/plot_ensample.py -rf evaluation/from-server/yolov5m-runs/ -n yolov5m-runs
-
 # Just train everything a bit
 #python -m cmd_tf -df traindata-creator/dataset/seg-red-rects/ -r sm-unet-red-rects -bs 8 -e 75
 #python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco -bs 8 -e 100
@@ -99,6 +95,8 @@ for i in `seq 0 18 360`; do for j in `seq 0 1 5`; do python traindata-creator/cr
 python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensample-test
 
 # Eval plotting
+python evaluation/plot_ensample.py -rf evaluation/from-server/first-yolov5s-runs/ -n yolov5s-runs -rns -1
+python evaluation/plot_ensample.py -rf evaluation/from-server/yolov5m-runs/ -n yolov5m-runs
 python evaluation/plot_ensample.py -n yolov5s-sgs-ensample -rf evaluation/from-server/yolov5s-sgs-ensample-test/
 python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-yoloaug -rf evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*yolo5aug$'
 python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-no-yoloaug -rf evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*(?<!yolo5aug)$'
