@@ -13,7 +13,7 @@ from itertools import groupby
 
 import numpy as np
 
-from utils import *
+from utility import *
 
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-n','--name', type=str, help='.')
