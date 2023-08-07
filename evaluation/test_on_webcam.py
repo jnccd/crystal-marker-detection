@@ -40,6 +40,9 @@ if yolov5_pattern.match(train_def_model):
 
     # Main loop
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    cap.set(cv2.CAP_PROP_FPS,60)
     while cap.isOpened():
         ret, frame = cap.read()
         
@@ -62,6 +65,9 @@ elif yolov8_pattern.match(train_def_model):
 
     # Main loop
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    cap.set(cv2.CAP_PROP_FPS,60)
     while cap.isOpened():
         ret, frame = cap.read()
         
