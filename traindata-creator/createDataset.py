@@ -144,7 +144,7 @@ def main():
                         mats.append(create_random_persp_mat(img_size_wh, perspective_strength=args.augment_perspective_strength))
                     # -- Rotation
                     rotation_angle = 0
-                    if random.random() < args.augment_rotation_chance:
+                    if random.random() < args.augment_rotation_chance and args.augment_rotation_strength > 0:
                         rotation_angle += random.randrange(-args.augment_rotation_strength, args.augment_rotation_strength)
                     if random.random() < args.augment_ninety_deg_rotation_chance:
                         rotation_angle += random.randrange(0, 4) * 90
