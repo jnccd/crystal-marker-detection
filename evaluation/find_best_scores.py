@@ -38,8 +38,8 @@ for eval_path in eval_paths:
     
     evals.append((eval_path, eval_dict, train_def_dict))
     
+print(f'Best {args.sort_by} scores:')
 evals.sort(key=lambda x: -x[1][args.sort_by])
-
 for eval in evals[:10]:
     path, dict, train_def_dict = eval
     
