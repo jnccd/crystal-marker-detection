@@ -43,4 +43,4 @@ evals.sort(key=lambda x: -x[1][args.sort_by])
 for eval in evals[:10]:
     path, dict, train_def_dict = eval
     
-    print(f'{dict[args.sort_by]}: {path}')
+    print(str(dict[args.sort_by]) + ': ' + str(path).replace("\\", "\\\\"))
