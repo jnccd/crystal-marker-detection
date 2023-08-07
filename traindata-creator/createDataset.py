@@ -105,7 +105,7 @@ def main():
         aug_target_polys = []
         
         transform = A.Compose([
-            A.GaussNoise(var_limit=(10, 150), p=args.augment_gauss_noise_chance)
+            A.GaussNoise(var_limit=(10, 100), p=args.augment_gauss_noise_chance)
         ])
         
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
