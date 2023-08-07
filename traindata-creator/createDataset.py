@@ -148,7 +148,6 @@ def main():
                         rotation_angle += random.randrange(-args.augment_rotation_strength, args.augment_rotation_strength)
                     if random.random() < args.augment_ninety_deg_rotation_chance:
                         rotation_angle += random.randrange(0, 4) * 90
-                    print(rotation_angle)
                     mats.append(np.vstack([
                         cv2.getRotationMatrix2D(
                             (img_size_wh[0]/2, img_size_wh[1]/2), 
