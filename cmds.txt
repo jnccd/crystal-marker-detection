@@ -90,9 +90,10 @@ python evaluation/plot_ensample.py -rf evaluation/from-server/yolov5m-runs/ -n y
 
 # Create Ensample datasets
 for i in `seq 0 0.05 1`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -taf traindata-creator/dataset/sgss; done
-#smart grid ensample, 0 to 1 chance in 0.1 steps, 10 sets per step
+#smart grid ensample, 0 to 1 chance in 0.1 steps, 10 sets per step => 100 sets
 for i in `seq 0 0.1 1`; do for j in `seq 0 1 10`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -agnc 1 -taf traindata-creator/dataset/noise-sgss; done; done
-#rotation ensample, 0 to 1 
+#rotation ensample, 0 to 360deg in 18 steps (20 rot steps), 5 sets per step => 100 sets
+for i in `seq 0 18 360`; do for j in `seq 0 1 5`; do python traindata-creator/createDataset.py -n gpv2-rot-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -arc 1 -ars $i -agnc 1 -taf traindata-creator/dataset/_noise-rots; done; done
 
 # Run datasets ensample on remote
 python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensample-test
