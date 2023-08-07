@@ -161,7 +161,7 @@ def main():
                     mats.reverse()
                     for mat in mats:
                         final_mat = final_mat @ mat
-                    aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size_wh, final_mat, border_type=border_type)
+                    aug_img, aug_polys = homogeneous_mat_transform(aug_img, aug_polys, img_size_wh, final_mat, background_color=background_color, border_type=border_type)
                     
                     # Apply Albumentations transforms
                     aug_img = transform(image=aug_img)["image"]
