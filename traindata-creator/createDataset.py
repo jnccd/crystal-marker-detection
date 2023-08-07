@@ -43,6 +43,7 @@ def main():
     parser.add_argument('-aps','--augment-perspective-strength', type=float, default=0.08, help='Augment perspective strength in percent, 1 results in the image becoming triangular.')
     parser.add_argument('-arc','--augment-rotation-chance', type=float, default=0.9, help='Chance that rotation is applied to a sample.')
     parser.add_argument('-ars','--augment-rotation-strength', type=float, default=45, help='Maximum augment rotation in degrees.')
+    parser.add_argument('-andrc','--augment-ninety-deg-rotation-chance', type=float, default=0.7, help='Chance that a 90, 180 or 270 deg rotation is applied to a sample.')
     parser.add_argument('-arcc','--augment-random-crop-chance', type=float, default=0.6, help='Chance that image is cropped randomly.')
     parser.add_argument('-almc','--augment-label-move-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image.')
     parser.add_argument('-alm2c','--augment-label-move-v2-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image. (Improved version)')
@@ -142,13 +143,20 @@ def main():
                     if random.random() < args.augment_perspective_chance:
                         mats.append(create_random_persp_mat(img_size_wh, perspective_strength=args.augment_perspective_strength))
                     # -- Rotation
+                    rotation_angle = 0
                     if random.random() < args.augment_rotation_chance:
-                        mats.append(np.vstack([
-                            cv2.getRotationMatrix2D(
-                                (img_size_wh[0]/2, img_size_wh[1]/2), 
-                                random.randrange(-args.augment_rotation_strength, args.augment_rotation_strength), 
-                                1), 
-                            np.array([0, 0, 1])]))
+                        rotation_angle += random.randrange(-args.augment_rotation_strength, args.augment_rotation_strength)
+                    if random.random() < args.augment_ninety_deg_rotation_chance:
+                        rotation_angle += random.randrange(0, 4) * 90
+                    print(rotation_angle)
+                    mats.append(np.vstack([
+                        cv2.getRotationMatrix2D(
+                            (img_size_wh[0]/2, img_size_wh[1]/2), 
+                            rotation_angle, 
+                            1), 
+                        np.array([0, 0, 1])
+                        ])
+                    )
                     # -- Apply
                     final_mat = np.identity(3)
                     mats.reverse()
@@ -203,6 +211,7 @@ def main():
             'perspective_strength': args.augment_perspective_strength,
             'rotation_chance': args.augment_rotation_chance,
             'rotation_strength': args.augment_rotation_strength,
+            'ninety_deg_rotation_chance': args.augment_ninety_deg_rotation_chance,
             'random_crop_chance': args.augment_random_crop_chance,
             'label_move_chance': args.augment_label_move_chance,
             'label_move_v2_chance': args.augment_label_move_v2_chance,
