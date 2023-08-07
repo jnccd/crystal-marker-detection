@@ -82,7 +82,7 @@ for eval_paths_group in eval_paths_grouped:
     bar_chart_entry['run_name'] = run_name
     if args.config_index is not None:
         bar_chart_entry['config'] = run_name.split('-')[args.config_index]
-        bar_chart_entry['label'] = f'{float(bar_chart_entry["config"]) * 10}%'
+        bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}%'
     
     bar_chart_entry['voc2007_mAP'] = np.mean(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
     bar_chart_entry['voc2010_mAP'] = np.mean(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
@@ -102,6 +102,7 @@ for eval_paths_group in eval_paths_grouped:
 
 if args.config_index is not None:
     bar_chart_entries.sort(key=lambda x: x['config'])
+print('bar_chart_entries', bar_chart_entries)
 
 # Create barchart
 x = np.arange(len(bar_chart_entries))
