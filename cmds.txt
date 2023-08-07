@@ -17,15 +17,15 @@ python traindata-creator/createDataset.py -n good-pics-v2 -tf traindata-creator/
 # New sets
 python traindata-creator/createDataset.py -n good-pics-v1-no-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640
 python traindata-creator/createDataset.py -n good-pics-v2-no-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640
-python traindata-creator/createDataset.py -n good-pics-v1-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1 -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 0
-python traindata-creator/createDataset.py -n good-pics-v2-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1 -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 0
-python traindata-creator/createDataset.py -n good-pics-v1-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 1 -apc 0 -arc 0 -arcc 0 -almc 0
-python traindata-creator/createDataset.py -n good-pics-v2-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 1 -apc 0 -arc 0 -arcc 0 -almc 0
-python traindata-creator/createDataset.py -n good-pics-v2-slight-mat-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0.4 -aps 0.04 -arc 0.4 -ars 20 -arcc 0 -almc 0
-python traindata-creator/createDataset.py -n good-pics-v2-def-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4
-python traindata-creator/createDataset.py -n good-pics-v2-rc-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 1 -almc 0
-python traindata-creator/createDataset.py -n good-pics-v2-lm-only-test -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 1
-python traindata-creator/createDataset.py -n good-pics-v2-lm2-only-test -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0 -apldc 0 -apc 0 -arc 0 -arcc 0 -alm2c 1
+python traindata-creator/createDataset.py -n good-pics-v1-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1
+python traindata-creator/createDataset.py -n good-pics-v2-sgs-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 1
+python traindata-creator/createDataset.py -n good-pics-v1-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -apldc 1
+python traindata-creator/createDataset.py -n good-pics-v2-pld-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -apldc 1
+python traindata-creator/createDataset.py -n good-pics-v2-slight-mat-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -apc 0.4 -aps 0.04 -arc 0.4 -ars 20
+python traindata-creator/createDataset.py -n good-pics-v2-def-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0.9 -apldc 0.6 -apc 0.6 -aps 0.08 -arc 0.9 -ars 45 -andrc 0.7 -arcc 0.6 -almc 0 -alm2c 0 -agnc 0
+python traindata-creator/createDataset.py -n good-pics-v2-rc-only -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -arcc 1
+python traindata-creator/createDataset.py -n good-pics-v2-lm-only-test -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -almc 1
+python traindata-creator/createDataset.py -n good-pics-v2-lm2-only-test -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -alm2c 1
 # Create Valsets
 python traindata-creator/createDataset.py -n on-skin-valset -vf traindata-creator/dataseries/man-fPCS_on_skin/ -t yolov5 -s 640
 python traindata-creator/createDataset.py -n on-skin-valset-v2 -vf traindata-creator/dataseries/man-fPCS_on_skin/ traindata-creator/dataseries/man-on_skin_v2/ -t yolov5 -s 640
@@ -89,9 +89,10 @@ python evaluation/plot_ensample.py -rf evaluation/from-server/yolov5m-runs/ -n y
 # python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco-same2 -bs 8 -e 5
 
 # Create Ensample datasets
-for i in `seq 0 0.05 1`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -apldc 0 -apc 0 -arc 0 -arcc 0 -almc 0 -taf traindata-creator/dataset/sgss; done
-
-for i in `seq 0 0.1 1`; do for j in `seq 0 1 10`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 6 -asgsc $i -apldc 0 -apc 0 -arc 0 -arcc 0 -alm2c 0 -agnc 1 -taf traindata-creator/dataset/noise-sgss; done; done
+for i in `seq 0 0.05 1`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -taf traindata-creator/dataset/sgss; done
+#smart grid ensample, 0 to 1 chance in 0.1 steps, 10 sets per step
+for i in `seq 0 0.1 1`; do for j in `seq 0 1 10`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -agnc 1 -taf traindata-creator/dataset/noise-sgss; done; done
+#rotation ensample, 0 to 1 
 
 # Run datasets ensample on remote
 python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensample-test
