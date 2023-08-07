@@ -10,7 +10,7 @@ import re
 
 import numpy as np
 
-from utils import *
+from utility import *
 
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-rf','--runs-folders', action='append', nargs='+', type=str, help='.')
