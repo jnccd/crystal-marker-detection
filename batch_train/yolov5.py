@@ -22,6 +22,7 @@ def main():
     parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the model to train with.')
     parser.add_argument('-de','--device', type=str, default='0', help='Sets the device to train on.')
     parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
+    parser.add_argument('-snr','--skip-noaug-runs', action='store_true', help='.')
     
     parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
     parser.add_argument('-wc','--worker-count', type=int, default=-1, help='.')
@@ -53,17 +54,18 @@ def main():
     loop_folders = datasets_dirs if not args.debug else datasets_dirs[:1]
     for dataset_dir in loop_folders:
         # Without yolov5 aug
-        yolov5_train_loop(dataset_dir, 
-                          testset_path, 
-                          run_name=dataset_dir.stem,
-                          output_path=args.output_path,
-                          epochs=args.epochs,
-                          img_size=args.img_size,
-                          batch_size=args.batch_size,
-                          model=args.model,
-                          device=args.device,
-                          init_random_weights=args.init_random_weights,
-                          no_aug=True)
+        if not args.skip_noaug_runs:
+            yolov5_train_loop(  dataset_dir, 
+                                testset_path, 
+                                run_name=dataset_dir.stem,
+                                output_path=args.output_path,
+                                epochs=args.epochs,
+                                img_size=args.img_size,
+                                batch_size=args.batch_size,
+                                model=args.model,
+                                device=args.device,
+                                init_random_weights=args.init_random_weights,
+                                no_aug=True)
         # With yolov5 aug
         yolov5_train_loop(dataset_dir, 
                           testset_path, 
