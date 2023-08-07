@@ -7,7 +7,7 @@ import sys
 import time
 from pathlib import Path
 
-from utils import *
+from utility import *
 
 # Parse
 parser = argparse.ArgumentParser(prog='', description='Regenerate evaldata and reanalyze outputs, in case there was a bug in the prod server script.')
