@@ -40,7 +40,7 @@ for eval_path in eval_paths:
     
 print(f'Best {args.sort_by} scores:')
 evals.sort(key=lambda x: -x[1][args.sort_by])
-for eval in evals[:10]:
+for i, eval in enumerate(evals[:50]):
     path, dict, train_def_dict = eval
     
-    print(str(dict[args.sort_by]) + ': ' + str(path).replace("\\", "\\\\"))
+    print(str(i+1)+". " + str(dict[args.sort_by]) + ': ' + str(path).replace("\\", "\\\\"))
