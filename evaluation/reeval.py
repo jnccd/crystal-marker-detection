@@ -15,7 +15,7 @@ parser.add_argument('-r','--runs-path', type=str, help='.')
 parser.add_argument('-t','--testset-path', type=str, help='.')
 parser.add_argument('-rt','--run-type', type=str, help='.')
 
-parser.add_argument('-rne','--run-name-exclude', type=str, default='', help='.')
+parser.add_argument('-rne','--run-name-exclude', type=str, default='---------', help='.')
 parser.add_argument('-sge','--skip-gen-evaldata', action='store_true', help='.')
 args = parser.parse_args()
 
