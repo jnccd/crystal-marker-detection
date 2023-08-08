@@ -101,8 +101,7 @@ for eval_paths_group in eval_paths_grouped:
 # print('bar_chart_coco_mAP_errors', [x['coco_mAP_errors'] for x in bar_chart_entries])
 
 if args.config_index is not None:
-    bar_chart_entries.sort(key=lambda x: x['config'])
-print('bar_chart_entries', bar_chart_entries)
+    bar_chart_entries.sort(key=lambda x: float(x['config']))
 
 # Create barchart
 x = np.arange(len(bar_chart_entries))
