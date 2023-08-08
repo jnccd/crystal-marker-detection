@@ -171,6 +171,7 @@ def analyze(
     
     # Write out said metrics
     eval_dict_path = eval_path / 'evals.json'
+    print(f'Writing eval dict to {eval_dict_path}...')
     with open(eval_dict_path, "w") as text_file:
         text_file.write(json.dumps({
             'avg_iou':float(np.average(flat_best_iou_matches)),
