@@ -16,6 +16,7 @@ parser.add_argument('-t','--testset-path', type=str, help='.')
 parser.add_argument('-rt','--run-type', type=str, help='.')
 
 parser.add_argument('-rne','--run-name-exclude', type=str, default='', help='.')
+parser.add_argument('-sge','--skip-gen-evaldata', action='store_true', help='.')
 args = parser.parse_args()
 
 run_dirs = [(x.parent.parent, x) for x in Path(args.runs_path).glob('**/training-def.json')]
@@ -51,8 +52,10 @@ for training_run_folder, train_def_path in run_dirs:
     os.system(f'rm {training_run_folder / "test" / "*.txt"}'.replace("\\", "/"))
     os.system(f'rm {training_run_folder / "test" / "*.png"}'.replace("\\", "/"))
     if current_run_type == 'yolov5':
-        os.system(f'python repos/yolov5_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
+        if not args.skip_gen_evaldata:
+            os.system(f'python repos/yolov5_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
         os.system(f'python evaluation/analyze.py -av {training_run_folder}')
     elif current_run_type == 'yolov8':
-        os.system(f'python batch_train/yolov8_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
+        if not args.skip_gen_evaldata:
+            os.system(f'python batch_train/yolov8_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
         os.system(f'python evaluation/analyze.py -av {training_run_folder}')
