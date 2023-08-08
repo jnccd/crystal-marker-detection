@@ -339,6 +339,8 @@ def segment_img_between_poly_labels(img: Mat, polys: List[Polygon], dim: Literal
         'img': seg_img,
         }
     segments.append(new_segment)
+    #print("new_segment['size']", new_segment['size'])
+    #print("new_segment['img'].shape", new_segment['img'].shape)
     assert new_segment['size'] == new_segment['img'].shape[1 - dim]
     
     return segments
