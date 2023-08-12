@@ -428,6 +428,29 @@ def random_crop(img: Mat, polys: List[Polygon], target_size_wh: tuple):
     
     return crop_img, polys
 
+def random_crop_v2(img: Mat, polys: List[Polygon], target_size_wh: tuple, min_size_wh: tuple = (320, 320)):
+    img_h, img_w = img.shape[:2]
+    if img_w < min_size_wh[0] + 1 or img_h < min_size_wh[1] + 1:
+        return img, polys
+    
+    target_size_ratio = target_size_wh[0] / target_size_wh[1]
+    
+    crop_pos_x = random.randrange(0, img.shape[1] - min_size_wh[0])
+    crop_pos_y = random.randrange(0, img.shape[0] - min_size_wh[1])
+    crop_width = random.randrange(max(min_size_wh[0], min_size_wh[1] * target_size_ratio), min(img.shape[1] - crop_pos_x, (img.shape[0] - crop_pos_y) * target_size_ratio))
+    crop_height = int(crop_width / target_size_ratio)
+    crop_img = img[crop_pos_y:crop_pos_y+crop_height, crop_pos_x:crop_pos_x+crop_width]
+    crop_img = cv2.resize(crop_img, target_size_wh, interpolation=cv2.INTER_CUBIC)
+    # print("crop_width", crop_width, crop_height)
+    
+    resize_w = target_size_wh[0] / crop_width
+    resize_h = target_size_wh[1] / crop_height
+    polys = [transform(p, lambda x: np.array([((p[0] - crop_pos_x) * resize_w, (p[1] - crop_pos_y) * resize_h) for p in x] )) for p in polys]
+    crop_area = get_poly_from_bounds((0,0,target_size_wh[0],target_size_wh[1]))
+    polys = drop_low_visibility_labels(polys, crop_area)
+    
+    return crop_img, polys
+
 def poly_label_dropout(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     
     if len(polys) == 0:

@@ -45,6 +45,7 @@ def main():
     parser.add_argument('-ars','--augment-rotation-strength', type=float, default= 0, help='Maximum augment rotation in degrees.')
     parser.add_argument('-andrc','--augment-ninety-deg-rotation-chance', type=float, default=0, help='Chance that a 90, 180 or 270 deg rotation is applied to a sample.')
     parser.add_argument('-arcc','--augment-random-crop-chance', type=float, default=0, help='Chance that image is cropped randomly.')
+    parser.add_argument('-arc2c','--augment-random-crop-v2-chance', type=float, default=0, help='Chance that image is cropped randomly. (Improved version)')
     parser.add_argument('-almc','--augment-label-move-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image.')
     parser.add_argument('-alm2c','--augment-label-move-v2-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image. (Improved version)')
     
@@ -119,6 +120,11 @@ def main():
                     # Random Crop
                     if random.random() < args.augment_random_crop_chance:
                         aug_img, aug_polys = random_crop(aug_img, aug_polys, (args.size, args.size))
+                        img_size_wh = tuple(reversed(aug_img.shape[:2]))
+                        
+                    # Random Crop V2
+                    if random.random() < args.augment_random_crop_v2_chance:
+                        aug_img, aug_polys = random_crop_v2(aug_img, aug_polys, (args.size, args.size))
                         img_size_wh = tuple(reversed(aug_img.shape[:2]))
                     
                     # Smart Grid Shuffle
@@ -212,6 +218,7 @@ def main():
             'rotation_strength': args.augment_rotation_strength,
             'ninety_deg_rotation_chance': args.augment_ninety_deg_rotation_chance,
             'random_crop_chance': args.augment_random_crop_chance,
+            'random_crop_v2_chance': args.augment_random_crop_v2_chance,
             'label_move_chance': args.augment_label_move_chance,
             'label_move_v2_chance': args.augment_label_move_v2_chance,
             'gauss_noise_chance': args.augment_gauss_noise_chance,
