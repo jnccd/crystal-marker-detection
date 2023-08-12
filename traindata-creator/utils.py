@@ -618,7 +618,7 @@ def drop_low_visibility_labels(img: Mat, polys: List[Polygon], visible_area: Pol
                 c[1] = img.shape[0] - 1
             # Sample color from poly centroid in img
             draw_color = [int(x) for x in img[int(c[1]), int(c[0])]]
-            print(c)
+            #print(c)
             img = rasterize_polys(img, [inflate_poly(polys[i], 0.2)], draw_color)
             
     return new_polys
