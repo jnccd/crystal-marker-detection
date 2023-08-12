@@ -298,11 +298,15 @@ def segment_img_between_poly_labels(img: Mat, polys: List[Polygon], dim: Literal
         upper_poly_lower_bound = max(0, polys[i].bounds[2 if dim == 0 else 3])
         lower_poly_upper_bound = max(0, polys[i+1].bounds[0 if dim == 0 else 1])
         dim_distance = lower_poly_upper_bound - upper_poly_lower_bound
-        if dim_distance > collage_padding:
+        if dim_distance > collage_padding and lower_poly_upper_bound < img.shape[1 - dim]:
             if len(segments) > 0:
                 last_end = segments[-1]['end']
             else:
                 last_end = 0
+            # print("upper_poly_lower_bound", upper_poly_lower_bound,
+            #   "lower_poly_upper_bound", lower_poly_upper_bound,
+            #   "i", i,
+            #   "polys[i+1].bounds", polys[i+1].bounds,)
             end = int((upper_poly_lower_bound + lower_poly_upper_bound) / 2)
             if dim == 0:
                 corners = list(filter(lambda x: x.exterior.coords[0][0] > last_end and x.exterior.coords[0][0] < end, polys))
@@ -339,8 +343,14 @@ def segment_img_between_poly_labels(img: Mat, polys: List[Polygon], dim: Literal
         'img': seg_img,
         }
     segments.append(new_segment)
-    #print("new_segment['size']", new_segment['size'])
-    #print("new_segment['img'].shape", new_segment['img'].shape)
+    # if new_segment['size'] != new_segment['img'].shape[1 - dim]:
+    #     print("new_segment['size']", new_segment['size'], 
+    #           "new_segment['img'].shape", new_segment['img'].shape,
+    #           "dim", dim,
+    #           "end", end,
+    #           "last_end", last_end,
+    #           "segments", segments,
+    #           img_h, img_w,)
     assert new_segment['size'] == new_segment['img'].shape[1 - dim]
     
     return segments
