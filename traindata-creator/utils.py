@@ -8,7 +8,7 @@ import cv2
 from cv2 import Mat
 import numpy as np
 from copy import deepcopy
-from shapely import Polygon, transform, intersection
+from shapely import Polygon, transform, intersection, LineString, Point
 
 # --- Paths -------------------------------------------------------------------------------------------------------------------------
 
@@ -209,6 +209,15 @@ def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: List[Polygon]
     return rp_img, polys
 
 def rasterize_polys(draw_img: Mat, polys: List[Polygon], draw_color: tuple = (255, 255, 255)):
+    # print(polys)
+    polys = list(filter(lambda poly: 
+        poly is not Point and 
+        poly is not LineString and 
+        not str(poly).__contains__('LINESTRING') and 
+        not str(poly).__contains__('POINT'), 
+        polys))
+    # print(polys)
+    
     vertices_per_obj = [[(
         int(max(0, min(draw_img.shape[1], point[0]))), 
         int(max(0, min(draw_img.shape[0], point[1])))) 
@@ -586,7 +595,7 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
 def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
-def drop_low_visibility_labels(img: Mat, polys: List[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
+def drop_low_visibility_labels(img: Mat, polys: List[Polygon], visible_area: Polygon, min_label_visiblity = 0.6):
     new_polys = []
     
     for i in range(len(polys)):
@@ -598,17 +607,17 @@ def drop_low_visibility_labels(img: Mat, polys: List[Polygon], visible_area: Pol
         if visibility >= min_label_visiblity:
             new_polys.append(polys[i])
         elif not polys[i].is_empty:
-            c = polys[i].centroid
-            if c.x < 0:
-                c.x = 0
-            if c.y < 0:
-                c.y = 0
-            if c.x > img.shape[1] - 1:
-                c.x = img.shape[1] - 1
-            if c.y > img.shape[0] - 1:
-                c.y = img.shape[0] - 1
+            c = [polys[i].centroid.x, polys[i].centroid.y]
+            if c[0] < 0:
+                c[0] = 0
+            if c[1] < 0:
+                c[1] = 0
+            if c[0] > img.shape[1] - 1:
+                c[0] = img.shape[1] - 1
+            if c[1] > img.shape[0] - 1:
+                c[1] = img.shape[0] - 1
             # Sample color from poly centroid in img
-            draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
+            draw_color = [int(x) for x in img[int(c[1]), int(c[0])]]
             print(c)
             img = rasterize_polys(img, [inflate_poly(polys[i], 0.2)], draw_color)
             
