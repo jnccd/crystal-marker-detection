@@ -564,16 +564,16 @@ def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
 def drop_low_visibility_labels(polys: List[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
+    new_polys = []
+    
     for i in range(len(polys)):
-        if i >= len(polys):
-            break
-        
         visible_label_poly = intersection(polys[i], visible_area)
         visibility = visible_label_poly.area / polys[i].area
-        if visibility < min_label_visiblity:
-            del polys[i]
-            i-=1
-        elif visibility < 1:
+        
+        if visibility < 1:
             polys[i] = visible_label_poly
-    return polys
+        if visibility >= min_label_visiblity:
+            new_polys.append(polys[i])
+            
+    return new_polys
     
