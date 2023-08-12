@@ -407,7 +407,7 @@ def homogeneous_mat_transform(
     M: Mat, 
     background_color = [0, 0, 0], 
     border_type = cv2.BORDER_CONSTANT,
-    min_label_visiblity = 0.25,
+    min_label_visiblity = 0.6,
     ):
     # If M is Affine make it homogeneous
     if M.shape[0] == 2:
