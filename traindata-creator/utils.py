@@ -430,7 +430,10 @@ def random_crop(img: Mat, polys: List[Polygon], target_size_wh: tuple):
 
 def poly_label_dropout(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     
-    pi = random.randrange(0, len(polys))
+    if len(polys) == 0:
+        return img, polys
+    
+    pi = random.randrange(len(polys))
     
     if len(draw_color) != 3:
         c = polys[pi].centroid
