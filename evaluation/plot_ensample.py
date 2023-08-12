@@ -102,6 +102,8 @@ for eval_paths_group in eval_paths_grouped:
 
 if args.config_index is not None:
     bar_chart_entries.sort(key=lambda x: float(x['config']))
+else:
+    bar_chart_entries.sort(key=lambda x: x['label'])
 
 # Create barchart
 x = np.arange(len(bar_chart_entries))
