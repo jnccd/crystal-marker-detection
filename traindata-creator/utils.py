@@ -410,7 +410,7 @@ def homogeneous_mat_transform(
     
     # Drop low visibility labels
     img_area = get_poly_from_bounds((0,0,img_size_wh[0],img_size_wh[1]))
-    polys = drop_low_visibility_labels(polys, img_area, min_label_visiblity)
+    polys = drop_low_visibility_labels(img, polys, img_area, min_label_visiblity)
     
     return img, polys
 
@@ -423,7 +423,7 @@ def random_crop(img: Mat, polys: List[Polygon], target_size_wh: tuple):
     crop_img = img[crop_pos_y:crop_pos_y+target_size_wh[1], crop_pos_x:crop_pos_x+target_size_wh[0]]
     
     crop_area = get_poly_from_bounds((crop_pos_x,crop_pos_y,target_size_wh[0],target_size_wh[1]))
-    polys = drop_low_visibility_labels(polys, crop_area)
+    polys = drop_low_visibility_labels(crop_img, polys, crop_area)
     polys = [transform(p, lambda x: np.array([(p[0] - crop_pos_x, p[1] - crop_pos_y) for p in x] )) for p in polys]
     
     return crop_img, polys
@@ -447,7 +447,7 @@ def random_crop_v2(img: Mat, polys: List[Polygon], target_size_wh: tuple, min_si
     resize_h = target_size_wh[1] / crop_height
     polys = [transform(p, lambda x: np.array([((p[0] - crop_pos_x) * resize_w, (p[1] - crop_pos_y) * resize_h) for p in x] )) for p in polys]
     crop_area = get_poly_from_bounds((0,0,target_size_wh[0],target_size_wh[1]))
-    polys = drop_low_visibility_labels(polys, crop_area)
+    polys = drop_low_visibility_labels(crop_img, polys, crop_area)
     
     return crop_img, polys
 
@@ -586,7 +586,7 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
 def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
-def drop_low_visibility_labels(polys: List[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
+def drop_low_visibility_labels(img: Mat, polys: List[Polygon], visible_area: Polygon, min_label_visiblity = 0.25):
     new_polys = []
     
     for i in range(len(polys)):
@@ -597,6 +597,20 @@ def drop_low_visibility_labels(polys: List[Polygon], visible_area: Polygon, min_
             polys[i] = visible_label_poly
         if visibility >= min_label_visiblity:
             new_polys.append(polys[i])
+        elif not polys[i].is_empty:
+            c = polys[i].centroid
+            if c.x < 0:
+                c.x = 0
+            if c.y < 0:
+                c.y = 0
+            if c.x > img.shape[1] - 1:
+                c.x = img.shape[1] - 1
+            if c.y > img.shape[0] - 1:
+                c.y = img.shape[0] - 1
+            # Sample color from poly centroid in img
+            draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
+            print(c)
+            img = rasterize_polys(img, [inflate_poly(polys[i], 0.2)], draw_color)
             
     return new_polys
     
