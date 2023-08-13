@@ -44,6 +44,7 @@ def main():
     datasets_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
                     if (not args.recursive_folder_searching and x.parent.parent == datasets_path or args.recursive_folder_searching)
                     and not str(x).__contains__("-valset")]
+    datasets_dirs.sort(key=lambda d: d.stem)
     testset_path = Path(args.testset_path)
     
     dd_n = len(datasets_dirs)
