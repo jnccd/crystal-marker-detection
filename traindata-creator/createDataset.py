@@ -50,6 +50,7 @@ def main():
     parser.add_argument('-alm2c','--augment-label-move-v2-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image. (Improved version)')
     
     parser.add_argument('-agnc','--augment-gauss-noise-chance', type=float, default=0, help='Chance that gauss noise is applied.')
+    parser.add_argument('-agns','--augment-gauss-noise-strength', type=float, default=15, help='Strength of gauss noise that is applied.')
     args = parser.parse_args()
     
     if args.size is None:
@@ -106,7 +107,7 @@ def main():
         aug_target_polys = []
         
         transform = A.Compose([
-            A.GaussNoise(var_limit=(10, 100), p=args.augment_gauss_noise_chance)
+            A.GaussNoise(var_limit=(0, args.augment_gauss_noise_strength), p=args.augment_gauss_noise_chance)
         ])
         
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
