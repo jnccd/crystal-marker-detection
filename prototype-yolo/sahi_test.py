@@ -15,3 +15,5 @@ result = get_sliced_prediction(
 
 print(result)
 result.export_visuals('prototype-yolo/sahi_export/')
+for pred in result.object_prediction_list:
+    print(pred.score.value, pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy)
