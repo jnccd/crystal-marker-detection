@@ -8,3 +8,4 @@ venv
 .cache
 *.pt
 network_cmds.txt
+network_cmds.sh
