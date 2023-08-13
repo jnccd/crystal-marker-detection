@@ -37,6 +37,7 @@ def main():
     datasets_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
                     if (not args.recursive_folder_searching and x.parent.parent == datasets_path or args.recursive_folder_searching)
                     and not str(x).__contains__("-valset")]
+    datasets_dirs.sort(key=lambda d: d.stem)
     testset_path = root_dir.parent / args.testset_path
     
     dd_n = len(datasets_dirs)
@@ -44,7 +45,7 @@ def main():
         datasets_dirs = datasets_dirs[int((dd_n / args.worker_count) * args.worker_index):int((dd_n / args.worker_count) * (args.worker_index+1))]
     newline_char = "\n" # Python 3.9 :/
     print(f'Running ensample run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
-    #sys.exit(0) # For dataset choosing testing
+    sys.exit(0) # For dataset choosing testing
     
     os.system(f'python traindata-creator/fixYolo5Yamls.py -df {datasets_path}')
     
