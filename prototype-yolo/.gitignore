@@ -3,3 +3,4 @@ images/*.*
 labels/*.*
 marker.*
 classes.txt
+sahi_export/*.*
