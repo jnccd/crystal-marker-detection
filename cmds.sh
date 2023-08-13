@@ -1,4 +1,5 @@
 exit 0
+# This file is not meant to be executed but rather as a lookup table for frequently used commands
 
 # Create dataseries
 python traindata-creator/createArucoFrameDataseries.py -if N:\\Downloads\\Archives\\FabioBilder\\the_good_pics_for_nn -lirf -ng 
