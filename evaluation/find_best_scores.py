@@ -13,30 +13,21 @@ import numpy as np
 from utility import *
 
 parser = argparse.ArgumentParser(prog='', description='.')
-parser.add_argument('-rf','--runs-folders', action='append', nargs='+', type=str, help='.')
+parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
 parser.add_argument('-s','--sort-by', type=str, default='voc2010_mAP', help='.')
 args = parser.parse_args()
 
 root_dir = Path(__file__).resolve().parent
 if args.runs_folders is None:
     args.runs_folders = [[root_dir / 'from-server', root_dir.parent / 'training']]
-runs_folders = flatten(args.runs_folders)
-eval_paths = flatten([[ x for x in Path(run_folders).glob('**/evals.json') 
-                        if not str(x).__contains__("_old")] 
-                        for run_folders in runs_folders])
+runs_paths = get_all_subfolder_run_dirs(flatten(args.runs_folders))
 
 evals = []
-for eval_path in eval_paths:
-    train_def_path = eval_path.parent.parent / 'training-def.json'
+for run_paths_dict in runs_paths:
+    eval_dict = json.loads(read_textfile(run_paths_dict['eval']).replace("    ", "").replace("\n", ""))
+    train_def_dict = json.loads(read_textfile(run_paths_dict['train_def']).replace("    ", "").replace("\n", ""))
     
-    if not train_def_path.is_file():
-            print(f'Couldnt find train file of {eval_path}')
-            continue
-    
-    eval_dict = json.loads(read_textfile(eval_path).replace("    ", "").replace("\n", ""))
-    train_def_dict = json.loads(read_textfile(train_def_path).replace("    ", "").replace("\n", ""))
-    
-    evals.append((eval_path, eval_dict, train_def_dict))
+    evals.append((run_paths_dict['run_root'], eval_dict, train_def_dict))
     
 print(f'Best {args.sort_by} scores:')
 evals.sort(key=lambda x: -x[1][args.sort_by])
