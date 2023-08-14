@@ -23,23 +23,27 @@ def main():
     # Set up Paths
     run_folder_path = Path(args.run_folder)
     run_test_folder_path = create_dir_if_not_exists(run_folder_path / 'test', clear=True)
-    run_network_path = run_folder_path / 'weights/best.pt'
-    model = YOLO(run_network_path)
+    run_best_model_path = run_folder_path / 'weights/best.pt'
     
     # Generate evaldata
-    print("Generating evaldata for:", run_network_path)
-    gen_evaldata(model, args.testset_folder, run_test_folder_path)
+    print("Generating evaldata for:", run_best_model_path)
+    gen_evaldata(
+        model_path= run_best_model_path, 
+        valset_path= args.testset_folder, 
+        out_testdata_path= run_test_folder_path
+        )
     
     # Start analyze script
     os.system(f'python evaluation/analyze.py -av {run_folder_path}')
     
-def gen_evaldata(model, valset_path, out_testdata_path):
+def gen_evaldata(model_path, valset_path, out_testdata_path):
     valdata_imgs_path = Path(valset_path) / 'val/images'
     valdata_labels_path = Path(valset_path) / 'val/labels'
     
     valdata_imgs_paths = get_files_from_folders_with_ending([valdata_imgs_path], (".png", ".jpg"))
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
     
+    model = YOLO(model_path)
     results = model(valdata_imgs_path / '*.png')
     
     for i, (img_path, label_path) in enumerate(zip(valdata_imgs_paths, valdata_labels_paths)):
