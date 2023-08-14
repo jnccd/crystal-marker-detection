@@ -54,6 +54,8 @@ def main():
     print(f'Running ensample run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
     #sys.exit(0) # For dataset choosing testing
     
+    os.environ['KMP_DUPLICATE_LIB_OK']='True'
+    
     os.system(f'python traindata-creator/fixYolo5Yamls.py -df {datasets_path}')
     
     # Train
