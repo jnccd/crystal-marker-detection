@@ -15,21 +15,24 @@ from utils import *
 
 def main():
     # Parse
-    parser = argparse.ArgumentParser(prog='yolov8-gen-evaluation-data', description='Generate testable evaluation data for yolov8 output on some datasets valdata.')
-    parser.add_argument('-r','--run-folder', type=str, default='', help='Yolov5 run foldername, or path to runfolder.')
-    parser.add_argument('-df','--dataset-folder', type=str, default='',  help='The trainings data folder name to learn from or build into.')
+    parser = argparse.ArgumentParser(prog='yolov8-evaluate', description='Evaluate yolov8 output on a datasets valdata.')
+    parser.add_argument('-r','--run-folder', type=str, help='Path to a Yolov8 run folder.')
+    parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use the valdata of as a testset for this evaluation.')
     args = parser.parse_args()
     
-    # Get chosen or last yolov5 run dir
-    train_dir = Path(args.run_folder)
-    network_file = Path(args.run_folder) / 'weights/best.pt'
-    model = YOLO(network_file)
+    # Set up Paths
+    run_folder_path = Path(args.run_folder)
+    run_test_folder_path = create_dir_if_not_exists(run_folder_path / 'test', clear=True)
+    run_network_path = run_folder_path / 'weights/best.pt'
+    model = YOLO(run_network_path)
     
-    print("Generating evaldata for:", network_file)
+    # Generate evaldata
+    print("Generating evaldata for:", run_network_path)
+    gen_evaldata(model, args.testset_folder, run_test_folder_path)
     
-    gen_evaldata(model, args.dataset_folder, create_dir_if_not_exists(train_dir / 'test'))
+    # Start analyze script
+    os.system(f'python evaluation/analyze.py -av {run_folder_path}')
     
-
 def gen_evaldata(model, valset_path, out_testdata_path):
     valdata_imgs_path = Path(valset_path) / 'val/images'
     valdata_labels_path = Path(valset_path) / 'val/labels'
