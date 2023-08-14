@@ -48,7 +48,8 @@ def get_all_subfolder_run_dirs(search_root_dirs: list[str]):
     
     tuple_paths_list = list(zip(run_paths, train_def_paths, eval_paths))
     dict_keys = ['run_root', 'train_def', 'eval']
-    return [dict(zip(dict_keys, x)) for x in tuple_paths_list]
+    return [dict(zip(dict_keys, x)) for x in tuple_paths_list 
+            if os.path.exists(x[2]) and os.path.isfile(x[2]) and os.path.exists(x[1]) and os.path.isfile(x[1])]
 
 # Other
 def flatten(list):
