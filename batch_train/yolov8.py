@@ -134,7 +134,7 @@ def yolov8_train_loop(dataset_path,
     
     print('--- Evaluating...')
     os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {valset_path}')
-    write_textfile(json.dumps(train_def_dict, indent=4), training_run_testdata_folder / 'training-def.json')
+    write_textfile(json.dumps(train_def_dict, indent=4), training_run_folder / 'training-def.json')
 
 if __name__ == '__main__':
     main()
