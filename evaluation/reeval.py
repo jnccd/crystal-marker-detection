@@ -11,7 +11,7 @@ from utility import *
 
 # Parse
 parser = argparse.ArgumentParser(prog='', description='Regenerate evaldata and reanalyze outputs, in case there was a bug in the prod server script.')
-parser.add_argument('-r','--runs-path', type=str, help='.')
+parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
 parser.add_argument('-t','--testset-path', type=str, help='.')
 parser.add_argument('-rt','--run-type', type=str, help='.')
 
@@ -19,14 +19,16 @@ parser.add_argument('-rne','--run-name-exclude', type=str, default='---------', 
 parser.add_argument('-sge','--skip-gen-evaldata', action='store_true', help='.')
 args = parser.parse_args()
 
-run_dirs = [(x.parent.parent, x) for x in Path(args.runs_path).glob('**/training-def.json')]
+runs_paths = get_all_subfolder_run_dirs(flatten(args.runs_folders))
 newline_char = "\n" # Python 3.9 :/
-print(f'Running reeval run on the following {len(run_dirs)} training runs:\n{newline_char.join([str(x[0]) for x in run_dirs])}')
+print(f'Running reeval run on the following {len(runs_paths)} training runs:\n{newline_char.join([str(x["run_root"]) for x in runs_paths])}')
 
 yolov5_pattern = re.compile('yolov5(.?)$')
 yolov8_pattern = re.compile('yolov8(.?)$|yolov5(.?)u$') 
 
-for training_run_folder, train_def_path in run_dirs:
+for run_paths_dict in runs_paths:
+    training_run_folder = run_paths_dict['run_root']
+    train_def_path = run_paths_dict['train_def']
     if str(training_run_folder).__contains__(args.run_name_exclude):
         print(f'Skipping {training_run_folder}...')
         continue
