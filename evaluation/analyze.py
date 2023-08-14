@@ -26,11 +26,11 @@ def analyze(
         run_dir = runs_dir / f'{run_or_testdata}'
         testdata_path = run_dir / 'test'
     if len(get_files_from_folders_with_ending([testdata_path], '_input.png')) == 0:
-        testdata_path = testdata_path / 'test'
-        if os.path.exists(testdata_path) and \
-            os.path.isdir(testdata_path) and \
-            len(get_files_from_folders_with_ending([testdata_path], '_input.png')) > 0:
-            testdata_path = testdata_path
+        test_folder_path = testdata_path / 'test'
+        if os.path.exists(test_folder_path) and \
+            os.path.isdir(test_folder_path) and \
+            len(get_files_from_folders_with_ending([test_folder_path], '_input.png')) > 0:
+            testdata_path = test_folder_path
         else:
             print('Couldnt find test data folder!')
             sys.exit(1)
