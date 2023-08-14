@@ -27,45 +27,36 @@ args = parser.parse_args()
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
 
 root_dir = Path(__file__).resolve().parent
-runs_folders = flatten(args.runs_folders)
-eval_paths = flatten([[ x for x in Path(run_folders).glob('**/evals.json') 
-                        if not str(x).__contains__("_old")] 
-                        for run_folders in runs_folders])
+runs_paths = get_all_subfolder_run_dirs(flatten(args.runs_folders))
 
 # Group eval_paths by part_index if it is set, else use one elem lists
 if args.part_index is not None:
-    eval_paths_keys = []
-    for x in eval_paths:
-        run_name = x.parent.parent.parent.stem
+    run_paths_keys = []
+    for x in runs_paths:
+        run_name = x['run_root'].stem
         run_name_split = run_name.split('-')
         run_name_split.pop(args.part_index)
-        eval_paths_keys.append(('-'.join(run_name_split), x))
-    eval_paths_grouped = [[y for y in eval_paths_keys if y[0]==x] for x in set(map(lambda x: x[0], eval_paths_keys))]
+        run_paths_keys.append(('-'.join(run_name_split), x))
+    runs_paths_grouped = [[y for y in run_paths_keys if y[0]==x] for x in set(map(lambda x: x[0], run_paths_keys))]
 else:
-    eval_paths_keys = [x.parent.parent.parent.stem for x in eval_paths]
-    eval_paths_grouped = [[(x, y)] for x, y in zip(eval_paths_keys, eval_paths)]
+    run_paths_keys = [x['run_root'].stem for x in runs_paths]
+    runs_paths_grouped = [[(x, y)] for x, y in zip(run_paths_keys, runs_paths)]
 # print(eval_paths_grouped)
 # print(eval_paths_grouped[0])
 # sys.exit(0)
 
 # Create Eval database
 bar_chart_entries = []
-for eval_paths_group in eval_paths_grouped:
+for runs_paths_group in runs_paths_grouped:
     bar_chart_entry = {}
     
     group_voc2007_mAPs = []
     group_voc2010_mAPs = []
     group_coco_mAPs = []
     
-    for eval_name, eval_path in eval_paths_group:
-        train_def_path = eval_path.parent.parent / 'training-def.json'
-        
-        if not train_def_path.is_file():
-            print(f'Couldnt find file of {eval_name}, {eval_path}')
-            continue
-        
-        eval_dict = json.loads(read_textfile(eval_path).replace("    ", "").replace("\n", ""))
-        train_def_dict = json.loads(read_textfile(train_def_path).replace("    ", "").replace("\n", ""))
+    for run_paths_name, run_paths in runs_paths_group:
+        eval_dict = json.loads(read_textfile(run_paths['eval']).replace("    ", "").replace("\n", ""))
+        train_def_dict = json.loads(read_textfile(run_paths['train_def']).replace("    ", "").replace("\n", ""))
         
         run_name: str = train_def_dict['run_name']
         if name_pattern is not None and not name_pattern.match(run_name):
@@ -78,7 +69,7 @@ for eval_paths_group in eval_paths_grouped:
     if group_voc2007_mAPs == []:
         continue
     
-    bar_chart_entry['label'] = '-'.join(eval_name.split('-')[2:])
+    bar_chart_entry['label'] = '-'.join(run_paths_name.split('-')[2:])
     bar_chart_entry['run_name'] = run_name
     if args.config_index is not None:
         bar_chart_entry['config'] = run_name.split('-')[args.config_index]
