@@ -184,11 +184,12 @@ def main():
         target_polys[aug_group] = aug_target_polys
         
     # Resize and pad imgs and labels
-    for group in data_groups:
-        for i, (in_img, target_poly) in enumerate(zip(in_imgs[group], target_polys[group])):
-            img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
-            in_imgs[group][i] = img
-            target_polys[group][i] = poly
+    if args.size > 0:
+        for group in data_groups:
+            for i, (in_img, target_poly) in enumerate(zip(in_imgs[group], target_polys[group])):
+                img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
+                in_imgs[group][i] = img
+                target_polys[group][i] = poly
     
     # --- Build dataset ---
     if args.type == 'seg':
