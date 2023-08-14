@@ -56,5 +56,4 @@ os.system(f'python repos/yolov5/train.py --name {args.run_name} --img {args.img_
 os.system(f'rm {args.model}.pt')
 print('--- Evaluating...')
 os.system(f'python repos/yolov5_evaluate.py -r {args.run_name} -t {args.valset_path}/')
-os.system(f'python evaluation/analyze.py -av {training_run_folder}')
 write_textfile(json.dumps(train_def_dict, indent=4), training_run_testdata_folder / 'training-def.json')
