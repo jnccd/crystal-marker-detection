@@ -61,7 +61,7 @@ python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-ps
 #python repos/yolov5/train.py --img 320 --batch 16 --epochs 50 --data traindata-creator/dataset/yolov5-red-rects/dataset/yolov5-red-rects.yaml --weights yolov5s.pt
 python repos/yolov5/train.py --img 640 --batch 8 --epochs 100 --data traindata-creator/dataset/yolov5-good-pics-v2/yolov5-good-pics-v2.yaml --weights yolov5s.pt --hyp hyp.scratch.yaml 
 # Test yolo
-python repos/yolov5_gen_evaldata.py -r test_old_aug_gpv2_whyp -df traindata-creator/dataset/yolov5-640-on-skin-valset/
+python repos/yolov5_evaluate.py -r test_old_aug_gpv2_whyp -t traindata-creator/dataset/yolov5-640-on-skin-valset/
 #python prototype-yolov5/test_yolo_on_pics.py -m repos/yolov5/runs/train/exp/weights/best.pt -d N:\\Downloads\\Archives\\FabioBilder\\fPCS_on_skin
 # Do it all yolo
 python repos/yolov5_train_loop.py -n test-py-loop -d traindata-creator/dataset/yolov5-640-good-pics-v2-slight-mat-only/ --no-aug -e 2

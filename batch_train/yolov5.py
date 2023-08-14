@@ -139,8 +139,7 @@ def yolov5_train_loop(dataset_path,
     os.system(f'python repos/yolov5/train.py --name {run_name} --img {img_size} --batch {batch_size} --epochs {epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml {yolov5_args}')
     os.system(f'rm {model}.pt')
     print('--- Evaluating...')
-    os.system(f'python repos/yolov5_gen_evaldata.py -r {training_run_folder} -df {valset_path}/')
-    os.system(f'python evaluation/analyze.py -av {training_run_folder}')
+    os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {valset_path}/')
     write_textfile(json.dumps(train_def_dict, indent=4), training_run_testdata_folder / 'training-def.json')
 
 if __name__ == '__main__':
