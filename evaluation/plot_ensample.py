@@ -18,7 +18,7 @@ from utility import *
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-n','--name', type=str, help='.')
 parser.add_argument('-t','--title', type=str, help='.')
-parser.add_argument('-rf','--runs-folders', action='append', nargs='+', type=str, help='.')
+parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run name.')
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the .')
 parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the .')
