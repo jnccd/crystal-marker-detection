@@ -46,16 +46,13 @@ for training_run_folder, train_def_path in run_dirs:
         else:
             print('What model is that? ' + train_def_model)
             sys.exit(1)
-            
+    
     # Regenerate
-    print(current_run_type)
-    os.system(f'rm {training_run_folder / "test" / "*.txt"}'.replace("\\", "/"))
-    os.system(f'rm {training_run_folder / "test" / "*.png"}'.replace("\\", "/"))
-    if current_run_type == 'yolov5':
-        if not args.skip_gen_evaldata:
-            os.system(f'python repos/yolov5_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
+    print("Run type:", current_run_type)
+    if args.skip_gen_evaldata:
         os.system(f'python evaluation/analyze.py -av {training_run_folder}')
-    elif current_run_type == 'yolov8':
-        if not args.skip_gen_evaldata:
-            os.system(f'python batch_train/yolov8_gen_evaldata.py -r {training_run_folder} -df {args.testset_path}/')
-        os.system(f'python evaluation/analyze.py -av {training_run_folder}')
+    else:
+        if current_run_type == 'yolov5':
+            os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {args.testset_path}/')
+        elif current_run_type == 'yolov8':
+            os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {args.testset_path}/')
