@@ -36,7 +36,7 @@ def get_all_subfolder_run_dirs(search_root_dirs: list[str]):
       search_root_dirs: A list of paths to search all subfolders of for run files.
 
     Returns:
-      A list of tuples (run_path, train_def_path, eval_path).
+      A list of dicts {'run_root', 'train_def', 'eval'}.
     """
     
     train_def_paths = flatten([[x for x in Path(search_root_dir).glob('**/training-def.json')
@@ -45,7 +45,10 @@ def get_all_subfolder_run_dirs(search_root_dirs: list[str]):
     run_paths = [x.parent.parent if x.parent.stem == 'test' else x.parent 
                     for x in train_def_paths]
     eval_paths = [x / 'test/evals/evals.json' for x in run_paths]
-    return list(zip(run_paths, train_def_paths, eval_paths))
+    
+    tuple_paths_list = list(zip(run_paths, train_def_paths, eval_paths))
+    dict_keys = ['run_root', 'train_def', 'eval']
+    return [dict(zip(dict_keys, x)) for x in tuple_paths_list]
 
 # Other
 def flatten(list):
