@@ -129,14 +129,14 @@ done
 python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensample-test
 
 # Eval plotting
-python evaluation/plot_ensample.py -rf evaluation/from-server/first-yolov5s-runs/ -n yolov5s-runs -rns -1
-python evaluation/plot_ensample.py -rf evaluation/from-server/yolov5m-runs/ -n yolov5m-runs
-python evaluation/plot_ensample.py -n yolov5s-sgs-ensample -rf evaluation/from-server/yolov5s-sgs-ensample-test/
-python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-yoloaug -rf evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*yolo5aug$'
-python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-no-yoloaug -rf evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*(?<!yolo5aug)$'
-python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample -rf evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*(?<!yolo5aug)$'
-python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -rf evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$'
-python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -rf evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
+python evaluation/plot_ensample.py -r evaluation/from-server/first-yolov5s-runs/ -n yolov5s-runs -rns -1
+python evaluation/plot_ensample.py -r evaluation/from-server/yolov5m-runs/ -n yolov5m-runs
+python evaluation/plot_ensample.py -n yolov5s-sgs-ensample -r evaluation/from-server/yolov5s-sgs-ensample-test/
+python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-yoloaug -r evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*yolo5aug$'
+python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-no-yoloaug -r evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*(?<!yolo5aug)$'
+python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*(?<!yolo5aug)$'
+python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$'
+python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
 
 # Worker Ensample
 with_gpu -n 1 sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' ncarstensen/pcmd:0.1 python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/ -wi 0 -wc 2
