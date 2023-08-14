@@ -14,51 +14,47 @@ from utility import *
 
 def main():
     parser = argparse.ArgumentParser(prog='yolov5-gen-evaluation-data', description='Generate testable evaluation data for yolov5 output on some datasets valdata.')
-    parser.add_argument('-r','--run', type=str, default='', help='Yolov5 run foldername, or path to runfolder.')
+    parser.add_argument('-r','--run-folder', type=str, default='', help='Yolov5 run foldername, or path to runfolder.')
     parser.add_argument('-t','--testset-folder', type=str, default='',  help='The dataset to use as a testset for this evaluation.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
     args = parser.parse_args()
     
-    # Get chosen or last yolov5 run dir
-    root_dir = Path(__file__).resolve().parent
-    train_dir = root_dir / f'../training/yolov5'
-    if args.run == '':
-        for dir in glob.iglob('training/yolov5/*', recursive=False):
-            last_dir = dir
-        last_dir = Path(last_dir)
-        args.run = last_dir.stem
-        print(args.run)
-        network_file = last_dir / 'weights/best.pt'
-    elif Path(args.run).is_dir():
-        train_dir = Path(args.run).parent
-        network_file = Path(args.run) / 'weights/best.pt'
-        args.run = Path(args.run).stem
-    else:
-        network_file = train_dir / f'{args.run}/weights/best.pt'
-    
-    print("Generating evaldata for:", network_file)
+    # Set up Paths
+    run_folder_path = Path(args.run_folder)
+    run_test_folder_path = create_dir_if_not_exists(run_folder_path / 'test', clear=True)
+    run_best_model_path = run_folder_path / 'weights/best.pt'
 
     # Torch hub cache support on
     os.system('mkdir ./.cache')
     os.environ['TORCH_HOME'] = './.cache'
     
-    print("network_file:",network_file)
-    if not args.use_sahi:
-        model = torch.hub.load('ultralytics/yolov5', 'custom', path=network_file)
+    print("Generating evaldata for:", run_best_model_path)
+    gen_evaldata(
+        model_path= run_best_model_path,
+        valset_path= args.testset_folder, 
+        out_testdata_path= run_test_folder_path,
+        use_sahi= args.use_sahi,
+    )
+    
+    # Start analyze script
+    os.system(f'python evaluation/analyze.py -av {run_folder_path}')
+    
+def gen_evaldata(model_path, valset_path, out_testdata_path, use_sahi = False):
+    valdata_imgs_path = Path(valset_path) / 'val/images'
+    valdata_labels_path = Path(valset_path) / 'val/labels'
+    
+    valdata_imgs_paths = get_files_from_folders_with_ending([valdata_imgs_path], (".png", ".jpg"))
+    valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
+    
+    if not use_sahi:
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
     else:
         # Get sahi imports and model if set
         from sahi.predict import get_sliced_prediction
         from sahi import AutoDetectionModel
-        model = AutoDetectionModel.from_pretrained(model_type='yolov5', model_path=network_file)
+        model = AutoDetectionModel.from_pretrained(model_type='yolov5', model_path=model_path)
     
-    valdata_imgs_path = Path(args.dataset_folder) / 'val/images'
-    valdata_labels_path = Path(args.dataset_folder) / 'val/labels'
-    
-    valdata_imgs_paths = get_files_from_folders_with_ending([valdata_imgs_path], (".png", ".jpg"))
-    valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
-
     i=0
-    out_testdata_path = create_dir_if_not_exists(train_dir / f'{args.run}/test')
     for img_path, label_path in zip(valdata_imgs_paths, valdata_labels_paths):
         
         # Write input picture
@@ -67,7 +63,7 @@ def main():
         img = cv2.imread(img_path)
         img_h, img_w = img.shape[:2]
         
-        if not args.use_sahi:
+        if not use_sahi:
             # Default Yolov5 inference
             
             # Write model out
