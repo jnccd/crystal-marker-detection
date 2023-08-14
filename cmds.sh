@@ -35,13 +35,15 @@ python traindata-creator/createDataset.py -n good-pics-v2-lm2-only-test -tf trai
 # Create Valsets
 python traindata-creator/createDataset.py -n on-skin-valset -vf traindata-creator/dataseries/man-fPCS_on_skin/ -t yolov5 -s 640
 python traindata-creator/createDataset.py -n on-skin-valset-v2 -vf traindata-creator/dataseries/man-fPCS_on_skin/ traindata-creator/dataseries/man-on_skin_v2/ -t yolov5 -s 640
-python traindata-creator/createDataset.py -n on-skin-valset-v3-ensample-val -vf traindata-creator/dataseries/man-fPCS_on_skin/ -t yolov5 -s 640
-python traindata-creator/createDataset.py -n on-skin-valset-v3-testset -vf traindata-creator/dataseries/man-on_skin_v2/ -t yolov5 -s 640
+python traindata-creator/createDataset.py -n on-skin-valset-v3-ensample-test -vf traindata-creator/dataseries/man-on_skin_v3_ensample_test/ -t yolov5 -s 640
+python traindata-creator/createDataset.py -n on-skin-valset-v3-testset -vf traindata-creator/dataseries/man-on_skin_v3_test/ -t yolov5 -s 640
+python traindata-creator/createDataset.py -n on-skin-valset-v3-ensample-test -vf traindata-creator/dataseries/man-on_skin_v3_ensample_test/ -t yolov5 -s 0
+python traindata-creator/createDataset.py -n on-skin-valset-v3-testset -vf traindata-creator/dataseries/man-on_skin_v3_test/ -t yolov5 -s 0
 # Good pics v3
 python traindata-creator/createDataset.py -n good-pics-v3-no-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s2/ traindata-creator/dataseries/af-good-zimmer-v1/ -r 0.1 -t yolov5 -s 640
 python traindata-creator/createDataset.py -n good-pics-v3-def-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s2/ traindata-creator/dataseries/af-good-zimmer-v1/ -r 0.1 -t yolov5 -s 640 -a -aim 4 -asgsc 0.9 -apldc 0.6 -apc 0.6 -aps 0.08 -arc 0.9 -ars 45 -andrc 0.7 -arc2c 0.6 -almc 0 -alm2c 0 -agnc 0
 python traindata-creator/createDataset.py -n good-pics-v3-def2-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s2/ traindata-creator/dataseries/af-good-zimmer-v1/ -r 0.1 -t yolov5 -s 640 -a -aim 4 -asgsc 0.3 -apldc 0.3 -apc 0.3 -aps 0.05 -arc 0.4 -ars 128 -andrc 0.7 -arc2c 0.3 -almc 0 -alm2c 0 -agnc 0.05
-# Good pics compare builds 
+# Good pics compare builds
 python traindata-creator/createDataset.py -n good-pics-v1-no-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640
 python traindata-creator/createDataset.py -n good-pics-v1-def-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0.9 -apldc 0.6 -apc 0.6 -aps 0.08 -arc 0.9 -ars 45 -andrc 0.7 -arc2c 0.6 -almc 0 -alm2c 0 -agnc 0
 python traindata-creator/createDataset.py -n good-pics-v1-def2-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0.3 -apldc 0.3 -apc 0.3 -aps 0.05 -arc 0.4 -ars 128 -andrc 0.7 -arc2c 0.3 -almc 0 -alm2c 0 -agnc 0.05
