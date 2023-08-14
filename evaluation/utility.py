@@ -29,6 +29,24 @@ def create_dir_if_not_exists(dir: Path, clear = False):
         os.makedirs(dir)
     return dir
 
+def get_all_subfolder_run_dirs(search_root_dirs: list[str]):
+    """Finds all subfolders that are run folders as well as paths to important files within.
+
+    Arguments:
+      search_root_dirs: A list of paths to search all subfolders of for run files.
+
+    Returns:
+      A list of tuples (run_path, train_def_path, eval_path).
+    """
+    
+    train_def_paths = flatten([[x for x in Path(search_root_dir).glob('**/training-def.json')
+                                if not str(x).__contains__("_old")] 
+                                for search_root_dir in search_root_dirs])
+    run_paths = [x.parent.parent if x.parent.stem == 'test' else x.parent 
+                    for x in train_def_paths]
+    eval_paths = [x / 'test/evals/evals.json' for x in run_paths]
+    return list(zip(run_paths, train_def_paths, eval_paths))
+
 # Other
 def flatten(list):
     return [item for sublist in list for item in sublist]
