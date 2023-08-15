@@ -1,7 +1,11 @@
 import os
 from pathlib import Path
+import re
 import shutil
 from typing import List
+
+yolov5_pattern = re.compile('yolov5(.?)$')
+yolov8_pattern = re.compile('yolov8(.?)$|yolov5(.?)u$')
 
 # String stuff
 def startswith_any(filename: str, prefs: List[str]):
@@ -48,8 +52,10 @@ def get_all_subfolder_run_dirs(search_root_dirs):
     
     tuple_paths_list = list(zip(run_paths, train_def_paths, eval_paths))
     dict_keys = ['run_root', 'train_def', 'eval']
-    return [dict(zip(dict_keys, x)) for x in tuple_paths_list 
-            if os.path.exists(x[2]) and os.path.isfile(x[2]) and os.path.exists(x[1]) and os.path.isfile(x[1])]
+    dict_list = [dict(zip(dict_keys, x)) for x in tuple_paths_list 
+                    if os.path.exists(x[2]) and os.path.isfile(x[2]) and os.path.exists(x[1]) and os.path.isfile(x[1])]
+    dict_list.sort(key=lambda d: d['run_root'].stem)
+    return dict_list
 
 # Other
 def flatten(list):
