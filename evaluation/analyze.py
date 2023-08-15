@@ -16,8 +16,10 @@ bbox_inflation = 0
 
 def analyze(
     run_or_testdata: str,
+    build_debug_output: bool = False,
     ):
     
+    # Interprete run_or_testdata input as run name in cmd_tf, as a path to a run or as a path to a test folder with evaluation data
     root_dir = Path(__file__).resolve().parent
     if os.path.exists(run_or_testdata) and os.path.isdir(run_or_testdata):
         testdata_path = Path(run_or_testdata)
@@ -67,7 +69,8 @@ def analyze(
                     bboxes_xyxy.append(tuple([float(x) for x in line.split(' ')]))
             target_bboxes_per_img.append(bboxes_xyxy)
             
-            cv2.imwrite(str(target_out)+'.bbox_test.png', draw_bboxes(cv2.imread(str(in_img), cv2.IMREAD_GRAYSCALE), bboxes_xyxy))
+            if build_debug_output:
+                cv2.imwrite(str(target_out)+'.bbox_test.png', draw_bboxes(cv2.imread(str(in_img), cv2.IMREAD_GRAYSCALE), bboxes_xyxy))
         
         network_bboxes_per_img = []
         for network_out in bbox_network_outs:
@@ -79,7 +82,8 @@ def analyze(
                     bboxes_xyxy.append(tuple([float(x) for x in line.split(' ')]))
             network_bboxes_per_img.append(bboxes_xyxy)
             
-            cv2.imwrite(str(network_out)+'.bbox_test.png', draw_bboxes(cv2.imread(str(in_img), cv2.IMREAD_GRAYSCALE), bboxes_xyxy))
+            if build_debug_output:
+                cv2.imwrite(str(network_out)+'.bbox_test.png', draw_bboxes(cv2.imread(str(in_img), cv2.IMREAD_GRAYSCALE), bboxes_xyxy))
     
     # print('target_bboxes',target_bboxes_per_img)
     # print('network_bboxes',network_bboxes_per_img)
@@ -313,7 +317,10 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(prog='analyze', description='Analyzes object detection and segmentation models by unifying the results as bboxes through pixel clustering.')
     parser.add_argument('-av','--analyze-valdata-from', type=str, default='', help='Set to a run name to analyze the validation data of or to a path to a folder containing validation data')
+    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
     args = parser.parse_args()
     
-    analyze(args.analyze_valdata_from)
+    analyze(run_or_testdata=args.analyze_valdata_from,
+            build_debug_output=args.debug_output_imgs,
+            )
     
