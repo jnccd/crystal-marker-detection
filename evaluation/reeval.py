@@ -23,9 +23,6 @@ runs_paths = get_all_subfolder_run_dirs(flatten(args.runs_folders))
 newline_char = "\n" # Python 3.9 :/
 print(f'Running reeval run on the following {len(runs_paths)} training runs:\n{newline_char.join([str(x["run_root"]) for x in runs_paths])}')
 
-yolov5_pattern = re.compile('yolov5(.?)$')
-yolov8_pattern = re.compile('yolov8(.?)$|yolov5(.?)u$') 
-
 for run_paths_dict in runs_paths:
     training_run_folder = run_paths_dict['run_root']
     train_def_path = run_paths_dict['train_def']
