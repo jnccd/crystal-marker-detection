@@ -17,6 +17,7 @@ def main():
     parser.add_argument('-r','--run-folder', type=str, help='Yolov5 run foldername, or path to runfolder.')
     parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use as a testset for this evaluation.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
+    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
     args = parser.parse_args()
     
     # Set up Paths
@@ -34,12 +35,18 @@ def main():
         valset_path= args.testset_folder, 
         out_testdata_path= run_test_folder_path,
         use_sahi= args.use_sahi,
+        build_debug_output=args.debug_output_imgs,
     )
     
     # Start analyze script
     os.system(f'python evaluation/analyze.py -av {run_folder_path}')
     
-def gen_evaldata(model_path, valset_path, out_testdata_path, use_sahi = False):
+def gen_evaldata(model_path,
+                valset_path, 
+                out_testdata_path, 
+                use_sahi = False,
+                build_debug_output: bool = False
+                ):
     valdata_imgs_path = Path(valset_path) / 'val/images'
     valdata_labels_path = Path(valset_path) / 'val/labels'
     
@@ -124,10 +131,11 @@ def gen_evaldata(model_path, valset_path, out_testdata_path, use_sahi = False):
                 text_file.write(f"{min_x} {min_y} {max_x} {max_y}\n")
                 #print(f"{min_x} {min_y} {max_x} {max_y}")
                 
-                verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
-                #print(verts)
-                cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
-                cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
+                if build_debug_output:
+                    verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
+                    #print(verts)
+                    cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
+                    cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
                 
         i+=1
 
