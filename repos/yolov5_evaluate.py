@@ -96,7 +96,7 @@ def gen_evaldata(model_path, valset_path, out_testdata_path, use_sahi = False):
             
         # Write labels
         # Rasterize Segmentation image
-        sanity_check_image = np.zeros((img_w, img_h) + (3,), dtype = np.uint8)
+        sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
         vd_bbox_lines_og = vd_bbox_lines
