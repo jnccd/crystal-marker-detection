@@ -29,7 +29,7 @@ def create_dir_if_not_exists(dir: Path, clear = False):
         os.makedirs(dir)
     return dir
 
-def get_all_subfolder_run_dirs(search_root_dirs: list[str]):
+def get_all_subfolder_run_dirs(search_root_dirs):
     """Finds all subfolders that are run folders as well as paths to important files within.
 
     Arguments:
