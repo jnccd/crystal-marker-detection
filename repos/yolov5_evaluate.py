@@ -14,8 +14,8 @@ from utility import *
 
 def main():
     parser = argparse.ArgumentParser(prog='yolov5-gen-evaluation-data', description='Generate testable evaluation data for yolov5 output on some datasets valdata.')
-    parser.add_argument('-r','--run-folder', type=str, default='', help='Yolov5 run foldername, or path to runfolder.')
-    parser.add_argument('-t','--testset-folder', type=str, default='',  help='The dataset to use as a testset for this evaluation.')
+    parser.add_argument('-r','--run-folder', type=str, help='Yolov5 run foldername, or path to runfolder.')
+    parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use as a testset for this evaluation.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
     args = parser.parse_args()
     
