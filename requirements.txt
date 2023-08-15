@@ -24,3 +24,8 @@ segmentation-models==1.0.1
 tikzplotlib>=0.10.1
 keras>=2.10.0
 shapely
+ensemble-boxes
+
+# sahi
+sahi
+yolov5==7.0.4
