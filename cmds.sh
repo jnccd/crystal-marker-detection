@@ -127,11 +127,12 @@ for i in `seq 0 1 5`; do
     python traindata-creator/createDataset.py -n good-pics-v3-p$i-def2-aug -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ /data/pcmd/dataseries/af-the_good_pics_for_nn3_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn3_s2/ /data/pcmd/dataseries/af-good-zimmer-v1/ -r 0.1 -t yolov5 -s 640 -a -aim 4 -asgsc 0.3 -apldc 0.3 -apc 0.3 -aps 0.05 -arc 0.4 -ars 128 -andrc 0.7 -arc2c 0.3 -almc 0 -alm2c 0 -agnc 0.2 -taf /data/pcmd/dataset/_noise-gp-compare
 done
 
-# Fusion inference
+# Advanced inference
 python evaluation/fusion_inference.py -r evaluation/from-server/yolov5s-rot-ensample/ -rnp yolov5-640-gpv2-rot-234-p[0-9]*-yolo5aug
 python evaluation/analyze.py -av evaluation/from-server/yolov5s-rot-ensample/yolov5-640-gpv2-rot-234-p0-yolo5aug/test_fused/
 python evaluation/fusion_inference.py -r evaluation/from-server/noise-sgs-ensample/ -rnp yolov5-640-gpv2-sgs-10-p[0-9]*-yolo5aug
 python evaluation/analyze.py -av evaluation/from-server/noise-sgs-ensample/yolov5-640-gpv2-sgs-10-p0-yolo5aug/test_fused/
+python repos/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensample/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-testset/ -us
 
 # Run datasets ensample on remote
 python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensample-test
