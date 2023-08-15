@@ -139,10 +139,11 @@ python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-no-yoloaug -r evaluat
 python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*(?<!yolo5aug)$'
 python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$'
 python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
+python evaluation/plot_ensample.py -n yolov5-noise-gp-tv3old -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
 
 # Worker Ensample
 with_gpu -n 1 sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' ncarstensen/pcmd:0.1 python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/ -wi 0 -wc 2
 python3 mip_worker_batch_train.py -c "python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/"
 python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-rots/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-rot-ensample/"
 python3 mip_worker_batch_train.py -n 9 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensample/"
-python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensample-val/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensample/"
+python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensample-test/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensample-tv3/"
