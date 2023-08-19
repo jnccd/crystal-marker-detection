@@ -1,7 +1,7 @@
 from sahi.predict import get_sliced_prediction
 from sahi import AutoDetectionModel
 
-detection_model = AutoDetectionModel.from_pretrained(model_type='yolov5', model_path='evaluation/from-server/yolov5s-rot-ensample/yolov5-640-gpv2-rot-234-p1-yolo5aug/weights/best.pt') # for YOLOv5 models
+detection_model = AutoDetectionModel.from_pretrained(model_type='yolov5', model_path='evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p1-yolo5aug/weights/best.pt') # for YOLOv5 models
 
 # get sliced prediction result
 result = get_sliced_prediction(

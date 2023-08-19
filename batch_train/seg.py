@@ -8,7 +8,7 @@ from pathlib import Path
 
 from utils import *
 
-# Segmentation models ensample run
+# Segmentation models ensemble run
 
 def main():
     start_time = time.time()
@@ -26,7 +26,7 @@ def main():
                         and not str(x).__contains__("-valset")]
     testset_path = root_dir.parent / args.testset_path
     newline_char = "\n" # Python 3.9 :/
-    print(f'Running ensample run using the following datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
+    print(f'Running ensemble run using the following datasets:\n{newline_char.join([str(x) for x in dataset_dirs])}')
 
     # Main train loop
     for dir in dataset_dirs:
