@@ -35,9 +35,9 @@ python traindata-creator/createDataset.py -n good-pics-v2-lm2-only-test -tf trai
 # Create Valsets
 python traindata-creator/createDataset.py -n on-skin-valset -vf traindata-creator/dataseries/man-fPCS_on_skin/ -t yolov5 -s 640
 python traindata-creator/createDataset.py -n on-skin-valset-v2 -vf traindata-creator/dataseries/man-fPCS_on_skin/ traindata-creator/dataseries/man-on_skin_v2/ -t yolov5 -s 640
-python traindata-creator/createDataset.py -n on-skin-valset-v3-ensample-test -vf traindata-creator/dataseries/man-on_skin_v3_ensample_test/ -t yolov5 -s 640
+python traindata-creator/createDataset.py -n on-skin-valset-v3-ensemble-test -vf traindata-creator/dataseries/man-on_skin_v3_ensemble_test/ -t yolov5 -s 640
 python traindata-creator/createDataset.py -n on-skin-valset-v3-testset -vf traindata-creator/dataseries/man-on_skin_v3_test/ -t yolov5 -s 640
-python traindata-creator/createDataset.py -n on-skin-valset-v3-ensample-test -vf traindata-creator/dataseries/man-on_skin_v3_ensample_test/ -t yolov5 -s 0
+python traindata-creator/createDataset.py -n on-skin-valset-v3-ensemble-test -vf traindata-creator/dataseries/man-on_skin_v3_ensemble_test/ -t yolov5 -s 0
 python traindata-creator/createDataset.py -n on-skin-valset-v3-testset -vf traindata-creator/dataseries/man-on_skin_v3_test/ -t yolov5 -s 0
 # Good pics v3
 python traindata-creator/createDataset.py -n good-pics-v3-no-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn3_s2/ traindata-creator/dataseries/af-good-zimmer-v1/ -r 0.1 -t yolov5 -s 640
@@ -51,7 +51,7 @@ python traindata-creator/createDataset.py -n good-pics-v2-no-aug -tf traindata-c
 python traindata-creator/createDataset.py -n good-pics-v2-def-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0.9 -apldc 0.6 -apc 0.6 -aps 0.08 -arc 0.9 -ars 45 -andrc 0.7 -arc2c 0.6 -almc 0 -alm2c 0 -agnc 0
 python traindata-creator/createDataset.py -n good-pics-v2-def2-aug -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0.3 -apldc 0.3 -apc 0.3 -aps 0.05 -arc 0.4 -ars 128 -andrc 0.7 -arc2c 0.3 -almc 0 -alm2c 0 -agnc 0.05
 
-# Ensample run using cmd_tf
+# ensemble run using cmd_tf
 python -m cmd_tf -df traindata-creator/dataset/seg-red-rects/ -r xunet-red-rects -e 75
 python -m cmd_tf -df traindata-creator/dataset/seg-red-rects/ -r sm-unet-red-rects -bs 8 -e 75
 python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco -bs 8 -e 100
@@ -89,7 +89,7 @@ python prototype-cv/classic_pipe/classic.py
 
 # Batch train
 python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/
-python batch_train/yolov5.py -d /data/pcmd/dataset/noise-sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -o training/noise-sgs-ensample -e 300
+python batch_train/yolov5.py -d /data/pcmd/dataset/noise-sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -o training/noise-sgs-ensemble -e 300
 python batch_train/yolov5.py -d traindata-creator/dataset/ -t traindata-creator/dataset/yolov5-640-on-skin-valset-v2/
 
 python -m cmd_tf -t -td traindata-creator/dataset/seg-640-on-skin-valset-v2/ -r sm-unet-aruco
@@ -105,11 +105,11 @@ python -m cmd_tf -t -td traindata-creator/dataset/seg-640-on-skin-valset-v2/ -r 
 # python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco-same1 -bs 8 -e 5
 # python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco-same2 -bs 8 -e 5
 
-# Create Ensample datasets
+# Create ensemble datasets
 for i in `seq 0 0.05 1`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -taf traindata-creator/dataset/sgss; done
-#smart grid ensample, 0 to 1 chance in 0.1 steps, 10 sets per step => 100 sets
+#smart grid ensemble, 0 to 1 chance in 0.1 steps, 10 sets per step => 100 sets
 for i in `seq 0 0.1 1`; do for j in `seq 0 1 10`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -agnc 1 -taf traindata-creator/dataset/noise-sgss; done; done
-#rotation ensample, 0 to 360deg in 18 steps (20 rot steps), 5 sets per step => 100 sets
+#rotation ensemble, 0 to 360deg in 18 steps (20 rot steps), 5 sets per step => 100 sets
 for i in `seq 0 18 360`; do for j in `seq 0 1 5`; do python traindata-creator/createDataset.py -n gpv2-rot-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -arc 1 -ars $i -agnc 1 -taf traindata-creator/dataset/_noise-rots; done; done
 #gp compare on server, 9 datasets, 10 noise sets per dataset => 90 sets
 for i in `seq 0 1 5`; do 
@@ -128,29 +128,29 @@ for i in `seq 0 1 5`; do
 done
 
 # Advanced inference
-python evaluation/fusion_inference.py -r evaluation/from-server/yolov5s-rot-ensample/ -rnp yolov5-640-gpv2-rot-234-p[0-9]*-yolo5aug
-python evaluation/analyze.py -av evaluation/from-server/yolov5s-rot-ensample/yolov5-640-gpv2-rot-234-p0-yolo5aug/test_fused/
-python evaluation/fusion_inference.py -r evaluation/from-server/noise-sgs-ensample/ -rnp yolov5-640-gpv2-sgs-10-p[0-9]*-yolo5aug
-python evaluation/analyze.py -av evaluation/from-server/noise-sgs-ensample/yolov5-640-gpv2-sgs-10-p0-yolo5aug/test_fused/
-python repos/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensample/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-testset/ -us
+python evaluation/fusion_inference.py -r evaluation/from-server/yolov5s-rot-ensemble/ -rnp yolov5-640-gpv2-rot-234-p[0-9]*-yolo5aug
+python evaluation/analyze.py -av evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p0-yolo5aug/test_fused/
+python evaluation/fusion_inference.py -r evaluation/from-server/noise-sgs-ensemble/ -rnp yolov5-640-gpv2-sgs-10-p[0-9]*-yolo5aug
+python evaluation/analyze.py -av evaluation/from-server/noise-sgs-ensemble/yolov5-640-gpv2-sgs-10-p0-yolo5aug/test_fused/
+python repos/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-testset/ -us
 
-# Run datasets ensample on remote
-python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensample-test
+# Run datasets ensemble on remote
+python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensemble-test
 
 # Eval plotting
-python evaluation/plot_ensample.py -r evaluation/from-server/first-yolov5s-runs/ -n yolov5s-runs -rns -1
-python evaluation/plot_ensample.py -r evaluation/from-server/yolov5m-runs/ -n yolov5m-runs
-python evaluation/plot_ensample.py -n yolov5s-sgs-ensample -r evaluation/from-server/yolov5s-sgs-ensample-test/
-python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-yoloaug -r evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*yolo5aug$'
-python evaluation/plot_ensample.py -n yolov5s-sgs-ensample-no-yoloaug -r evaluation/from-server/yolov5s-sgs-ensample-test/ -rnp '.*(?<!yolo5aug)$'
-python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*(?<!yolo5aug)$'
-python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$'
-python evaluation/plot_ensample.py -n yolov5-noise-sgs-ensample-yolov5aug -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -ci 4 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
-python evaluation/plot_ensample.py -n yolov5-noise-gp-tv3old -r evaluation/from-server/noise-sgs-ensample/ -pi 5 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
+python evaluation/plot_ensemble.py -r evaluation/from-server/first-yolov5s-runs/ -n yolov5s-runs -rns -1
+python evaluation/plot_ensemble.py -r evaluation/from-server/yolov5m-runs/ -n yolov5m-runs
+python evaluation/plot_ensemble.py -n yolov5s-sgs-ensemble -r evaluation/from-server/yolov5s-sgs-ensemble-test/
+python evaluation/plot_ensemble.py -n yolov5s-sgs-ensemble-yoloaug -r evaluation/from-server/yolov5s-sgs-ensemble-test/ -rnp '.*yolo5aug$'
+python evaluation/plot_ensemble.py -n yolov5s-sgs-ensemble-no-yoloaug -r evaluation/from-server/yolov5s-sgs-ensemble-test/ -rnp '.*(?<!yolo5aug)$'
+python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -ci 4 -rnp '.*(?<!yolo5aug)$'
+python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble-yolov5aug -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -ci 4 -rnp '.*yolo5aug$'
+python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble-yolov5aug -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -ci 4 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
+python evaluation/plot_ensemble.py -n yolov5-noise-gp-tv3old -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
 
-# Worker Ensample
+# Worker ensemble
 with_gpu -n 1 sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' ncarstensen/pcmd:0.1 python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/ -wi 0 -wc 2
 python3 mip_worker_batch_train.py -c "python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/"
-python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-rots/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-rot-ensample/"
-python3 mip_worker_batch_train.py -n 9 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensample/"
-python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensample-test/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensample-tv3/"
+python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-rots/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-rot-ensemble/"
+python3 mip_worker_batch_train.py -n 9 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensemble/"
+python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensemble-test/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensemble-tv3/"

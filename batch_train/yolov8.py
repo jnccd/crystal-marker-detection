@@ -51,7 +51,7 @@ def main():
     if args.worker_index >= 0 and args.worker_count > 0:
         datasets_dirs = datasets_dirs[int((dd_n / args.worker_count) * args.worker_index):int((dd_n / args.worker_count) * (args.worker_index+1))]
     newline_char = "\n" # Python 3.9 :/
-    print(f'Running ensample run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
+    print(f'Running ensemble run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
     #sys.exit(0) # For dataset choosing testing
     
     os.environ['KMP_DUPLICATE_LIB_OK']='True'
