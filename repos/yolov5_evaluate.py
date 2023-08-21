@@ -16,6 +16,8 @@ def main():
     parser = argparse.ArgumentParser(prog='yolov5-gen-evaluation-data', description='Generate testable evaluation data for yolov5 output on some datasets valdata.')
     parser.add_argument('-r','--run-folder', type=str, help='Yolov5 run foldername, or path to runfolder.')
     parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use as a testset for this evaluation.')
+    
+    parser.add_argument('-ct','--confidence-threshold', type=int, default=0.5, help='The minimum confidence of considered predictions.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
     parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
     args = parser.parse_args()
@@ -34,6 +36,7 @@ def main():
         model_path= run_best_model_path,
         valset_path= args.testset_folder, 
         out_testdata_path= run_test_folder_path,
+        confidence_thereshold= args.confidence_thereshold,
         use_sahi= args.use_sahi,
         build_debug_output=args.debug_output_imgs,
     )
@@ -44,6 +47,7 @@ def main():
 def gen_evaldata(model_path,
                 valset_path, 
                 out_testdata_path, 
+                confidence_thereshold = 0.5,
                 use_sahi = False,
                 build_debug_output: bool = False
                 ):
@@ -95,7 +99,7 @@ def gen_evaldata(model_path,
         # Write model out
         with open(out_testdata_path / f'{i}_network_output.txt', "w") as text_file:
             for xmin, ymin, xmax, ymax, conf in boxes:
-                if conf > 0.5:
+                if conf > confidence_thereshold:
                     text_file.write(f"{xmin} {ymin} {xmax} {ymax} {conf}\n")
             
         # Write labels
