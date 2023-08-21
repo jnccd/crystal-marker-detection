@@ -70,19 +70,14 @@ def gen_evaldata(model_path,
         img = cv2.imread(img_path)
         img_h, img_w = img.shape[:2]
         
+        # Gather inference results from different sources
+        boxes = [] # [(xmin, ymin, xmax, ymax, conf), ..]
         if not use_sahi:
             # Default Yolov5 inference
-            
-            # Write model out
             results = model(img)
             res_df = results.pandas().xyxy[0]
-            out_path = out_testdata_path / f'{i}_network_output.txt'
-            with open(out_path, "w") as text_file:
-                res_df = res_df.reset_index()
-                for index, row in res_df.iterrows():
-                    if row['confidence'] > 0.5:
-                        text_file.write(f"{row['xmin']} {row['ymin']} {row['xmax']} {row['ymax']} {row['confidence']}\n")
-            #print(out_img_path)
+            for index, row in res_df.iterrows():
+                boxes.append((row['xmin'], row['ymin'], row['xmax'], row['ymax'], row['confidence']))
             cv2.imwrite(str(out_testdata_path / f'{i}_result_render.png'), np.squeeze(results.render()))
         else:
             # Sahi inference
@@ -94,12 +89,14 @@ def gen_evaldata(model_path,
                 overlap_height_ratio = 0.2,
                 overlap_width_ratio = 0.2
             )
+            for pred in result.object_prediction_list:
+                boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
-            out_path = out_testdata_path / f'{i}_network_output.txt'
-            with open(out_path, "w") as text_file:
-                for pred in result.object_prediction_list:
-                    if pred.score.value > 0.5:
-                        text_file.write(f"{pred.bbox.minx} {pred.bbox.miny} {pred.bbox.maxx} {pred.bbox.maxy} {pred.score.value}\n")
+        # Write model out
+        with open(out_testdata_path / f'{i}_network_output.txt', "w") as text_file:
+            for xmin, ymin, xmax, ymax, conf in boxes:
+                if conf > 0.5:
+                    text_file.write(f"{xmin} {ymin} {xmax} {ymax} {conf}\n")
             
         # Write labels
         # Rasterize Segmentation image
