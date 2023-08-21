@@ -17,7 +17,8 @@ def main():
     parser.add_argument('-r','--run-folder', type=str, help='Yolov5 run foldername, or path to runfolder.')
     parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use as a testset for this evaluation.')
     
-    parser.add_argument('-ct','--confidence-threshold', type=int, default=0.5, help='The minimum confidence of considered predictions.')
+    parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
+    parser.add_argument('-ct','--confidence-threshold', type=float, default=0.5, help='The minimum confidence of considered predictions.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
     parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
     args = parser.parse_args()
@@ -38,6 +39,7 @@ def main():
         out_testdata_path= run_test_folder_path,
         confidence_threshold= args.confidence_threshold,
         use_sahi= args.use_sahi,
+        border_ignore_size= args.border_ignore_size,
         build_debug_output=args.debug_output_imgs,
     )
     
@@ -49,6 +51,7 @@ def gen_evaldata(model_path,
                 out_testdata_path, 
                 confidence_threshold = 0.5,
                 use_sahi = False,
+                border_ignore_size = 0,
                 build_debug_output: bool = False
                 ):
     valdata_imgs_path = Path(valset_path) / 'val/images'
@@ -96,8 +99,15 @@ def gen_evaldata(model_path,
             for pred in result.object_prediction_list:
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
-        # Write model out
+        # Filter model out
         print('boxes', boxes)
+        if border_ignore_size > 0:
+            boxes = list(filter(lambda box: #xmin, ymin, xmax, ymax, conf: 
+                box[0] / img_w > border_ignore_size and 
+                box[1] / img_h > border_ignore_size and
+                1 - (box[2] / img_w) > border_ignore_size and 
+                1 - (box[3] / img_h) > border_ignore_size, boxes))
+        # Write model out
         with open(out_testdata_path / f'{i}_network_output.txt', "w") as text_file:
             for xmin, ymin, xmax, ymax, conf in boxes:
                 if conf > confidence_threshold:
