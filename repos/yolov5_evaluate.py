@@ -36,7 +36,7 @@ def main():
         model_path= run_best_model_path,
         valset_path= args.testset_folder, 
         out_testdata_path= run_test_folder_path,
-        confidence_thereshold= args.confidence_thereshold,
+        confidence_threshold= args.confidence_threshold,
         use_sahi= args.use_sahi,
         build_debug_output=args.debug_output_imgs,
     )
@@ -47,7 +47,7 @@ def main():
 def gen_evaldata(model_path,
                 valset_path, 
                 out_testdata_path, 
-                confidence_thereshold = 0.5,
+                confidence_threshold = 0.5,
                 use_sahi = False,
                 build_debug_output: bool = False
                 ):
@@ -97,9 +97,10 @@ def gen_evaldata(model_path,
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
         # Write model out
+        print('boxes', boxes)
         with open(out_testdata_path / f'{i}_network_output.txt', "w") as text_file:
             for xmin, ymin, xmax, ymax, conf in boxes:
-                if conf > confidence_thereshold:
+                if conf > confidence_threshold:
                     text_file.write(f"{xmin} {ymin} {xmax} {ymax} {conf}\n")
             
         # Write labels
