@@ -47,3 +47,6 @@ def create_dir_if_not_exists(dir: Path, clear = False):
     if not os.path.exists(dir):
         os.makedirs(dir)
     return dir
+
+def flatten(list):
+    return [item for sublist in list for item in sublist]

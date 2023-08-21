@@ -17,8 +17,9 @@ def main():
     parser.add_argument('-r','--run-folder', type=str, help='Yolov5 run foldername, or path to runfolder.')
     parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use as a testset for this evaluation.')
     
-    parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
     parser.add_argument('-ct','--confidence-threshold', type=float, default=0.5, help='The minimum confidence of considered predictions.')
+    parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
+    parser.add_argument('-sqt','--squareness-threshold', type=float, default=0, help='The minimum squareness of considered prediction boxes.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
     parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
     args = parser.parse_args()
@@ -38,6 +39,7 @@ def main():
         valset_path= args.testset_folder, 
         out_testdata_path= run_test_folder_path,
         confidence_threshold= args.confidence_threshold,
+        squareness_threshold= args.squareness_threshold,
         use_sahi= args.use_sahi,
         border_ignore_size= args.border_ignore_size,
         build_debug_output=args.debug_output_imgs,
@@ -50,6 +52,7 @@ def gen_evaldata(model_path,
                 valset_path, 
                 out_testdata_path, 
                 confidence_threshold = 0.5,
+                squareness_threshold = 0,
                 use_sahi = False,
                 border_ignore_size = 0,
                 build_debug_output: bool = False
@@ -107,11 +110,20 @@ def gen_evaldata(model_path,
                 box[1] / img_h > border_ignore_size and
                 1 - (box[2] / img_w) > border_ignore_size and 
                 1 - (box[3] / img_h) > border_ignore_size, boxes))
+        if squareness_threshold > 0:
+            boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
+        boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
+        # Rasterize Segmentation image
+        if build_debug_output:
+            sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
+            for min_x, min_y, max_x, max_y, conf in boxes:
+                verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y)), (int(min_x), int(min_y))])
+                cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
+            cv2.imwrite(str(out_testdata_path / f'{i}_network_output.png'), sanity_check_image)
         # Write model out
         with open(out_testdata_path / f'{i}_network_output.txt', "w") as text_file:
             for xmin, ymin, xmax, ymax, conf in boxes:
-                if conf > confidence_threshold:
-                    text_file.write(f"{xmin} {ymin} {xmax} {ymax} {conf}\n")
+                text_file.write(f"{xmin} {ymin} {xmax} {ymax} {conf}\n")
             
         # Write labels
         # Rasterize Segmentation image
@@ -119,12 +131,8 @@ def gen_evaldata(model_path,
         with open(label_path, 'r') as file:
             vd_bbox_lines = file.read().split('\n')
         vd_bbox_lines_og = vd_bbox_lines
-        #print("vd_bbox_lines", vd_bbox_lines)
         vd_bbox_lines = list(filter(lambda s: s and not s.isspace(), vd_bbox_lines)) # Filter whitespace lines away
         target_output_path = out_testdata_path / f'{i}_target_output.txt'
-        #print("target_output_path", target_output_path)
-        #print("vd_bbox_lines", vd_bbox_lines)
-        #print("label_path", label_path)
         with open(target_output_path, "w") as text_file:
             for line in vd_bbox_lines:
                 sc, sx, sy, sw, sh = line.split(' ')
@@ -141,11 +149,9 @@ def gen_evaldata(model_path,
                 max_y = bbox_h + min_y
                 
                 text_file.write(f"{min_x} {min_y} {max_x} {max_y}\n")
-                #print(f"{min_x} {min_y} {max_x} {max_y}")
                 
                 if build_debug_output:
                     verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
-                    #print(verts)
                     cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
                     cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
                 
