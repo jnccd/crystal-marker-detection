@@ -592,6 +592,43 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     
     return img, polys
 
+def black_dot_aug(img: Mat, polys: List[Polygon]):
+    img_h, img_w = img.shape[:2]
+    blur_strength = 7
+    
+    while True:
+        circle_alpha = random.randrange(128, 255)
+    
+        # Set target position
+        bd_bounds_size = random.randint(int(img_w*0.05), int(img_w*0.1))
+        bd_radius = int(bd_bounds_size / 2)
+        while True:
+            new_pos_x = random.randrange(0, img_w - bd_bounds_size)
+            new_pos_y = random.randrange(0, img_h - bd_bounds_size)
+            if not any([x.bounds[0] < new_pos_x + bd_bounds_size and
+                        x.bounds[2] > new_pos_x and
+                        x.bounds[1] < new_pos_y + bd_bounds_size and
+                        x.bounds[3] > new_pos_y
+                        for x in polys]):
+                break
+        
+        # Create circle overlay
+        alpha_channel_img = np.zeros((img_h, img_w, 4), dtype = np.uint8)
+        cv2.circle(alpha_channel_img, (new_pos_x + bd_radius, new_pos_y + bd_radius), bd_radius - blur_strength, (0, 0, 0, circle_alpha), -1)
+        kernel = cv2.getGaussianKernel(blur_strength, 1)
+        alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
+        kernel = cv2.transpose(kernel)
+        alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel)
+        
+        # Insert circle overlay
+        img = overlay_transparent_fore_alpha(img, alpha_channel_img, new_pos_x, new_pos_y)
+        #cv2.rectangle(img, (new_pos_x, new_pos_y), (new_pos_x + bd_bounds_size, new_pos_y + bd_bounds_size), (0, 255, 0))
+        
+        if random.random() < 0.6:
+            break
+    
+    return img, polys
+
 def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
