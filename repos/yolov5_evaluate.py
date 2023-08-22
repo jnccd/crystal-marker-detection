@@ -1,5 +1,6 @@
 import argparse
 import glob
+import json
 from math import isnan
 import os
 import shutil
@@ -156,6 +157,18 @@ def gen_evaldata(model_path,
                     cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
                 
         i+=1
+    
+    # Add test def dict
+    valset_def_dict = json.loads(read_textfile(Path(valset_path) / 'dataset-def.json').replace("    ", "").replace("\n", ""))
+    write_textfile(json.dumps({
+            'model_path': str(model_path),
+            'valset': valset_def_dict,
+            'confidence_threshold': confidence_threshold,
+            'use_sahi': use_sahi,
+            'border_ignore_size': border_ignore_size,
+            'squareness_threshold': squareness_threshold,
+            'build_debug_output': build_debug_output,
+        }, indent=4), out_testdata_path / '_test-def.json')
 
 if __name__ == '__main__':
     main()
