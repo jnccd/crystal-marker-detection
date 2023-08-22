@@ -2,7 +2,7 @@
 \usepackage{graphicx}
 \usepackage{enumitem}
 \usepackage{booktabs}
-\usepackage[textwidth=18cm, textheight=26cm]{geometry}
+\usepackage[textwidth=16cm, textheight=22cm]{geometry}
 
 %\setlength{\oddsidemargin}{11pt}% the default is 31pt so decrease by 20pt
 %\setlength{\textwidth}{430pt}% the default is 390pt so increase by 40pt
@@ -11,6 +11,22 @@
 
 \begin{document}
     \pagenumbering{gobble}
+
+    \section*{Instructions}
+
+    This image labeling is not about gathering more training data but instead about evaluating the current model output quality against human detection. The goal is to detect Aruco markers on photonic crystal structures on tape. Due to the manufacturing process of these structures, the markers are often not entirely visible.
+
+    \begin{figure}[h!]
+        \begin{center}
+          \includegraphics[width=0.3\textwidth]{images/in-img-marker-scaled.png}
+        \end{center}
+        \caption{Example of the type of aruco marker that is supposed to be detected}
+        \label{fig:marker}
+    \end{figure}
+
+    
+
+    \newpage
 
     \centerline{\Large{Examples for Markers in Images}}
     \begin{table}[h!]
