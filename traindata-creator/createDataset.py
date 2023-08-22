@@ -35,7 +35,7 @@ def main():
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
-    parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.')
+    parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.') # TODO: Update desc
     
     parser.add_argument('-asgsc','--augment-smart-grid-shuffle-chance', type=float, default=0, help='Chance that smart-grid-shuffle is applied to a sample.')
     parser.add_argument('-apldc','--augment-label-dropout-chance', type=float, default=0, help='Chance that label-dropout is applied to a sample.')
@@ -48,6 +48,7 @@ def main():
     parser.add_argument('-arc2c','--augment-random-crop-v2-chance', type=float, default=0, help='Chance that image is cropped randomly. (Improved version)')
     parser.add_argument('-almc','--augment-label-move-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image.')
     parser.add_argument('-alm2c','--augment-label-move-v2-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image. (Improved version)')
+    parser.add_argument('-abdc','--augment-black-dot-chance', type=float, default=0, help='Chance that black dots are placed on the image.')
     
     parser.add_argument('-agnc','--augment-gauss-noise-chance', type=float, default=0, help='Chance that gauss noise is applied.')
     parser.add_argument('-agns','--augment-gauss-noise-strength', type=float, default=15, help='Strength of gauss noise that is applied.')
@@ -143,6 +144,10 @@ def main():
                     # Poly Label Move v2
                     if random.random() < args.augment_label_move_v2_chance:
                         aug_img, aug_polys = poly_label_move_v2(aug_img, aug_polys)
+                        
+                    # Black dot aug
+                    if random.random() < args.augment_black_dot_chance:
+                        aug_img, aug_polys = black_dot_aug(aug_img, aug_polys)
                     
                     # Matrix Transform
                     mats = []
@@ -224,6 +229,7 @@ def main():
             'label_move_chance': args.augment_label_move_chance,
             'label_move_v2_chance': args.augment_label_move_v2_chance,
             'gauss_noise_chance': args.augment_gauss_noise_chance,
+            'black_dot_chance': args.augment_black_dot_chance,
         }, indent=4), dataset_dir / 'dataset-def.json')
 
 def build_seg_dataset(in_imgs, target_polys):
