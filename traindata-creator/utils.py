@@ -561,8 +561,7 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     while True:
         new_pos_x = random.randrange(0, img_w - og_bounds_width)
         new_pos_y = random.randrange(0, img_h - og_bounds_height)
-        target_pos_poly = get_poly_from_bounds((new_pos_x, new_pos_y, og_bounds_width, og_bounds_height))
-        if not any([x.intersects(target_pos_poly) for x in polys]):
+        if not any([do_bboxes_touch(x.bounds, (new_pos_x, new_pos_y, new_pos_x + og_bounds_width, new_pos_y + og_bounds_height)) for x in polys]):
             break
     
     # Adapt colors roughly to target position
