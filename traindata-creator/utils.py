@@ -530,6 +530,9 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     img_h, img_w = img.shape[:2]
     blur_strength = 7
     
+    if len(polys) == 0:
+        return img, polys
+    
     # Choose random polygon to be moved
     pi = random.randrange(len(polys))
     
