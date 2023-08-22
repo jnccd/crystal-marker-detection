@@ -104,7 +104,7 @@ def gen_evaldata(model_path,
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
         # Filter model out
-        print('boxes', boxes)
+        #print('boxes', boxes)
         if border_ignore_size > 0:
             boxes = list(filter(lambda box: #xmin, ymin, xmax, ymax, conf: 
                 box[0] / img_w > border_ignore_size and 
