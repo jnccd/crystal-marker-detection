@@ -597,7 +597,7 @@ def black_dot_aug(img: Mat, polys: List[Polygon]):
     blur_strength = 7
     
     while True:
-        circle_alpha = random.randrange(128, 255)
+        circle_alpha = random.randrange(180, 255)
     
         # Set target position
         bd_bounds_size = random.randint(int(img_w*0.05), int(img_w*0.1))
