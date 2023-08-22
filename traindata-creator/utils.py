@@ -552,6 +552,9 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
     polys.pop(pi)
     
+    if move_poly_img.shape[0] * move_poly_img.shape[1] == 0:
+        return img, polys
+    
     # Set target position
     og_bounds_width = move_poly_og_bounds[2] - move_poly_og_bounds[0]
     og_bounds_height = move_poly_og_bounds[3] - move_poly_og_bounds[1]
@@ -586,7 +589,6 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     # Apply mask
     move_poly_img = cv2.cvtColor(move_poly_img, cv2.COLOR_BGR2BGRA)
     move_poly_img[:, :, 3] = np.squeeze(alpha_channel_img)
-    #cv2.imwrite('test2.png', move_poly_img)
     
     # Reinsert poly label
     img = overlay_transparent_fore_alpha(img, move_poly_img, new_pos_x, new_pos_y)
