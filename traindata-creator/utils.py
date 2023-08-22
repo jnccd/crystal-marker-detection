@@ -610,11 +610,7 @@ def black_dot_aug(img: Mat, polys: List[Polygon]):
         while True:
             new_pos_x = random.randrange(0, img_w - bd_bounds_size)
             new_pos_y = random.randrange(0, img_h - bd_bounds_size)
-            if not any([x.bounds[0] < new_pos_x + bd_bounds_size and
-                        x.bounds[2] > new_pos_x and
-                        x.bounds[1] < new_pos_y + bd_bounds_size and
-                        x.bounds[3] > new_pos_y
-                        for x in polys]):
+            if not any([do_bboxes_touch(x.bounds, (new_pos_x, new_pos_y, new_pos_x + bd_bounds_size, new_pos_y + bd_bounds_size)) for x in polys]):
                 break
         
         # Create circle overlay
@@ -636,6 +632,12 @@ def black_dot_aug(img: Mat, polys: List[Polygon]):
 
 def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
+
+def do_bboxes_touch(bbox_xyxy_1, bbox_xyxy_2):
+    return  bbox_xyxy_1[0] <= bbox_xyxy_2[2] and \
+            bbox_xyxy_1[2] >= bbox_xyxy_2[0] and \
+            bbox_xyxy_1[1] <= bbox_xyxy_2[3] and \
+            bbox_xyxy_1[3] >= bbox_xyxy_2[1]
 
 def drop_low_visibility_labels(img: Mat, polys: List[Polygon], visible_area: Polygon, min_label_visiblity = 0.6):
     new_polys = []
