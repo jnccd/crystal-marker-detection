@@ -3,9 +3,6 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-# For sahi
-conda install -c conda-forge shapely
-
 pip install -r requirements.txt
 
 cd repos
