@@ -121,12 +121,12 @@ def main():
                     
                     # Random Crop
                     if random.random() < args.augment_random_crop_chance:
-                        aug_img, aug_polys = random_crop(aug_img, aug_polys, (args.size, args.size))
+                        aug_img, aug_polys = random_crop(aug_img, aug_polys, (args.size, args.size) if args.size != 0 else img_size_wh)
                         img_size_wh = tuple(reversed(aug_img.shape[:2]))
                         
                     # Random Crop V2
                     if random.random() < args.augment_random_crop_v2_chance:
-                        aug_img, aug_polys = random_crop_v2(aug_img, aug_polys, (args.size, args.size))
+                        aug_img, aug_polys = random_crop_v2(aug_img, aug_polys, (args.size, args.size) if args.size != 0 else img_size_wh)
                         img_size_wh = tuple(reversed(aug_img.shape[:2]))
                     
                     # Smart Grid Shuffle
