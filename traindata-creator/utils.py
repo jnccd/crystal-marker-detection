@@ -292,7 +292,7 @@ def overlay_transparent_fore_alpha(background_img, foreground_img, x = 0, y = 0)
     weighted_bg = background_img * (1 - weights)
     weighted_fg = foreground_img[:,:,:bg_channels] * weights
     mixed_img = weighted_bg + weighted_fg
-    return mixed_img
+    return mixed_img.astype('uint8')
     
 def segment_img_between_poly_labels(img: Mat, polys: List[Polygon], dim: Literal[0,1], collage_padding = 5):
     img_h, img_w = img.shape[:2]
@@ -596,6 +596,8 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     img = overlay_transparent_fore_alpha(img, move_poly_img, new_pos_x, new_pos_y)
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
     polys.append(move_poly)
+    
+    print('return', img.shape, img.dtype)
     
     return img, polys
 
