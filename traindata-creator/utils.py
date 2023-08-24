@@ -448,7 +448,7 @@ def random_crop_v2(img: Mat, polys: List[Polygon], target_size_wh: tuple, min_si
     crop_pos_y = random.randrange(0, img.shape[0] - max(int(min_size_wh[0] / target_size_ratio), min_size_wh[1]))
     min_size_crop_width = int(max(min_size_wh[0], min_size_wh[1] * target_size_ratio))
     max_size_crop_width = int(min(img.shape[1] - crop_pos_x, (img.shape[0] - crop_pos_y) * target_size_ratio))
-    print('target_size_wh', target_size_wh, 'min_size_wh', min_size_wh, 'crop_pos_', (crop_pos_x, crop_pos_y), 'diff', (img.shape[1] - crop_pos_x, img.shape[0] - crop_pos_y), 'min_size_crop_width', min_size_crop_width, 'max_size_crop_width', max_size_crop_width)
+    #print('target_size_wh', target_size_wh, 'min_size_wh', min_size_wh, 'crop_pos_', (crop_pos_x, crop_pos_y), 'diff', (img.shape[1] - crop_pos_x, img.shape[0] - crop_pos_y), 'min_size_crop_width', min_size_crop_width, 'max_size_crop_width', max_size_crop_width)
     crop_width = random.randrange(min_size_crop_width, max_size_crop_width)
     crop_height = int(crop_width / target_size_ratio)
     crop_img = img[crop_pos_y:crop_pos_y+crop_height, crop_pos_x:crop_pos_x+crop_width]
