@@ -597,8 +597,6 @@ def poly_label_move_v2(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     move_poly = transform(move_poly, lambda x: np.array( [(p[0] + new_pos_x, p[1] + new_pos_y) for p in x] ))
     polys.append(move_poly)
     
-    print('return', img.shape, img.dtype)
-    
     return img, polys
 
 def black_dot_aug(img: Mat, polys: List[Polygon]):
