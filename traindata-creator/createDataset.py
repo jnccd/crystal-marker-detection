@@ -112,8 +112,9 @@ def main():
         aug_in_imgs = []
         aug_target_polys = []
         
+        # Init Albumentations pixel level transforms, make sure to use own random here to use rng_seed
         transform = A.Compose([
-            A.GaussNoise(var_limit=(0, args.augment_gauss_noise_strength), p=args.augment_gauss_noise_chance)
+            A.GaussNoise(var_limit=(0, args.augment_gauss_noise_strength), p=(1 if random.random() < args.augment_gauss_noise_chance else 0))
         ])
         
         for i, (in_img, target_poly) in enumerate(zip(in_imgs[aug_group], target_polys[aug_group])):
