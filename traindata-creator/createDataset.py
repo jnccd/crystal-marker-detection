@@ -33,6 +33,7 @@ def main():
     parser.add_argument('-vf','--valdata-folders', action='append', nargs='+', type=str, help='The folders containing validation data.')
     parser.add_argument('-taf','--target-folder', type=str, help='The folder to build the dataset folder into.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
+    parser.add_argument('-sd','--seed', type=int, help='Sets the seed that defines the pseudo random dataset generation.')
     
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.') # TODO: Update desc
@@ -57,6 +58,10 @@ def main():
     if args.size is None:
         print('Please specify a size')
         sys.exit(1)
+        
+    # Set random seed
+    rng_seed = args.seed if args.seed is not None else random.randrange(sys.maxsize)
+    random.seed(rng_seed)
     
     args.name = args.name.replace('.','').replace('/','').replace('\\','').replace('>','').replace('<','').replace(':','').replace('|','').replace('?','').replace('*','')
     dataset_name = f'{args.type}-{args.size}-{args.name}'
@@ -213,6 +218,7 @@ def main():
     write_textfile(json.dumps({
             'name': dataset_name,
             'type': args.type,
+            'rng_seed': rng_seed,
             'td_series': args.traindata_folders,
             'vd_series': args.valdata_folders,
             'ratio': args.ratio,
