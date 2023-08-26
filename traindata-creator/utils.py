@@ -1,3 +1,4 @@
+import math
 import os
 from pathlib import Path
 import random
@@ -79,9 +80,14 @@ def flatten(list):
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
 
-def inflate_poly(p: Polygon, amount):
+def inflate_poly(p: Polygon, amount_mult):
     centroid = p.centroid
-    return transform(p, lambda x: np.array([(p[0] + (p[0] - centroid.x) * amount, p[1] + (p[1] - centroid.y) * amount) for p in x]))
+    return transform(p, lambda x: np.array([(p[0] + (p[0] - centroid.x) * amount_mult, p[1] + (p[1] - centroid.y) * amount_mult) for p in x]))
+
+def inflate_bbox_xyxy(bbox_xyxy: tuple, amount_mult):
+    bbox_width = bbox_xyxy[2] - bbox_xyxy[0]
+    bbox_height = bbox_xyxy[3] - bbox_xyxy[1]
+    return (bbox_xyxy[0] - amount_mult*bbox_width, bbox_xyxy[1] - amount_mult*bbox_height, bbox_xyxy[2] + amount_mult*bbox_width, bbox_xyxy[3] + amount_mult*bbox_height)
 
 def get_bounds(point2D_list):
     x = min([p[0] for p in point2D_list])
