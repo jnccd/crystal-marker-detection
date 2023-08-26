@@ -50,6 +50,7 @@ def main():
     parser.add_argument('-almc','--augment-label-move-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image.')
     parser.add_argument('-alm2c','--augment-label-move-v2-chance', type=float, default=0, help='Chance that a label is moved randomly to another part of the image. (Improved version)')
     parser.add_argument('-abdc','--augment-black-dot-chance', type=float, default=0, help='Chance that black dots are placed on the image.')
+    parser.add_argument('-alcc','--augment-label-curving-chance', type=float, default=0, help='Chance that labels are curved using a half circle function based vector field on the image.')
     
     parser.add_argument('-agnc','--augment-gauss-noise-chance', type=float, default=0, help='Chance that gauss noise is applied.')
     parser.add_argument('-agns','--augment-gauss-noise-strength', type=float, default=15, help='Strength of gauss noise that is applied.')
@@ -154,6 +155,10 @@ def main():
                     # Black dot aug
                     if random.random() < args.augment_black_dot_chance:
                         aug_img, aug_polys = black_dot_aug(aug_img, aug_polys)
+                        
+                    # Poly label curving
+                    if random.random() < args.augment_label_curving_chance:
+                        aug_img, aug_polys = poly_label_curving(aug_img, aug_polys)
                     
                     # Matrix Transform
                     mats = []
@@ -239,6 +244,7 @@ def main():
             'label_move_v2_chance': args.augment_label_move_v2_chance,
             'gauss_noise_chance': args.augment_gauss_noise_chance,
             'black_dot_chance': args.augment_black_dot_chance,
+            'label_curving_chance': args.augment_label_curving_chance
         }, indent=4), dataset_dir / 'dataset-def.json')
 
 def build_seg_dataset(in_imgs, target_polys):
