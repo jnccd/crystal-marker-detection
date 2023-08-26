@@ -89,6 +89,17 @@ def inflate_bbox_xyxy(bbox_xyxy: tuple, amount_mult):
     bbox_height = bbox_xyxy[3] - bbox_xyxy[1]
     return (bbox_xyxy[0] - amount_mult*bbox_width, bbox_xyxy[1] - amount_mult*bbox_height, bbox_xyxy[2] + amount_mult*bbox_width, bbox_xyxy[3] + amount_mult*bbox_height)
 
+def keep_bbox_in_bounds(bbox_xyxy: tuple, bounds_bbox_xyxy: tuple):
+    if bbox_xyxy[0] < bounds_bbox_xyxy[0]:
+        bbox_xyxy[0] = bounds_bbox_xyxy[0]
+    if bbox_xyxy[1] < bounds_bbox_xyxy[1]:
+        bbox_xyxy[1] = bounds_bbox_xyxy[1]
+    if bbox_xyxy[2] > bounds_bbox_xyxy[2]:
+        bbox_xyxy[2] = bounds_bbox_xyxy[2]
+    if bbox_xyxy[3] > bounds_bbox_xyxy[3]:
+        bbox_xyxy[3] = bounds_bbox_xyxy[3]
+    return bbox_xyxy
+
 def get_bounds(point2D_list):
     x = min([p[0] for p in point2D_list])
     y = min([p[1] for p in point2D_list])
