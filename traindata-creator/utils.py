@@ -649,16 +649,12 @@ def black_dot_aug(img: Mat, polys: List[Polygon]):
     
     return img, polys
 
-def poly_label_curving(img: Mat, polys: List[Polygon], background_color = [], border_type = cv2.BORDER_CONSTANT):
+def poly_label_curving(img: Mat, polys: List[Polygon], border_type = cv2.BORDER_CONSTANT):
     img_h, img_w = img.shape[:2]
     if len(polys) == 0:
         return img, polys
     
     pi = random.randrange(len(polys))
-    if len(background_color) != 3:
-        c = polys[pi].centroid
-        # Sample color from poly centroid in img
-        background_color = [int(x) for x in img[int(c.y), int(c.x)]]
     
     # Set remapping params
     target_bounds = keep_bbox_in_bounds([int(x) for x in inflate_bbox_xyxy(polys[pi].bounds, 0.3)], (0,0,img_w,img_h))
@@ -682,11 +678,27 @@ def poly_label_curving(img: Mat, polys: List[Polygon], background_color = [], bo
             map_y[y, x] = y + (math.sqrt(cur_curve_sqrt_pos) if cur_curve_sqrt_pos > 0 else 0) / curvature_width * curvature_height - curvature_height
             map_y_diff[y, x] = map_y[y, x] - y
     
-    # Extract relevant segment, remap, reinsert
+    # Extract relevant segment, remap
     curving_img_segment = img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]]
-    curving_img_segment = cv2.remap(curving_img_segment, map_x, map_y, cv2.INTER_LINEAR, borderMode=border_type, borderValue=background_color)
-    print(target_bounds, (target_height, target_width), curving_img_segment.shape, target_bounds[3], img_h)
-    img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]] = curving_img_segment
+    curving_img_segment = cv2.remap(curving_img_segment, map_x, map_y, cv2.INTER_LINEAR, borderMode=border_type, borderValue=[0,0,0])
+    
+    # Create mask with border
+    alpha_channel_img = ((cv2.cvtColor(curving_img_segment, cv2.COLOR_BGR2GRAY) > 25) * 255).astype('uint8')
+    alpha_channel_img = cv2.copyMakeBorder(alpha_channel_img,1,1,1,1,cv2.BORDER_CONSTANT,value=0)
+    print(alpha_channel_img.shape, alpha_channel_img.dtype)
+    # Blur mask edges
+    kernel = cv2.getGaussianKernel(7, 1)
+    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel, borderType=cv2.BORDER_REPLICATE)
+    kernel = cv2.transpose(kernel)
+    alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel, borderType=cv2.BORDER_REPLICATE)
+    
+    # Apply mask and Reinsert
+    curving_img_segment = cv2.cvtColor(curving_img_segment, cv2.COLOR_BGR2BGRA)
+    curving_img_segment[:, :, 3] = alpha_channel_img[1:-1, 1:-1]
+    img = overlay_transparent_fore_alpha(img, curving_img_segment, target_bounds[0], target_bounds[1])
+    
+    #print(target_bounds, (target_height, target_width), curving_img_segment.shape, target_bounds[3], img_h)
+    #img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]] = curving_img_segment
     
     # Put polys into map_y coord systems, map their coords, put the output back into the image coord system
     #print([map_y_diff[int(x[1] - target_bounds[1]), int(x[0] - target_bounds[0])] for x in polys[pi].exterior.coords[:-1]])
