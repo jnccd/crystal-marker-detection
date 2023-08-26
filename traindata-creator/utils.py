@@ -665,8 +665,13 @@ def poly_label_curving(img: Mat, polys: List[Polygon], border_type = cv2.BORDER_
     curvature_height = int(half_target_height)
     curvature_width = random.randrange(int(half_target_height*1.5), int(half_target_height*2))
     curvature_x_positioning = random.randrange(int(half_target_height/2), int(half_target_height*3/2))
-    if target_bounds[3] > img_h:
+    
+    # Cancel if preconditions are not met
+    if target_bounds[3] > img_h: # Out of bounds target
         return img, polys
+    if any([do_bboxes_touch(poly.bounds, target_bounds) and i != pi for i, poly in enumerate(polys)]): # Affecting other labels
+        return img, polys
+    
     # Manually build vector field (low prio TODO: there should be a faster way to do this)
     map_x = np.zeros((target_height, target_width), np.float32)
     map_y = np.zeros((target_height, target_width), np.float32)
