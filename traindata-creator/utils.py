@@ -690,7 +690,7 @@ def poly_label_curving(img: Mat, polys: List[Polygon], border_type = cv2.BORDER_
     # Create mask with border
     alpha_channel_img = ((cv2.cvtColor(curving_img_segment, cv2.COLOR_BGR2GRAY) > 25) * 255).astype('uint8')
     alpha_channel_img = cv2.copyMakeBorder(alpha_channel_img,1,1,1,1,cv2.BORDER_CONSTANT,value=0)
-    print(alpha_channel_img.shape, alpha_channel_img.dtype)
+    #print(alpha_channel_img.shape, alpha_channel_img.dtype)
     # Blur mask edges
     kernel = cv2.getGaussianKernel(7, 1)
     alpha_channel_img = cv2.filter2D(alpha_channel_img, -1, kernel, borderType=cv2.BORDER_REPLICATE)
