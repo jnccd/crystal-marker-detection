@@ -649,6 +649,47 @@ def black_dot_aug(img: Mat, polys: List[Polygon]):
     
     return img, polys
 
+def poly_label_curving(img: Mat, polys: List[Polygon], background_color = [], border_type = cv2.BORDER_CONSTANT):
+    img_h, img_w = img.shape[:2]
+    if len(polys) == 0:
+        return img, polys
+    
+    pi = random.randrange(len(polys))
+    if len(background_color) != 3:
+        c = polys[pi].centroid
+        # Sample color from poly centroid in img
+        background_color = [int(x) for x in img[int(c.y), int(c.x)]]
+    
+    # Set remapping params
+    target_bounds = keep_bbox_in_bounds([int(x) for x in inflate_bbox_xyxy(polys[pi].bounds, 0.3)], (0,0,img_w,img_h))
+    target_width = target_bounds[2] - target_bounds[0]
+    target_height = target_bounds[3] - target_bounds[1]
+    half_target_width = int(target_width / 2)
+    half_target_height = int(target_height / 2)
+    curvature_height = int(half_target_height)
+    curvature_width = random.randrange(int(half_target_height*1.5), int(half_target_height*2))
+    curvature_x_positioning = random.randrange(int(half_target_height/2), int(half_target_height*3/2))
+    if target_bounds[3] > img_h:
+        return img, polys
+    # Manually build vector field (low prio TODO: there should be a faster way to do this)
+    map_x = np.zeros((target_height, target_width), np.float32)
+    map_y = np.zeros((target_height, target_width), np.float32)
+    for y in range(target_height):
+        for x in range(target_width):
+            map_x[y, x] = x
+            cur_curve_sqrt_pos = (curvature_width)**2 - (x-curvature_x_positioning)**2
+            map_y[y, x] = y + (math.sqrt(cur_curve_sqrt_pos) if cur_curve_sqrt_pos > 0 else 0) / curvature_width * curvature_height - curvature_height
+    
+    # Extract relevant segment, remap, reinsert
+    curving_img_segment = img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]]
+    curving_img_segment = cv2.remap(curving_img_segment, map_x, map_y, cv2.INTER_LINEAR, borderMode=border_type, borderValue=background_color)
+    print(target_bounds, (target_height, target_width), curving_img_segment.shape, target_bounds[3], img_h)
+    img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]] = curving_img_segment
+    
+    # TODO: Remap poly too?
+    
+    return img, polys
+
 def get_poly_from_bounds(bounds_xywh: tuple):
     return Polygon([[bounds_xywh[0], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[1]], [bounds_xywh[2], bounds_xywh[3]], [bounds_xywh[0], bounds_xywh[3]]])
 
