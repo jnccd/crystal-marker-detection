@@ -674,11 +674,13 @@ def poly_label_curving(img: Mat, polys: List[Polygon], background_color = [], bo
     # Manually build vector field (low prio TODO: there should be a faster way to do this)
     map_x = np.zeros((target_height, target_width), np.float32)
     map_y = np.zeros((target_height, target_width), np.float32)
+    map_y_diff = np.zeros((target_height, target_width), np.float32)
     for y in range(target_height):
         for x in range(target_width):
             map_x[y, x] = x
             cur_curve_sqrt_pos = (curvature_width)**2 - (x-curvature_x_positioning)**2
             map_y[y, x] = y + (math.sqrt(cur_curve_sqrt_pos) if cur_curve_sqrt_pos > 0 else 0) / curvature_width * curvature_height - curvature_height
+            map_y_diff[y, x] = map_y[y, x] - y
     
     # Extract relevant segment, remap, reinsert
     curving_img_segment = img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]]
@@ -686,7 +688,10 @@ def poly_label_curving(img: Mat, polys: List[Polygon], background_color = [], bo
     print(target_bounds, (target_height, target_width), curving_img_segment.shape, target_bounds[3], img_h)
     img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]] = curving_img_segment
     
-    # TODO: Remap poly too?
+    # Put polys into map_y coord systems, map their coords, put the output back into the image coord system
+    print([map_y_diff[int(x[1] - target_bounds[1]), int(x[0] - target_bounds[0])] for x in polys[pi].exterior.coords[:-1]])
+    polys[pi] = transform(polys[pi], lambda x: np.array( [(p[0], float(-map_y_diff[int(p[1] - target_bounds[1]), int(p[0] - target_bounds[0])] + p[1])) for p in x] ))
+    print(polys[pi].exterior.coords[:-1])
     
     return img, polys
 
