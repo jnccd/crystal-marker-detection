@@ -30,6 +30,12 @@ for run_paths_dict in runs_paths:
         print(f'Skipping {training_run_folder}...')
         continue
     
+    legacy_train_def_location = training_run_folder / 'test/training-def.json'
+    if legacy_train_def_location.is_file():
+        # In case of old train def config, save the file from deletion by the evaluation scripts by copying it
+        print(f'Saving train def to {training_run_folder / "training-def.json"}...')
+        shutil.copyfile(legacy_train_def_location, training_run_folder / 'training-def.json')
+    
     # Read train def
     train_def_json = json.loads(read_textfile(train_def_path).replace("    ", "").replace("\n", ""))
     train_def_model = train_def_json['model']
