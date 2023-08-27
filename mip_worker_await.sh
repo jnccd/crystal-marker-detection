@@ -1,4 +1,4 @@
 wpat="w[0-9]+"
-if [[ "$(screen -ls)" =~ $wpat ]]; then
+while  [[ "$(screen -ls)" =~ $wpat ]]; do
     sleep 5
-fi
+done
