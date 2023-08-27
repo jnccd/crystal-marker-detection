@@ -106,11 +106,21 @@ python -m cmd_tf -t -td traindata-creator/dataset/seg-640-on-skin-valset-v2/ -r 
 # python -m cmd_tf -df traindata-creator/dataset/seg-good-pics-ratio-val/ -r sm-unet-aruco-same2 -bs 8 -e 5
 
 # Create ensemble datasets
-for i in `seq 0 0.05 1`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -taf traindata-creator/dataset/sgss; done
+for i in `seq 0 0.05 1`; do 
+    python traindata-creator/createDataset.py -n gpv2-sgs-$i -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -taf traindata-creator/dataset/sgss; 
+done
 #smart grid ensemble, 0 to 1 chance in 0.1 steps, 10 sets per step => 100 sets
-for i in `seq 0 0.1 1`; do for j in `seq 0 1 10`; do python traindata-creator/createDataset.py -n gpv2-sgs-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -agnc 1 -taf traindata-creator/dataset/noise-sgss; done; done
+for i in `seq 0 0.1 1`; do 
+    for j in `seq 0 1 10`; do 
+        python traindata-creator/createDataset.py -n gpv2-sgs-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc $i -agnc 1 -taf traindata-creator/dataset/noise-sgss
+    done
+done
 #rotation ensemble, 0 to 360deg in 18 steps (20 rot steps), 5 sets per step => 100 sets
-for i in `seq 0 18 360`; do for j in `seq 0 1 5`; do python traindata-creator/createDataset.py -n gpv2-rot-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -arc 1 -ars $i -agnc 1 -taf traindata-creator/dataset/_noise-rots; done; done
+for i in `seq 0 18 360`; do 
+    for j in `seq 0 1 5`; do 
+        python traindata-creator/createDataset.py -n gpv2-rot-$i-p$j -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 4 -arc 1 -ars $i -agnc 1 -taf traindata-creator/dataset/_noise-rots
+    done
+done
 #gp compare on server, 9 datasets, 10 noise sets per dataset => 90 sets
 for i in `seq 0 1 5`; do 
     target_folder=/data/pcmd/dataset/_noise-gp-compare-v2
@@ -131,6 +141,16 @@ for i in `seq 0 1 5`; do
     python traindata-creator/createDataset.py -n good-pics-v3-p$i-3-strong-aug -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ /data/pcmd/dataseries/af-the_good_pics_for_nn3_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn3_s2/ /data/pcmd/dataseries/af-good-zimmer-v1/ -r 0.1 -t yolov5 -s 640 $strong_aug -taf $target_folder
     python traindata-creator/createDataset.py -n good-pics-v3-p$i-2-weak-aug -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ /data/pcmd/dataseries/af-the_good_pics_for_nn3_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn3_s2/ /data/pcmd/dataseries/af-good-zimmer-v1/ -r 0.1 -t yolov5 -s 640 $weak_aug -taf $target_folder
 done
+
+# Full ensemble workflow for black dot ensemble
+#black_dot ensemble on mip server, 0 to 1 chance in 0.2 steps, 5 sets per step => 25 sets (IN DOCKER ENV)
+for i in `seq 0 0.2 1`; do 
+    for j in `seq 0 1 5`; do 
+        python traindata-creator/createDataset.py -n gpv2-bd-$i-p$j -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -a -aim 3 -abdc $i -agnc 1 -taf /data/pcmd/dataset/_noise-bds
+    done
+done
+python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-bds/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensemble-test/ -e 300 -snr -o /data/pcmd/training/yolov5s-bd-ensemble/"
+# TODO: Build plot
 
 # Advanced inference
 python evaluation/fusion_inference.py -r evaluation/from-server/yolov5s-rot-ensemble/ -rnp yolov5-640-gpv2-rot-234-p[0-9]*-yolo5aug
