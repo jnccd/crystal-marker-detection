@@ -150,7 +150,11 @@ for i in `seq 0 0.2 1`; do
     done
 done
 python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-bds/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensemble-test/ -e 300 -snr -o /data/pcmd/training/yolov5s-bd-ensemble/"
-# TODO: Build plot
+bash mip_worker_await.sh
+with_gpu -n 1 sudo mip-docker-run --gpus '"device=$CUDA_VISIBLE_DEVICES"' ncarstensen/pcmd:0.11 python evaluation/plot_ensemble.py -n yolov5-noise-bd -r /data/pcmd/training/yolov5s-bd-ensemble/ -pi 5 -ci 4 -cu 10% -rnp '.*yolo5aug$' -t "mAP scores for a given chance of black dot augmentation in the dataset"
+
+# Ensemble workflow for label curving
+with_gpu -n 1 sudo mip-docker-run --gpus '"device=$CUDA_VISIBLE_DEVICES"' ncarstensen/pcmd:0.11 python mip_create_ensemble_datasets.py -n gpv2-curving -op "-tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 -alcc"
 
 # Advanced inference
 python evaluation/fusion_inference.py -r evaluation/from-server/yolov5s-rot-ensemble/ -rnp yolov5-640-gpv2-rot-234-p[0-9]*-yolo5aug
