@@ -77,11 +77,11 @@ for runs_paths_group in runs_paths_grouped:
         
         if args.config_unit is None:
             bar_chart_entry['label'] = bar_chart_entry["config"]
-        elif args.config_unit is '%':
+        elif args.config_unit == '%':
             bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}%'
-        elif args.config_unit is '10%':
+        elif args.config_unit == '10%':
             bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}0%'
-        elif args.config_unit is 'deg%':
+        elif args.config_unit == 'deg%':
             bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}°'
     
     bar_chart_entry['voc2007_mAP'] = np.mean(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
