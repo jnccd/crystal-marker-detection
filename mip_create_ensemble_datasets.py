@@ -3,8 +3,8 @@ import os
 
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-n','--name', type=str, default='test', help='.')
-parser.add_argument('-mc','--max-config', type=int, default='1', help='.')
-parser.add_argument('-sc','--step-config', type=int, default='0.1', help='.')
+parser.add_argument('-mc','--max-config', type=float, default='1', help='.')
+parser.add_argument('-sc','--step-config', type=float, default='0.1', help='.')
 parser.add_argument('-np','--num-parts', type=int, default='5', help='.')
 parser.add_argument('-op','--other-params', type=str, default='', help='.')
 args = parser.parse_args()
