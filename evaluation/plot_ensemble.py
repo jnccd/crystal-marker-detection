@@ -22,7 +22,7 @@ parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str,
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run name.')
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the.')
 parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the.')
-parser.add_argument('-cp','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
+parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
