@@ -20,8 +20,9 @@ parser.add_argument('-n','--name', type=str, help='.')
 parser.add_argument('-t','--title', type=str, help='.')
 parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run name.')
-parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the .')
-parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the .')
+parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the.')
+parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the.')
+parser.add_argument('-cp','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -73,7 +74,15 @@ for runs_paths_group in runs_paths_grouped:
     bar_chart_entry['run_name'] = run_name
     if args.config_index is not None:
         bar_chart_entry['config'] = run_name.split('-')[args.config_index]
-        bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}%'
+        
+        if args.config_unit is None:
+            bar_chart_entry['label'] = bar_chart_entry["config"]
+        elif args.config_unit is '%':
+            bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}%'
+        elif args.config_unit is '10%':
+            bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}0%'
+        elif args.config_unit is 'deg%':
+            bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}°'
     
     bar_chart_entry['voc2007_mAP'] = np.mean(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
     bar_chart_entry['voc2010_mAP'] = np.mean(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
