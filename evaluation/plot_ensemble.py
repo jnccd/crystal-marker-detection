@@ -80,7 +80,7 @@ for runs_paths_group in runs_paths_grouped:
         elif args.config_unit == '%':
             bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}%'
         elif args.config_unit == '10%':
-            bar_chart_entry['label'] = f'{bar_chart_entry["config"]}0%'
+            bar_chart_entry['label'] = f'{str(bar_chart_entry["config"]).lstrip("0")}0%'
         elif args.config_unit == 'deg%':
             bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}°'
     
