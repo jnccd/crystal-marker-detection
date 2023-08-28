@@ -11,4 +11,4 @@ args = parser.parse_args()
 
 for ic in range(0, args.max_config, args.step_config):
     for ip in range(args.num_parts):
-        os.system(f'python traindata-creator/createDataset.py -n {args.name}-$i-p$j -a -aim 4 -agnc 1 {args.other_params} {ic} -taf /data/pcmd/dataset/_noise-ensemble-{args.name}')
+        os.system(f'python traindata-creator/createDataset.py -n {args.name}-{ic}-p{ip} -a -aim 4 -agnc 1 {args.other_params} {ic} -taf /data/pcmd/dataset/_noise-ensemble-{args.name}')
