@@ -13,7 +13,7 @@ args = parser.parse_args()
 # Load paths
 root_dir = Path(__file__).resolve().parent
 input_dir = Path(args.images_folder)
-dataseries_dir = create_dir_if_not_exists(root_dir / 'dataseries' / f'coco-{input_dir.name}', clear=True)
+dataseries_dir = create_dir_if_not_exists(root_dir / 'dataseries' / f'coco-{Path(args.coco_json).stem}', clear=True)
 img_paths = [Path(x) for x in get_files_from_folders_with_ending([args.images_folder], (".png", ".jpg"))]
 coco_dict = json.loads(read_textfile(args.coco_json).replace("    ", "").replace("\n", ""))
 
@@ -22,6 +22,7 @@ dict_annots = coco_dict['annotations']
 dict_images = coco_dict['images']
 for i, img_path in enumerate(img_paths):
     dict_images_hits = list(filter(lambda x: x['file_name'] == img_path.name, dict_images))
+    img = cv2.imread(str(img_path))
     img_vertecies = []
     
     # Some images may not have entries
@@ -29,7 +30,6 @@ for i, img_path in enumerate(img_paths):
         dict_img = dict_images_hits[0]
         img_id = dict_img['id']
         img_annots = list(filter(lambda x: x['image_id'] == img_id, dict_annots))
-        img = cv2.imread(str(img_path))
         
         # Build int tuple vertex list
         for img_annot in img_annots:
