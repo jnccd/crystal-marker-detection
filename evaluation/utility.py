@@ -60,6 +60,9 @@ def get_all_subfolder_run_dirs(search_root_dirs):
 # Other
 def flatten(list):
     return [item for sublist in list for item in sublist]
+
+def unflatten(list, chunk_size):
+    return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
     
 def autolabel(rects, ax):
     """Attach a text label above each bar in *rects*, displaying its height."""
