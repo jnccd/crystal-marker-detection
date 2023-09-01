@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 root_dir = Path(__file__).resolve().parent
 if args.runs_folders is None:
-    args.runs_folders = [[root_dir / 'from-server', root_dir.parent / 'training']]
+    args.runs_folders = [[root_dir.parent / 'training', root_dir / 'from-server', Path('/data/pcmd/training/')]]
 runs_paths = get_all_subfolder_run_dirs(flatten(args.runs_folders))
 
 evals = []
