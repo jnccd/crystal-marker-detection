@@ -17,6 +17,7 @@ def main():
     parser = argparse.ArgumentParser(prog='yolov5-gen-evaluation-data', description='Generate testable evaluation data for yolov5 output on some datasets valdata.')
     parser.add_argument('-r','--run-folder', type=str, help='Yolov5 run foldername, or path to runfolder.')
     parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use as a testset for this evaluation.')
+    parser.add_argument('-tn','--test-folder-name', type=str, default='test', help='The folder name for this test in the run-folder, per default its "test".')
     
     parser.add_argument('-ct','--confidence-threshold', type=float, default=0.5, help='The minimum confidence of considered predictions.')
     parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
@@ -27,7 +28,7 @@ def main():
     
     # Set up Paths
     run_folder_path = Path(args.run_folder)
-    run_test_folder_path = create_dir_if_not_exists(run_folder_path / 'test', clear=True)
+    run_test_folder_path = create_dir_if_not_exists(run_folder_path / args.test_folder_name, clear=True)
     run_best_model_path = run_folder_path / 'weights/best.pt'
 
     # Torch hub cache support on
@@ -47,7 +48,7 @@ def main():
     )
     
     # Start analyze script
-    os.system(f'python evaluation/analyze.py -av {run_folder_path}')
+    os.system(f'python evaluation/analyze.py -av {run_test_folder_path}')
     
 def gen_evaldata(model_path,
                 valset_path, 
