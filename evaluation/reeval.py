@@ -17,6 +17,12 @@ parser.add_argument('-rt','--run-type', type=str, help='.')
 
 parser.add_argument('-rne','--run-name-exclude', type=str, default='---------', help='.')
 parser.add_argument('-sge','--skip-gen-evaldata', action='store_true', help='.')
+parser.add_argument('-stn','--set-test-folder-name', action='store_true', help='Sets the test folder name in the run folder based on the settings.')
+
+parser.add_argument('-ct','--confidence-threshold', type=float, default=0.5, help='The minimum confidence of considered predictions.')
+parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
+parser.add_argument('-sqt','--squareness-threshold', type=float, default=0, help='The minimum squareness of considered prediction boxes.')
+parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
 args = parser.parse_args()
 
 runs_paths = get_all_subfolder_run_dirs(flatten(args.runs_folders))
@@ -52,12 +58,20 @@ for run_paths_dict in runs_paths:
             print('What model is that? ' + train_def_model)
             sys.exit(1)
     
+    # Set test folder name
+    testset_path = Path(args.testset_path)
+    if args.set_test_folder_name:
+        test_folder_name = f'test-{testset_path.stem}{"-sahi" if args.use_sahi else ""}{f"-ct{args.confidence_threshold}" if args.confidence_threshold != 0.5 else ""}' + \
+                           f'{f"-bis{args.border_ignore_size}" if args.border_ignore_size != 0 else ""}{f"-sqt{args.squareness_threshold}" if args.squareness_threshold != 0 else ""}'
+    else:
+        test_folder_name = 'test'
+    
     # Regenerate
     print("Run type:", current_run_type)
     if args.skip_gen_evaldata:
-        os.system(f'python evaluation/analyze.py -av {training_run_folder}')
+        os.system(f'python evaluation/analyze.py -av {training_run_folder / test_folder_name}')
     else:
         if current_run_type == 'yolov5':
-            os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {args.testset_path}/')
+            os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {testset_path}/ -ct {args.confidence_threshold} -bis {args.border_ignore_size} -sqt {args.squareness_threshold} -tn {test_folder_name}')
         elif current_run_type == 'yolov8':
-            os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {args.testset_path}/')
+            os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {testset_path}/')
