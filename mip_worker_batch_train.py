@@ -4,7 +4,7 @@ import os
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-c','--command', type=str, default='bash', help='.')
 parser.add_argument('-n','--num-gpus', type=int, default='2', help='.')
-parser.add_argument('-i','--image', type=str, default='ncarstensen/pcmd:0.1', help='.')
+parser.add_argument('-i','--image', type=str, default='ncarstensen/pcmd:0.11', help='.')
 args = parser.parse_args()
 
 for i in range(args.num_gpus):
