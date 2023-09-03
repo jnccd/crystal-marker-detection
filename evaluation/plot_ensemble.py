@@ -151,11 +151,15 @@ elif args.chart_type == 'box':
     for data_line in data_lines:
         charts.append(
             ax.boxplot(
-                x=          [entry[f'{data_line}s'] for entry in bar_chart_entries],
-                positions=  data_lines_x_offset[data_line],
-                widths=     width,
+                x=              [entry[f'{data_line}s'] for entry in bar_chart_entries],
+                positions=      data_lines_x_offset[data_line],
+                widths=         width,
+                patch_artist=   True,
                 )
             )
+    for box, col in zip(charts, data_colors.values()):
+        for patch in box['boxes']:
+            patch.set_facecolor(col)
 
 # Add best fit line
 if args.best_fit_lines is not None:
