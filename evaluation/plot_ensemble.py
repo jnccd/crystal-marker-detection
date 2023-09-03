@@ -162,7 +162,7 @@ elif args.chart_type == 'box':
             patch.set_facecolor(col)
 
 # Add best fit line
-if args.best_fit_lines is not None:
+if args.best_fit_lines:
     for data_line in data_lines:
         theta = np.polyfit(x, [x[data_line] for x in bar_chart_entries], 1)
         y_line = theta[1] + theta[0] * x
