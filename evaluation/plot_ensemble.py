@@ -23,6 +23,7 @@ parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter fo
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the.')
 parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the.')
 parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
+parser.add_argument('-bfl','--best-fit-lines', type=str, help='Adds a degree 1 best fit line over the data.')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -105,13 +106,30 @@ if args.config_index is not None:
 else:
     bar_chart_entries.sort(key=lambda x: x['label'])
 
-# Create barchart
+# --- Create barchart
 x = np.arange(len(bar_chart_entries))
 width = 0.6 / 3
 fig, ax = plt.subplots()
-v7_bars = ax.bar(x - width, [x['voc2007_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2007_mAP_error'] for x in bar_chart_entries], label='voc2007 mAP', color=colors.to_hex((0.15, 0.4, 1)))
-v10_bars = ax.bar(x, [x['voc2010_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2010_mAP_errors'] for x in bar_chart_entries], label='voc2010 mAP', color=colors.to_hex((0.3, 0.65, 1)))
-coco_bars = ax.bar(x + width, [x['coco_mAP'] for x in bar_chart_entries], width, yerr=[x['coco_mAP_errors'] for x in bar_chart_entries], label='coco mAP', color=colors.to_hex((1, 0.6, 0)))
+data_lines = ['voc2007_mAP', 'voc2010_mAP', 'coco_mAP']
+data_colors = {
+    'voc2007_mAP': colors.to_hex((0.15, 0.4, 1)),
+    'voc2010_mAP': colors.to_hex((0.3, 0.65, 1)),
+    'coco_mAP': colors.to_hex((1, 0.6, 0)),
+}
+
+# Add data bars
+v7_bars = ax.bar(x - width, [x['voc2007_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2007_mAP_error'] for x in bar_chart_entries], label='voc2007 mAP', color=data_colors['voc2007_mAP'])
+v10_bars = ax.bar(x, [x['voc2010_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2010_mAP_errors'] for x in bar_chart_entries], label='voc2010 mAP', color=data_colors['voc2010_mAP'])
+coco_bars = ax.bar(x + width, [x['coco_mAP'] for x in bar_chart_entries], width, yerr=[x['coco_mAP_errors'] for x in bar_chart_entries], label='coco mAP', color=data_colors['coco_mAP'])
+
+# Add best fit line
+if args.best_fit_lines is not None:
+    for data_line in data_lines:
+        theta = np.polyfit(x, [x[data_line] for x in bar_chart_entries], 1)
+        y_line = theta[1] + theta[0] * x
+        plt.plot(x, y_line, data_colors[data_line])
+
+# Set labels and layout
 ax.set_ylim((0, max(np.max([x['voc2007_mAP'] for x in bar_chart_entries]), np.max([x['voc2010_mAP'] for x in bar_chart_entries]), np.max([x['coco_mAP'] for x in bar_chart_entries])) * 1.1))
 ax.set_ylabel('mAP')
 ax.set_title(f'mAP per run in {args.name.replace("-", " ")}' if args.title is None else args.title)
@@ -123,4 +141,5 @@ autolabel(v10_bars, ax)
 autolabel(coco_bars, ax)
 fig.tight_layout()
 plt.gcf().set_size_inches(20, 9)
+
 plt.savefig(root_dir / 'plots' / f'{args.name}.pdf', dpi=300)
