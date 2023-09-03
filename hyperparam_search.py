@@ -42,7 +42,7 @@ def hyp_param_run(param_dict):
     os.system(f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s {dataset_image_size} -sd {param_dict["seed"]} ' +\
         '-a -aim 4 ' + ' '.join([f'-{x[0]} {param_dict[x[0]]}' for x in def_aug_params]))
     
-    os.system(f'python batch_train/yolov5.py -d {dataset_folder / dataset_name} -t {testset_path} -e {param_dict["epochs"]} -snr -o {training_folder}')
+    os.system(f'python batch_train/yolov5.py -d {dataset_folder / dataset_name} -t {testset_path} -e {int(param_dict["epochs"])} -snr -o {training_folder}')
     
     eval_json_path = training_folder / f'yolov5-{dataset_image_size}-{dataset_name}' / 'test' / 'evals' / 'evals.json'
     eval_dict = json.loads(read_textfile(eval_json_path).replace("    ", "").replace("\n", ""))
