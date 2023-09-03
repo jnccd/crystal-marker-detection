@@ -28,6 +28,7 @@ parser.add_argument('-ci','--config-index', type=int, help='Index of the config 
 parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
 
 parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a degree 1 best fit line over the data.')
+parser.add_argument('-ct','--chart-type', type=str, default='bar', help='The type of chart the data is plotted to.')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -89,6 +90,10 @@ for runs_paths_group in runs_paths_grouped:
         elif args.config_unit == 'deg%':
             bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}°'
     
+    bar_chart_entry['voc2007_mAPs'] = group_voc2007_mAPs
+    bar_chart_entry['voc2010_mAPs'] = group_voc2010_mAPs
+    bar_chart_entry['coco_mAPs'] = group_coco_mAPs
+    
     bar_chart_entry['voc2007_mAP'] = np.mean(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
     bar_chart_entry['voc2010_mAP'] = np.mean(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
     bar_chart_entry['coco_mAP'] = np.mean(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
@@ -110,7 +115,7 @@ if args.config_index is not None:
 else:
     bar_chart_entries.sort(key=lambda x: x['label'])
 
-# --- Create barchart
+# --- Create chart
 x = np.arange(len(bar_chart_entries))
 width = 0.6 / 3
 fig, ax = plt.subplots()
@@ -127,18 +132,30 @@ data_lines_x_offset = {
 }
 
 # Add data bars
-bars = []
-for data_line in data_lines:
-    bars.append(
-        ax.bar(
-            x=      data_lines_x_offset[data_line], 
-            height= [x[data_line] for x in bar_chart_entries], 
-            width=  width, 
-            yerr=   [x[f'{data_line}_error'] for x in bar_chart_entries], 
-            label=  data_line.replace('_', ' '), 
-            color=  data_colors[data_line]
+charts = []
+if args.chart_type == 'bar':
+    for data_line in data_lines:
+        charts.append(
+            ax.bar(
+                x=      data_lines_x_offset[data_line], 
+                height= [x[data_line] for x in bar_chart_entries], 
+                width=  width, 
+                yerr=   [x[f'{data_line}_error'] for x in bar_chart_entries], 
+                label=  data_line.replace('_', ' '), 
+                color=  data_colors[data_line],
+                )
             )
-        )
+    for bar in charts:
+        autolabel(bar, ax)
+elif args.chart_type == 'box':
+    for data_line in data_lines:
+        charts.append(
+            ax.boxplot(
+                x=          [entry[f'{data_line}s'] for entry in bar_chart_entries],
+                positions=  data_lines_x_offset[data_line],
+                widths=     width,
+                )
+            )
 
 # Add best fit line
 if args.best_fit_lines is not None:
@@ -147,8 +164,8 @@ if args.best_fit_lines is not None:
         y_line = theta[1] + theta[0] * x
         plt.plot(data_lines_x_offset[data_line], y_line, data_colors[data_line])
         ax.annotate(str(round(theta[0] * 10000, 2)),
-            xy=(data_lines_x_offset[data_line][-1], y_line[-1]),
-            xytext=(8, -3),
+            xy=(x[-1], y_line[-1]),
+            xytext=(25, -3),
             textcoords="offset points",
             ha='left', va='bottom')
 
@@ -160,8 +177,6 @@ ax.set_xticks(x)
 ax.set_xlabel(args.x_label)
 ax.set_xticklabels([x['label'] for x in bar_chart_entries], rotation=30, ha='right')
 ax.legend()
-for bar in bars:
-    autolabel(bar, ax)
 fig.tight_layout()
 plt.gcf().set_size_inches(20, 9)
 
