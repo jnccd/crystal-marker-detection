@@ -175,6 +175,7 @@ python evaluation/plot_ensemble.py -r evaluation/from-server/first-yolov5s-runs/
 python evaluation/plot_ensemble.py -r evaluation/from-server/yolov5m-runs/ -n yolov5m-runs
 python evaluation/plot_ensemble.py -n yolov5s-sgs-ensemble -r evaluation/from-server/yolov5s-sgs-ensemble-test/
 python evaluation/plot_ensemble.py -n yolov5s-sgs-ensemble-yoloaug -r evaluation/from-server/yolov5s-sgs-ensemble-test/ -rnp '.*yolo5aug$'
+python evaluation/plot_ensemble.py -n yolov5s-sgs-ensemble-yoloaug -r evaluation/from-server/yolov5s-sgs-ensemble-test/ -rnp '.*yolo5aug$' -bfl  -ci 4 -cu % -xl 'Probability for each image in the dataset to be augmented by smart grid shuffeling'
 python evaluation/plot_ensemble.py -n yolov5s-sgs-ensemble-no-yoloaug -r evaluation/from-server/yolov5s-sgs-ensemble-test/ -rnp '.*(?<!yolo5aug)$'
 python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -ci 4 -rnp '.*(?<!yolo5aug)$'
 python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble-yolov5aug -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -ci 4 -rnp '.*yolo5aug$'
