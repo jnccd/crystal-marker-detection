@@ -279,7 +279,7 @@ def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=Non
     roi = bg_img[y:y+h, x:x+w]
 
 	# Black-out the area behind the logo in our original ROI
-    print('img1_bg, range', roi.shape, mask.shape)
+    #print('img1_bg, range', roi.shape, mask.shape)
     img1_bg = cv2.bitwise_and(roi.copy(), roi.copy(), mask=cv2.bitwise_not(mask))
 	
 	# Mask out the logo from the logo image.
