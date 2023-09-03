@@ -168,7 +168,7 @@ def main():
                     # -- Rotation
                     rotation_angle = 0
                     if random.random() < args.augment_rotation_chance and args.augment_rotation_strength > 0:
-                        rotation_angle += random.randrange(-args.augment_rotation_strength, args.augment_rotation_strength)
+                        rotation_angle += (random.random() - 0.5) * 2 * args.augment_rotation_strength
                     if random.random() < args.augment_ninety_deg_rotation_chance:
                         rotation_angle += random.randrange(0, 4) * 90
                     mats.append(
