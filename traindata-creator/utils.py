@@ -286,7 +286,7 @@ def overlay_transparent(background_img, img_to_overlay_t, x, y, overlay_size=Non
     img2_fg = cv2.bitwise_and(overlay_color,overlay_color,mask = mask)
 
 	# Update the original image with our new ROI
-    print('overlay_transparent, range', (x,y,w,h), bg_img.shape)
+    #print('overlay_transparent, range', (x,y,w,h), bg_img.shape)
     bg_img[y:y+h, x:x+w] = cv2.add(img1_bg, img2_fg)
     
     return bg_img
