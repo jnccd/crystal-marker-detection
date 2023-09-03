@@ -23,7 +23,7 @@ parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter fo
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name, split by "-", if set runs are grouped by the.')
 parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the.')
 parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
-parser.add_argument('-bfl','--best-fit-lines', type=str, help='Adds a degree 1 best fit line over the data.')
+parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a degree 1 best fit line over the data.')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -128,6 +128,11 @@ if args.best_fit_lines is not None:
         theta = np.polyfit(x, [x[data_line] for x in bar_chart_entries], 1)
         y_line = theta[1] + theta[0] * x
         plt.plot(x, y_line, data_colors[data_line])
+        ax.annotate(str(round(theta[0] * 10000, 2)),
+            xy=(x[-1], y_line[-1]),
+            xytext=(3, -2),  # 3 points vertical offset
+            textcoords="offset points",
+            ha='left', va='bottom')
 
 # Set labels and layout
 ax.set_ylim((0, max(np.max([x['voc2007_mAP'] for x in bar_chart_entries]), np.max([x['voc2010_mAP'] for x in bar_chart_entries]), np.max([x['coco_mAP'] for x in bar_chart_entries])) * 1.1))
