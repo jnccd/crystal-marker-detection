@@ -131,8 +131,10 @@ def yolov5_train_loop(dataset_path,
         yolov5_args += '--hyp hyp.no-augmentation.yaml '
         
     # Set device
-    if device != '0':
-        yolov5_args += f'--device {device} '
+    yolov5_args += f'--device {device} '
+    
+    # Overwriting other training is okay
+    yolov5_args += f'--exist-ok '
     
     # --- Commands
     print('--- Training...')
