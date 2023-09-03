@@ -6,17 +6,18 @@ import sys
 import time
 from hyperopt import fmin, tpe, hp, STATUS_OK
 
-from evaluation.utility import read_textfile
+from evaluation.utility import *
 
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-t','--testset-path', type=str, help='.')
 parser.add_argument('-df','--dataset-folder', type=str, default='traindata-creator/dataset', help='.') # /data/pcmd/dataset/
 parser.add_argument('-tf','--training-folder', type=str, default='training/hyp-param-search', help='.') # /data/pcmd/training/hyp-param-search
+parser.add_argument('-ds','--dataseries-sources', type=str, default='-tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2', help='.')
 args = parser.parse_args()
 
 testset_path = Path(args.testset_path)
 dataset_folder = Path(args.dataset_folder)
-training_folder = Path(args.training_folder)
+training_folder = create_dir_if_not_exists(Path(args.training_folder))
 
 def_aug_params = [
     ("asgsc", 0, 1),
@@ -39,8 +40,7 @@ def hyp_param_run(param_dict):
     
     dataset_image_size = 0
     dataset_name = 'hyp-search-set'
-    os.system(f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s {dataset_image_size} -sd {param_dict["seed"]} ' +\
-        '-tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 ' + \
+    os.system(f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s {dataset_image_size} -sd {param_dict["seed"]} {args.dataseries_sources} -t yolov5 -s 640 ' +\
         '-a -aim 4 ' + ' '.join([f'-{x[0]} {param_dict[x[0]]}' for x in def_aug_params]))
     
     os.system(f'python batch_train/yolov5.py -d {dataset_folder / dataset_name} -t {testset_path} -e {int(param_dict["epochs"])} -snr -o {training_folder}')
