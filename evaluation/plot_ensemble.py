@@ -90,8 +90,8 @@ for runs_paths_group in runs_paths_grouped:
     bar_chart_entry['coco_mAP'] = np.mean(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
     
     bar_chart_entry['voc2007_mAP_error'] = np.std(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
-    bar_chart_entry['voc2010_mAP_errors'] = np.std(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
-    bar_chart_entry['coco_mAP_errors'] = np.std(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
+    bar_chart_entry['voc2010_mAP_error'] = np.std(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
+    bar_chart_entry['coco_mAP_error'] = np.std(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
     
     bar_chart_entries.append(bar_chart_entry)
 
@@ -116,11 +116,16 @@ data_colors = {
     'voc2010_mAP': colors.to_hex((0.3, 0.65, 1)),
     'coco_mAP': colors.to_hex((1, 0.6, 0)),
 }
+data_lines_x_offset = {
+    'voc2007_mAP': x - width,
+    'voc2010_mAP': x,
+    'coco_mAP': x + width,
+}
 
 # Add data bars
-v7_bars = ax.bar(x - width, [x['voc2007_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2007_mAP_error'] for x in bar_chart_entries], label='voc2007 mAP', color=data_colors['voc2007_mAP'])
-v10_bars = ax.bar(x, [x['voc2010_mAP'] for x in bar_chart_entries], width, yerr=[x['voc2010_mAP_errors'] for x in bar_chart_entries], label='voc2010 mAP', color=data_colors['voc2010_mAP'])
-coco_bars = ax.bar(x + width, [x['coco_mAP'] for x in bar_chart_entries], width, yerr=[x['coco_mAP_errors'] for x in bar_chart_entries], label='coco mAP', color=data_colors['coco_mAP'])
+bars = []
+for data_line in data_lines:
+    bars.append(ax.bar(data_lines_x_offset[data_line], [x[data_line] for x in bar_chart_entries], width, yerr=[x[f'{data_line}_error'] for x in bar_chart_entries], label=data_line.replace('_', ' '), color=data_colors[data_line]))
 
 # Add best fit line
 if args.best_fit_lines is not None:
@@ -135,15 +140,14 @@ if args.best_fit_lines is not None:
             ha='left', va='bottom')
 
 # Set labels and layout
-ax.set_ylim((0, max(np.max([x['voc2007_mAP'] for x in bar_chart_entries]), np.max([x['voc2010_mAP'] for x in bar_chart_entries]), np.max([x['coco_mAP'] for x in bar_chart_entries])) * 1.1))
+ax.set_ylim((0, max([np.max([x[data_line] for x in bar_chart_entries]) for data_line in data_lines]) * 1.1))
 ax.set_ylabel('mAP')
 ax.set_title(f'mAP per run in {args.name.replace("-", " ")}' if args.title is None else args.title)
 ax.set_xticks(x)
 ax.set_xticklabels([x['label'] for x in bar_chart_entries], rotation=30, ha='right')
 ax.legend()
-autolabel(v7_bars, ax)
-autolabel(v10_bars, ax)
-autolabel(coco_bars, ax)
+for bar in bars:
+    autolabel(bar, ax)
 fig.tight_layout()
 plt.gcf().set_size_inches(20, 9)
 
