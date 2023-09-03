@@ -498,6 +498,9 @@ def poly_label_dropout(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     return img, polys
 
 def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
+    if len(polys) == 0:
+        return img, polys
+    
     img_h, img_w = img.shape[:2]
     pi = random.randrange(len(polys))
     
