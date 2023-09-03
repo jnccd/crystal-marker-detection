@@ -710,7 +710,7 @@ def poly_label_curving(img: Mat, polys: List[Polygon], border_type = cv2.BORDER_
     
     # Put polys into map_y coord systems, map their coords, put the output back into the image coord system
     #print([map_y_diff[int(x[1] - target_bounds[1]), int(x[0] - target_bounds[0])] for x in polys[pi].exterior.coords[:-1]])
-    polys[pi] = transform(polys[pi], lambda x: np.array( [(p[0], float(-map_y_diff[int(p[1] - target_bounds[1]), int(p[0] - target_bounds[0])] + p[1])) for p in x] ))
+    polys[pi] = transform(polys[pi], lambda x: np.array( [(p[0], float(-map_y_diff[int(p[1] - target_bounds[1])-1, int(p[0] - target_bounds[0])-1] + p[1])) for p in x] ))
     #print(polys[pi].exterior.coords[:-1])
     
     return img, polys
