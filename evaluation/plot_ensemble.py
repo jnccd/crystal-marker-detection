@@ -125,7 +125,16 @@ data_lines_x_offset = {
 # Add data bars
 bars = []
 for data_line in data_lines:
-    bars.append(ax.bar(data_lines_x_offset[data_line], [x[data_line] for x in bar_chart_entries], width, yerr=[x[f'{data_line}_error'] for x in bar_chart_entries], label=data_line.replace('_', ' '), color=data_colors[data_line]))
+    bars.append(
+        ax.bar(
+            x=      data_lines_x_offset[data_line], 
+            height= [x[data_line] for x in bar_chart_entries], 
+            width=  width, 
+            yerr=   [x[f'{data_line}_error'] for x in bar_chart_entries], 
+            label=  data_line.replace('_', ' '), 
+            color=  data_colors[data_line]
+            )
+        )
 
 # Add best fit line
 if args.best_fit_lines is not None:
