@@ -24,6 +24,7 @@ parser.add_argument('-pi','--part-index', type=int, help='Index of the part numb
 parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name, split by "-", if set runs are grouped by the.')
 parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
 parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a degree 1 best fit line over the data.')
+parser.add_argument('-xl','--x-label', type=str, default='', help='X Axis label')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -153,6 +154,7 @@ ax.set_ylim((0, max([np.max([x[data_line] for x in bar_chart_entries]) for data_
 ax.set_ylabel('mAP')
 ax.set_title(f'mAP per run in {args.name.replace("-", " ")}' if args.title is None else args.title)
 ax.set_xticks(x)
+ax.set_xlabel(args.x_label)
 ax.set_xticklabels([x['label'] for x in bar_chart_entries], rotation=30, ha='right')
 ax.legend()
 for bar in bars:
