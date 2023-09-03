@@ -141,10 +141,10 @@ if args.best_fit_lines is not None:
     for data_line in data_lines:
         theta = np.polyfit(x, [x[data_line] for x in bar_chart_entries], 1)
         y_line = theta[1] + theta[0] * x
-        plt.plot(x, y_line, data_colors[data_line])
+        plt.plot(data_lines_x_offset[data_line], y_line, data_colors[data_line])
         ax.annotate(str(round(theta[0] * 10000, 2)),
-            xy=(x[-1], y_line[-1]),
-            xytext=(3, -2),  # 3 points vertical offset
+            xy=(data_lines_x_offset[data_line][-1], y_line[-1]),
+            xytext=(8, -3),
             textcoords="offset points",
             ha='left', va='bottom')
 
