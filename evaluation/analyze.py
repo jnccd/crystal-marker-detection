@@ -8,16 +8,20 @@ import shutil
 import sys
 import cv2
 from matplotlib import pyplot as plt
-
 import numpy as np
 
 num_classes = 1
 bbox_inflation = 0
+check_scores = False
+
+if check_scores:
+    from mean_average_precision import MetricBuilder
 
 def analyze(
     run_or_testdata: str,
     build_debug_output: bool = False,
     ):
+    global check_scores
     
     # Interprete run_or_testdata input as run name in cmd_tf, as a path to a run or as a path to a test folder with evaluation data
     root_dir = Path(__file__).resolve().parent
@@ -176,6 +180,24 @@ def analyze(
         if len(iou_str) <= 3:
             iou_str = iou_str + '0'
         plt.savefig(eval_path / f'eval_PR_Curve_{iou_str}.pdf', dpi=100)
+    
+    if check_scores:
+        package_gts = []
+        package_preds = []
+        for target_boxes, network_boxes in zip(target_bboxes_per_img, network_bboxes_per_img):
+            for x,y,mx,my in target_boxes:
+                package_gts.append([x,y,mx,my,0,0,0])
+            for x,y,mx,my,conf in network_boxes:
+                package_preds.append([x,y,mx,my,0,conf])
+        print(MetricBuilder.get_metrics_list())
+        metric_fn = MetricBuilder.build_evaluation_metric("map_2d", async_mode=True, num_classes=1)
+        metric_fn.add(np.array(package_preds), np.array(package_gts))
+        # compute PASCAL VOC metric
+        print(f"PACKAGE VOC PASCAL mAP: {metric_fn.value(iou_thresholds=0.5, recall_thresholds=np.arange(0., 1.1, 0.1))['mAP']}")
+        # compute PASCAL VOC metric at the all points
+        print(f"PACKAGE VOC PASCAL mAP in all points: {metric_fn.value(iou_thresholds=0.5)['mAP']}")
+        # compute metric COCO metric
+        print(f"PACKAGE COCO mAP: {metric_fn.value(iou_thresholds=np.arange(0.5, 1.0, 0.05), recall_thresholds=np.arange(0., 1.01, 0.01), mpolicy='soft')['mAP']}")
     
     # Write out said metrics
     eval_dict_path = eval_path / 'evals.json'
