@@ -8,7 +8,7 @@ import shutil
 import sys
 import cv2
 import re
-from matplotlib import colors, pyplot as plt
+from matplotlib import colors, pyplot as plt, patches as mpatches
 from itertools import groupby
 
 import numpy as np
@@ -131,6 +131,18 @@ data_lines_x_offset = {
     'coco_mAP': x + width,
 }
 
+# Add best fit line
+if args.best_fit_lines:
+    for data_line in data_lines:
+        theta = np.polyfit(x, [x[data_line] for x in bar_chart_entries], 1)
+        y_line = theta[1] + theta[0] * x
+        plt.plot(data_lines_x_offset[data_line], y_line, data_colors[data_line])
+        ax.annotate(str(round(theta[0] * 10000, 2)),
+            xy=(x[-1], y_line[-1]),
+            xytext=(25, -3),
+            textcoords="offset points",
+            ha='left', va='bottom')
+
 # Add data bars
 charts = []
 if args.chart_type == 'bar':
@@ -161,18 +173,6 @@ elif args.chart_type == 'box':
         for patch in box['boxes']:
             patch.set_facecolor(col)
 
-# Add best fit line
-if args.best_fit_lines:
-    for data_line in data_lines:
-        theta = np.polyfit(x, [x[data_line] for x in bar_chart_entries], 1)
-        y_line = theta[1] + theta[0] * x
-        plt.plot(data_lines_x_offset[data_line], y_line, data_colors[data_line])
-        ax.annotate(str(round(theta[0] * 10000, 2)),
-            xy=(x[-1], y_line[-1]),
-            xytext=(25, -3),
-            textcoords="offset points",
-            ha='left', va='bottom')
-
 # Set labels and layout
 ax.set_ylim((0, max([np.max([x[data_line] for x in bar_chart_entries]) for data_line in data_lines]) * 1.1))
 ax.set_ylabel('mAP')
@@ -180,7 +180,13 @@ ax.set_title(f'mAP per run in {args.name.replace("-", " ")}' if args.title is No
 ax.set_xticks(x)
 ax.set_xlabel(args.x_label)
 ax.set_xticklabels([x['label'] for x in bar_chart_entries], rotation=30, ha='right')
-ax.legend()
+
+# Add legend
+legend_patches = []
+for data_line in data_lines:
+    legend_patches.append(mpatches.Patch(color=data_colors[data_line], label=data_line.replace('_', ' ')))
+ax.legend(handles=legend_patches)
+
 fig.tight_layout()
 plt.gcf().set_size_inches(20, 9)
 
