@@ -61,8 +61,8 @@ for run_paths_dict in runs_paths:
     # Set test folder name
     testset_path = Path(args.testset_path)
     if args.set_test_folder_name:
-        test_folder_name = f'test-{testset_path.stem}{"-sahi" if args.use_sahi else ""}{f"-ct{args.confidence_threshold}" if args.confidence_threshold != 0.5 else ""}' + \
-                           f'{f"-bis{args.border_ignore_size}" if args.border_ignore_size != 0 else ""}{f"-sqt{args.squareness_threshold}" if args.squareness_threshold != 0 else ""}'
+        test_folder_name = f'test-{testset_path.stem}{"-sahi" if args.use_sahi else ""}{f"-ct{round(args.confidence_threshold * 100)}" if args.confidence_threshold != 0.5 else ""}' + \
+                           f'{f"-bis{round(args.border_ignore_size * 100)}" if args.border_ignore_size != 0 else ""}{f"-sqt{round(args.squareness_threshold * 100)}" if args.squareness_threshold != 0 else ""}'
     else:
         test_folder_name = 'test'
     
