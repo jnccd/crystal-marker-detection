@@ -150,7 +150,7 @@ def analyze(
     # Compute COCO mAP
     coco_mAPs = []
     ious = [x/20 for x in range(10, 20, 1)]
-    coco_recall_points = [x/10 for x in range(0, 101, 1)]
+    coco_recall_points = [x/100 for x in range(0, 101, 1)]
     pr_curves_per_iou = []
     for iou in ious:
         mAP, rp, pp = compute_mAP(mAP_table, total_gts, coco_recall_points, iou)
@@ -182,7 +182,7 @@ def analyze(
     print(f'Writing eval dict to {eval_dict_path}...')
     with open(eval_dict_path, "w") as text_file:
         text_file.write(json.dumps({
-            'version': 1.1,
+            'version': 1.2,
             
             'voc2007_mAP': float(voc2007_mAP),
             'voc2010_mAP': float(voc2010_mAP),
