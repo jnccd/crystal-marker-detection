@@ -21,6 +21,7 @@ parser.add_argument('-t','--title', type=str, help='.')
 parser.add_argument('-xl','--x-label', type=str, default='', help='X Axis label')
 
 parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
+parser.add_argument('-tn','--test-name', type=str, default='test', help='Name of the test folder to plot from.')
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run name.')
 
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name split by "-", if set runs are grouped.')
@@ -62,7 +63,10 @@ for runs_paths_group in runs_paths_grouped:
     group_coco_mAPs = []
     
     for run_paths_name, run_paths in runs_paths_group:
-        eval_dict = json.loads(read_textfile(run_paths['eval']).replace("    ", "").replace("\n", ""))
+        if args.test_name == 'test':
+            eval_dict = json.loads(read_textfile(run_paths['eval']).replace("    ", "").replace("\n", ""))
+        else:
+            eval_dict = json.loads(read_textfile(run_paths[args.test_name]['eval']).replace("    ", "").replace("\n", ""))
         train_def_dict = json.loads(read_textfile(run_paths['train_def']).replace("    ", "").replace("\n", ""))
         
         run_name: str = train_def_dict['run_name']
