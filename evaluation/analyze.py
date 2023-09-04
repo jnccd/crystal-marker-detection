@@ -100,7 +100,11 @@ def analyze(
                 if iou > max_iou_match:
                     max_iou_match = iou
             flat_best_iou_matches.append(max_iou_match)
-    print('flat_best_iou_matches',flat_best_iou_matches)
+    avg_iou = float(np.average(flat_best_iou_matches))
+    targ_acc = len(list(filter(lambda x: x > 0.5, flat_best_iou_matches))) / len(flat_best_iou_matches),
+    print('flat_best_iou_matches', flat_best_iou_matches)
+    print('avg_iou', avg_iou)
+    print('targ_acc', targ_acc)
     
     # Match pred to target bboxes for each image and build mAP table
     mAP_table = []
@@ -178,11 +182,15 @@ def analyze(
     print(f'Writing eval dict to {eval_dict_path}...')
     with open(eval_dict_path, "w") as text_file:
         text_file.write(json.dumps({
-            'avg_iou':float(np.average(flat_best_iou_matches)),
-            'voc2007_mAP':float(voc2007_mAP),
-            'voc2010_mAP':float(voc2010_mAP),
-            'coco_mAP':float(coco_mAP),
-            'version':1.1,
+            'version': 1.1,
+            
+            'voc2007_mAP': float(voc2007_mAP),
+            'voc2010_mAP': float(voc2010_mAP),
+            'coco_mAP': float(coco_mAP),
+            
+            'avg_iou': avg_iou,
+            'targ_acc': targ_acc,
+            'flat_best_iou_matches': flat_best_iou_matches,
             }, indent=4))
 
 def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
