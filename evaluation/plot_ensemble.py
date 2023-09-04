@@ -135,7 +135,7 @@ data_lines_x_offset = {
     'coco_mAP': x + width,
 }
 
-# Add data bars
+# Add charts
 charts = []
 if args.chart_type == 'bar':
     for data_line in data_lines:
@@ -168,12 +168,14 @@ elif args.chart_type == 'box':
 # Add best fit line
 if args.best_fit_lines:
     for data_line in data_lines:
-        theta = np.polyfit(x, [x[data_line] for x in chart_entries], 1)
+        y = [x[data_line] for x in chart_entries]
+        theta = np.polyfit(x, y, 1)
+        r = np.corrcoef(x, y)
         y_line = theta[1] + theta[0] * x
         plt.plot(data_lines_x_offset[data_line], y_line, data_colors[data_line])
-        ax.annotate(str(round(theta[0] * 10000, 2)),
-            xy=(data_lines_x_offset[data_line][-1], y_line[-1]),
-            xytext=(20, -3),
+        ax.annotate(str(round(r[1, 0], 2)),
+            xy=(x[-1], y_line[-1]),
+            xytext=(70 * width * 3, -3),
             textcoords="offset points",
             ha='left', va='bottom')
 
