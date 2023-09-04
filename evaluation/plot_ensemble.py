@@ -53,9 +53,9 @@ else:
 # sys.exit(0)
 
 # Create Eval database
-bar_chart_entries = []
+chart_entries = []
 for runs_paths_group in runs_paths_grouped:
-    bar_chart_entry = {}
+    chart_entry = {}
     
     group_voc2007_mAPs = []
     group_voc2010_mAPs = []
@@ -76,47 +76,47 @@ for runs_paths_group in runs_paths_grouped:
     if group_voc2007_mAPs == []:
         continue
     
-    bar_chart_entry['label'] = '-'.join(run_paths_name.split('-')[2:])
-    bar_chart_entry['run_name'] = run_name
+    chart_entry['label'] = '-'.join(run_paths_name.split('-')[2:])
+    chart_entry['run_name'] = run_name
     if args.config_index is not None:
-        bar_chart_entry['config'] = run_name.split('-')[args.config_index]
+        chart_entry['config'] = run_name.split('-')[args.config_index]
         
         if args.config_unit is None:
-            bar_chart_entry['label'] = bar_chart_entry["config"]
+            chart_entry['label'] = chart_entry["config"]
         elif args.config_unit == '%':
-            bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}%'
+            chart_entry['label'] = f'{float(chart_entry["config"])}%'
         elif args.config_unit == '10%':
-            bar_chart_entry['label'] = f'{str(bar_chart_entry["config"]).lstrip("0")}0%'
+            chart_entry['label'] = f'{str(chart_entry["config"]).lstrip("0")}0%'
         elif args.config_unit == 'deg%':
-            bar_chart_entry['label'] = f'{float(bar_chart_entry["config"])}°'
+            chart_entry['label'] = f'{float(chart_entry["config"])}°'
     
-    bar_chart_entry['voc2007_mAPs'] = group_voc2007_mAPs
-    bar_chart_entry['voc2010_mAPs'] = group_voc2010_mAPs
-    bar_chart_entry['coco_mAPs'] = group_coco_mAPs
+    chart_entry['voc2007_mAPs'] = group_voc2007_mAPs
+    chart_entry['voc2010_mAPs'] = group_voc2010_mAPs
+    chart_entry['coco_mAPs'] = group_coco_mAPs
     
-    bar_chart_entry['voc2007_mAP'] = np.mean(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
-    bar_chart_entry['voc2010_mAP'] = np.mean(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
-    bar_chart_entry['coco_mAP'] = np.mean(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
+    chart_entry['voc2007_mAP'] = np.mean(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
+    chart_entry['voc2010_mAP'] = np.mean(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
+    chart_entry['coco_mAP'] = np.mean(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
     
-    bar_chart_entry['voc2007_mAP_error'] = np.std(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
-    bar_chart_entry['voc2010_mAP_error'] = np.std(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
-    bar_chart_entry['coco_mAP_error'] = np.std(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
+    chart_entry['voc2007_mAP_error'] = np.std(group_voc2007_mAPs) if len(group_voc2007_mAPs) > 0 else 0
+    chart_entry['voc2010_mAP_error'] = np.std(group_voc2010_mAPs) if len(group_voc2010_mAPs) > 0 else 0
+    chart_entry['coco_mAP_error'] = np.std(group_coco_mAPs) if len(group_coco_mAPs) > 0 else 0
     
-    bar_chart_entries.append(bar_chart_entry)
+    chart_entries.append(chart_entry)
 
-# print('bar_chart_voc2007_mAPs', [x['voc2007_mAP'] for x in bar_chart_entries])
-# print('bar_chart_voc2010_mAPs', [x['voc2010_mAP'] for x in bar_chart_entries])
-# print('bar_chart_coco_mAPs', [x['coco_mAP'] for x in bar_chart_entries])
-# print('bar_chart_voc2007_mAP_errors', [x['voc2007_mAP_error'] for x in bar_chart_entries])
-# print('bar_chart_coco_mAP_errors', [x['coco_mAP_errors'] for x in bar_chart_entries])
+# print('bar_chart_voc2007_mAPs', [x['voc2007_mAP'] for x in chart_entries])
+# print('bar_chart_voc2010_mAPs', [x['voc2010_mAP'] for x in chart_entries])
+# print('bar_chart_coco_mAPs', [x['coco_mAP'] for x in chart_entries])
+# print('bar_chart_voc2007_mAP_errors', [x['voc2007_mAP_error'] for x in chart_entries])
+# print('bar_chart_coco_mAP_errors', [x['coco_mAP_errors'] for x in chart_entries])
 
 if args.config_index is not None:
-    bar_chart_entries.sort(key=lambda x: float(x['config']))
+    chart_entries.sort(key=lambda x: float(x['config']))
 else:
-    bar_chart_entries.sort(key=lambda x: x['label'])
+    chart_entries.sort(key=lambda x: x['label'])
 
 # --- Create chart
-x = np.arange(len(bar_chart_entries))
+x = np.arange(len(chart_entries))
 width = 0.6 / 3
 fig, ax = plt.subplots()
 data_lines = ['voc2007_mAP', 'voc2010_mAP', 'coco_mAP']
@@ -138,9 +138,9 @@ if args.chart_type == 'bar':
         charts.append(
             ax.bar(
                 x=      data_lines_x_offset[data_line], 
-                height= [x[data_line] for x in bar_chart_entries], 
+                height= [x[data_line] for x in chart_entries], 
                 width=  width, 
-                yerr=   [x[f'{data_line}_error'] for x in bar_chart_entries], 
+                yerr=   [x[f'{data_line}_error'] for x in chart_entries], 
                 label=  data_line.replace('_', ' '), 
                 color=  data_colors[data_line],
                 )
@@ -151,7 +151,7 @@ elif args.chart_type == 'box':
     for data_line in data_lines:
         charts.append(
             ax.boxplot(
-                x=              [entry[f'{data_line}s'] for entry in bar_chart_entries],
+                x=              [entry[f'{data_line}s'] for entry in chart_entries],
                 positions=      data_lines_x_offset[data_line],
                 widths=         width,
                 patch_artist=   True,
@@ -164,7 +164,7 @@ elif args.chart_type == 'box':
 # Add best fit line
 if args.best_fit_lines:
     for data_line in data_lines:
-        theta = np.polyfit(x, [x[data_line] for x in bar_chart_entries], 1)
+        theta = np.polyfit(x, [x[data_line] for x in chart_entries], 1)
         y_line = theta[1] + theta[0] * x
         plt.plot(data_lines_x_offset[data_line], y_line, data_colors[data_line])
         ax.annotate(str(round(theta[0] * 10000, 2)),
@@ -174,12 +174,12 @@ if args.best_fit_lines:
             ha='left', va='bottom')
 
 # Set labels and layout
-ax.set_ylim((0, max([np.max([x[data_line] for x in bar_chart_entries]) for data_line in data_lines]) * 1.1))
+ax.set_ylim((0, max([np.max([x[data_line] for x in chart_entries]) for data_line in data_lines]) * 1.1))
 ax.set_ylabel('mAP')
 ax.set_title(f'mAP per run in {args.name.replace("-", " ")}' if args.title is None else args.title)
 ax.set_xticks(x)
 ax.set_xlabel(args.x_label)
-ax.set_xticklabels([x['label'] for x in bar_chart_entries], rotation=30, ha='right')
+ax.set_xticklabels([x['label'] for x in chart_entries], rotation=30, ha='right')
 
 # Add legend
 legend_patches = []
