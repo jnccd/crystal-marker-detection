@@ -105,7 +105,7 @@ def analyze(
                     max_iou_match = iou
             flat_best_iou_matches.append(max_iou_match)
     avg_iou = float(np.average(flat_best_iou_matches))
-    targ_acc = len(list(filter(lambda x: x > 0.5, flat_best_iou_matches))) / len(flat_best_iou_matches),
+    targ_acc = len(list(filter(lambda x: x > 0.5, flat_best_iou_matches))) / len(flat_best_iou_matches)
     print('flat_best_iou_matches', flat_best_iou_matches)
     print('avg_iou', avg_iou)
     print('targ_acc', targ_acc)
