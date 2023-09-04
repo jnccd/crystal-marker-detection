@@ -25,6 +25,7 @@ tikzplotlib>=0.10.1
 keras>=2.10.0
 shapely
 ensemble-boxes
+hyperopt
 
 # sahi
 sahi
