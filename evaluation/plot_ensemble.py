@@ -63,7 +63,6 @@ for runs_paths_group in runs_paths_grouped:
     group_coco_mAPs = []
     
     for run_paths_name, run_paths in runs_paths_group:
-        print(run_paths)
         if args.test_name == 'test':
             eval_dict = json.loads(read_textfile(run_paths['eval']).replace("    ", "").replace("\n", ""))
         else:
