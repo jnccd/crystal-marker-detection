@@ -40,6 +40,7 @@ def main():
         model_path= run_best_model_path,
         valset_path= args.testset_folder, 
         out_testdata_path= run_test_folder_path,
+        
         confidence_threshold= args.confidence_threshold,
         squareness_threshold= args.squareness_threshold,
         use_sahi= args.use_sahi,
@@ -50,15 +51,16 @@ def main():
     # Start analyze script
     os.system(f'python evaluation/analyze.py -av {run_test_folder_path}')
     
-def gen_evaldata(model_path,
-                valset_path, 
-                out_testdata_path, 
-                confidence_threshold = 0.5,
-                squareness_threshold = 0,
-                use_sahi = False,
-                border_ignore_size = 0,
-                build_debug_output: bool = False
-                ):
+def gen_evaldata(
+    model_path,
+    valset_path, 
+    out_testdata_path, 
+    confidence_threshold = 0.5,
+    squareness_threshold = 0,
+    use_sahi = False,
+    border_ignore_size = 0,
+    build_debug_output: bool = False
+    ):
     valdata_imgs_path = Path(valset_path) / 'val/images'
     valdata_labels_path = Path(valset_path) / 'val/labels'
     
@@ -73,12 +75,12 @@ def gen_evaldata(model_path,
         from sahi import AutoDetectionModel
         model = AutoDetectionModel.from_pretrained(model_type='yolov5', model_path=model_path)
     
-    i=0
-    for img_path, label_path in zip(valdata_imgs_paths, valdata_labels_paths):
+    for i, (img_path, label_path) in enumerate(zip(valdata_imgs_paths, valdata_labels_paths)):
         
         # Write input picture
         shutil.copyfile(img_path, out_testdata_path / f'{i}_input.png')
         
+        # Get inference img
         img = cv2.imread(img_path)
         img_h, img_w = img.shape[:2]
         
@@ -104,60 +106,19 @@ def gen_evaldata(model_path,
             for pred in result.object_prediction_list:
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
-        # Filter model out
-        #print('boxes', boxes)
-        if border_ignore_size > 0:
-            boxes = list(filter(lambda box: #xmin, ymin, xmax, ymax, conf: 
-                box[0] / img_w > border_ignore_size and 
-                box[1] / img_h > border_ignore_size and
-                1 - (box[2] / img_w) > border_ignore_size and 
-                1 - (box[3] / img_h) > border_ignore_size, boxes))
-        if squareness_threshold > 0:
-            boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
-        boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
-        # Rasterize Segmentation image
-        if build_debug_output:
-            sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
-            for min_x, min_y, max_x, max_y, conf in boxes:
-                verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y)), (int(min_x), int(min_y))])
-                cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
-            cv2.imwrite(str(out_testdata_path / f'{i}_network_output.png'), sanity_check_image)
-        # Write model out
-        with open(out_testdata_path / f'{i}_network_output.txt', "w") as text_file:
-            for xmin, ymin, xmax, ymax, conf in boxes:
-                text_file.write(f"{xmin} {ymin} {xmax} {ymax} {conf}\n")
-            
-        # Write labels
-        # Rasterize Segmentation image
-        sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
-        with open(label_path, 'r') as file:
-            vd_bbox_lines = file.read().split('\n')
-        vd_bbox_lines_og = vd_bbox_lines
-        vd_bbox_lines = list(filter(lambda s: s and not s.isspace(), vd_bbox_lines)) # Filter whitespace lines away
-        target_output_path = out_testdata_path / f'{i}_target_output.txt'
-        with open(target_output_path, "w") as text_file:
-            for line in vd_bbox_lines:
-                sc, sx, sy, sw, sh = line.split(' ')
-                
-                if any(isnan(float(x)) for x in [sx, sy, sw, sh]):
-                    print(f'Encountered NaN output in {label_path}', list(vd_bbox_lines), vd_bbox_lines_og, sx, sy, sw, sh)
-                    continue
-                
-                bbox_w = float(sw) * img_w
-                bbox_h = float(sh) * img_h
-                min_x = float(sx) * img_w - bbox_w / 2
-                min_y = float(sy) * img_h - bbox_h / 2
-                max_x = bbox_w + min_x
-                max_y = bbox_h + min_y
-                
-                text_file.write(f"{min_x} {min_y} {max_x} {max_y}\n")
-                
-                if build_debug_output:
-                    verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
-                    cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
-                    cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
-                
-        i+=1
+        
+        handle_model_out(
+            i, 
+            boxes,
+            img_w, 
+            img_h, 
+            out_testdata_path,
+            label_path,
+            confidence_threshold, 
+            border_ignore_size, 
+            squareness_threshold,
+            build_debug_output
+            )
     
     # Add test def dict
     valset_def_dict = json.loads(read_textfile(Path(valset_path) / 'dataset-def.json').replace("    ", "").replace("\n", ""))
@@ -170,6 +131,71 @@ def gen_evaldata(model_path,
             'squareness_threshold': squareness_threshold,
             'build_debug_output': build_debug_output,
         }, indent=4), out_testdata_path / '_test-def.json')
+
+def handle_model_out(
+    i,
+    boxes, 
+    img_w, 
+    img_h, 
+    out_testdata_path,
+    label_path,
+    confidence_threshold, 
+    border_ignore_size, 
+    squareness_threshold,
+    build_debug_output
+    ):
+    # Filter model out
+    #print('boxes', boxes)
+    if border_ignore_size > 0:
+        boxes = list(filter(lambda box: #xmin, ymin, xmax, ymax, conf: 
+            box[0] / img_w > border_ignore_size and 
+            box[1] / img_h > border_ignore_size and
+            1 - (box[2] / img_w) > border_ignore_size and 
+            1 - (box[3] / img_h) > border_ignore_size, boxes))
+    if squareness_threshold > 0:
+        boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
+    boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
+    # Rasterize Segmentation image
+    if build_debug_output:
+        sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
+        for min_x, min_y, max_x, max_y, conf in boxes:
+            verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y)), (int(min_x), int(min_y))])
+            cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
+        cv2.imwrite(str(out_testdata_path / f'{i}_network_output.png'), sanity_check_image)
+    # Write model out
+    with open(out_testdata_path / f'{i}_network_output.txt', "w") as text_file:
+        for xmin, ymin, xmax, ymax, conf in boxes:
+            text_file.write(f"{xmin} {ymin} {xmax} {ymax} {conf}\n")
+        
+    # Write labels
+    # Rasterize Segmentation image
+    sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
+    with open(label_path, 'r') as file:
+        vd_bbox_lines = file.read().split('\n')
+    vd_bbox_lines_og = vd_bbox_lines
+    vd_bbox_lines = list(filter(lambda s: s and not s.isspace(), vd_bbox_lines)) # Filter whitespace lines away
+    target_output_path = out_testdata_path / f'{i}_target_output.txt'
+    with open(target_output_path, "w") as text_file:
+        for line in vd_bbox_lines:
+            sc, sx, sy, sw, sh = line.split(' ')
+            
+            if any(isnan(float(x)) for x in [sx, sy, sw, sh]):
+                print(f'Encountered NaN output in {label_path}', list(vd_bbox_lines), vd_bbox_lines_og, sx, sy, sw, sh)
+                continue
+            
+            bbox_w = float(sw) * img_w
+            bbox_h = float(sh) * img_h
+            min_x = float(sx) * img_w - bbox_w / 2
+            min_y = float(sy) * img_h - bbox_h / 2
+            max_x = bbox_w + min_x
+            max_y = bbox_h + min_y
+            
+            text_file.write(f"{min_x} {min_y} {max_x} {max_y}\n")
+            
+            if build_debug_output:
+                verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
+                cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
+                cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
 
 if __name__ == '__main__':
     main()
