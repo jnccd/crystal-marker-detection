@@ -69,7 +69,10 @@ def gen_evaldata(
         model = YOLO(model_path)
         results = model(valdata_imgs_path / '*.png')
     else:
-        raise NotImplementedError() # TODO: Add sahi support
+        # Get sahi imports and model if set
+        from sahi.predict import get_sliced_prediction
+        from sahi import AutoDetectionModel
+        model = AutoDetectionModel.from_pretrained(model_type='yolov8', model_path=model_path)
     
     for i, (img_path, label_path) in enumerate(zip(valdata_imgs_paths, valdata_labels_paths)):
         
@@ -89,7 +92,18 @@ def gen_evaldata(
                 boxes.append(tuple(list(box.xyxy[0])[:4] + [box.conf]))
             cv2.imwrite(str(out_testdata_path / f'{i}_result_plot.png'), np.squeeze(result.plot()))
         else:
-            raise NotImplementedError() # TODO: Add sahi support
+            # Sahi inference
+            result = get_sliced_prediction(
+                img_path,
+                model,
+                slice_height = 640,
+                slice_width = 640,
+                overlap_height_ratio = 0.2,
+                overlap_width_ratio = 0.2
+            )
+            for pred in result.object_prediction_list:
+                boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
+            result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
             
         handle_model_out(
             i, 
