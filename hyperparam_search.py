@@ -30,6 +30,7 @@ def_aug_params = [
     ("arcc", 0, 1),
     ("arc2c", 0, 1),
     ("almc", 0, 1),
+    ("alm2c", 0, 1),
     ("abdc", 0, 1),
     ("alcc", 0, 1),
     ("agnc", 0, 1),
