@@ -67,7 +67,7 @@ for runs_paths_group in runs_paths_grouped:
         if args.test_name == 'test':
             eval_dict = json.loads(read_textfile(run_paths['eval']).replace("    ", "").replace("\n", ""))
         else:
-            eval_dict = json.loads(read_textfile(run_paths[args.test_name]['eval']).replace("    ", "").replace("\n", ""))
+            eval_dict = json.loads(read_textfile(run_paths['tests'][args.test_name]['eval']).replace("    ", "").replace("\n", ""))
         train_def_dict = json.loads(read_textfile(run_paths['train_def']).replace("    ", "").replace("\n", ""))
         
         run_name: str = train_def_dict['run_name']

@@ -40,7 +40,7 @@ def get_all_subfolder_run_dirs(search_root_dirs):
       search_root_dirs: A list of paths to search all subfolders of for run files.
 
     Returns:
-      A list of dicts for all found run folders [{'run_root', 'train_def', 'eval', {'$test_name': {'test_def', 'eval'} } }].
+      A list of dicts for all found run folders [{'run_root', 'train_def', 'eval', 'tests': {'$test_name': {'test_def', 'eval'} } }].
       (The leafs are omitted)
     """
     
