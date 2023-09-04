@@ -27,7 +27,7 @@ preds = np.array([
 print(MetricBuilder.get_metrics_list())
 
 # create metric_fn
-metric_fn = MetricBuilder.build_evaluation_metric("map_2d", async_mode=True, num_classes=1)
+metric_fn = MetricBuilder.build_evaluation_metric("map_2d", async_mode=False, num_classes=1)
 
 # add some samples to evaluation
 for i in range(10):
