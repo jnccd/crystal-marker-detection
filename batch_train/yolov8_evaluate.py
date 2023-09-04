@@ -47,7 +47,7 @@ def main():
         )
     
     # Start analyze script
-    os.system(f'python evaluation/analyze.py -av {run_folder_path}')
+    os.system(f'python evaluation/analyze.py -av {run_test_folder_path}')
     
 def gen_evaldata(
     model_path,
