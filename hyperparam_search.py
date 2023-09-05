@@ -14,6 +14,8 @@ parser.add_argument('-t','--testset-path', type=str, help='.')
 parser.add_argument('-df','--dataset-folder', type=str, default='traindata-creator/dataset/_hyp-param-search', help='.') # /data/pcmd/dataset/hyp-param-search
 parser.add_argument('-tf','--training-folder', type=str, default='training/hyp-param-search', help='.') # /data/pcmd/training/hyp-param-search
 parser.add_argument('-ds','--dataseries-sources', type=str, default='-tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2', help='.')
+parser.add_argument('-mine','--min-epochs', type=int, default=5, help='Sets the min epochs to train for.')
+parser.add_argument('-maxe','--max-epochs', type=int, default=15, help='Sets the max epochs to train for.')
 args = parser.parse_args()
 
 testset_path = Path(args.testset_path)
@@ -63,7 +65,7 @@ def hyp_param_run(param_dict):
         
     return {'loss': -eval_dict[opt_score], 'status': STATUS_OK }
 
-space = dict([('epochs', hp.uniform('epochs', 5, 15)), 
+space = dict([('epochs', hp.uniform('epochs', args.min_epochs, args.max_epochs)), 
               ('seed', hp.randint('seed', sys.maxsize))] + 
              [(x[0], hp.uniform(x[0], x[1], x[2])) for x in def_aug_params])
 
