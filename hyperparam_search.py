@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import sys
 import time
+from distutils.dir_util import copy_tree
 from hyperopt import fmin, tpe, hp, STATUS_OK
 
 from evaluation.utility import *
@@ -37,7 +38,12 @@ def_aug_params = [
     ("agns", 0, 150),
 ]
 
+best_score = -1
+opt_score = 'voc2010_mAP'
+
 def hyp_param_run(param_dict):
+    global best_score, opt_score
+    
     training_folder = create_dir_if_not_exists(Path(args.training_folder), clear=True)
     
     dataset_image_size = 640
@@ -51,9 +57,13 @@ def hyp_param_run(param_dict):
     eval_json_path = training_folder / training_subfolder / 'test' / 'evals' / 'evals.json'
     eval_dict = json.loads(read_textfile(eval_json_path).replace("    ", "").replace("\n", ""))
     
-    return {'loss': -eval_dict['voc2010_mAP'], 'status': STATUS_OK }
+    if eval_dict[opt_score] > best_score:
+        copy_tree(str(training_folder / training_subfolder), str(training_folder.parent / 'hyp-best-run'))
+        best_score = eval_dict[opt_score]
+        
+    return {'loss': -eval_dict[opt_score], 'status': STATUS_OK }
 
-space = dict([('epochs', hp.uniform('epochs', 15, 35)), 
+space = dict([('epochs', hp.uniform('epochs', 5, 15)), 
               ('seed', hp.randint('seed', sys.maxsize))] + 
              [(x[0], hp.uniform(x[0], x[1], x[2])) for x in def_aug_params])
 
