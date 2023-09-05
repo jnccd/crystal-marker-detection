@@ -26,7 +26,7 @@ keras>=2.10.0
 shapely
 ensemble-boxes
 hyperopt
-super-gradients==3.2.1
+#super-gradients==3.2.1
 
 # sahi
 sahi
