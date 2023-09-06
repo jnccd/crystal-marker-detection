@@ -29,7 +29,7 @@ parser.add_argument('-ci','--config-index', type=int, help='Index of the config 
 parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
 
 parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a degree 1 best fit line over the data.')
-parser.add_argument('-ct','--chart-type', type=str, default='bar', help='The type of chart the data is plotted to.')
+parser.add_argument('-ct','--chart-type', type=str, default='bar', help='The type of chart the data is plotted to, "bar", "box", "scatter".')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -164,6 +164,17 @@ elif args.chart_type == 'box':
     for box, col in zip(charts, data_colors.values()):
         for patch in box['boxes']:
             patch.set_facecolor(col)
+elif args.chart_type == 'scatter':
+    for data_line in data_lines:
+        data_pos = flatten([[(x[i], y, data_colors[data_line]) for y in entry[f'{data_line}s']] for i, entry in enumerate(chart_entries)])
+        print([d[2] for d in data_pos])
+        charts.append(
+            ax.scatter(
+                x=              [d[0] for d in data_pos],
+                y=              [d[1] for d in data_pos],
+                c=              [d[2] for d in data_pos],
+                )
+            )
             
 # Add best fit line
 if args.best_fit_lines:
