@@ -67,7 +67,7 @@ def hyp_param_run(param_dict):
     return {'loss': -eval_dict[opt_score], 'status': STATUS_OK }
 
 space = dict([('epochs', hp.uniform('epochs', args.min_epochs, args.max_epochs)), 
-              ('seed', hp.randint('seed', sys.maxsize))] + 
+              ('seed', hp.randint('seed', 4294967296))] + 
              [(x[0], hp.uniform(x[0], x[1], x[2])) for x in def_aug_params])
 
 best = fmin(
