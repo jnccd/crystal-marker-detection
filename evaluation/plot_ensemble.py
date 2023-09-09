@@ -8,6 +8,7 @@ import shutil
 import sys
 import cv2
 import re
+import scipy
 from matplotlib import colors, pyplot as plt, patches as mpatches
 from itertools import groupby
 
@@ -130,9 +131,9 @@ data_colors = {
     'coco_mAP': colors.to_hex((1, 0.6, 0)),
 }
 data_lines_x_offset = {
-    'voc2007_mAP': x - width,
-    'voc2010_mAP': x,
-    'coco_mAP': x + width,
+    'voc2007_mAP': -width,
+    'voc2010_mAP': 0,
+    'coco_mAP': width,
 }
 
 # Add charts
@@ -141,7 +142,7 @@ if args.chart_type == 'bar':
     for data_line in data_lines:
         charts.append(
             ax.bar(
-                x=      data_lines_x_offset[data_line], 
+                x=      x + data_lines_x_offset[data_line], 
                 height= [x[data_line] for x in chart_entries], 
                 width=  width, 
                 yerr=   [x[f'{data_line}_error'] for x in chart_entries], 
@@ -156,7 +157,7 @@ elif args.chart_type == 'box':
         charts.append(
             ax.boxplot(
                 x=              [entry[f'{data_line}s'] for entry in chart_entries],
-                positions=      data_lines_x_offset[data_line],
+                positions=      x + data_lines_x_offset[data_line],
                 widths=         width,
                 patch_artist=   True,
                 )
@@ -179,11 +180,20 @@ elif args.chart_type == 'scatter':
 # Add best fit line
 if args.best_fit_lines:
     for data_line in data_lines:
-        y = [x[data_line] for x in chart_entries]
-        theta = np.polyfit(x, y, 1)
-        r = np.corrcoef(x, y)
-        y_line = theta[1] + theta[0] * x
-        plt.plot(data_lines_x_offset[data_line], y_line, data_colors[data_line])
+        legacy_y = [x[data_line] for x in chart_entries]
+        
+        data_pos = flatten([[(x[i], y) for y in entry[f'{data_line}s']] for i, entry in enumerate(chart_entries)])
+        lx = np.array([d[0] for d in data_pos])
+        y = [d[1] if d[1] != 0 else 0.000001 for d in data_pos]
+        print(lx, y)
+        #fitting_weights = 1 - ((lx+1) / (lx[-1]+1)) + 0.1
+        theta = scipy.optimize.curve_fit(lambda t,a,b: a+b*np.log(t), lx+1, y)#, sigma=fitting_weights)
+        y_line = theta[0][1] + theta[0][0] * np.log(x+1)
+        print(y_line)
+        print(theta)
+        ax.plot(x + data_lines_x_offset[data_line], y_line, c = data_colors[data_line])
+        
+        r = np.corrcoef(lx, y)
         ax.annotate(str(round(r[1, 0], 2)),
             xy=(x[-1], y_line[-1]),
             xytext=(70 * width * 3, -3),
