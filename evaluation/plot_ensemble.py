@@ -168,7 +168,6 @@ elif args.chart_type == 'box':
 elif args.chart_type == 'scatter':
     for data_line in data_lines:
         data_pos = flatten([[(x[i], y, data_colors[data_line]) for y in entry[f'{data_line}s']] for i, entry in enumerate(chart_entries)])
-        print([d[2] for d in data_pos])
         charts.append(
             ax.scatter(
                 x=              [d[0] for d in data_pos],
@@ -185,12 +184,9 @@ if args.best_fit_lines:
         data_pos = flatten([[(x[i], y) for y in entry[f'{data_line}s']] for i, entry in enumerate(chart_entries)])
         lx = np.array([d[0] for d in data_pos])
         y = [d[1] if d[1] != 0 else 0.000001 for d in data_pos]
-        print(lx, y)
         #fitting_weights = 1 - ((lx+1) / (lx[-1]+1)) + 0.1
         theta = scipy.optimize.curve_fit(lambda t,a,b: a+b*np.log(t), lx+1, y)#, sigma=fitting_weights)
         y_line = theta[0][1] + theta[0][0] * np.log(x+1)
-        print(y_line)
-        print(theta)
         ax.plot(x + data_lines_x_offset[data_line], y_line, c = data_colors[data_line])
         
         r = np.corrcoef(lx, y)
