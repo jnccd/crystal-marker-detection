@@ -170,7 +170,7 @@ elif args.chart_type == 'scatter':
         data_pos = flatten([[(x[i], y, data_colors[data_line]) for y in entry[f'{data_line}s']] for i, entry in enumerate(chart_entries)])
         charts.append(
             ax.scatter(
-                x=              [d[0] for d in data_pos],
+                x=              np.array([d[0] for d in data_pos]) + data_lines_x_offset[data_line],
                 y=              [d[1] for d in data_pos],
                 c=              [d[2] for d in data_pos],
                 )
