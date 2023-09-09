@@ -185,8 +185,10 @@ if args.best_fit_lines:
         lx = np.array([d[0] for d in data_pos])
         y = [d[1] if d[1] != 0 else 0.000001 for d in data_pos]
         #fitting_weights = 1 - ((lx+1) / (lx[-1]+1)) + 0.1
-        theta = scipy.optimize.curve_fit(lambda t,a,b: a+b*np.log(t), lx+1, y)#, sigma=fitting_weights)
-        y_line = theta[0][1] + theta[0][0] * np.log(x+1)
+        def func(x, a, c, d):
+            return a*np.exp(-c*x)+d
+        popt, pcov = scipy.optimize.curve_fit(func, lx+1, y)#, sigma=fitting_weights)
+        y_line = func(x+1, *popt)
         ax.plot(x + data_lines_x_offset[data_line], y_line, c = data_colors[data_line])
         
         r = np.corrcoef(lx, y)
