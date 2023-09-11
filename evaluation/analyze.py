@@ -9,6 +9,7 @@ import sys
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
+from copy import deepcopy
 
 num_classes = 1
 bbox_inflation = 0
@@ -149,6 +150,7 @@ def analyze(
     voc2007_mAP, _, _, _ = compute_mAP(mAP_table, total_gts, voc_2007_recall_points)
     print('voc2007_mAP:',voc2007_mAP)
     voc2010_mAP, _, _, voc2010_mAP_table = compute_mAP(mAP_table, total_gts)
+    voc2010_mAP_table = deepcopy(voc2010_mAP_table)
     print('voc2010_mAP:',voc2010_mAP)
     
     # Compute COCO mAP
