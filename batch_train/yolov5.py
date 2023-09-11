@@ -24,6 +24,10 @@ def main():
     parser.add_argument('-rw','--init-random-weights', action='store_true', help='.')
     parser.add_argument('-snr','--skip-noaug-runs', action='store_true', help='.')
     
+    parser.add_argument('-ct','--confidence-threshold', type=float, default=0.5, help='The minimum confidence of considered predictions.')
+    parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
+    parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
+    
     parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
     parser.add_argument('-wc','--worker-count', type=int, default=-1, help='.')
     
@@ -56,29 +60,39 @@ def main():
     for dataset_dir in loop_folders:
         # Without yolov5 aug
         if not args.skip_noaug_runs:
-            yolov5_train_loop(  dataset_dir, 
-                                testset_path, 
-                                run_name=dataset_dir.stem,
-                                output_path=args.output_path,
-                                epochs=args.epochs,
-                                img_size=args.img_size,
-                                batch_size=args.batch_size,
-                                model=args.model,
-                                device=args.device,
-                                init_random_weights=args.init_random_weights,
-                                no_aug=True)
+            yolov5_train_loop(
+                dataset_dir, 
+                testset_path, 
+                run_name=dataset_dir.stem,
+                output_path=args.output_path,
+                epochs=args.epochs,
+                img_size=args.img_size,
+                batch_size=args.batch_size,
+                model=args.model,
+                device=args.device,
+                init_random_weights=args.init_random_weights,
+                no_aug=True,
+                use_sahi=args.use_sahi,
+                border_ignore_size=args.border_ignore_size,
+                confidence_threshold=args.confidence_threshold,
+            )
         # With yolov5 aug
-        yolov5_train_loop(dataset_dir, 
-                          testset_path, 
-                          run_name=dataset_dir.stem+'-yolo5aug',
-                          output_path=args.output_path,
-                          epochs=args.epochs,
-                          img_size=args.img_size,
-                          batch_size=args.batch_size,
-                          model=args.model,
-                          device=args.device,
-                          init_random_weights=args.init_random_weights,
-                          no_aug=False)
+        yolov5_train_loop(
+            dataset_dir, 
+            testset_path, 
+            run_name=dataset_dir.stem+'-yolo5aug',
+            output_path=args.output_path,
+            epochs=args.epochs,
+            img_size=args.img_size,
+            batch_size=args.batch_size,
+            model=args.model,
+            device=args.device,
+            init_random_weights=args.init_random_weights,
+            no_aug=False,
+            use_sahi=args.use_sahi,
+            border_ignore_size=args.border_ignore_size,
+            confidence_threshold=args.confidence_threshold,
+        )
         
     end_time = time.time()
     diff_time = end_time  - start_time
@@ -96,7 +110,11 @@ def yolov5_train_loop(dataset_path,
                       device = '0',
                       model = 'yolov5s', 
                       init_random_weights = False, 
-                      no_aug = False):
+                      no_aug = False,
+                      use_sahi = False,
+                      border_ignore_size = 0,
+                      confidence_threshold = 0.5,
+                      ):
     # --- Set Paths
     project_folder = Path(output_path)
     training_run_folder = project_folder / run_name
@@ -141,7 +159,7 @@ def yolov5_train_loop(dataset_path,
     os.system(f'python repos/yolov5/train.py --name {run_name} --img {img_size} --batch {batch_size} --epochs {epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml {yolov5_args}')
     os.system(f'rm {model}.pt')
     print('--- Evaluating...')
-    os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {valset_path}/')
+    os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {valset_path}/ {"-us" if use_sahi else ""} -bis {border_ignore_size} -ct {confidence_threshold}')
     write_textfile(json.dumps(train_def_dict, indent=4), training_run_folder / 'training-def.json')
 
 if __name__ == '__main__':
