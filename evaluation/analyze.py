@@ -110,7 +110,7 @@ def analyze(
     print('avg_iou', avg_iou)
     print('targ_acc', targ_acc)
     
-    # Match pred to target bboxes for each image and build mAP table
+    # Match pred to target bboxes for each image and build preliminary mAP table
     mAP_table = []
     for i, (target_boxes, network_boxes) in enumerate(zip(target_bboxes_per_img, network_bboxes_per_img)):
         for nbi, network_box in enumerate(network_boxes):
@@ -119,7 +119,7 @@ def analyze(
             max_match_target_box_index = -1
             for tbi, target_box in enumerate(target_boxes):
                 iou = iou_between_bboxes(network_box, target_box)
-                if iou > max_match_iou:
+                if iou > max_match_iou: # Other match criteria are satisfied within compute_mAP()
                     max_match_iou = iou
                     max_match_target_box = target_box
                     max_match_target_box_index = tbi + 1000000*i
