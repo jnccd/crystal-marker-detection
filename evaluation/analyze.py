@@ -146,9 +146,9 @@ def analyze(
     voc_2007_recall_points = [x/10 for x in range(0, 11, 1)]
     
     # Compute VOC mAPs
-    voc2007_mAP, _, _ = compute_mAP(mAP_table, total_gts, voc_2007_recall_points)
+    voc2007_mAP, _, _, _ = compute_mAP(mAP_table, total_gts, voc_2007_recall_points)
     print('voc2007_mAP:',voc2007_mAP)
-    voc2010_mAP, _, _ = compute_mAP(mAP_table, total_gts)
+    voc2010_mAP, _, _, voc2010_mAP_table = compute_mAP(mAP_table, total_gts)
     print('voc2010_mAP:',voc2010_mAP)
     
     # Compute COCO mAP
@@ -157,7 +157,7 @@ def analyze(
     coco_recall_points = [x/100 for x in range(0, 101, 1)]
     pr_curves_per_iou = []
     for iou in ious:
-        mAP, rp, pp = compute_mAP(mAP_table, total_gts, coco_recall_points, iou)
+        mAP, rp, pp, _ = compute_mAP(mAP_table, total_gts, coco_recall_points, iou)
         pr_curves_per_iou.append({'rp':rp,'pp':pp})
         coco_mAPs.append(mAP)
     coco_mAP = np.mean(coco_mAPs)
@@ -213,6 +213,7 @@ def analyze(
             'avg_iou': avg_iou,
             'targ_acc': targ_acc,
             'flat_best_iou_matches': flat_best_iou_matches,
+            'voc2010_mAP_table': voc2010_mAP_table,
             }, indent=4))
 
 def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
@@ -292,7 +293,7 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
         #print('APs:',APs)
         mAP = np.mean(APs)
     
-    return mAP, rp, pp
+    return mAP, rp, pp, mAP_table
 
 def iou_between_bboxes(xyxy_bbox_a, xyxy_bbox_b):
     # xyxy_bbox = (0: x_min, 1: y_min, 2: x_max, 3: y_max)
