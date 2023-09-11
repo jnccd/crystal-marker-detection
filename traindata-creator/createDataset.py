@@ -216,6 +216,8 @@ def main():
         build_yolov5_dataset(in_imgs, target_polys)
     elif args.type == 'csv':
         build_od_csv_dataset(in_imgs, target_polys)
+    elif args.type == 'pet':
+        build_pet_dataset(in_imgs, target_polys)
     else:
         print('Error: Unsupported dataset type!')
         exit()
@@ -265,6 +267,37 @@ def build_seg_dataset(in_imgs, target_polys):
             seg_image = rasterize_polys(seg_image, polys)
             
             cv2.imwrite(str(dir[group] / f'{i}_seg.png'), seg_image)
+        print(f'Built {i+1} {group}data!')
+        
+def build_pet_dataset(in_imgs, target_polys):
+    global data_groups, dataset_name, dataset_dir, background_color, border_type
+    pet_target_size = 160
+    
+    # Create train / val dirs
+    dir = {}
+    for group in data_groups:
+        dir[group] = create_dir_if_not_exists(dataset_dir / group)
+    
+    # Build groups data
+    i = -1
+    for group in data_groups:
+        for i, (in_img, polys) in enumerate(zip(in_imgs[group], target_polys[group])):
+            for j, poly in enumerate(polys):
+                # Prepare bbox
+                poly: Polygon = poly # For linting
+                b = [int(x) for x in inflate_bbox_xyxy(poly.bounds, 0.3)]
+                
+                # Prepare img cutout
+                crop_img = in_img[b[1]:b[3], b[0]:b[2]]
+                poly: Polygon = transform(poly, lambda x: np.array([(p[0] - b[0], p[1] - b[1]) for p in x] ))
+                crop_img, pad_polys = resize_and_pad_with_labels(crop_img, pet_target_size, [poly], background_color, border_type)
+                poly = pad_polys[0]
+                
+                cv2.imwrite(str(dir[group] / f'{i}_{j}_in.png'), crop_img)
+                
+                # Transform poly points to bounds coord system
+                write_textfile(str(poly.exterior.coords[:-1]), dir[group] / f'{i}_{j}_p.txt')
+                
         print(f'Built {i+1} {group}data!')
 
 def build_od_csv_dataset(in_imgs, target_polys):
