@@ -28,9 +28,9 @@ boxes_per_image = 4
 epochs = 75
 
 root_dir = Path(__file__).resolve().parent
-dataseries_t1_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae'/'images_traindata'
-dataseries_v1_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf'/'images_traindata'
-dataseries_t2_dir = root_dir/'..'/'traindata-creator'/'dataseries-320-webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0'/'images_traindata'
+dataseries_t1_dir = root_dir/'..'/'traindata-creator'/'dataseries'/'_old'/'320-webcam-images-1312ecab-04e7-4f45-a714-07365d8c0dae'/'images_traindata'
+dataseries_v1_dir = root_dir/'..'/'traindata-creator'/'dataseries'/'_old'/'320-webcam-images-203d3683-7c91-4429-93b6-be24a28f47bf'/'images_traindata'
+dataseries_t2_dir = root_dir/'..'/'traindata-creator'/'dataseries'/'_old'/'320-webcam-images-f50ec0b7-f960-400d-91f0-c42a6d44e3d0'/'images_traindata'
 
 data_img_paths = sorted(
     [
@@ -65,13 +65,15 @@ def load_dataset(file_paths, img_size):
 
     for img_spath in file_paths:
         img_path = Path(img_spath)
-        txt_path = img_path.parent / (str(img_path.stem)+'_yolo.txt')
+        if img_path.stem.endswith('_seg'):
+            continue
+        txt_path = img_path.parent / (img_path.stem.removesuffix('_in')+'_cxcywh_n.txt')
         
         #print((txt_path, img_path))
         boxes = []
         with open(txt_path) as f:
             for row in f.readlines():
-                (class_label, x, y, w, h) = row.removesuffix("\n").split(" ")
+                (x, y, w, h) = row.removesuffix("\n").split(" ")
                 boxes.extend((x, y, w, h))
         
         image = load_img(img_path, target_size=(img_size[0], img_size[1]))
@@ -129,6 +131,7 @@ opt = Adam(lr=0.0008)
 model.compile(loss="mse", optimizer=opt)
 print(model.summary())
 
+print('fitting...')
 H = model.fit(
 	trainImages, trainTargets,
 	validation_data=(testImages, testTargets),
