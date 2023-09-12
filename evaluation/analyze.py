@@ -212,7 +212,8 @@ def analyze(
     ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
     for i in range(conf_matrix.shape[0]):
         for j in range(conf_matrix.shape[1]):
-            ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
+            if not (i == 1 and j == 1):
+                ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
     ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
     plt.xlabel('Predictions', fontsize=18)
     plt.ylabel('Ground Truth', fontsize=18)
