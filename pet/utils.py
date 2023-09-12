@@ -30,5 +30,8 @@ def create_dir_if_not_exists(dir: Path, clear = False):
         os.makedirs(dir)
     return dir
 
+def flatten(list):
+    return [item for sublist in list for item in sublist]
+
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
