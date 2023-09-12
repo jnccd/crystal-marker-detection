@@ -33,6 +33,7 @@ root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-pet-test-red-rects'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
+output_folder = create_dir_if_not_exists(root_dir / 'output')
 
 def load_dataseries(dataseries_path, img_size):
     data = []
@@ -106,7 +107,7 @@ H = model.fit(
 	verbose=1)
 
 print("[INFO] saving object detector model...")
-model.save(root_dir / 'model.h5', save_format="h5")
+model.save(output_folder / 'model.h5', save_format="h5")
 
 N = epochs
 plt.style.use("ggplot")
@@ -117,7 +118,7 @@ plt.title("Bounding Box Regression Loss on Training Set")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss")
 plt.legend(loc="lower left")
-plt.savefig(root_dir / 'plot.png')
+plt.savefig(output_folder / 'plot.png')
 
 # Test model
 val_img_paths = get_files_from_folders_with_ending([dataset_val_dir], '.png')
