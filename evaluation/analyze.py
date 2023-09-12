@@ -241,8 +241,6 @@ def compute_mAP(mAP_table, total_gts, recall_points = None, IoU = 0.5):
     # Decide TP/FP cases
     taken_gt_boxes = []
     for entry in mAP_table:
-        print(entry['gt_index'])
-        print(taken_gt_boxes)
         if entry['iou'] > IoU and not entry['gt_index'] in taken_gt_boxes:
             entry['tpfp'] = True
             taken_gt_boxes.append(entry['gt_index'])
