@@ -19,6 +19,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.preprocessing.image import load_img
+import keras.backend as K
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
@@ -48,6 +49,8 @@ def load_dataseries(dataseries_path, img_size):
         image = img_to_array(image)
         
         points = ast.literal_eval(read_textfile(vert_path))
+        print(points)
+        points = sorted(points, key = lambda x: x[0])
         
         data.append(image)
         targets.append(flatten([(x / img_size[0], y / img_size[1]) for (x, y) in points]))
