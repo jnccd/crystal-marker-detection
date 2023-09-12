@@ -216,6 +216,8 @@ def analyze(
             if not (i == 1 and j == 1):
                 ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
     ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
+    ax.set_xticklabels(['marker', 'background'])
+    ax.set_yticklabels(['marker', 'background'])
     plt.xlabel('Predictions', fontsize=18)
     plt.ylabel('Ground Truth', fontsize=18)
     plt.title('Confusion Matrix with IoU Threshold of 0.5', fontsize=18)
