@@ -216,7 +216,7 @@ def analyze(
     ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
     plt.xlabel('Predictions', fontsize=18)
     plt.ylabel('Ground Truth', fontsize=18)
-    plt.title('Confusion Matrix with IoU threshold of 0.5', fontsize=18)
+    plt.title('Confusion Matrix with IoU Threshold of 0.5', fontsize=18)
     plt.savefig(str(eval_path / 'confusion_matrix.pdf'))
     
     # Write out said metrics
