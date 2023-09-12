@@ -210,14 +210,14 @@ def analyze(
     conf_matrix = np.array([[num_tp,num_fp],[num_fn,num_tn]])
     fig, ax = plt.subplots(figsize=(7.5, 7.5))
     cax = ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
-    fig.colorbar(cax)
+    fig.colorbar(cax, pad=0.2)
     for i in range(conf_matrix.shape[0]):
         for j in range(conf_matrix.shape[1]):
             if not (i == 1 and j == 1):
                 ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
     ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
     ax.set_xticklabels(['marker', 'background', 'marker'], )
-    ax.set_yticklabels(['marker', 'background', 'marker'], rotation=90, rotation_mode='anchor')
+    ax.set_yticklabels(['marker', 'background', 'marker'], rotation=90)
     plt.xlabel('Predictions', fontsize=18)
     plt.ylabel('Ground Truth', fontsize=18)
     plt.title('Confusion Matrix with IoU Threshold of 0.5', fontsize=18)
