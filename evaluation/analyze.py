@@ -201,6 +201,23 @@ def analyze(
         # compute metric COCO metric
         print(f"PACKAGE COCO mAP: {metric_fn.value(iou_thresholds=np.arange(0.5, 1.0, 0.05), recall_thresholds=np.arange(0., 1.01, 0.01), mpolicy='soft')['mAP']}")
     
+    # Write confusion matrix
+    num_gt = sum([len(target_bboxes) for target_bboxes in target_bboxes_per_img])
+    num_tp = voc2010_mAP_table[-1]['acc_tp']
+    num_fp = voc2010_mAP_table[-1]['acc_fp']
+    num_fn = num_gt - num_tp
+    num_tn = 0 # Doesn't apply to object detection
+    conf_matrix = np.array([[num_tp,num_fp],[num_fn,num_tn]])
+    fig, ax = plt.subplots(figsize=(7.5, 7.5))
+    ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
+    for i in range(conf_matrix.shape[0]):
+        for j in range(conf_matrix.shape[1]):
+            ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
+    plt.xlabel('Predictions', fontsize=18)
+    plt.ylabel('Ground Truth', fontsize=18)
+    plt.title('Confusion Matrix with IoU threshold of 0.5', fontsize=18)
+    plt.savefig(str(eval_path / 'confusion_matrix.pdf'))
+    
     # Write out said metrics
     eval_dict_path = eval_path / 'evals.json'
     print(f'Writing eval dict to {eval_dict_path}...')
