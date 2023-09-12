@@ -210,7 +210,7 @@ def analyze(
     conf_matrix = np.array([[num_tp,num_fp],[num_fn,num_tn]])
     fig, ax = plt.subplots(figsize=(7.5, 7.5))
     cax = ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
-    fig.colorbar(cax, pad=0.2)
+    #fig.colorbar(cax, pad=0.2)
     for i in range(conf_matrix.shape[0]):
         for j in range(conf_matrix.shape[1]):
             if not (i == 1 and j == 1):
