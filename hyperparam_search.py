@@ -17,6 +17,7 @@ parser.add_argument('-ds','--dataseries-sources', type=str, default='-tf trainda
 parser.add_argument('-mine','--min-epochs', type=int, default=5, help='Sets the min epochs to train for.')
 parser.add_argument('-maxe','--max-epochs', type=int, default=15, help='Sets the max epochs to train for.')
 parser.add_argument('-emax','--max-evals', type=int, default=3, help='Sets the max evals to hyp search for.')
+parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
 args = parser.parse_args()
 
 testset_path = Path(args.testset_path)
@@ -54,7 +55,7 @@ def hyp_param_run(param_dict):
     os.system(f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s {dataset_image_size} -sd {param_dict["seed"]} {args.dataseries_sources} -t yolov5 -s {dataset_image_size} ' +\
         '-a -aim 4 ' + ' '.join([f'-{x[0]} {param_dict[x[0]]}' for x in def_aug_params]))
     
-    os.system(f'python batch_train/yolov5.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} -snr -o {training_folder}')
+    os.system(f'python batch_train/yolov5.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} {"-us" if args.use_sahi else ""} -snr -o {training_folder}')
     
     training_subfolder = [x.parent.stem for x in training_folder.glob('**/training-def.json')][0]
     eval_json_path = training_folder / training_subfolder / 'test' / 'evals' / 'evals.json'
