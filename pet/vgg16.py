@@ -28,10 +28,10 @@ import os
 from utils import *
 
 img_size = (160, 160)
-epochs = 75
+epochs = 35
 
 root_dir = Path(__file__).resolve().parent
-dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-pet-test-red-rects'
+dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-good-pics-v2-rot-aug'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
 output_folder = create_dir_if_not_exists(root_dir / 'output')
@@ -70,10 +70,10 @@ for data_img_path, data_target, data_filename in zip(train_img_paths, train_targ
     image = cv2.imread(data_img_path)
     
     points = unflatten(data_target, 2)
-    for point in points:
+    for i, point in enumerate(points):
         x = int(point[0] * img_size[0])
         y = int(point[1] * img_size[1])
-        cv2.circle(image, (x, y), 2, (0, 255, 0), 2)
+        cv2.circle(image, (x, y), 2, (0, 255 / 4 * i, 0), 2)
     
     print(f"Traindata {data_filename}")
     cv2.imshow("Traindata", image)
@@ -105,7 +105,7 @@ print('fitting...')
 H = model.fit(
 	train_np_images, train_targets,
 	validation_data=(val_np_images, val_targets),
-	batch_size=8,
+	batch_size=32,
 	epochs=epochs,
 	verbose=1)
 
@@ -135,12 +135,10 @@ for val_img in val_img_paths:
     print(val_img, points)
     
     image = cv2.imread(val_img)
-    
-    points = unflatten(preds, 2)
-    for point in points:
+    for i, point in enumerate(points):
         x = int(point[0] * img_size[0])
         y = int(point[1] * img_size[1])
-        cv2.circle(image, (x, y), 2, (0, 255, 0), 2)
+        cv2.circle(image, (x, y), 2, (0, 255 / 4 * i, 0), 2)
     
     cv2.imshow("Model Prediction", image)
     k = cv2.waitKey(0)
