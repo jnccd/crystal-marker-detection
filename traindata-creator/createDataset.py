@@ -289,6 +289,8 @@ def build_pet_dataset(in_imgs, target_polys):
                 
                 # Prepare img cutout
                 crop_img = in_img[b[1]:b[3], b[0]:b[2]]
+                if crop_img.shape[0] <= 0 or crop_img.shape[1] <= 0:
+                    continue
                 poly: Polygon = transform(poly, lambda x: np.array([(p[0] - b[0], p[1] - b[1]) for p in x] ))
                 crop_img, pad_polys = resize_and_pad_with_labels(crop_img, pet_target_size, [poly], background_color, border_type)
                 poly = pad_polys[0]
