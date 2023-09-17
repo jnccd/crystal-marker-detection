@@ -1,6 +1,7 @@
 import os
 import glob
 import cv2
+from matplotlib import pyplot as plt
 import numpy as np
 import ast
 import scipy
@@ -16,7 +17,7 @@ import torchvision.models as models
 from utils import *
 
 LR = 1e-3
-EPOCHS = 2
+EPOCHS = 50
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
@@ -169,13 +170,16 @@ loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
-avg_vloss = 0.0
+avg_val_loss = 0.0
 best_vloss = 999_999
+loss_history = []
+val_loss_history = []
 
 # Train loop
 for i_epoch in range(EPOCHS):
     # Train
     model.train(True)
+    batch_losses = []
     with tqdm.tqdm(total=len(train_loader)) as pbar:
         for image_batch, label_batch in train_loader:
             # Shift to GPU
@@ -192,16 +196,19 @@ for i_epoch in range(EPOCHS):
             loss = loss_fn(label_pred, label_batch)
             if len(loss.shape) != 0:
                 loss = torch.mean(loss)
+            batch_losses.append(loss.to('cpu').detach().numpy())
 
             # Backprop
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             
-            pbar.set_description(f"Ep {i_epoch}, L {loss.item():.4f} 上VaL {avg_vloss}, " + 
+            pbar.set_description(f"Ep {i_epoch}, L {loss.item():.4f} 上VaL {avg_val_loss}, " + 
                 ', '.join([metric.__name__ + ' ' + str(torch.mean(metric(label_pred, label_batch)).item()) for metric in metrics]))
             pbar.update(1)
-            
+    avg_loss = np.average(batch_losses)
+    loss_history.append(avg_loss)
+    
     # Validate
     model.eval()
     running_vloss = 0.0
@@ -227,14 +234,25 @@ for i_epoch in range(EPOCHS):
                 val_loss = torch.mean(val_loss)
             
             running_vloss += val_loss
-    avg_vloss = running_vloss / (i + 1)
+    avg_val_loss = running_vloss / (i + 1)
+    val_loss_history.append(avg_val_loss.to('cpu').detach().numpy())
     
     # Track best performance, and save the model's state
-    if avg_vloss < best_vloss:
-        best_vloss = avg_vloss
+    if avg_val_loss < best_vloss:
+        best_vloss = avg_val_loss
         if i_epoch > 5:
             model_path = output_folder / f'best_model_{round(best_vloss * 1000)}_{loss_fn.__name__}.pt'
             torch.save(model.state_dict(), model_path)
+
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(np.arange(0, EPOCHS), loss_history, label="train_loss")
+plt.plot(np.arange(0, EPOCHS), val_loss_history, label="val_loss")
+plt.title("Keypoint detection loss over epochs")
+plt.xlabel("Epoch #")
+plt.ylabel("Loss")
+plt.legend(loc="lower left")
+plt.savefig(output_folder / 'plot.png')
 
 # Visualize val data out
 val_loader = DataLoader(
