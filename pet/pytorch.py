@@ -28,7 +28,7 @@ root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-pet-test-red-rects'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/mbn')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
 
