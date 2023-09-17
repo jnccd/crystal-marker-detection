@@ -16,7 +16,7 @@ import torchvision.models as models
 from utils import *
 
 LR = 1e-3
-EPOCHS = 5
+EPOCHS = 2
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
@@ -160,7 +160,7 @@ train_loader = DataLoader(
     batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(
     DataseriesLoader(dataset_val_dir), 
-    batch_size=BATCH_SIZE, shuffle=True)
+    batch_size=BATCH_SIZE)
 
 # Set up training 
 model = custom_vgg16.to(DEVICE)
@@ -236,24 +236,41 @@ for i_epoch in range(EPOCHS):
         torch.save(model.state_dict(), model_path)
 
 # Pass visualization image through network
-# val_loader = DataseriesLoader(dataset_val_dir, batch_size=BATCH_SIZE)
-# with torch.no_grad():
-#     for i, vdata in enumerate(val_loader):
-#         vinputs, vlabels = vdata
-#         voutputs = model(vinputs)
-#         label_pred = voutputs[0].cpu().numpy()
-#     label_pred = model(image_vis[None, ...])
-#     label_pred = label_pred[0].cpu().numpy()
-#     image_vis_np = image_vis.detach().cpu().permute(1,2,0).numpy()
+val_loader = DataLoader(
+    DataseriesLoader(dataset_val_dir), 
+    batch_size=BATCH_SIZE)
+val_img_idx = 0
+with torch.no_grad():
+    for i, vdata in enumerate(val_loader):
+        val_inputs, val_labels = vdata
+        val_inputs = val_inputs.to(DEVICE)
+        val_labels = val_labels.to(DEVICE)
+        
+        val_outputs = model(val_inputs)
+        val_outputs = val_outputs.view(-1, NUM_KEYPOINTS, DIM_KEYPOINTS)
+        print(val_inputs.shape, val_outputs.shape, val_labels.shape)
+       
+        for (vii, val_input), (voi, val_outputs), (vli, val_labels) in zip(enumerate(val_inputs), enumerate(val_outputs), enumerate(val_labels)):
+            
+            val_image_np = val_input.detach().cpu().permute(1,2,0).numpy()
+            val_image_np = np.ascontiguousarray((val_image_np * 255), dtype=np.uint8)
+            
+            print(val_image_np.shape, val_image_np.dtype)
+            
+            pred = val_outputs.cpu().numpy()
+            gt = val_labels.cpu().numpy()
 
-#     # Visualize
-#     image_vis_np = (image_vis_np * 255).astype(np.uint8)
+            print('pred', pred)
+            print('gt', gt)
+            for ip in range(4):
+                pred_point = pred[ip,:]# * IMG_SIZE
+                cv2.drawMarker(val_image_np, tuple(pred_point.astype(np.int32)), (255,0,0), markerType=cv2.MARKER_CROSS, markerSize=10, thickness=2)
+                
+                gt_point = gt[ip,:]
+                cv2.drawMarker(val_image_np, tuple(gt_point.astype(np.int32)), (0,0,255), markerType=cv2.MARKER_CROSS, markerSize=10, thickness=2)
 
-#     # Insert predicted corners
-#     for i_corner in range(4):
-#         marker_pos = label_pred[i_corner,:]
-#         cv2.drawMarker(image_vis_np, tuple(marker_pos.astype(np.int32)), (0,0,255), markerType=cv2.MARKER_CROSS, markerSize=10, thickness=2)
-
-#     cv2.imshow("image", image_vis_np)
-#     cv2.waitKey(1)
+            cv2.imshow("image", val_image_np)
+            k = cv2.waitKey(0)
+            if k == ord('q'):
+                    break
 
