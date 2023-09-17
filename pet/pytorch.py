@@ -1,4 +1,3 @@
-import datetime
 import os
 import glob
 import cv2
@@ -6,6 +5,7 @@ import numpy as np
 import ast
 import scipy
 import tqdm
+from datetime import datetime
 from geomloss import SamplesLoss
 
 import torch
@@ -229,7 +229,11 @@ for i_epoch in range(EPOCHS):
             running_vloss += val_loss
     avg_vloss = running_vloss / (i + 1)
     
-    
+    # Track best performance, and save the model's state
+    if avg_vloss < best_vloss:
+        best_vloss = avg_vloss
+        model_path = output_folder / f'model_{timestamp}_{i_epoch}.pt'
+        torch.save(model.state_dict(), model_path)
 
 # Pass visualization image through network
 # val_loader = DataseriesLoader(dataset_val_dir, batch_size=BATCH_SIZE)
