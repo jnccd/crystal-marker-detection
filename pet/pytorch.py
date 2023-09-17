@@ -1,3 +1,4 @@
+import datetime
 import os
 import glob
 import cv2
@@ -5,6 +6,7 @@ import numpy as np
 import ast
 import scipy
 import tqdm
+from geomloss import SamplesLoss
 
 import torch
 import torch.nn as nn
@@ -14,11 +16,13 @@ import torchvision.models as models
 from utils import *
 
 LR = 1e-3
-EPOCHS = 15
-BATCH_SIZE = 128
+EPOCHS = 5
+BATCH_SIZE = 32
 DEVICE = "cuda"
-NUM_KEYPOINTS = 4 * 2
-IMG_SIZE = 160
+DIM_KEYPOINTS = 2
+NUM_KEYPOINTS = 4
+IMG_SIZE = 224
+RESIZE_ON_LOAD = True
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-pet-test-red-rects'
@@ -43,6 +47,8 @@ class DataseriesLoader(Dataset):
     def __getitem__(self, idx):
         # Read image
         image = cv2.imread(self.image_label_filenames[idx][0])
+        if RESIZE_ON_LOAD:
+            image = cv2.resize(image, (IMG_SIZE, IMG_SIZE))
         image = image.astype(np.float32) / 255.0
         image = torch.from_numpy(image).permute(2,0,1)
 
@@ -90,7 +96,7 @@ class SimpleCNN(torch.nn.Module):
         x = x.view(-1, 4, 2)
 
         return x
-    
+
 vgg16 = models.vgg16(pretrained=True)
 vgg16 = vgg16.features
 class CustomVGG16Head(nn.Module):
@@ -109,7 +115,7 @@ class CustomVGG16Head(nn.Module):
         x = self.relu(x)
         x = self.fc2(x)
         return x
-custom_head = CustomVGG16Head(NUM_KEYPOINTS)
+custom_head = CustomVGG16Head(NUM_KEYPOINTS * DIM_KEYPOINTS)
 custom_vgg16 = nn.Sequential(vgg16, custom_head)
 
 # --- Loss ----------------------------------------------------------------------------------------
@@ -154,13 +160,17 @@ train_loader = DataLoader(
     batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(
     DataseriesLoader(dataset_val_dir), 
-    batch_size=BATCH_SIZE, shuffle=True) 
+    batch_size=BATCH_SIZE, shuffle=True)
 
 # Set up training 
 model = custom_vgg16.to(DEVICE)
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
-loss_fn = hungarian_loss
+loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
+metrics = [loss_mse, loss_repulsion]
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
 avg_vloss = 0.0
+best_vloss = 999_999
 
 # Train loop
 for i_epoch in range(EPOCHS):
@@ -175,20 +185,21 @@ for i_epoch in range(EPOCHS):
             # Forward pass
             label_pred = model(image_batch)
             label_pred = label_pred[:label_batch.shape[0]]
-            #print(label_pred.shape, label_batch.shape)
+            label_pred = label_pred.view(-1, NUM_KEYPOINTS, DIM_KEYPOINTS)
+            # print('pred, batch shapes:',label_pred.shape, label_batch.shape)
             
             # Compute loss
-            loss_mse_val = loss_mse(label_pred, label_batch)
-            loss_rep_val = loss_repulsion(label_pred, label_batch)
-            loss_hun_val = hungarian_loss(label_pred, label_batch)
-            loss = loss_hun_val
+            loss = loss_fn(label_pred, label_batch)
+            if len(loss.shape) != 0:
+                loss = torch.mean(loss)
 
             # Backprop
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             
-            pbar.set_description(f"Epoch {i_epoch}, loss {loss.item():.4f} (mse {loss_mse_val.item():.4f}, rep {loss_rep_val.item():.4f}), val-los: {avg_vloss}")
+            pbar.set_description(f"Ep {i_epoch}, L {loss.item():.4f} 上VaL {avg_vloss}, " + 
+                ', '.join([metric.__name__ + ' ' + str(torch.mean(metric(label_pred, label_batch)).item()) for metric in metrics]))
             pbar.update(1)
             
     # Validate
@@ -196,13 +207,29 @@ for i_epoch in range(EPOCHS):
     running_vloss = 0.0
     with torch.no_grad():
         for i, val_data in enumerate(val_loader):
+            # Get Input
             val_inputs, val_labels = val_data
             val_inputs = val_inputs.to(DEVICE)
-            print(val_inputs.shape, val_inputs.dtype)
+            val_labels = val_labels.to(DEVICE)
+            # print(val_inputs.shape, val_inputs.dtype)
+            
+            # Get network out
             val_output = model(val_inputs)
+            val_output = val_output.view(-1, NUM_KEYPOINTS, DIM_KEYPOINTS)
+            val_labels = val_labels.view(-1, NUM_KEYPOINTS, DIM_KEYPOINTS)
+            
+            # Compute Loss
+            # print('out')
+            # print(val_output.shape, val_output.dtype)
+            # print(val_output.shape, val_output.dtype)
             val_loss = loss_fn(val_output, val_labels)
+            if len(val_loss.shape) != 0:
+                val_loss = torch.mean(val_loss)
+            
             running_vloss += val_loss
     avg_vloss = running_vloss / (i + 1)
+    
+    
 
 # Pass visualization image through network
 # val_loader = DataseriesLoader(dataset_val_dir, batch_size=BATCH_SIZE)
