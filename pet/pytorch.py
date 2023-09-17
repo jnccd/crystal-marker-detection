@@ -235,7 +235,7 @@ for i_epoch in range(EPOCHS):
         model_path = output_folder / f'model_{timestamp}_{i_epoch}.pt'
         torch.save(model.state_dict(), model_path)
 
-# Pass visualization image through network
+# Visualize val data out
 val_loader = DataLoader(
     DataseriesLoader(dataset_val_dir), 
     batch_size=BATCH_SIZE)
