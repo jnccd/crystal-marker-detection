@@ -25,7 +25,7 @@ IMG_SIZE = 224
 RESIZE_ON_LOAD = True
 
 root_dir = Path(__file__).resolve().parent
-dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-pet-test-red-rects'
+dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-good-pics-v2-rot-aug'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
 output_folder = create_dir_if_not_exists(root_dir / 'output/pt')
@@ -232,8 +232,9 @@ for i_epoch in range(EPOCHS):
     # Track best performance, and save the model's state
     if avg_vloss < best_vloss:
         best_vloss = avg_vloss
-        model_path = output_folder / f'model_{timestamp}_{i_epoch}.pt'
-        torch.save(model.state_dict(), model_path)
+        if i_epoch > 5:
+            model_path = output_folder / f'best_model_{round(best_vloss * 1000)}_{loss_fn.__name__}.pt'
+            torch.save(model.state_dict(), model_path)
 
 # Visualize val data out
 val_loader = DataLoader(
@@ -248,7 +249,7 @@ with torch.no_grad():
         
         val_outputs = model(val_inputs)
         val_outputs = val_outputs.view(-1, NUM_KEYPOINTS, DIM_KEYPOINTS)
-        print(val_inputs.shape, val_outputs.shape, val_labels.shape)
+        # print(val_inputs.shape, val_outputs.shape, val_labels.shape)
        
         for (vii, val_input), (voi, val_outputs), (vli, val_labels) in zip(enumerate(val_inputs), enumerate(val_outputs), enumerate(val_labels)):
             
@@ -260,8 +261,8 @@ with torch.no_grad():
             pred = val_outputs.cpu().numpy()
             gt = val_labels.cpu().numpy()
 
-            print('pred', pred)
-            print('gt', gt)
+            # print('pred', pred)
+            # print('gt', gt)
             for ip in range(4):
                 pred_point = pred[ip,:]# * IMG_SIZE
                 cv2.drawMarker(val_image_np, tuple(pred_point.astype(np.int32)), (255,0,0), markerType=cv2.MARKER_CROSS, markerSize=10, thickness=2)
