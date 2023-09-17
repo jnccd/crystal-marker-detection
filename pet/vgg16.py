@@ -49,7 +49,6 @@ def load_dataseries(dataseries_path, img_size):
         image = img_to_array(image)
         
         points = ast.literal_eval(read_textfile(vert_path))
-        print(points)
         points = sorted(points, key = lambda x: x[0])
         
         data.append(image)
@@ -97,8 +96,43 @@ bboxHead = Dense(8, activation="sigmoid")(bboxHead)
 
 model = Model(inputs=vgg.input, outputs=bboxHead)
 
-opt = Adam(lr=0.0008)
-model.compile(loss="mse", optimizer=opt)
+from scipy.optimize import linear_sum_assignment
+def hungarian_loss(y_true, y_pred):
+    """
+    Hungarian (Munkres) Loss Function
+
+    Arguments:
+    y_true -- true target labels, shape (batch_size, num_samples)
+    y_pred -- predicted target labels, shape (batch_size, num_samples)
+
+    Returns:
+    loss -- Hungarian loss
+    """
+    print(y_true.shape, y_pred.shape)
+    batch_size = tf.shape(y_true)[0]
+    num_samples = tf.shape(y_true)[1]
+
+    # Define a cost matrix based on the negative of predicted probabilities
+    cost_matrix = -tf.reduce_sum(y_pred, axis=2)
+
+    # Apply the Hungarian algorithm to find the optimal assignment
+    assignment = tf.py_function(func=linear_sum_assignment, inp=[cost_matrix], Tout=tf.int64)
+
+    # Create a one-hot matrix based on the assignment
+    assignment_one_hot = tf.one_hot(assignment[0], depth=num_samples)
+
+    # Compute the element-wise product between the one-hot matrix and true labels
+    selected_labels = tf.reduce_sum(y_true * assignment_one_hot, axis=1)
+
+    # Calculate the loss as the negative sum of selected labels
+    loss = -tf.reduce_sum(selected_labels)
+
+    return loss
+
+model.compile(
+    loss=hungarian_loss, 
+    optimizer=Adam(lr=0.0008)
+)
 print(model.summary())
 
 print('fitting...')
@@ -107,7 +141,8 @@ H = model.fit(
 	validation_data=(val_np_images, val_targets),
 	batch_size=32,
 	epochs=epochs,
-	verbose=1)
+	verbose=1
+ )
 
 print("[INFO] saving object detector model...")
 model.save(output_folder / 'model.h5', save_format="h5")
