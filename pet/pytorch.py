@@ -328,8 +328,8 @@ for i_epoch in range(EPOCHS):
 
 plt.style.use("ggplot")
 plt.figure()
-plt.plot(np.arange(0, EPOCHS), loss_history, label="train_loss")
-plt.plot(np.arange(0, EPOCHS), val_loss_history, label="val_loss")
+plt.plot(np.arange(1, EPOCHS), loss_history[1:], label="train_loss")
+plt.plot(np.arange(1, EPOCHS), val_loss_history[1:], label="val_loss")
 plt.title("Keypoint detection loss over epochs")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss")
