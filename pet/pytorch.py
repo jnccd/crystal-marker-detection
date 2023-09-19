@@ -14,6 +14,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 import torchvision.models as models
+from torchsummary import summary
 
 from utils import *
 
@@ -245,6 +246,7 @@ val_loader = DataLoader(
 
 # Set up training 
 model = get_model().to(DEVICE)
+summary(model, input_size=(3, IMG_SIZE, IMG_SIZE))
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
