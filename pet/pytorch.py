@@ -46,7 +46,7 @@ class DataseriesLoader(Dataset):
                 A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                 A.RandomRotate90(),
                 A.SafeRotate(),
-                A.ShiftScaleRotate(scale_limit=0, rotate_limit=0),
+                A.ShiftScaleRotate(scale_limit=0, rotate_limit=0, shift_limit=0.12),
                 A.HueSaturationValue(),
             ], keypoint_params=A.KeypointParams(format='xy'))
         else:
