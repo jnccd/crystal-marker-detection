@@ -8,6 +8,7 @@ import scipy
 import tqdm
 from datetime import datetime
 from geomloss import SamplesLoss
+import albumentations as A
 
 import torch
 import torch.nn as nn
@@ -39,6 +40,14 @@ class DataseriesLoader(Dataset):
         self.image_filenames = get_files_from_folders_with_ending([dataseries_dir], '.png')
         self.label_filenames = get_files_from_folders_with_ending([dataseries_dir], '.txt')
         self.image_label_filenames = list(zip(self.image_filenames, self.label_filenames))
+        
+        # Define transform pipeline
+        self.transform = A.Compose([
+            A.RandomRotate90(),
+            A.SafeRotate(),
+            A.ShiftScaleRotate(scale_limit=0, rotate_limit=0),
+            A.HueSaturationValue(),
+        ], keypoint_params=A.KeypointParams(format='xy'))
 
         print(f"Found {len(self.image_label_filenames)} images in {dataseries_dir}")
 
@@ -50,12 +59,20 @@ class DataseriesLoader(Dataset):
         image = cv2.imread(self.image_label_filenames[idx][0])
         if RESIZE_ON_LOAD:
             image = cv2.resize(image, (IMG_SIZE, IMG_SIZE))
+        # Read points
+        points = ast.literal_eval(read_textfile(self.image_label_filenames[idx][1]))
+        
+        # Augment
+        transformed = self.transform(image=image, keypoints=points)
+        image = transformed['image']
+        points = transformed['keypoints']
+        #print(points)
+        
+        # Prepare for torch
         image = image.astype(np.float32) / 255.0
         image = torch.from_numpy(image).permute(2,0,1)
-
-        # Read label
         label = torch.from_numpy(
-            np.array(ast.literal_eval(read_textfile(self.image_label_filenames[idx][1])))
+            np.array(points)
         ).float()
 
         return image, label
