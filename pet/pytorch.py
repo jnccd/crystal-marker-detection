@@ -304,10 +304,10 @@ for i_epoch in range(EPOCHS):
     val_loss_history.append(avg_val_loss.to('cpu').detach().numpy())
     
     # Track best performance, and save the model's state
-    if avg_val_loss < best_vloss:
-        best_vloss = avg_val_loss
+    if val_loss_history[-1] < best_vloss:
+        best_vloss = val_loss_history[-1]
         if i_epoch > 5:
-            model_path = output_folder / f'best_model_{round(best_vloss * 1000)}_{loss_fn.__name__}.pt'
+            model_path = output_folder / f'best_model_{round(best_vloss * 1000)}_{name_of_object(loss_fn)}.pt'
             torch.save(model.state_dict(), model_path)
 
 plt.style.use("ggplot")
