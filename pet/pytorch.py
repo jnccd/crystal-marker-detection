@@ -45,15 +45,15 @@ class DataseriesLoader(Dataset):
             self.transform = A.Compose([
                 A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                 A.RandomRotate90(),
+                A.Transpose(),
                 A.SafeRotate(always_apply=True),
-                A.ShiftScaleRotate(rotate_limit=0, shift_limit=0.12),
+                A.ShiftScaleRotate(rotate_limit=0, shift_limit=0.2),
                 A.HueSaturationValue(),
                 A.ColorJitter(),
             ], keypoint_params=A.KeypointParams(format='xy'))
         else:
             self.transform = A.Compose([
                 A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
-                A.RandomRotate90(),
             ], keypoint_params=A.KeypointParams(format='xy'))
 
         print(f"Found {len(self.image_label_filenames)} images in {dataseries_dir}")
