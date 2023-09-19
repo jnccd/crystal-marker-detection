@@ -35,3 +35,14 @@ def flatten(list):
 
 def unflatten(list, chunk_size):
     return [list[n:n+chunk_size] for n in range(0, len(list), chunk_size)]
+
+# Horrible function implemented shortly before october
+def name_of_object(arg):
+    try:
+        return arg.__name__
+    except AttributeError:
+        pass
+
+    for name, value in globals().items():
+        if value is arg and not name.startswith('_'):
+            return name
