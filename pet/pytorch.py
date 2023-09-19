@@ -323,8 +323,7 @@ for i_epoch in range(EPOCHS):
     # Track best performance, and save the model's state
     if val_loss_history[-1] < best_vloss:
         best_vloss = val_loss_history[-1]
-        if i_epoch > 5:
-            torch.save(model.state_dict(), model_path)
+        torch.save(model.state_dict(), model_path)
 
 plt.style.use("ggplot")
 plt.figure()
