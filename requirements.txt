@@ -27,6 +27,8 @@ shapely
 ensemble-boxes
 hyperopt
 super-gradients==3.2.1
+torchsummary
+geomloss
 
 # sahi
 sahi
