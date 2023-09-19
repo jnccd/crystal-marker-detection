@@ -24,7 +24,6 @@ DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
 IMG_SIZE = 224
-RESIZE_ON_LOAD = True
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet'
@@ -44,10 +43,15 @@ class DataseriesLoader(Dataset):
         # Define transform pipeline
         if aug:
             self.transform = A.Compose([
+                A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                 A.RandomRotate90(),
                 A.SafeRotate(),
                 A.ShiftScaleRotate(scale_limit=0, rotate_limit=0),
                 A.HueSaturationValue(),
+            ], keypoint_params=A.KeypointParams(format='xy'))
+        else:
+            self.transform = A.Compose([
+                A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
             ], keypoint_params=A.KeypointParams(format='xy'))
 
         print(f"Found {len(self.image_label_filenames)} images in {dataseries_dir}")
@@ -56,15 +60,12 @@ class DataseriesLoader(Dataset):
         return len(self.image_label_filenames)
     
     def __getitem__(self, idx):
-        # Read image
+        # Read image and points
         image = cv2.imread(self.image_label_filenames[idx][0])
-        if RESIZE_ON_LOAD:
-            image = cv2.resize(image, (IMG_SIZE, IMG_SIZE))
-        # Read points
         points = ast.literal_eval(read_textfile(self.image_label_filenames[idx][1]))
         
         # Augment
-        if self.transform != None and False:
+        if self.transform != None:
             transformed = self.transform(image=image, keypoints=points)
             image = transformed['image']
             points = transformed['keypoints']
