@@ -9,8 +9,8 @@ from evaluation.utility import *
 #     os.system(f'with_gpu -n 1 sudo mip-docker-run --gpus \'"device=$CUDA_VISIBLE_DEVICES"\' ncarstensen/pcmd:0.11 python evaluation/plot_ensemble.py -n yolov5s-noise-{aug_token} -r /data/pcmd/training/yolov5s-{aug_token}-ensemble/ -pi 5 -ci 4 -cu 10% -rnp \'.*yolo5aug$\' -t "mAP scores for a given chance of {aug_name} augmentation in the dataset"')
 
 # --- After yolov5s aug hyp opt
-opt_aug_params = "-asgsc 0.16536455065004735 -apldc 0.3406092762590903 -apc 0.9026868390392013 -aps 0.44744759491769104 -arc 0.8397534486075489 -ars 269.5297433583759 -andrc 0.4779575209987885 -arcc 0.07811140975400804 -arc2c 0.09484458554495206 -almc 0.3281069403856025 -alm2c 0.04946212899649677 -abdc 0.5932304638260782 -alcc 0.09002886339102176 -agnc 0.2850102716939429 -agns 147.09472782083168"
-epochs = 219
+opt_aug_params = "-asgsc 0.6832841914530021 -apldc 0.7472412493690345 -apc 0.8965160681643762 -aps 0.14231038299950238 -arc 0.7194422300566737 -ars 105.83149978479527 -andrc 0.8340463734130839 -arcc 0.12321476086303013 -arc2c 0.20432659337780826 -almc 0.020587253796741117 -alm2c 0.017673002005261285 -abdc 0.8011914710474702 -alcc 0.21241785889630882 -agnc 0.3599594528673184 -agns 80.5545109790516"
+epochs = 368
 docker_image = 'ncarstensen/pcmd:0.13'
 def aug_ensemble_workflow(aug_token: str, aug_name: str, aug_arg: str):
     # Get all param values that are not being changed in this ensemble
@@ -21,17 +21,17 @@ def aug_ensemble_workflow(aug_token: str, aug_name: str, aug_arg: str):
     plot_name = f'hyperparameter-search-based-{aug_token}-sahi-ensemble'
     
     os.system(f'with_gpu -n 1 sudo mip-docker-run --gpus \'"device=$CUDA_VISIBLE_DEVICES"\' {docker_image} python mip_create_ensemble_datasets.py -n gpv2-{aug_token} -op "-tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 {other_aug_params_str} -{aug_arg}"')
-    os.system(f'python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-ensemble-gpv2-{aug_token}/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensemble-test/ -us -e {epochs} -snr -o {train_folder}"')
+    os.system(f'python3 mip_worker_batch_train.py -n 4 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-ensemble-gpv2-{aug_token}/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensemble-test/ -us -e {epochs} -snr -o {train_folder}"')
     os.system(f'bash mip_worker_await.sh')
     os.system(f'with_gpu -n 1 sudo mip-docker-run --gpus \'"device=$CUDA_VISIBLE_DEVICES"\' {docker_image} python evaluation/plot_ensemble.py -n {plot_name} -r {train_folder} -pi 5 -ci 4 -cu 10% -rnp \'.*yolo5aug$\' -t "mAP scores for a given chance of {aug_name} augmentation in the dataset"')
     
 os.system(f'bash mip_worker_await.sh')
 
+aug_ensemble_workflow(aug_token='bd', aug_name='black dot', aug_arg='abdc')
 aug_ensemble_workflow(aug_token='persp', aug_name='perspective', aug_arg='apc')
 aug_ensemble_workflow(aug_token='rot', aug_name='rotation', aug_arg='arc')
 aug_ensemble_workflow(aug_token='sgs', aug_name='smart grid shuffling', aug_arg='asgsc')
 aug_ensemble_workflow(aug_token='gn', aug_name='gauss noise', aug_arg='agnc')
-aug_ensemble_workflow(aug_token='bd', aug_name='black dot', aug_arg='abdc')
 aug_ensemble_workflow(aug_token='ld', aug_name='label dropout', aug_arg='apldc')
 aug_ensemble_workflow(aug_token='ndr', aug_name='ninety deg rotation', aug_arg='andrc')
 aug_ensemble_workflow(aug_token='lm', aug_name='label move', aug_arg='almc')
