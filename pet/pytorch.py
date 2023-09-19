@@ -52,6 +52,8 @@ class DataseriesLoader(Dataset):
         else:
             self.transform = A.Compose([
                 A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
+                A.RandomRotate90(),
+                A.ShiftScaleRotate(scale_limit=0, rotate_limit=0),
             ], keypoint_params=A.KeypointParams(format='xy'))
 
         print(f"Found {len(self.image_label_filenames)} images in {dataseries_dir}")
