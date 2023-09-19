@@ -18,12 +18,13 @@ import torchvision.models as models
 from utils import *
 
 LR = 1e-3
-EPOCHS = 100
+EPOCHS = 10
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
 IMG_SIZE = 224
+MODEL = 'vgg16'
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet'
@@ -47,7 +48,7 @@ class DataseriesLoader(Dataset):
                 A.RandomRotate90(),
                 A.Transpose(),
                 A.SafeRotate(always_apply=True),
-                A.ShiftScaleRotate(rotate_limit=0, shift_limit=0.2),
+                A.ShiftScaleRotate(rotate_limit=0, shift_limit=0.15),
                 A.HueSaturationValue(),
                 A.ColorJitter(),
             ], keypoint_params=A.KeypointParams(format='xy'))
@@ -112,62 +113,67 @@ def interactive_validate_dataloader(loader: DataLoader):
     
 # --- Model ----------------------------------------------------------------------------------------
 
-class SimpleCNN(torch.nn.Module):
-    def __init__(self):
-        super(SimpleCNN, self).__init__()
+def get_model():
+    if MODEL == 'scnn':
+        class SimpleCNN(torch.nn.Module):
+            def __init__(self):
+                super(SimpleCNN, self).__init__()
 
-        self.maxpool = torch.nn.MaxPool2d(2,2)
-        self.dropout = torch.nn.Dropout2d(0.2)
-        self.conv1 = torch.nn.Conv2d(3, 32, 3, padding=1)
-        self.conv2 = torch.nn.Conv2d(32, 64, 3, padding=1)
-        self.conv3 = torch.nn.Conv2d(64, 128, 3, padding=1)
-        self.fc1 = torch.nn.Linear(128 * 16 * 16, 8)
+                self.maxpool = torch.nn.MaxPool2d(2,2)
+                self.dropout = torch.nn.Dropout2d(0.2)
+                self.conv1 = torch.nn.Conv2d(3, 32, 3, padding=1)
+                self.conv2 = torch.nn.Conv2d(32, 64, 3, padding=1)
+                self.conv3 = torch.nn.Conv2d(64, 128, 3, padding=1)
+                self.fc1 = torch.nn.Linear(128 * 16 * 16, 8)
 
-    def forward(self, x):
-        # Convolutional layers
-        x = self.conv1(x)
-        x = torch.nn.functional.relu(x)
-        x = self.maxpool(x)
+            def forward(self, x):
+                # Convolutional layers
+                x = self.conv1(x)
+                x = torch.nn.functional.relu(x)
+                x = self.maxpool(x)
 
-        x = self.conv2(x)
-        x = torch.nn.functional.relu(x)
-        x = self.maxpool(x)
+                x = self.conv2(x)
+                x = torch.nn.functional.relu(x)
+                x = self.maxpool(x)
 
-        x = self.conv3(x)
-        x = torch.nn.functional.relu(x)
-        x = self.maxpool(x)
+                x = self.conv3(x)
+                x = torch.nn.functional.relu(x)
+                x = self.maxpool(x)
 
-        # Flatten
-        x = x.view(-1, 128 * 16 * 16)
+                # Flatten
+                x = x.view(-1, 128 * 16 * 16)
 
-        # Fully connected
-        x = self.fc1(x)
+                # Fully connected
+                x = self.fc1(x)
+                
+                # Reshape to (batch_size, 4, 2)
+                x = x.view(-1, 4, 2)
+
+                return x
+        model = SimpleCNN()
+    elif MODEL == 'vgg16':
+        vgg16 = models.vgg16(pretrained=True)
+        vgg16 = vgg16.features
+        class CustomVGG16Head(nn.Module):
+            def __init__(self, num_keypoints):
+                super(CustomVGG16Head, self).__init__()
+                self.conv1 = nn.Conv2d(512, 256, kernel_size=3, padding=1)
+                self.relu = nn.ReLU()
+                self.fc1 = nn.Linear(256 * 7 * 7, 128)
+                self.fc2 = nn.Linear(128, num_keypoints)
+
+            def forward(self, x):
+                x = self.conv1(x)
+                x = self.relu(x)
+                x = x.view(x.size(0), -1)  # Flatten
+                x = self.fc1(x)
+                x = self.relu(x)
+                x = self.fc2(x)
+                return x
+        custom_head = CustomVGG16Head(NUM_KEYPOINTS * DIM_KEYPOINTS)
+        model = nn.Sequential(vgg16, custom_head)
         
-        # Reshape to (batch_size, 4, 2)
-        x = x.view(-1, 4, 2)
-
-        return x
-
-vgg16 = models.vgg16(pretrained=True)
-vgg16 = vgg16.features
-class CustomVGG16Head(nn.Module):
-    def __init__(self, num_keypoints):
-        super(CustomVGG16Head, self).__init__()
-        self.conv1 = nn.Conv2d(512, 256, kernel_size=3, padding=1)
-        self.relu = nn.ReLU()
-        self.fc1 = nn.Linear(256 * 7 * 7, 128)
-        self.fc2 = nn.Linear(128, num_keypoints)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.relu(x)
-        x = x.view(x.size(0), -1)  # Flatten
-        x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
-        return x
-custom_head = CustomVGG16Head(NUM_KEYPOINTS * DIM_KEYPOINTS)
-custom_vgg16 = nn.Sequential(vgg16, custom_head)
+    return model
 
 # --- Loss ----------------------------------------------------------------------------------------
 
@@ -232,11 +238,12 @@ val_loader = DataLoader(
 )
 
 # Set up training 
-model = custom_vgg16.to(DEVICE)
+model = get_model().to(DEVICE)
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+model_path = output_folder / f'best_model_{name_of_object(loss_fn)}.pt'
 
 avg_val_loss = 0.0
 best_vloss = 999_999
@@ -309,7 +316,6 @@ for i_epoch in range(EPOCHS):
     if val_loss_history[-1] < best_vloss:
         best_vloss = val_loss_history[-1]
         if i_epoch > 5:
-            model_path = output_folder / f'best_model_{name_of_object(loss_fn)}.pt'
             torch.save(model.state_dict(), model_path)
 
 plt.style.use("ggplot")
@@ -321,6 +327,9 @@ plt.xlabel("Epoch #")
 plt.ylabel("Loss")
 plt.legend(loc="lower left")
 plt.savefig(output_folder / 'plot.png')
+
+model = get_model().to(DEVICE)
+model.load_state_dict(torch.load(model_path))
 
 # Visualize val data out
 val_loader = DataLoader(
