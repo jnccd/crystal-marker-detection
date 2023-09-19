@@ -6,5 +6,6 @@ COPY . /src
 RUN apt-get update && apt-get install git ffmpeg libsm6 libxext6 -y
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 RUN pip install -r requirements.txt
+RUN python -m pip install git+https://github.com/jnccd/super-gradients
 
 # Start with -im
