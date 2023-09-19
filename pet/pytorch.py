@@ -19,8 +19,8 @@ from torchsummary import summary
 from utils import *
 
 LR = 1e-3
-EPOCHS = 10
-BATCH_SIZE = 32
+EPOCHS = 200
+BATCH_SIZE = 64
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
