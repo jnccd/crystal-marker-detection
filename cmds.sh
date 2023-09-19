@@ -195,3 +195,6 @@ python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data
 python hyperparam_search.py -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -df /data/pcmd/dataset/hyp-param-search -tf /data/pcmd/training/hyp-param-search -mine 200 -maxe 400 -ds " -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2" -emax 300
 python traindata-creator/createDataset.py -n best-yolov5s-hyp-search-set -s 640 -tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -sd 8338 -r 0.2 -t yolov5 -s 640 -a -aim 4 -asgsc 0.16536455065004735 -apldc 0.3406092762590903 -apc 0.9026868390392013 -aps 0.44744759491769104 -arc 0.8397534486075489 -ars 269.5297433583759 -andrc 0.4779575209987885 -arcc 0.07811140975400804 -arc2c 0.09484458554495206 -almc 0.3281069403856025 -alm2c 0.04946212899649677 -abdc 0.5932304638260782 -alcc 
 0.09002886339102176 -agnc 0.2850102716939429 -agns 147.09472782083168
+
+# pet pipeline
+python traindata-creator/createDataset.py -n man-pet -t pet -s 0 -tf traindata-creator/dataseries/coco-man-pet/ -r 0.1
