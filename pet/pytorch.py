@@ -251,7 +251,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-model_path = output_folder / f'best_model_{name_of_object(loss_fn)}.pt'
+model_path = output_folder / f'best_{MODEL}.pt'
 
 avg_val_loss = 0.0
 best_vloss = 999_999
