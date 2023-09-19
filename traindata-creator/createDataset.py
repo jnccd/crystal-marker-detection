@@ -218,6 +218,8 @@ def main():
         build_od_csv_dataset(in_imgs, target_polys)
     elif args.type == 'pet':
         build_pet_dataset(in_imgs, target_polys)
+    elif args.type == 'alb-test':
+        build_alb_test_dataset(in_imgs, target_polys)
     else:
         print('Error: Unsupported dataset type!')
         exit()
@@ -266,6 +268,43 @@ def build_seg_dataset(in_imgs, target_polys):
             seg_image = np.zeros(in_img.shape[:2] + (3,), dtype = np.uint8)
             seg_image = rasterize_polys(seg_image, polys)
             
+            cv2.imwrite(str(dir[group] / f'{i}_seg.png'), seg_image)
+        print(f'Built {i+1} {group}data!')
+        
+def build_alb_test_dataset(in_imgs, target_polys):
+    global data_groups, dataset_name, dataset_dir
+    
+    # Create train / val dirs
+    dir = {}
+    for group in data_groups:
+        dir[group] = create_dir_if_not_exists(dataset_dir / group)
+        
+    transform = A.Compose([
+        A.ElasticTransform(always_apply=True)
+    ], bbox_params=A.BboxParams(format='pascal_voc'))
+    
+    # Build groups data
+    i = -1
+    for group in data_groups:
+        for i, (in_img, polys) in enumerate(zip(in_imgs[group], target_polys[group])):
+            h, w = in_img.shape[:2]
+            polys: List[Polygon] = polys
+            
+            #bboxes = [[c / (w if i % 2 == 0 else h) for i, c in enumerate(p.bounds)] for p in polys]
+            bboxes = [p.bounds for p in polys]
+            bboxes = [[int(x) for x in b] for b in bboxes]
+            bboxes = [(b[0], b[1], b[2], b[3], 'marker') for b in bboxes]
+            transform_out = transform(image=in_img, bboxes=bboxes)
+            aug_img = transform_out["image"]
+            aug_bboxes = transform_out["bboxes"]
+            
+            cv2.imwrite(str(dir[group] / f'{i}_in.png'), aug_img)
+            
+            seg_image = np.zeros(in_img.shape[:2] + (3,), dtype = np.uint8)
+            for bbox in aug_bboxes:
+                bbox = bbox[:4]
+                bbox = [int(x) for x in bbox]
+                cv2.rectangle(seg_image, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 3)
             cv2.imwrite(str(dir[group] / f'{i}_seg.png'), seg_image)
         print(f'Built {i+1} {group}data!')
         
