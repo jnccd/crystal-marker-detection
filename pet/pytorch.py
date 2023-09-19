@@ -97,7 +97,7 @@ def interactive_validate_dataloader(loader: DataLoader):
                 image_np = input.detach().cpu().permute(1,2,0).numpy()
                 image_np = np.ascontiguousarray((image_np * 255), dtype=np.uint8)
                 
-                print(image_np.shape, image_np.dtype)
+                #print(image_np.shape, image_np.dtype)
                 
                 gt = labels.cpu().numpy()
 
@@ -360,7 +360,7 @@ with torch.no_grad():
             val_image_np = val_input.detach().cpu().permute(1,2,0).numpy()
             val_image_np = np.ascontiguousarray((val_image_np * 255), dtype=np.uint8)
             
-            print(val_image_np.shape, val_image_np.dtype)
+            #print(val_image_np.shape, val_image_np.dtype)
             
             pred = val_outputs.cpu().numpy()
             gt = val_labels.cpu().numpy()
