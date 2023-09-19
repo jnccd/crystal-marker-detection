@@ -18,7 +18,7 @@ import torchvision.models as models
 from utils import *
 
 LR = 1e-3
-EPOCHS = 50
+EPOCHS = 100
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
@@ -45,15 +45,15 @@ class DataseriesLoader(Dataset):
             self.transform = A.Compose([
                 A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                 A.RandomRotate90(),
-                A.SafeRotate(),
-                A.ShiftScaleRotate(scale_limit=0, rotate_limit=0, shift_limit=0.12),
+                A.SafeRotate(always_apply=True),
+                A.ShiftScaleRotate(rotate_limit=0, shift_limit=0.12),
                 A.HueSaturationValue(),
+                A.ColorJitter(),
             ], keypoint_params=A.KeypointParams(format='xy'))
         else:
             self.transform = A.Compose([
                 A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                 A.RandomRotate90(),
-                A.ShiftScaleRotate(scale_limit=0, rotate_limit=0),
             ], keypoint_params=A.KeypointParams(format='xy'))
 
         print(f"Found {len(self.image_label_filenames)} images in {dataseries_dir}")
