@@ -35,19 +35,20 @@ output_folder = create_dir_if_not_exists(root_dir / 'output/pt')
 # --- Dataloader ----------------------------------------------------------------------------------------
 
 class DataseriesLoader(Dataset):
-    def __init__(self, dataseries_dir):
+    def __init__(self, dataseries_dir, aug = False):
         # Read filenames
         self.image_filenames = get_files_from_folders_with_ending([dataseries_dir], '.png')
         self.label_filenames = get_files_from_folders_with_ending([dataseries_dir], '.txt')
         self.image_label_filenames = list(zip(self.image_filenames, self.label_filenames))
         
         # Define transform pipeline
-        self.transform = A.Compose([
-            A.RandomRotate90(),
-            A.SafeRotate(),
-            A.ShiftScaleRotate(scale_limit=0, rotate_limit=0),
-            A.HueSaturationValue(),
-        ], keypoint_params=A.KeypointParams(format='xy'))
+        if aug:
+            self.transform = A.Compose([
+                A.RandomRotate90(),
+                A.SafeRotate(),
+                A.ShiftScaleRotate(scale_limit=0, rotate_limit=0),
+                A.HueSaturationValue(),
+            ], keypoint_params=A.KeypointParams(format='xy'))
 
         print(f"Found {len(self.image_label_filenames)} images in {dataseries_dir}")
 
@@ -63,10 +64,11 @@ class DataseriesLoader(Dataset):
         points = ast.literal_eval(read_textfile(self.image_label_filenames[idx][1]))
         
         # Augment
-        transformed = self.transform(image=image, keypoints=points)
-        image = transformed['image']
-        points = transformed['keypoints']
-        #print(points)
+        if self.transform != None and False:
+            transformed = self.transform(image=image, keypoints=points)
+            image = transformed['image']
+            points = transformed['keypoints']
+            #print(points)
         
         # Prepare for torch
         image = image.astype(np.float32) / 255.0
@@ -76,6 +78,34 @@ class DataseriesLoader(Dataset):
         ).float()
 
         return image, label
+    
+def interactive_validate_dataloader(loader: DataLoader):
+    k = 0
+    with torch.no_grad():
+        for i, data in enumerate(loader):
+            inputs, labels = data
+            inputs = inputs.to('cpu')
+            labels = labels.to('cpu')
+            
+            for (ii, input), (li, labels) in zip(enumerate(inputs), enumerate(labels)):
+                
+                image_np = input.detach().cpu().permute(1,2,0).numpy()
+                image_np = np.ascontiguousarray((image_np * 255), dtype=np.uint8)
+                
+                print(image_np.shape, image_np.dtype)
+                
+                gt = labels.cpu().numpy()
+
+                for ip in range(4):
+                    gt_point = gt[ip,:]
+                    cv2.drawMarker(image_np, tuple(gt_point.astype(np.int32)), (0,0,255-ip*30), markerType=cv2.MARKER_CROSS, markerSize=10, thickness=2)
+
+                cv2.imshow("image", image_np)
+                k = cv2.waitKey(0)
+                if k == ord('q'):
+                    break
+            if k == ord('q'):
+                    break
     
 # --- Model ----------------------------------------------------------------------------------------
 
@@ -172,13 +202,31 @@ def hungarian_loss(pred, target):
 
 # --- Train ----------------------------------------------------------------------------------------
 
+# Test train data
+interactive_validate_dataloader(
+    DataLoader(
+        DataseriesLoader(
+            dataset_train_dir, 
+            aug=True
+        ), 
+        batch_size=BATCH_SIZE, 
+        shuffle=True
+    )
+)
+
 # define dataloaders
 train_loader = DataLoader(
-    DataseriesLoader(dataset_train_dir), 
-    batch_size=BATCH_SIZE, shuffle=True)
+    DataseriesLoader(
+        dataset_train_dir, 
+        aug=True
+    ), 
+    batch_size=BATCH_SIZE, 
+    shuffle=True
+)
 val_loader = DataLoader(
     DataseriesLoader(dataset_val_dir), 
-    batch_size=BATCH_SIZE)
+    batch_size=BATCH_SIZE
+)
 
 # Set up training 
 model = custom_vgg16.to(DEVICE)
@@ -274,7 +322,8 @@ plt.savefig(output_folder / 'plot.png')
 # Visualize val data out
 val_loader = DataLoader(
     DataseriesLoader(dataset_val_dir), 
-    batch_size=BATCH_SIZE)
+    batch_size=BATCH_SIZE
+)
 val_img_idx = 0
 with torch.no_grad():
     for i, vdata in enumerate(val_loader):
