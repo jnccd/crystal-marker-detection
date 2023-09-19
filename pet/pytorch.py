@@ -309,7 +309,7 @@ for i_epoch in range(EPOCHS):
     if val_loss_history[-1] < best_vloss:
         best_vloss = val_loss_history[-1]
         if i_epoch > 5:
-            model_path = output_folder / f'best_model_{round(best_vloss * 1000)}_{name_of_object(loss_fn)}.pt'
+            model_path = output_folder / f'best_model_{name_of_object(loss_fn)}.pt'
             torch.save(model.state_dict(), model_path)
 
 plt.style.use("ggplot")
