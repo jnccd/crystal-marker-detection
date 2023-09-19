@@ -220,7 +220,7 @@ for i_epoch in range(EPOCHS):
             loss.backward()
             optimizer.step()
             
-            pbar.set_description(f"Ep {i_epoch}, L {loss.item():.4f} 上VaL {avg_val_loss}, " + 
+            pbar.set_description(f"Ep {i_epoch}, L {np.average(batch_losses):.4f} 上VaL {avg_val_loss}, " + 
                 ', '.join([metric.__name__ + ' ' + str(torch.mean(metric(label_pred, label_batch)).item()) for metric in metrics]))
             pbar.update(1)
     avg_loss = np.average(batch_losses)
