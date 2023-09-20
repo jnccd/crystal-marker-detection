@@ -32,6 +32,7 @@ dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
 output_folder = create_dir_if_not_exists(root_dir / 'output/pt')
+eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
 
@@ -373,6 +374,7 @@ with torch.no_grad():
                 gt_point = gt[ip,:]
                 cv2.drawMarker(val_image_np, tuple(gt_point.astype(np.int32)), (0,0,255), markerType=cv2.MARKER_CROSS, markerSize=10, thickness=2)
 
+            cv2.imwrite(str(eval_folder / f'{i}_{vii}.png'), val_image_np)
             cv2.imshow("image", val_image_np)
             k = cv2.waitKey(0)
             if k == ord('q'):
