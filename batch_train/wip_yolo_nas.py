@@ -9,7 +9,19 @@ import time
 from pathlib import Path
 import cv2
 import numpy as np
+from super_gradients import Trainer
 import torch
+from torch.utils.data import DataLoader
+
+from super_gradients.training import models
+from super_gradients.training import dataloaders
+from super_gradients.training.datasets import YoloDarknetFormatDetectionDataset
+from super_gradients.training.metrics import (
+    DetectionMetrics_050,
+    DetectionMetrics_050_095
+)
+from super_gradients.training.losses import PPYoloELoss
+from super_gradients.training.models.detection_models.pp_yolo_e import PPYoloEPostPredictionCallback
 
 from utils import *
 
@@ -101,30 +113,87 @@ def yolo_nas_train_loop(dataset_path,
         'dataset': dataset_def_dict,
         'valset': valset_def_dict,
     }
+    
+    classes = ["marker"]
+    train_data = DataLoader(YoloDarknetFormatDetectionDataset(data_dir=str(dataset_path), images_dir='train/images', labels_dir='train/labels', classes=classes)) 
+    val_data = DataLoader(YoloDarknetFormatDetectionDataset(data_dir=str(dataset_path), images_dir='val/images', labels_dir='val/labels', classes=classes))
+    
+    #train_data.dataset.plot(plot_transformed_data=True)
 
     print('--- Training...')
     
-    model = YOLO(f'{model_name}.pt')
-    # Add noise to model if arg is set
-    if weight_noise > 0:
-        with torch.no_grad():
-            for param in model.model.parameters():
-                param.add_(torch.randn(param.size()) * weight_noise)
-    model.train(
-        data=f'{dataset_path}/{dataset_path.stem}.yaml',
-        epochs=epochs, 
-        batch=batch_size,
-        imgsz=img_size,
-        project=project_folder,
-        name=run_name,
-        pretrained=pretrained,
-        exist_ok=True,
-        device=[0])#list(range(torch.cuda.device_count())))
+    trainer = Trainer(
+        experiment_name=run_name, 
+        ckpt_root_dir=training_run_folder
+    )
+ 
+    model = models.get(
+        model_name, 
+        num_classes=len(classes), 
+        pretrained_weights="coco"
+    )
     
-    os.system('rm *.pt')
+    train_params = {
+        'silent_mode': False,
+        "average_best_models":True,
+        "warmup_mode": "linear_epoch_step",
+        "warmup_initial_lr": 1e-6,
+        "lr_warmup_epochs": 3,
+        "initial_lr": 5e-4,
+        "lr_mode": "cosine",
+        "cosine_final_lr_ratio": 0.1,
+        "optimizer": "Adam",
+        "optimizer_params": {"weight_decay": 0.0001},
+        "zero_weight_decay_on_bias_and_bn": True,
+        "ema": True,
+        "ema_params": {"decay": 0.9, "decay_type": "threshold"},
+        "max_epochs": epochs,
+        #"mixed_precision": True,
+        "loss": PPYoloELoss(
+            use_static_assigner=False,
+            num_classes=len(classes),
+            reg_max=16
+        ),
+        "valid_metrics_list": [
+            DetectionMetrics_050(
+                score_thres=0.1,
+                top_k_predictions=300,
+                num_cls=len(classes),
+                normalize_targets=True,
+                post_prediction_callback=PPYoloEPostPredictionCallback(
+                    score_threshold=0.01,
+                    nms_top_k=1000,
+                    max_predictions=300,
+                    nms_threshold=0.7
+                )
+            ),
+            DetectionMetrics_050_095(
+                score_thres=0.1,
+                top_k_predictions=300,
+                num_cls=len(classes),
+                normalize_targets=True,
+                post_prediction_callback=PPYoloEPostPredictionCallback(
+                    score_threshold=0.01,
+                    nms_top_k=1000,
+                    max_predictions=300,
+                    nms_threshold=0.7
+                )
+            )
+        ],
+        "metric_to_watch": 'mAP@0.50:0.95'
+    }
+    trainer.train(
+        model=model, 
+        training_params=train_params, 
+        train_loader=train_data, 
+        valid_loader=val_data
+    )
     
     print('--- Evaluating...')
-    os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {valset_path}')
+    model_out = model.predict(get_files_from_folders_with_ending([valset_path / 'images'], '.png'))
+    model_out.show()
+    
+    #os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {valset_path}')
     write_textfile(json.dumps(train_def_dict, indent=4), training_run_folder / 'training-def.json')
 
 if __name__ == '__main__':
