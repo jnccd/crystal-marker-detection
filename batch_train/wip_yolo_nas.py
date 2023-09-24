@@ -48,7 +48,7 @@ def main():
     # Paths
     root_dir = Path(__file__).resolve().parent
     datasets_path = Path(args.datasets_path)
-    datasets_dirs = [x.parent for x in datasets_path.glob('**/yolov5-*.yaml') 
+    datasets_dirs = [x.parent for x in datasets_path.glob('**/dataset-def.json') 
                     if (not args.recursive_folder_searching and x.parent.parent == datasets_path or args.recursive_folder_searching)
                     and not str(x).__contains__("-valset")]
     datasets_dirs.sort(key=lambda d: d.stem)
@@ -115,8 +115,18 @@ def yolo_nas_train_loop(dataset_path,
     }
     
     classes = ["marker"]
-    train_data = DataLoader(YoloDarknetFormatDetectionDataset(data_dir=str(dataset_path), images_dir='train/images', labels_dir='train/labels', classes=classes)) 
-    val_data = DataLoader(YoloDarknetFormatDetectionDataset(data_dir=str(dataset_path), images_dir='val/images', labels_dir='val/labels', classes=classes))
+    train_dataloader = dataloaders.get(name='coco2017_train',
+        dataset_params={
+            "data_dir": dataset_path,
+            },
+        dataloader_params={'num_workers': 2}
+    )
+    val_dataloader = dataloaders.get(name='coco2017_val',
+        dataset_params={
+            "data_dir": dataset_path,
+            },
+        dataloader_params={'num_workers': 2}
+    )
     
     #train_data.dataset.plot(plot_transformed_data=True)
 
@@ -133,6 +143,7 @@ def yolo_nas_train_loop(dataset_path,
         pretrained_weights="coco"
     )
     
+    # Taken from: https://learnopencv.com/train-yolo-nas-on-custom-dataset/
     train_params = {
         'silent_mode': False,
         "average_best_models":True,
@@ -185,12 +196,12 @@ def yolo_nas_train_loop(dataset_path,
     trainer.train(
         model=model, 
         training_params=train_params, 
-        train_loader=train_data, 
-        valid_loader=val_data
+        train_loader=train_dataloader, 
+        valid_loader=val_dataloader
     )
     
     print('--- Evaluating...')
-    model_out = model.predict(get_files_from_folders_with_ending([valset_path / 'images'], '.png'))
+    model_out = model.predict(get_files_from_folders_with_ending([valset_path / 'val' / 'images'], '.png'))
     model_out.show()
     
     #os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {valset_path}')
