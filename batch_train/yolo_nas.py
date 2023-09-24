@@ -9,23 +9,14 @@ import time
 from pathlib import Path
 import cv2
 import numpy as np
-from super_gradients import Trainer
 import torch
 from torch.utils.data import DataLoader
-
-from super_gradients.training import models
-from super_gradients.training import dataloaders
-from super_gradients.training.datasets import YoloDarknetFormatDetectionDataset
-from super_gradients.training.metrics import (
-    DetectionMetrics_050,
-    DetectionMetrics_050_095
-)
-from super_gradients.training.losses import PPYoloELoss
-from super_gradients.training.models.detection_models.pp_yolo_e import PPYoloEPostPredictionCallback
 
 from utils import *
 
 def main():
+    global Trainer, models, dataloaders, DetectionMetrics_050, DetectionMetrics_050_095, PPYoloELoss, PPYoloEPostPredictionCallback
+    
     # Parse
     parser = argparse.ArgumentParser(prog='', description='.')
     parser.add_argument('-d','--datasets-path', type=str, default='', help='.')
@@ -61,6 +52,18 @@ def main():
     print(f'Running ensemble run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
     #sys.exit(0) # For dataset choosing testing
     
+    # Set log position env var and get super_gradients imports
+    os.environ["SUPER_GRADIENTS_LOG_DIR"] = str(Path(args.output_path) / 'sg_logs')
+    from super_gradients import Trainer
+    from super_gradients.training import models
+    from super_gradients.training import dataloaders
+    from super_gradients.training.metrics import (
+        DetectionMetrics_050,
+        DetectionMetrics_050_095
+    )
+    from super_gradients.training.losses import PPYoloELoss
+    from super_gradients.training.models.detection_models.pp_yolo_e import PPYoloEPostPredictionCallback
+    
     os.system(f'python traindata-creator/fixYolo5Yamls.py -df {datasets_path}')
     
     # Train
@@ -93,6 +96,8 @@ def yolo_nas_train_loop(dataset_path,
                         epochs = 100, 
                         model_name = 'yolo_nas_s'
                         ):
+    global Trainer, models, dataloaders, DetectionMetrics_050, DetectionMetrics_050_095, PPYoloELoss, PPYoloEPostPredictionCallback
+    
     # Set Paths
     project_folder = Path(output_path)
     training_run_folder = project_folder / run_name
