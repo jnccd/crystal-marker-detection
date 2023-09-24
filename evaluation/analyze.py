@@ -207,7 +207,7 @@ def analyze(
     num_fp = voc2010_mAP_table[-1]['acc_fp'] if len(voc2010_mAP_table) > 0 else 0
     num_fn = num_gt - num_tp
     num_tn = 0 # Doesn't apply to object detection
-    conf_matrix = np.array([[num_tp,num_fp],[num_fn,num_tn]])
+    conf_matrix = np.array([[num_tp,num_fp],[num_fn,num_tn]]).T
     fig, ax = plt.subplots(figsize=(7.5, 7.5))
     cax = ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
     #fig.colorbar(cax, pad=0.2)
