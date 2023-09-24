@@ -53,7 +53,7 @@ def main():
     #sys.exit(0) # For dataset choosing testing
     
     # Set log position env var and get super_gradients imports
-    os.environ["SUPER_GRADIENTS_LOG_DIR"] = str(Path(args.output_path) / 'sg_logs')
+    os.environ["SUPER_GRADIENTS_LOG_DIR"] = str(Path(args.output_path) / f'sg_logs_{time.time()}')
     from super_gradients import Trainer
     from super_gradients.training import models
     from super_gradients.training import dataloaders
