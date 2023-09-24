@@ -203,8 +203,8 @@ def analyze(
     
     # Write confusion matrix
     num_gt = sum([len(target_bboxes) for target_bboxes in target_bboxes_per_img])
-    num_tp = voc2010_mAP_table[-1]['acc_tp']
-    num_fp = voc2010_mAP_table[-1]['acc_fp']
+    num_tp = voc2010_mAP_table[-1]['acc_tp'] if len(voc2010_mAP_table) > 0 else 0
+    num_fp = voc2010_mAP_table[-1]['acc_fp'] if len(voc2010_mAP_table) > 0 else 0
     num_fn = num_gt - num_tp
     num_tn = 0 # Doesn't apply to object detection
     conf_matrix = np.array([[num_tp,num_fp],[num_fn,num_tn]])
