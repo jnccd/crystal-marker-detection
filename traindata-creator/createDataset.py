@@ -214,6 +214,8 @@ def main():
         build_seg_dataset(in_imgs, target_polys)
     elif args.type == 'yolov5':
         build_yolov5_dataset(in_imgs, target_polys)
+    elif args.type == 'coco':
+        build_coco_dataset(in_imgs, target_polys)
     elif args.type == 'csv':
         build_od_csv_dataset(in_imgs, target_polys)
     elif args.type == 'pet':
@@ -221,7 +223,7 @@ def main():
     elif args.type == 'alb-test':
         build_alb_test_dataset(in_imgs, target_polys)
     else:
-        print('Error: Unsupported dataset type!')
+        print('Error: Unsupported dataset type!') 
         exit()
         
     # Add dataset definition dict
@@ -368,6 +370,63 @@ def build_od_csv_dataset(in_imgs, target_polys):
     classes_csv_path = dataset_dir / 'classes.csv'
     with open(classes_csv_path, "w") as text_file:
         text_file.write(f"marker,0\n")
+        
+def build_coco_dataset(in_imgs, target_polys):
+    global data_groups, dataset_name, dataset_dir
+    
+    annot_dir = create_dir_if_not_exists(dataset_dir / 'annotations')
+    img_dir = create_dir_if_not_exists(dataset_dir / 'images')
+    
+    # Get images and annots paths
+    annot_file = {}
+    images_dir = {}
+    for group in data_groups:
+        annot_file[group] = annot_dir / f'instances_{group}2017.json'
+        images_dir[group] = create_dir_if_not_exists(img_dir / f'{group}2017')
+        
+    # Build groups data
+    for group in data_groups:
+        group_annot_dict = {
+            "info": {
+                "description": dataset_name
+            },
+            "licenses": [],
+            "images": [],
+            "annotations": [],
+            "categories": [{"supercategory": "marker","id": 1,"name": "marker"}],
+            "segment_info": []
+        }
+        
+        for i, (td_in, td_polys) in enumerate(zip(in_imgs[group], target_polys[group])):
+            img_h, img_w = td_in.shape[:2]
+            pic_path: Path = images_dir[group] / f'{i}.png'
+            cv2.imwrite(str(pic_path), td_in)
+            
+            group_annot_dict["images"].append({
+                "id":i,
+                "width":img_w,
+                "height":img_h,
+                "file_name":pic_path.stem + pic_path.suffix
+            })
+            
+            img_bounds = (0,0,img_w,img_h)
+            xyxy_bboxes = [bounds(poly) for poly in td_polys]
+            xyxy_bboxes = [keep_box_in_bounds(bbox, img_bounds) for bbox in xyxy_bboxes]
+            xywh_bboxes = [[bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]] for bbox in xyxy_bboxes]
+            for ib, (bbox, poly) in enumerate(zip(xywh_bboxes, td_polys)):
+                poly: Polygon = poly # Linting
+                group_annot_dict["annotations"].append({
+                    "id": i*100000+ib,
+                    "image_id": i,
+                    "segmentation": [list(flatten(poly.exterior.coords[:-1]))],
+                    "bbox": list(bbox),
+                    "area": poly.area,
+                    "category_id": 1,
+                    "iscrowd": 0,
+                })
+            
+        write_textfile(json.dumps(group_annot_dict), annot_file[group])
+        print(f'Built {len(in_imgs[group])} {group}data!')
     
 def build_yolov5_dataset(in_imgs, target_polys):
     global data_groups, dataset_name, dataset_dir
