@@ -195,7 +195,7 @@ def yolo_nas_train_loop(dataset_path,
     }
     trainer.train(
         model=model, 
-        training_params='coco2017_yolo_nas_train_params', 
+        training_params=train_params, 
         train_loader=train_dataloader, 
         valid_loader=val_dataloader
     )
