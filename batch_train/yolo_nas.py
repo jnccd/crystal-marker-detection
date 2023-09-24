@@ -139,7 +139,7 @@ def yolo_nas_train_loop(dataset_path,
     
     trainer = Trainer(
         experiment_name=run_name, 
-        ckpt_root_dir=training_run_folder
+        ckpt_root_dir=project_folder,
     )
  
     model = models.get(
@@ -206,10 +206,7 @@ def yolo_nas_train_loop(dataset_path,
     )
     
     print('--- Evaluating...')
-    model_out = model.predict(get_files_from_folders_with_ending([valset_path / 'val' / 'images'], '.png'))
-    model_out.show()
-    
-    #os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {valset_path}')
+    os.system(f'python batch_train/yolo_nas_evaluate.py -r {training_run_folder} -t {valset_path}')
     write_textfile(json.dumps(train_def_dict, indent=4), training_run_folder / 'training-def.json')
 
 if __name__ == '__main__':
