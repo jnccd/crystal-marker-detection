@@ -20,12 +20,12 @@ from utils import *
 
 LR = 1e-3
 EPOCHS = 200
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
 IMG_SIZE = 224
-MODEL = 'vgg16'
+MODEL = 'mobilenet'
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet'
@@ -180,6 +180,37 @@ def get_model():
                 return x
         custom_head = CustomVGG16Head(NUM_KEYPOINTS * DIM_KEYPOINTS)
         model = nn.Sequential(vgg16, custom_head)
+    elif MODEL == 'mobilenet':
+        # Define the custom head
+        class CustomHead(nn.Module):
+            def __init__(self, in_features, num_classes):
+                super(CustomHead, self).__init__()
+                self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+                self.fc = nn.Sequential(
+                    nn.Flatten(),
+                    nn.Linear(in_features, 512),
+                    nn.ReLU(),
+                    nn.Dropout(0.5),
+                    nn.Linear(512, num_classes),
+                )
+
+            def forward(self, x):
+                x = self.avgpool(x)
+                x = self.fc(x)
+                return x
+
+        # Load the MobileNetV2 base model
+        base_model = models.mobilenet_v2(pretrained=True)
+        # Freeze all layers in the base model
+        for param in base_model.parameters():
+            param.requires_grad = False
+
+        # Modify the final classification layer of the base model
+        in_features = base_model.classifier[1].in_features
+        custom_head = CustomHead(in_features, num_classes=NUM_KEYPOINTS * DIM_KEYPOINTS)  # Change num_classes as needed
+
+        # Create the full model by combining the base model and custom head
+        model = nn.Sequential(base_model.features, custom_head)
         
     return model
 
