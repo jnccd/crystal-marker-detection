@@ -119,6 +119,9 @@ def yolo_nas_train_loop(dataset_path,
         'valset': valset_def_dict,
     }
     
+    # clear training run folder
+    os.system(f'rm -r {training_run_folder}/RUN_*')
+    
     classes = ["marker"]
     train_dataloader = dataloaders.get(name='coco2017_train',
         dataset_params={
