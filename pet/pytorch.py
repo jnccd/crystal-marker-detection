@@ -19,7 +19,7 @@ from torchsummary import summary
 from utils import *
 
 LR = 1e-3
-EPOCHS = 200
+EPOCHS = 400
 BATCH_SIZE = 128
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
@@ -46,14 +46,18 @@ class DataseriesLoader(Dataset):
         # Define transform pipeline
         if aug:
             self.transform = A.Compose([
-                A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
-                A.RandomRotate90(),
-                A.Transpose(),
-                A.SafeRotate(always_apply=True),
-                A.ShiftScaleRotate(rotate_limit=0, shift_limit=0.15),
-                A.HueSaturationValue(),
-                A.ColorJitter(),
-            ], keypoint_params=A.KeypointParams(format='xy'))
+                    A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
+                    A.RandomRotate90(),
+                    A.Transpose(),
+                    A.ShiftScaleRotate(shift_limit=0.15, scale_limit=0),
+                    # A.HueSaturationValue(),
+                    # A.ColorJitter(),
+                ],  
+                keypoint_params=A.KeypointParams(
+                    format='xy',
+                    remove_invisible = False
+                ),
+            )
         else:
             self.transform = A.Compose([
                 A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
@@ -202,12 +206,12 @@ def get_model():
         # Load the MobileNetV2 base model
         base_model = models.mobilenet_v2(pretrained=True)
         # Freeze all layers in the base model
-        for param in base_model.parameters():
-            param.requires_grad = False
+        # for param in base_model.parameters():
+        #     param.requires_grad = False
 
         # Modify the final classification layer of the base model
         in_features = base_model.classifier[1].in_features
-        custom_head = CustomHead(in_features, num_classes=NUM_KEYPOINTS * DIM_KEYPOINTS)  # Change num_classes as needed
+        custom_head = CustomHead(in_features, num_classes=NUM_KEYPOINTS * DIM_KEYPOINTS)
 
         # Create the full model by combining the base model and custom head
         model = nn.Sequential(base_model.features, custom_head)
