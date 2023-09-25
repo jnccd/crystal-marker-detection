@@ -357,15 +357,16 @@ for i_epoch in range(EPOCHS):
         best_vloss = val_loss_history[-1]
         torch.save(model.state_dict(), model_path)
 
-plt.style.use("ggplot")
-plt.figure()
-plt.plot(np.arange(1, EPOCHS), loss_history[1:], label="train_loss")
-plt.plot(np.arange(1, EPOCHS), val_loss_history[1:], label="val_loss")
-plt.title("Keypoint detection loss over epochs")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss")
-plt.legend(loc="lower left")
-plt.savefig(output_folder / 'plot.png')
+if EPOCHS > 2:
+    plt.style.use("ggplot")
+    plt.figure()
+    plt.plot(np.arange(1, EPOCHS), loss_history[1:], label="train_loss")
+    plt.plot(np.arange(1, EPOCHS), val_loss_history[1:], label="val_loss")
+    plt.title("Keypoint detection loss over epochs")
+    plt.xlabel("Epoch #")
+    plt.ylabel("Loss")
+    plt.legend(loc="lower left")
+    plt.savefig(output_folder / 'plot.png')
 
 model = get_model().to(DEVICE)
 model.load_state_dict(torch.load(model_path))
