@@ -120,7 +120,8 @@ def yolo_nas_train_loop(dataset_path,
     }
     
     # clear training run folder
-    os.system(f'rm -r {training_run_folder}/RUN_*')
+    esc_char = '\\'
+    os.system(f'rm -r {str(training_run_folder).replace(esc_char, "/")}/RUN_*')
     
     classes = ["marker"]
     train_dataloader = dataloaders.get(name='coco2017_train',
