@@ -319,8 +319,8 @@ def build_pet_dataset(in_imgs, target_polys):
     for group in data_groups:
         dir[group] = create_dir_if_not_exists(dataset_dir / group)
     
-    # Build groups data
-    i = -1
+    # Build mixed groups data
+    mixed_group_data = [] # [img_path, img, vertices, verts_path]
     for group in data_groups:
         for i, (in_img, polys) in enumerate(zip(in_imgs[group], target_polys[group])):
             for j, poly in enumerate(polys):
@@ -336,13 +336,30 @@ def build_pet_dataset(in_imgs, target_polys):
                 crop_img, pad_polys = resize_and_pad_with_labels(crop_img, pet_target_size, [poly], background_color, border_type)
                 poly = pad_polys[0]
                 
-                cv2.imwrite(str(dir[group] / f'{i}_{j}_in.png'), crop_img)
-                
-                # Transform poly points to bounds coord system
-                write_textfile(str(poly.exterior.coords[:-1]), dir[group] / f'{i}_{j}_p.txt')
-                
-        print(f'Built {i+1} {group}data!')
-
+                # Store cutout output in mixed_group_data
+                mixed_group_data.append(
+                    (
+                        f'{i}_{j}_in.png', 
+                        crop_img, 
+                        str(poly.exterior.coords[:-1]), 
+                        f'{i}_{j}_p.txt'
+                    )
+                )
+        
+    # Shuffle mixed group data, regroup, write
+    random.Random(42).shuffle(mixed_group_data)
+    i = 0
+    for group in data_groups:
+        shuffled_group_data = mixed_group_data[i:i+sum([len(x) for x in target_polys[group]])]
+        
+        for data in shuffled_group_data:
+            cv2.imwrite(str(dir[group] / data[0]), data[1])
+            write_textfile(data[2], dir[group] / data[3])
+        
+        i += len(in_imgs[group])
+        
+        print(f'Built {len(in_imgs[group])} {group}data!')
+        
 def build_od_csv_dataset(in_imgs, target_polys):
     global data_groups, dataset_name, dataset_dir
     
