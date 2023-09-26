@@ -1,0 +1,349 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{kcssCover}
+\RequirePackage{kvoptions}
+\DeclareBoolOption[false]{showlayoutlines}
+\DeclareBoolOption[false]{showsafetylines}
+\DeclareBoolOption[true]{showbleedlines}
+\DeclareBoolOption[false]{germantext}
+\DeclareBoolOption[false]{twolineresearchgroup}
+\DeclareStringOption[15.24cm]{coverwidth} % aka trim area
+\DeclareStringOption[22.86cm]{coverheight}
+\DeclareStringOption[15.24cm]{smallercoverwidth}
+\DeclareStringOption[22.86cm]{smallercoverheight}
+\DeclareStringOption[1.5cm]{spinewidth}
+\DeclareStringOption[0mm]{spinecorr}
+\DeclareStringOption[3.2mm]{bleed}
+\DeclareStringOption[6.35mm]{safety}
+\DeclareStringOption[0cm]{frontgraphicxshift}
+\DeclareStringOption[-2cm]{frontgraphicyshift}
+
+\DeclareStringOption[1.0cm]{margintop}
+\DeclareStringOption[1.0cm]{marginright}
+\DeclareStringOption[1.0cm]{marginbottom}
+\DeclareStringOption[1.0cm]{marginleft}
+\DeclareStringOption[0.5cm]{spineauthorsep}
+\DeclareStringOption[1.0cm]{spineleftrightsep}
+\DeclareStringOption[2mm]{spinepaddingtop}
+\DeclareStringOption[5mm]{spinepaddingbottom}
+
+\ProcessKeyvalOptions*
+
+\RequirePackage{wrapfig}
+
+\setlength{\parindent}{0pt} % just to make sure
+\newlength{\coverwidth}
+\newlength{\coverheight}
+\newlength{\smallercoverwidth}
+\newlength{\smallercoverheight}
+\newlength{\bleed}
+\newlength{\safety}
+\newlength{\frontgraphicxshift}
+\newlength{\frontgraphicyshift}
+\newlength{\margintoporiginal}
+\newlength{\margintop}
+\newlength{\marginright}
+\newlength{\marginbottom}
+\newlength{\marginleft}
+\newlength{\spinewidth}
+\newlength{\spinecorr}
+\newlength{\spineauthorsep}
+\newlength{\spineleftrightsep}
+\newlength{\spinepaddingtop}
+\newlength{\spinepaddingbottom}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% The following commands usually have to be re-defined by the user.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Text to be set by the author
+%
+\newcommand{\spinetitle}{\Large\textbf{My Fake Dissertation With a Very Long Title}}
+\newcommand{\fronttitle}{\Huge\textbf{My Fake Dissertation \\[.5em] With a Very Long Title}}
+\newcommand{\frontauthor}{\LARGE John Q. Postgraduate}
+\newcommand{\spineauthor}{\Large John Q. Postgraduate}
+\newcommand{\kcssnumber}{2011/1}
+\newcommand{\kcssnumberspinefont}{}
+\newcommand{\isbn}{}
+\newcommand{\researchgroup}{Fake Research Group}
+\newcommand{\backtext}{%
+\noindent%
+Please adjust the length of this text carefully
+in order to fill an amount of space that makes the back of the book good-looking.
+The blue area should stretch far enough to the bottom,
+but should not get too close to the text about the Series,
+outside of the blue~area.
+\par
+Here is some more text to fill the space.
+This text should be about the contents of the book.
+It should help the book catch the (potential) reader's interest.
+A text as boring as this one will not be well suited.
+\par
+But we have to fill the space, so here is some more text.
+As stated earlier, the length of this text should be adjusted
+so that the blue area gives a nice impression.
+This goal has almost been reached now.
+Just one more line, and we are done.
+Just one more line.
+\par\medskip%
+\begin{wrapfigure}[6]{l}{2.35cm}
+  \vspace{-\baselineskip}
+  \includegraphics[width=2.35cm]{no_photo}
+\end{wrapfigure}%
+\color{white}%
+To the left is a photo of the author.
+Here is enough place for a short CV.
+The CV should be long enough to fill all the space
+to the right of the photo.
+The photo is optional, but a short CV should be here.
+With or without photo.
+Moreover, the text should cover all the space to the side of the photo
+and may even stretch beyond the photo.
+The number of lines right to the photo should be given
+as an argument to the \lstinline|wrapfigure| environment, here 6.
+\par%
+}
+\newcommand{\frontgraphic}{%
+\begin{tikzpicture}
+  \tikzset{every edge/.style={>=stealth',draw,->,thick}}
+  \node [draw, rectangle] (a) {Here is enough space\ldots};
+  \node [draw, circle, below right = of a] (b) {\ldots for the author\ldots};
+  \node [draw, rectangle, below left = of b, decorate, decoration=zigzag, inner sep=10pt] (c) {\ldots to put a graphic.};
+  \path (a) edge (b) (b) edge (c);
+\end{tikzpicture}}
+
+%
+% Lengths to be set by the author
+%
+\setlength{\coverwidth}{\kcssCover@coverwidth} % aka trim area
+\setlength{\coverheight}{\kcssCover@coverheight}
+\setlength{\smallercoverwidth}{\kcssCover@smallercoverwidth}
+\setlength{\smallercoverheight}{\kcssCover@smallercoverheight}
+\setlength{\spinewidth}{\kcssCover@spinewidth}
+\setlength{\spinecorr}{\kcssCover@spinecorr}
+\setlength{\bleed}{\kcssCover@bleed}
+\setlength{\safety}{\kcssCover@safety}
+\setlength{\frontgraphicxshift}{\kcssCover@frontgraphicxshift}
+\setlength{\frontgraphicyshift}{\kcssCover@frontgraphicyshift}
+
+%
+% Standard lengths, usually no changes necessary
+%
+\newlength{\smallerlargerwidthcorr}
+\setlength{\smallerlargerwidthcorr}{(\coverwidth-\smallercoverwidth)/2}
+\newlength{\smallerlargerheightcorr}
+\setlength{\smallerlargerheightcorr}{(\coverheight-\smallercoverheight)/2}
+\setlength{\margintoporiginal}{\kcssCover@margintop}
+\setlength{\margintop}{\kcssCover@margintop+\smallerlargerheightcorr}
+\setlength{\marginright}{\kcssCover@marginright+\smallerlargerwidthcorr}
+\setlength{\marginbottom}{\kcssCover@marginbottom+\smallerlargerheightcorr}
+\setlength{\marginleft}{\kcssCover@marginleft+\smallerlargerwidthcorr}
+\setlength{\spineauthorsep}{\kcssCover@spineauthorsep}
+\setlength{\spineleftrightsep}{\kcssCover@spineleftrightsep}
+\setlength{\spinepaddingtop}{\kcssCover@spinepaddingtop}
+\setlength{\spinepaddingbottom}{\kcssCover@spinepaddingbottom}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% Beyond this point, nothing should be re-defined by the user unless
+%%% approved by the KCSS LaTeX officer.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{empty}
+%\definecolor{techfakblue}{cmyk}{1.0, 0.8, 0.0, 0.15}
+%\definecolor{techfakblue}{RGB}{48,60,135}
+\definecolor{techfakblue}{RGB}{0,39,118}
+\newcommand{\setparspacing}{%
+\setlength{\parskip}{.5\baselineskip plus .5\baselineskip}%
+\setlength{\parindent}{0em}%
+}
+
+%
+% Calculated lengths
+%
+
+% Size of whole document, including spine, bleed, etc.
+\newlength{\documentwidth}
+\newlength{\documentheight}
+\setlength{\documentwidth}{2\coverwidth+2\bleed+\spinewidth+2\spinecorr}
+\setlength{\documentheight}{\coverheight+2\bleed}
+
+% Bleed plus margin
+\newlength{\bleedplusmargintop}
+\newlength{\bleedplusmarginright}
+\newlength{\bleedplusmarginbottom}
+\newlength{\bleedplusmarginleft}
+\setlength{\bleedplusmargintop}{\bleed+\margintop}
+\setlength{\bleedplusmarginright}{\bleed+\marginright}
+\setlength{\bleedplusmarginbottom}{\bleed+\marginbottom}
+\setlength{\bleedplusmarginleft}{\bleed+\marginleft}
+
+% Spine
+\newlength{\bleedplusspinepaddingbottom}
+\setlength{\bleedplusspinepaddingbottom}{\bleed+\spinepaddingbottom}
+
+% Upper blocks: white on blue
+\newlength{\UpperLeftBlockWidth}
+\newlength{\UpperLeftBlockTextMarginX}
+\newlength{\UpperLeftBlockTextMarginY}
+\newlength{\UpperLeftBlockTextWidth}
+\newlength{\UpperLeftBlockTextOffset}
+\setlength{\UpperLeftBlockWidth}{\coverwidth+\bleed-\spineleftrightsep}
+\setlength{\UpperLeftBlockTextMarginX}{\marginleft}
+\setlength{\UpperLeftBlockTextMarginY}{\margintoporiginal/2}
+\setlength{\UpperLeftBlockTextWidth}{\UpperLeftBlockWidth-\bleed-2\UpperLeftBlockTextMarginX}
+\setlength{\UpperLeftBlockTextOffset}{\UpperLeftBlockTextMarginX+\bleed}
+\newlength{\UpperRightBlockWidth}
+\newlength{\UpperRightBlockTextMarginX}
+\newlength{\UpperRightBlockTextMarginY}
+\newlength{\UpperRightBlockTextWidth}
+\newlength{\UpperRightBlockTextOffset}
+\setlength{\UpperRightBlockWidth}{\coverwidth+\bleed-\spineleftrightsep}
+\setlength{\UpperRightBlockTextMarginX}{\marginright}
+\setlength{\UpperRightBlockTextMarginY}{\margintoporiginal}
+\setlength{\UpperRightBlockTextWidth}{\UpperRightBlockWidth-\bleed-2\UpperRightBlockTextMarginX}
+\setlength{\UpperRightBlockTextOffset}{\UpperRightBlockTextMarginX}
+
+% Lower blocks: blue on white
+\newlength{\LowerLeftBlockWidth}
+\setlength{\LowerLeftBlockWidth}{\coverwidth+\bleed-\spineleftrightsep-\bleed-2\UpperLeftBlockTextMarginX}
+
+\newcommand{\makecover}{%
+\begin{tikzpicture}
+  \coordinate (lower left) at (0, 0);
+  \coordinate (lower center) at (\documentwidth/2, 0);
+  \coordinate (lower right) at (\documentwidth, 0);
+  \coordinate (upper left) at (0, \documentheight);
+  \coordinate (upper center) at (\documentwidth/2, \documentheight);
+  \coordinate (upper right) at (\documentwidth, \documentheight);
+  \coordinate (center) at (\documentwidth/2, \documentheight/2);
+  \path (upper left) -- (upper right)
+  (upper right) -- (lower right)
+  (lower right) -- (lower left)
+  (lower left) -- (upper left);
+
+  %
+  % Spine
+  %
+  \node [draw, rectangle, text width = \spinewidth, inner sep = 0mm, color = white, fill = techfakblue] at (lower center) [above] (spinebox) %
+  {\begin{minipage}{\spinewidth}
+  \centering \vspace*{\spinepaddingtop} \kcssnumberspinefont KCSS \\ \kcssnumber \vspace*{\bleedplusspinepaddingbottom}\vspace*{\smallerlargerheightcorr}
+  \end{minipage}};
+  %
+  \draw
+  let \p1 = ($(spinebox.north) - ([yshift = -\bleedplusmargintop - \spineauthorsep] upper center)$) in
+  node [yshift = -\bleedplusmargintop, color = techfakblue, rotate = 270, mid right, inner sep = 0pt] at (upper center)
+  {\pgfmathparse{veclen(\x1,\y1)}\begin{minipage}{\pgfmathresult pt}\spinetitle\hfill\spineauthor\end{minipage}};
+
+  %
+  % Upper left block
+  %
+  \node [yshift = -\bleedplusmargintop, below right, draw, rectangle, color = white, fill = techfakblue, text width = \UpperLeftBlockWidth, inner xsep = 0pt, inner ysep = \UpperLeftBlockTextMarginY, align = justify] at (upper left)
+  {\hspace{\UpperLeftBlockTextOffset}%
+  \begin{minipage}{\UpperLeftBlockTextWidth}
+    \setparspacing\backtext%
+  \end{minipage}};
+
+  %
+  % Upper right block
+  %
+  \node [yshift = -\bleedplusmargintop, below left, draw, rectangle, color = white, fill = techfakblue, text width = \UpperRightBlockWidth, inner xsep = 0pt, inner ysep = \UpperRightBlockTextMarginY, align = justify] at (upper right)
+  {\hspace{\UpperRightBlockTextOffset}%
+  \begin{minipage}{\UpperRightBlockTextWidth}
+  \flushright\color{white}\fronttitle\par\normalsize\vspace{\UpperRightBlockTextMarginY}\frontauthor\par%
+  \end{minipage}};
+
+  %
+  % Lower right block
+  %
+  \node [yshift = \bleedplusmarginbottom, above left, color = techfakblue, text width = \UpperRightBlockWidth, inner ysep = 0pt, inner xsep = \marginright + \bleed, align = right] at (lower right)
+  {\Large \kcssnumber \\[.5em] Kiel Computer Science Series};
+
+  %
+  % Lower left block
+  %
+  \node [yshift = \bleedplusmarginbottom + 35mm, xshift = \bleed, above right, color = techfakblue, text width = \LowerLeftBlockWidth, inner ysep = 0pt, inner xsep = \UpperLeftBlockTextMarginX, align = justify] at (lower left)
+  {\ifkcssCover@germantext
+  \begin{minipage}{\textwidth}
+  \selectlanguage{ngerman}%
+  \smaller%
+  Die Schriftenreihe \enquote{Kiel Computer Science Series} (KCSS) wird
+  herausgegeben vom Institut für Informatik an der Technischen Fakult\"at
+  der Christian-Albrechts-Universit\"at zu Kiel. Die Ausrichtung dieser
+  Open-Access-Publikationsreihe umfasst Dissertationen, Habilitationsschriften
+  und Lehrb\"ucher der Informatik.
+  \end{minipage}
+  \else
+  \begin{minipage}{\textwidth}
+  \smaller%
+  The Kiel Computer Science Series (KCSS) is published by the Department
+  of Computer Science of the Faculty of Engineering at Kiel University.
+  The scope of this open access
+  publication series includes dissertations, habilitation theses, and text
+  books in computer science.
+  \end{minipage}
+  \fi};
+
+  %
+  % A node for the ISBN
+  %
+  \node [yshift = \bleedplusmarginbottom, xshift = \bleed+\UpperLeftBlockTextMarginX, above right, color = techfakblue, text width = \LowerLeftBlockWidth, inner sep = 0pt] at (lower left)
+  {\smaller%
+  \isbn\\
+  ISSN 2193-6781 (print version)\\
+  ISSN 2194-6639 (electronic version)\par};
+
+  %
+  % A node for the Ifi logo and research group
+  %
+  \node [yshift = \bleedplusmarginbottom, xshift = \bleed+\UpperLeftBlockTextMarginX, above right, color = techfakblue, text width = \LowerLeftBlockWidth, inner sep = 0pt, align = right] at (lower left)
+  {\smaller%
+  \includegraphics[width=4.5cm]{LogoIfI_CAU}\\%
+  \ifkcssCover@twolineresearchgroup%
+  \ifkcssCover@germantext\vspace{-1mm}\else\vspace{0mm}\fi%
+  \else\ifkcssCover@germantext\vspace{1mm}\else\vspace{2mm}\fi%
+  \fi%
+  \researchgroup\par};
+
+  %
+  % Graphic on the front
+  %
+  \node [xshift = (\coverwidth+\spinewidth)/2 + \frontgraphicxshift + \spinecorr, yshift = \frontgraphicyshift] at (center) {\frontgraphic};
+
+  %
+  % Help lines
+  %
+
+  % Layout
+  \ifkcssCover@showlayoutlines
+  \draw (upper center) -- (lower center);
+  \draw ([xshift=\spinewidth/2] upper center) -- ([xshift=\spinewidth/2] lower center);
+  \draw ([xshift=-\spinewidth/2] upper center) -- ([xshift=-\spinewidth/2] lower center);
+  \draw ([yshift=-\bleedplusmargintop] upper left) -- ([yshift=-\bleedplusmargintop] upper right);
+  \draw ([xshift=-\bleedplusmarginright] upper right) -- ([xshift=-\bleedplusmarginright] lower right);
+  \draw ([yshift=\bleedplusmarginbottom] lower left) -- ([yshift=\bleedplusmarginbottom] lower right);
+  \draw ([xshift=\bleedplusmarginleft] upper left) -- ([xshift=\bleedplusmarginleft] lower left);
+  \fi
+
+  % Safety
+  \ifkcssCover@showsafetylines
+  \draw [color=green] ([yshift=-(\bleed+\safety)] upper left) -- ([yshift=-(\bleed+\safety)] upper right);
+  \draw [color=green] ([xshift=-(\bleed+\safety)] upper right) -- ([xshift=-(\bleed+\safety)] lower right);
+  \draw [color=green] ([yshift=(\bleed+\safety)] lower left) -- ([yshift=(\bleed+\safety)] lower right);
+  \draw [color=green] ([xshift=(\bleed+\safety)] upper left) -- ([xshift=(\bleed+\safety)] lower left);
+  \fi
+
+  % Bleed
+  \ifkcssCover@showbleedlines
+  \draw [color=red] ([yshift=-\bleed] upper left) -- ([yshift=-\bleed] upper right);
+  \draw [color=red] ([xshift=-\bleed] upper right) -- ([xshift=-\bleed] lower right);
+  \draw [color=red] ([yshift=\bleed] lower left) -- ([yshift=\bleed] lower right);
+  \draw [color=red] ([xshift=\bleed] upper left) -- ([xshift=\bleed] lower left);
+  \fi
+
+  %
+\end{tikzpicture}
+}

@@ -1,0 +1,131 @@
+%%% KCSS Dissertation Template
+%%%
+%%% Take care of all fields marked <++FOO++>.
+%%% When using Vim LaTeX Suite <http://vim-latex.sourceforge.net/>,
+%%% then Ctrl-j should navigate to the next such field.
+
+\documentclass[10pt]{book}
+\usepackage[language=english,theorems=numbersfirst,paper=a4paper]{ifiseries}
+\usepackage{listings}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{pdfpages}
+\usepackage{todonotes}
+\usepackage{breakurl}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{lipsum}
+\usepackage{parcolumns}
+\setlength{\marginparwidth}{3cm}
+\addbibresource{thesis.bib}
+
+\graphicspath{{./resources/}}
+
+\newenvironment{localsize}[1]
+{%
+  \clearpage
+  \let\orignewcommand\newcommand
+  \let\newcommand\renewcommand
+  \makeatletter
+  \input{bk#1.clo}%
+  \makeatother
+  \let\newcommand\orignewcommand
+}
+{%
+  \clearpage
+}
+
+\newcommand{\figureref}[1]{\textbf{\autoref{#1}}}
+\newcommand{\figurereft}[2]{\textbf{\autoref{#1} #2}}
+\newcommand{\toxdo}[1]{}
+
+\newcommand*\NewPage{\newpage\null\thispagestyle{empty}\newpage}
+
+\begin{document}
+
+\frontmatter
+
+\studtitlepage%
+{ArUco Marker Detection on Flexible Photonic Crystals}%
+{}
+{Niklas Carstensen}%
+{Master's Thesis}%
+{\today}%
+{Prof. Dr. Reinhard Koch}%
+{Jakob Nazarenus, Tim Michels}%
+\NewPage{}
+\setcounter{page}{2}
+\studeidesstatt
+\NewPage{}
+
+\selectlanguage{english}
+\setcounter{page}{3}
+\chapter*{Abstract}
+-
+
+\tableofcontents
+\listoffigures
+%\listoftodos
+\mainmatter
+
+\chapter{Introduction}
+
+\section{Outline}
+
+\chapter{Preliminaries}
+\label{chap:prelim}
+
+\section{Definitions}
+
+\chapter{Related Work}
+\label{chap:relatedw}
+
+\chapter{Implementation}
+\label{chap:implement}
+
+\section{Software Architecture}
+
+\chapter{Evaluation}
+\label{chap:eval}
+
+\chapter{Conclusion}
+\label{chap:conclusion}
+
+\section{Summary}
+
+\section{Future Work}
+
+\chapter{Appendix}
+
+\section{List of Abbreviations}
+
+\begin{acronym}
+\acro{KIELER}{Kiel Integrated Environment for Layout Eclipse Rich Client}
+\acro{KEITH}{KIEL Environment Integrated in Theia}
+\acro{LSP}{Language Server Protocol}
+\acro{IDE}{Integrated Development Environment}
+\acro{ELK}{Eclipse Layout Kernel}
+\acro{GUI}{Graphical User Interface}
+\acro{UI}{User Interface}
+\acro{JSON}{JavaScript Object Notation}
+\acro{JSON-RPC}{JavaScript Object Notation - Remote Procedure Call}
+\acro{npm}{Node Package Manager}
+\acro{SVG}{Scalable Vector Graphics}
+\acro{UX}{User Experience}
+\acro{MDE}{Model Driven Development}
+\acro{KLighD}{Kieler Light Weight Diagrams}
+\acro{SCCharts}{Sequential Constructive Statecharts}
+\acro{melk}{ELK Metadata File}
+\acro{LMB}{left mouse button}
+\acro{AABB}{Axis Aligned Bounding Box}
+\acroplural{AABB}{Axis Aligned Bounding Boxes}
+\acro{HTML}{Hypertext Markup Language}
+\acro{GIMP}{GNU Image Manipulation Program}
+\end{acronym}
+
+\section{User Evaluation Files}
+
+
+\backmatter
+\tocbibliography
+
+\end{document}
