@@ -1,0 +1,31 @@
+\documentclass[11pt,twoside]{article}
+\usepackage[compact=,paper=a4paper,largepaper=true,bibresource=manual.bib,hcenter=true]{ifiseries}
+\newcommand{\emphasis}[1]{\emph{#1}}
+\begin{document}
+\title{Checklist Before Submitting to QA}
+\date{}
+\author{Kiel Computer Sciene Series (KCSS)}
+\maketitle
+\noindent
+Please in particular check the following details before submitting your work for QA at the KCSS.
+Should you have any questions, please consult the technical support as
+pointed out on the \href{http://informatik.uni-kiel.de/kcss}{KCSS Home Page}.
+\begin{enumerate}[label=(\arabic*)]
+\item Is each paragraph correctly terminated?
+  The end of a paragraph is indicated by \lstinline|\par|,
+  or a blank line, or the start of a new chapter, section, etc.
+  It is \emphasis{incorrect} to indicate the end of a paragraph by \lstinline|\\|,
+  and this \emphasis{must not be done}, since \lstinline|\\| means a line break, and not the end of a paragraph.
+\item Is there excessive vertical whitespace on some of the pages?
+  If so, try to use \lstinline|\raggedbottom| at the beginning of the document.
+  For individual pages, a fix is to use \lstinline|\par\vfill\pagebreak| at the end of the page.
+\item Capitalization must be like this:
+  \enquote{Please see Chapter 3 for details.}
+  But: \enquote{In the next chapter, we will look at the details.}
+\item If there is an ISBN on the cover or mentioned on the metadata page:
+  is it really yours and the correct one?
+  In particular, do not use a barcode of the ISSN
+  and ensure that none of the example barcodes is used accidentally.
+\item Is the DOI part of the bibliography entry on the metadata page?
+\end{enumerate}
+\end{document}
