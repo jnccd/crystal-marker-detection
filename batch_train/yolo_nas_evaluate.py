@@ -75,12 +75,11 @@ def gen_evaldata(
     
     if not use_sahi:
         print(f'Loading model from {model_path}...')
-        my_model = (torch.load(model_path, map_location='cpu'))
-        model = models.get(model_type, 
+        model = models.get(
+            model_type,
             num_classes=1, 
-            pretrained_weights="coco"
+            checkpoint_path=model_path
         )
-        adaptive_load_state_dict(model, my_model, strict="no_key_matching")
         
         model.eval()
         test_imgs = get_files_from_folders_with_ending([Path(valset_path) / 'val' / 'images'], '.png')
