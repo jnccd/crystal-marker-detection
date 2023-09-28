@@ -52,6 +52,10 @@ def main():
     print(f'Running ensemble run on the following {len(datasets_dirs)} datasets:\n{newline_char.join([str(x) for x in datasets_dirs])}')
     #sys.exit(0) # For dataset choosing testing
     
+    # Torch hub cache support on
+    os.system('mkdir ./.cache')
+    os.environ['TORCH_HOME'] = './.cache'
+    
     # Set log position env var and get super_gradients imports
     os.environ["SUPER_GRADIENTS_LOG_DIR"] = str(Path(args.output_path) / f'sg_logs_{time.time()}')
     from super_gradients import Trainer
