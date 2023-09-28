@@ -11,6 +11,9 @@ import cv2
 import numpy as np
 
 import torch
+
+if not("SUPER_GRADIENTS_LOG_DIR" in os.environ.keys()):
+    os.environ["SUPER_GRADIENTS_LOG_DIR"] = "./training/sg_logs"
 from super_gradients.training import models
 from super_gradients.training.utils.checkpoint_utils import adaptive_load_state_dict
 from super_gradients.training.utils.predict import ImagesDetectionPrediction
