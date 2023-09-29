@@ -160,7 +160,7 @@ def get_model():
                 return x
         model = SimpleCNN()
     elif MODEL == 'vgg16':
-        vgg16 = models.vgg16(pretrained=True)
+        vgg16 = models.vgg16(weights=models.MobileNet_V2_Weights.DEFAULT)
         vgg16 = vgg16.features
         class CustomVGG16Head(nn.Module):
             def __init__(self, num_keypoints):
