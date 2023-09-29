@@ -112,6 +112,8 @@ def gen_evaldata(
                                                         result.prediction.confidence, 
                                                         result.prediction.bboxes_xyxy)):
                 boxes.append(tuple(list(bbox)[:4] + [conf]))
+                
+            result.save(str(out_testdata_path) + f'/{i}_result.png')
             # TODO: result.save
         else:
             raise NotImplementedError()
