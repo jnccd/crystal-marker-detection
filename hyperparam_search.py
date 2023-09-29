@@ -44,6 +44,7 @@ def_aug_params = [
 
 best_score = -1
 opt_score = 'voc2010_mAP'
+history = []
 
 def hyp_param_run(param_dict):
     global best_score, opt_score
@@ -64,6 +65,9 @@ def hyp_param_run(param_dict):
     if eval_dict[opt_score] > best_score:
         copy_tree(str(training_folder / training_subfolder), str(training_folder.parent / 'hyp-best-run'))
         best_score = eval_dict[opt_score]
+        
+    history.append((float(eval_dict[opt_score]), float(best_score), param_dict))
+    write_textfile(json.dumps(history, indent=4), training_folder.parent / 'hyp-param-search-history.json')
         
     return {'loss': -eval_dict[opt_score], 'status': STATUS_OK }
 
