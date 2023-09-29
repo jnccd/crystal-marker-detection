@@ -50,6 +50,8 @@ class DataseriesLoader(Dataset):
                     A.RandomRotate90(),
                     A.Transpose(),
                     A.ShiftScaleRotate(shift_limit=0.15, scale_limit=0),
+                    A.Perspective(),
+                    A.Affine(shear=(-20, 20))
                     # A.HueSaturationValue(),
                     # A.ColorJitter(),
                 ],  
