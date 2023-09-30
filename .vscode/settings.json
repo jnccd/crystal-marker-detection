@@ -3,5 +3,6 @@
         "Albumentations",
         "bboxes",
         "verts"
-    ]
+    ],
+    "latex.linter.enabled": false,
 }
