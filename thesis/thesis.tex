@@ -18,7 +18,7 @@
 \setlength{\marginparwidth}{3cm}
 \addbibresource{thesis.bib}
 
-\graphicspath{{./resources/}}
+\graphicspath{{./assets/}}
 
 \newenvironment{localsize}[1]
 {%
@@ -102,7 +102,23 @@ This section gives a short overview over \acp{ANN}. Since this thesis is written
 
 Neural network interest and therefore research happened in waves over the last decades, starting with McCulloch and Pitts' work on logical operations on neurons in 1943 \cite{mcculloch1943logical,485891}. 
 
-The second wave started in the early 1960ies with Rosenblatt's perceptron convergence theorem \cite{rosenblatt1962principles}.
+\begin{figure}
+  \caption{Visualization of a perceptron}
+  \includegraphics[width=0.5\textwidth]{rosenblatt}
+  \label{fig:perceptron}
+\end{figure}
+
+The second wave started in the early 1960ies with Rosenblatt's perceptron convergence theorem \cite{rosenblatt1962principles}. A visualization of the perceptron can be seen in \figureref{fig:perceptron} and the output of the perceptron is calculated as follows:
+\[
+    p(x)= 
+\begin{cases}
+    1, & \text{if } \sum_i w_ix_i + b > 0\\
+    0, & \text{otherwise}
+\end{cases}
+\]
+Setting $w1$ and $w2$ to 1 yields a perceptron that implements the logical or operation. As McCulloch and Pitts' work showed, the perceptron is able to model all simple logical operations such as: and, or, not. However the second wave ended as Minsky and Papert showed that the perceptron is unable to model the XOR operation \cite{minsky1969perceptron}.
+
+
 
 \subsection{CNNs}
 
