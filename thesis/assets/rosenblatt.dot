@@ -1,0 +1,21 @@
+digraph G {
+  rankdir=LR;
+  node [shape=circle];
+
+  // Input nodes
+  x1 [label="x1"];
+  x2 [label="x2"];
+
+  // Weighted sum node
+  y [label="y"];
+
+  // Output node
+  z [label="Output", style=invisible];
+
+  // Input to Weighted Sum connections
+  x1 -> y [label="w1"];
+  x2 -> y [label="w2"];
+
+  // Threshold to Output connection
+  y -> z [label="Output"];
+}
