@@ -85,11 +85,16 @@ TODO
 
 \section{Definitions}
 
-TODO
+The term dataset is central to machine learning as it defines what is learned from. However this term is ambiguous as it describes both a series of images and labels\footnote{\url{https://pytorch.org/tutorials/beginner/introyt/trainingyt.html}, accessed at 01.10.2023} as well as multiple groups of series of images and labels \cite{lin2014microsoft}. In other subfields of machine learning a dataset may contain different data types other than images. For this thesis however dataset and similar terms are defined as follows to make the later parts more easily understandable:
+
+\begin{description}
+  \item[Label] A \textit{label} or \textit{annotation} refers to an extra data that belongs to an image and describes a subset of the images contents. \textit{Labels} are usually created using human input and describe the desired output of a machine learning model on that image.
+  \item[Dataseries] A \textit{dataseries} refers to a series of images and labels
+  \item[Dataset] A \textit{dataset} refers to a combination of usually up to three \textit{dataseries}.
+  \item[Datagroup] A \textit{datagroup} refers to a \textit{dataseries} in the context of a \textit{dataset}. Typical \textit{datagroups} are 'training', 'validation' and 'testing' or 'train', 'val' and 'test' for short.
+\end{description}
 
 \section{Neural Networks}
-
-
 
 \section{CNNs}
 
