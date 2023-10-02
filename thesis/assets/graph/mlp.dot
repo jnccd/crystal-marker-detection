@@ -1,0 +1,45 @@
+digraph G {
+  // Set rankdir to control the layout direction
+  rankdir=LR;
+
+  subgraph cluster_input {
+    label="Input Layer: a"
+    penwidth=0
+    a1 [label=<a<SUB>1</SUB>>]
+    a2 [label=<a<SUB>2</SUB>>]
+  }
+
+  subgraph cluster_hidden {
+    label="Hidden Layer: b"
+    penwidth=0
+    b1 [label=<b<SUB>1</SUB>>]
+    b2 [label=<b<SUB>2</SUB>>]
+    b3 [label=<b<SUB>3</SUB>>]
+
+    // sort bs
+    {
+      rank = same;
+      b1 -> b3 -> b2 [ style=invis ]
+    }
+  }
+
+  subgraph cluster_output {
+    label="Output Layer: y"
+    penwidth=0
+    y
+  }
+  
+  // Input layer to hidden layer connections
+  a1 -> b1// [label="w1,1", fontsize="9pt"];
+  a1 -> b2// [label="w1,2", fontsize="9pt"];
+  a1 -> b3// [label="w1,4", fontsize="9pt"];
+
+  a2 -> b1// [label="w1,3", fontsize="9pt"];
+  a2 -> b2// [label="w1,5", fontsize="9pt"];
+  a2 -> b3// [label="w1,6", fontsize="9pt"];
+  
+  // Hidden layer to output layer connections
+  b1 -> y// [label="w2,1", fontsize="9pt"];
+  b2 -> y// [label="w2,2", fontsize="9pt"];
+  b3 -> y// [label="w2,3", fontsize="9pt"];
+}

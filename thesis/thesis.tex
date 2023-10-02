@@ -116,11 +116,19 @@ The second wave started in the early 1960ies with Rosenblatt's perceptron conver
     0, & \text{otherwise}
 \end{cases}
 \]
-Setting $w1$ and $w2$ to 1 yields a perceptron that implements the logical or operation. As McCulloch and Pitts' work showed, the perceptron is able to model all simple logical operations such as: and, or, not. However the second wave ended as Minsky and Papert showed that the perceptron is unable to model the XOR operation \cite{minsky1969perceptron}.
+Setting $w1$ and $w2$ to 1 yields a perceptron that implements the logical or operation. As McCulloch and Pitts' work showed, the perceptron is able to model all simple logical operations such as: and, or, not. However the second wave slowed as Minsky and Papert showed that the perceptron is unable to model the XOR operation \cite{minsky1969perceptron}.
 
-
+The third and ongoing wave started in the early 1980ies with Hopfield's energy approach \cite{hopfield1982neural} as well as the introduction and refinement of back-propagation for \acp{MLP} \cite{werbos1974beyond,rumelhart1986parallel}.
 
 \subsection{CNNs}
+
+\begin{figure}
+  \caption{Visualization of a \ac{MLP}}
+  \includegraphics[width=0.5\textwidth]{graph/mlp}
+  \label{fig:mlp} 
+\end{figure}
+
+Each node in b in the \ac{MLP} as seen in \figureref{fig:mlp} is calculated like the node y in \figureref{fig:perceptron}
 
 \section{Shapely}
 
@@ -240,6 +248,7 @@ Shapely is a popular Python package for computational geometry. It provides a wi
 \acro{GPU}{Graphics Processing Unit}
 \acro{ANN}{artificial neural network}
 \acro{NN}{neural network}
+\acro{MLP}{multilayer feedforward network}
 
 \end{acronym}
 
