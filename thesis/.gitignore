@@ -24,3 +24,5 @@
 *.synctex.gz(busy)
 *.pdfsync
 *.pdf
+
+*.synctex*
