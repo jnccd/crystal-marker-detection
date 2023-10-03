@@ -5,7 +5,8 @@ import shutil
 from typing import List
 
 yolov5_pattern = re.compile('yolov5(.?)$')
-yolov8_pattern = re.compile('yolov8(.?)$|yolov5(.?)u$')
+yolov8_pattern = re.compile('yolov8(.?)$|yolov5(.?)u$') 
+yolo_nas_pattern = re.compile('yolo_nas_(.?)$')
 
 # String stuff
 def startswith_any(filename: str, prefs: List[str]):
