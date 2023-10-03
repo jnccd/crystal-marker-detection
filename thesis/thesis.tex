@@ -142,7 +142,22 @@ Shapely is a popular Python package for computational geometry. It provides a wi
 
 \subsection{ArUco Detection}
 
+The \ac{ArUco} library implemented into \ac{OpenCV} is based on a paper from S. Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
+and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
 
+This algorithm is however based on the assumption that the marker contour is always visible. If it isn't detections can become skewed or nothing is detected as seen in \figureref{fig:aruco-det}.
+
+\begin{figure}
+  \centering
+  \subcaptionbox{An easily detectable \ac{ArUco} marker image}
+     {\includegraphics[width=0.3\textwidth]{image/rec}}
+  \subcaptionbox{An \ac{ArUco} marker image with obscured contour corner}
+     {\includegraphics[width=0.3\textwidth]{image/skewed-rec}}
+  \subcaptionbox{An \ac{ArUco} marker image with broken contour}
+     {\includegraphics[width=0.3\textwidth]{image/no-rec}}
+  \caption{Open CV ArUco Detection on example \ac{ArUco} images which have been partly obscured by a white rectangle}
+  \label{fig:aruco-det}
+\end{figure}
 
 \section{Albumentations}
 
