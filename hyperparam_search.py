@@ -15,8 +15,8 @@ parser.add_argument('-df','--dataset-folder', type=str, default='traindata-creat
 parser.add_argument('-tf','--training-folder', type=str, default='training/hyp-param-search', help='.') # /data/pcmd/training/hyp-param-search
 parser.add_argument('-ds','--dataseries-sources', type=str, default='-tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2', help='.')
 parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the model to train with.')
-parser.add_argument('-mine','--min-epochs', type=int, default=5, help='Sets the min epochs to train for.')
-parser.add_argument('-maxe','--max-epochs', type=int, default=15, help='Sets the max epochs to train for.')
+parser.add_argument('-mine','--min-epochs', type=int, default=5, help='Sets the min epochs to train for in each eval.')
+parser.add_argument('-maxe','--max-epochs', type=int, default=15, help='Sets the max epochs to train for in each eval.')
 parser.add_argument('-emax','--max-evals', type=int, default=3, help='Sets the max evals to hyp search for.')
 parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
 args = parser.parse_args()
