@@ -173,7 +173,7 @@ Hyperopt is a Python package designed for hyperparameter optimization, a fundame
 
 Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function, this is the best choice for optimizing hyperparameters.
 
-A combination of grid search and manual search are widely used to optimize hyperparameters. However it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs, but afterwards it uses the sampling history to find promising new parameter combinations. 
+A combination of grid search and manual search are widely used to optimize hyperparameters. However it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs, but afterwards it uses the sampling history to find promising new parameter combinations \cite{bergstra2011algorithms}. 
 % \ac{TPE} roughly works in these steps:
 
 % \begin{enumerate}
@@ -185,6 +185,8 @@ A combination of grid search and manual search are widely used to optimize hyper
 % \end{enumerate}
 
 \section{mAP Scores}
+
+mAP, or mean Average Precision, is a commonly used metric in the field of object detection to evaluate the performance of an object detection model. It provides a measure of how well the model can identify and locate objects within an image.
 
 \subsection{Pascal Voc 2007}
 
