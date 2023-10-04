@@ -169,6 +169,21 @@ PyTorch is an open-source machine learning library for Python that has gained si
 
 \section{HyperOpt}
 
+Hyperopt is a Python package designed for hyperparameter optimization, a fundamental aspect of machine learning model development \cite{bergstra2013making}. It systematically explores the hyperparameter space using a variety of optimization algorithms, most notably \ac{TPE}, aiming to discover the parameter combination that optimizes a predefined objective function. 
+
+Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function, this is the best choice for optimizing hyperparameters.
+
+A combination of grid search and manual search are widely used to optimize hyperparameters. However it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs, but afterwards it uses the sampling history to find promising new parameter combinations. 
+% \ac{TPE} roughly works in these steps:
+
+% \begin{enumerate}
+%   \item Initialize the search space with Gaussian distributions or categorical distributions for continuous parameters and discrete parameters respectively.
+%   \item Sample the objective function
+%   \item The outputs of the objective function are thresholded into good and bad configurations
+%   \item A exploitation \ac{PDF} is constructed for good configurations and a exploration \ac{PDF} is constructed for bad configurations
+%   \item 
+% \end{enumerate}
+
 \section{mAP Scores}
 
 \subsection{Pascal Voc 2007}
@@ -277,6 +292,7 @@ PyTorch is an open-source machine learning library for Python that has gained si
 \acro{CNN}{convolutional neural network}
 \acro{OpenCV}{Open Source Computer Vision Library}
 \acro{TPE}{Tree-structured Parzen Estimators}
+\acro{PDF}{probability density function}
 
 \end{acronym}
 
