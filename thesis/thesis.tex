@@ -16,6 +16,7 @@
 \usepackage{lipsum}
 \usepackage{parcolumns}
 \usepackage[printonlyused]{acronym}
+\usepackage{amsmath}
 \setlength{\marginparwidth}{3cm}
 \addbibresource{thesis.bib}
 
@@ -201,12 +202,23 @@ The metric commonly chosen to measure the prediction quality between a predictio
 
 \subsection{Precision and Recall}
 
-In the context of object detection there exist 
+In the context of object detection there exist three prediction cases, with the \ac{TN} case being omitted, since it applies to all possible bounding boxes that were not predicted, which depends more on the image resolution than the predictions, assuming the bounding box coordinates are integer values.
 
 \begin{itemize}
-  \item uwu
-  \item owo
+  \item[$\bullet$] \ac{TP}: The highest confidence prediction of a ground truth label with an \ac{IoU} higher than the threshold
+  \item[$\bullet$] \ac{FP}: An incorrect or imprecise prediction
+  \item[$\bullet$] \ac{FN}: An undetected ground truth bounding box
 \end{itemize}
+
+Since \ac{TN} is not available in this context, metrics that use the \ac{TN} are also not available \cite{padilla2020survey}. Instead precision $P$ and recall $R$ are used as metrics.
+
+$$P = \frac{TP}{TP + FP} = \frac{TP}{\text{all predictions}}$$
+
+$$R = \frac{TP}{TP + FN} = \frac{TP}{\text{all ground truths}}$$
+
+Precision measures the percentage of correct predictions among all predictions and recall measures the percentage of correct predictions among all ground truth boxes. 
+
+The difference becomes most apparent when thinking about the extreme cases. If a model would output every possible bounding box on an image the recall would be 100\%, since for each ground truth bounding box there is an exact same prediction bounding box. If a model would instead output a perfect prediction for one ground truth bounding box and nothing for any other ground truth bounding boxes, the precision would be 100\%, since each made prediction is correct. Since both cases are undesirable but still result in an high score in one of the metrics a combination of both is needed.
 
 \subsection{Table}
 
@@ -337,6 +349,10 @@ In the following paragraphs the \ac{mAP} calculation is shown using the example 
 \acro{PDF}{probability density function}
 \acro{mAP}{mean Average Precision}
 \acro{IoU}{intersection over union}
+\acro{TP}{true positive}
+\acro{FP}{false positive}
+\acro{FN}{false negative}
+\acro{TN}{true negative}
 
 \end{acronym}
 
