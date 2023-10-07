@@ -187,7 +187,31 @@ A combination of grid search and manual search are widely used to optimize hyper
 
 \section{mAP Scores}
 
-mAP, or mean Average Precision, is a commonly used metric in the field of object detection to evaluate the performance of an object detection model. It provides a measure of how well the model can identify and locate objects within an image.
+\ac{mAP} scores are a class of commonly used metrics in the field of object detection to evaluate the performance of an object detection model \cite{padilla2020survey}. They aim to provide a measure of how well the model can identify and locate objects within an image. However there is a lack of consensus about the \ac{mAP} calculation. This work will therefore focus on three popular \ac{mAP} scores. 
+
+\subsection{IoU}
+
+The metric commonly chosen to measure the prediction quality between a prediction and ground truth label is the \ac{IoU} \cite{padilla2020survey}. The \ac{IoU} is a measurement based on the  Jaccard Index, a coefficient representing the similarity of two sets of data \cite{jaccard1901etude}. In the object detection context the \ac{IoU} measures the area of overlap divided by the area of union between two bounding boxes.
+
+\subsection{Table}
+
+\begin{figure}
+  \caption{Visualization of example prediction and ground truth bounding boxes}
+  \includegraphics[width=0.8\textwidth]{image/preds}
+  \label{fig:preds}
+\end{figure}
+
+In the following paragraphs the \ac{mAP} calculation is shown using the example shown in \figureref{fig:preds}. The first parts of the \ac{mAP} calculation are the same across all scores shown here.
+
+\begin{center}
+  \begin{tabular}{ c c c }
+   cell1 & cell2 & cell3 \\ 
+   \hline
+   cell4 & cell5 & cell6 \\  
+   cell7 & cell8 & cell9    
+  \end{tabular}
+  \label{tab:mAP}
+\end{center}
 
 \subsection{Pascal Voc 2007}
 
@@ -296,6 +320,8 @@ mAP, or mean Average Precision, is a commonly used metric in the field of object
 \acro{OpenCV}{Open Source Computer Vision Library}
 \acro{TPE}{Tree-structured Parzen Estimators}
 \acro{PDF}{probability density function}
+\acro{mAP}{mean Average Precision}
+\acro{IoU}{intersection over union}
 
 \end{acronym}
 
