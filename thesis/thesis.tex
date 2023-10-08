@@ -257,7 +257,7 @@ The \ac{mAP} scores are now based on the \ac{AUC} of the \ac{PR curve}, which re
 
 \subsection{Pascal VOC 2007}
 
-The VOC 2007 score summarizes the shape of the \ac{PR curve}, for an \ac{IoU} threshold of 0.5, by taking 11 equally spaced recall values \cite{padilla2020survey}. For each chosen recall value the maximum precision value on the curve at or to the right of that recall value is computed. Finally the AP score is defined as the mean of those maximum precision values as given by 
+The VOC 2007 score summarizes the shape of the \ac{PR curve}, for an \ac{IoU} threshold of 0.5, by taking 11 equally spaced recall values \cite{everingham2010pascal}. For each chosen recall value the maximum precision value on the curve at or to the right of that recall value is computed. Finally the AP score is defined as the mean of those maximum precision values as given by 
 
 $$AP_{11} = \frac{1}{11} \sum_{r\in(0,0.1,...,1)}p_{interp}(r)$$
 
@@ -267,7 +267,7 @@ $$p_{interp}(r) = max_{\bar{r} : \bar{r} \geq r}p(r)$$
 
 %$$p(r) = \text{the precision value on the \ac{PR curve} given a recall value}$$
 
-Since this work focuses on the one class case for object detection that AP score is also the \ac{mAP} score here, otherwise the \ac{mAP} score would be the mean of the AP scores of all classes.
+Since I focus on the one class case for object detection eg. only on ArUco markers, that AP score is also the \ac{mAP} score here, otherwise the \ac{mAP} score would be the mean of the AP scores of all classes.
 
 \subsection{Pascal VOC 2010}
 
