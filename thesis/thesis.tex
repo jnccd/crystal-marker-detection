@@ -188,7 +188,7 @@ A combination of grid search and manual search are widely used to optimize hyper
 
 \section{mAP Scores}
 
-\ac{mAP} scores are a class of commonly used metrics in the field of object detection to evaluate the performance of an object detection model \cite{padilla2020survey}. They aim to provide a measure of how well the model can identify and locate objects within an image. However there is a lack of consensus about the \ac{mAP} calculation. This work will therefore focus on three popular \ac{mAP} scores. 
+\ac{mAP} scores are a class of commonly used metrics in the field of object detection to evaluate the performance of an object detection model \cite{padilla2020survey}. They aim to provide a measure of how well the model can identify and locate objects within an image. However there is a lack of consensus about the \ac{mAP} calculation. I will therefore focus on three popular \ac{mAP} scores. 
 
 \subsection{IoU}
 
@@ -228,7 +228,7 @@ The difference becomes most apparent when thinking about the extreme cases. If a
   \label{fig:preds}
 \end{figure}
 
-The first parts of the \ac{mAP} calculation are the same across all scores considered. Therefore that unified part of the computation is described here for all \ac{mAP} scores using the example\footnote{\url{https://kharshit.github.io/blog/2019/09/20/evaluation-metrics-for-object-detection-and-segmentation}, accessed on 08.10.2023} shown in \figureref{fig:preds}. 
+The first parts of the \ac{mAP} calculation are the same across all scores considered. That unified part of the computation is described here using the example\footnote{\url{https://kharshit.github.io/blog/2019/09/20/evaluation-metrics-for-object-detection-and-segmentation}, accessed on 08.10.2023} shown in \figureref{fig:preds}. 
 
 Firstly a table of all predictions over all images in a given dataseries is created as seen in Table \ref{tab:mAP}. The table is sorted by prediction confidence. If there are multiple predictions for a single ground truth label, the prediction with the highest confidence is considered TP, if its \ac{IoU} is over the threshold, and all others FP, as seen with prediction P3. 
 
@@ -245,7 +245,7 @@ Firstly a table of all predictions over all images in a given dataseries is crea
   \label{tab:mAP}
 \end{center}
 
-As the table is stepped through from highest confidence predictions to lowest, the accumulated TP and FP are incremented based on whether it was a correct or incorrect prediction and saved into each table row \cite{padilla2020survey}. By computing $\text{acc \ac{TP}} / (\text{acc \ac{TP}} + \text{acc \ac{FP}})$ a preliminary precision is computed for each row. Similarly a preliminary recall value is calculated for each table row by dividing the accumulated \ac{TP} by the total number of ground truth labels of all images. Its important to note that recall values due to their computation formula here are monotonically increasing as the table rows are visited. When plotting the precision and recall values of the table rows as y and x components of points, the \ac{PR curve} is obtained as seen in \figureref{fig:pr-curve}.
+As the table is stepped through from highest confidence predictions to lowest, the accumulated TP and FP are incremented based on whether the prediction was correct or incorrect and saved into each table row \cite{padilla2020survey}. By computing $\text{acc \ac{TP}} / (\text{acc \ac{TP}} + \text{acc \ac{FP}})$ a preliminary precision is computed for each row. Similarly a preliminary recall value is calculated for each table row by dividing the accumulated \ac{TP} by the total number of ground truth labels of all images. Its important to note that recall values due to their computation formula here are monotonically increasing as the table rows are visited. When plotting the precision and recall values of the table rows as y and x components of points, the \ac{PR curve} is obtained as seen in \figureref{fig:pr-curve}.
 
 \begin{figure}
   \caption{Example of a \ac{PR curve} plot taken from training with real data}
@@ -257,7 +257,7 @@ The \ac{mAP} scores are now based on the \ac{AUC} of the \ac{PR curve}, which re
 
 \subsection{Pascal VOC 2007}
 
-The VOC 2007 score summarizes the shape of the \ac{PR curve}, for an \ac{IoU} threshold of 0.5, by taking 11 equally spaced recall values \cite{everingham2010pascal}. For each chosen recall value the maximum precision value on the curve at or to the right of that recall value is computed. Finally the AP score is defined as the mean of those maximum precision values as given by 
+For the VOC 2007 score the table as described earlier is computed for an \ac{IoU} threshold of 0.5 \cite{everingham2010pascal}. This threshold is deliberately set low to account for inaccuracies on the ground truth data, that can arise from hard to label objects. The VOC 2007 score summarizes the shape of the \ac{PR curve} by taking 11 equally spaced recall values . For each chosen recall value the maximum precision value on the curve at or to the right of that recall value is computed. Finally the AP score is defined as the mean of those maximum precision values as given by 
 
 $$AP_{11} = \frac{1}{11} \sum_{r\in(0,0.1,...,1)}p_{interp}(r)$$
 
