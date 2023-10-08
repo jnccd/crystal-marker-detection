@@ -679,7 +679,8 @@ def poly_label_curving(img: Mat, polys: List[Polygon], border_type = cv2.BORDER_
     curvature_x_positioning = random.randrange(int(half_target_height/2), int(half_target_height*3/2))
     
     # Cancel if preconditions are not met
-    if target_bounds[3] > img_h: # Out of bounds target
+    if polys[pi].bounds[0] < 0 or polys[pi].bounds[1] < 0 or polys[pi].bounds[2] >= img_w or polys[pi].bounds[3] >= img_h: # Label out of bounds
+        print('Warn: poly_label_curving(), out of bounds label, aborting augment')
         return img, polys
     if any([do_bboxes_touch(poly.bounds, target_bounds) and i != pi for i, poly in enumerate(polys)]): # Affecting other labels
         return img, polys
@@ -718,7 +719,13 @@ def poly_label_curving(img: Mat, polys: List[Polygon], border_type = cv2.BORDER_
     #img[target_bounds[1]:target_bounds[3], target_bounds[0]:target_bounds[2]] = curving_img_segment
     
     # Put polys into map_y coord systems, map their coords, put the output back into the image coord system
-    #print([map_y_diff[int(x[1] - target_bounds[1]), int(x[0] - target_bounds[0])] for x in polys[pi].exterior.coords[:-1]])
+    # print('---')
+    # print(img.shape)
+    # print(polys[pi].bounds)
+    # print(polys[pi].exterior.coords[:-1])
+    # print([(int(x[1] - target_bounds[1]), int(x[0] - target_bounds[0])) for x in polys[pi].exterior.coords[:-1]])
+    # print(target_bounds)
+    # print(map_y_diff.shape)
     polys[pi] = transform(polys[pi], lambda x: np.array( [(p[0], float(-map_y_diff[int(p[1] - target_bounds[1])-1, int(p[0] - target_bounds[0])-1] + p[1])) for p in x] ))
     #print(polys[pi].exterior.coords[:-1])
     
