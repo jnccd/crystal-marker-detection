@@ -133,16 +133,23 @@ def yolo_nas_train_loop(dataset_path,
         dataset_params={
             "data_dir": dataset_path,
             },
-        dataloader_params={'num_workers': 2}
+        dataloader_params={
+            'batch_size':batch_size,
+            'num_workers': 2,
+            }
     )
     val_dataloader = dataloaders.get(name='coco2017_val',
         dataset_params={
             "data_dir": dataset_path,
             },
-        dataloader_params={'num_workers': 2}
+        dataloader_params={
+            'batch_size':batch_size,
+            'num_workers': 2,
+            }
     )
     
-    #train_data.dataset.plot(plot_transformed_data=True)
+    train_dataloader.dataset.transforms.pop(2)
+    #train_dataloader.dataset.plot(plot_transformed_data=True)
 
     print('--- Training...')
     
@@ -157,10 +164,10 @@ def yolo_nas_train_loop(dataset_path,
         pretrained_weights="coco"
     )
     
-    # Taken from: https://learnopencv.com/train-yolo-nas-on-custom-dataset/
+    # Based on: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/recipes/roboflow_yolo_nas_s.yaml
     train_params = {
         'silent_mode': False,
-        "average_best_models":True,
+        #"average_best_models":True,
         "warmup_mode": "linear_epoch_step",
         "warmup_initial_lr": 1e-6,
         "lr_warmup_epochs": 3,
@@ -173,9 +180,9 @@ def yolo_nas_train_loop(dataset_path,
         "ema": True,
         "ema_params": {"decay": 0.9, "decay_type": "threshold"},
         "max_epochs": epochs,
-        #"mixed_precision": True,
+        "mixed_precision": True,
         "loss": PPYoloELoss(
-            use_static_assigner=False,
+            #use_static_assigner=False,
             num_classes=len(classes),
             reg_max=16
         ),
@@ -191,21 +198,9 @@ def yolo_nas_train_loop(dataset_path,
                     max_predictions=300,
                     nms_threshold=0.7
                 )
-            ),
-            DetectionMetrics_050_095(
-                score_thres=0.1,
-                top_k_predictions=300,
-                num_cls=len(classes),
-                normalize_targets=True,
-                post_prediction_callback=PPYoloEPostPredictionCallback(
-                    score_threshold=0.01,
-                    nms_top_k=1000,
-                    max_predictions=300,
-                    nms_threshold=0.7
-                )
             )
         ],
-        "metric_to_watch": 'mAP@0.50:0.95'
+        "metric_to_watch": 'mAP@0.50'
     }
     trainer.train(
         model=model, 
