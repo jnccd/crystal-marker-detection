@@ -521,6 +521,9 @@ def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     move_poly_og_bounds = [int(x) for x in move_poly.bounds]
     move_poly_img = img[move_poly_og_bounds[1]:move_poly_og_bounds[3], move_poly_og_bounds[0]:move_poly_og_bounds[2]].copy()
     # cv2.imwrite('./move_poly_img.png', move_poly_img)
+    if move_poly_img.shape[0] == 0:
+        print('Warn: poly_label_move(), out of bounds label, aborting augment')
+        return img, polys
     
     # Take out poly label
     img = rasterize_polys(img, [inflate_poly(move_poly, 0.2)], draw_color)
