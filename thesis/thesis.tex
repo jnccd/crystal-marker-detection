@@ -228,7 +228,7 @@ The difference becomes most apparent when thinking about the extreme cases. If a
   \label{fig:preds}
 \end{figure}
 
-In the following paragraphs the \ac{mAP} calculation is shown using the example\footnote{\url{https://kharshit.github.io/blog/2019/09/20/evaluation-metrics-for-object-detection-and-segmentation}, accessed on 08.10.2023} shown in \figureref{fig:preds}. The first parts of the \ac{mAP} calculation are the same across all scores shown here.
+The first parts of the \ac{mAP} calculation are the same across all scores considered. Therefore that unified part of the computation is described here for all \ac{mAP} scores using the example\footnote{\url{https://kharshit.github.io/blog/2019/09/20/evaluation-metrics-for-object-detection-and-segmentation}, accessed on 08.10.2023} shown in \figureref{fig:preds}. 
 
 Firstly a table of all predictions over all images in a given dataseries is created as seen in Table \ref{tab:mAP}. The table is sorted by prediction confidence. If there are multiple predictions for a single ground truth label, the prediction with the highest confidence is considered TP, if its \ac{IoU} is over the threshold, and all others FP, as seen with prediction P3.
 
