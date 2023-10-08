@@ -49,13 +49,15 @@ history = []
 
 def hyp_param_run(param_dict: dict):
     global best_score, opt_score
+    print(f'Hyp params: {param_dict}')
     
     training_folder = create_dir_if_not_exists(Path(args.training_folder), clear=True)
     
     dataset_image_size = 640
     dataset_name = 'hyp-search-set'
-    os.system(f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s {dataset_image_size} -sd {param_dict["seed"]} {args.dataseries_sources} -t yolov5 -s {dataset_image_size} ' +\
-        '-a -aim 4 ' + ' '.join([f'-{x[0]} {param_dict[x[0]]}' for x in def_aug_params]))
+    dataset_creation_command = f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s {dataset_image_size} -sd {param_dict["seed"]} {args.dataseries_sources} -t yolov5 -s {dataset_image_size} -a -aim 4 ' + ' '.join([f'-{x[0]} {param_dict[x[0]]}' for x in def_aug_params])
+    print(f'dataset creation command: {dataset_creation_command}')
+    os.system(dataset_creation_command)
     
     if yolov5_pattern.match(args.model):
         os.system(f'python batch_train/yolov5.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} -m {args.model} {"-us" if args.use_sahi else ""} -snr -o {training_folder}')
