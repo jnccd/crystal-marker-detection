@@ -506,6 +506,12 @@ def poly_label_move(img: Mat, polys: List[Polygon], draw_color: tuple = ()):
     
     if len(draw_color) != 3:
         c = polys[pi].centroid
+        
+        # Abort if centroid is not in img
+        if c.x < 0 or c.y < 0 or c.x >= img_w or c.y >= img_h:
+            print('poly_label_move_v2: poly centroid not in img!')
+            return img, polys
+        
         # Sample color from poly centroid in img
         draw_color = [int(x) for x in img[int(c.y), int(c.x)]]
     
