@@ -34,16 +34,17 @@ for img in pyr_imgs[3:]:
     #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Apply edge detection
-    edges = cv2.Canny(img, threshold1=3, threshold2=50)
+    edges = cv2.Canny(img, threshold1=10, threshold2=50)
 
     # Find contours
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     # to demonstrate the impact of contour approximation, let's loop
     # over a number of epsilon sizes
-    for eps in [0.006]:#np.linspace(0.001, 0.05, 10):
+    for eps in [0.01]:#np.linspace(0.001, 0.05, 10):
         # draw the approximated contour on the image
         output = img.copy()
+        output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
         
         # approximate the contour
         for c in contours:
