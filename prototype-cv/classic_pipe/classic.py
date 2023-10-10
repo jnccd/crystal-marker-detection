@@ -48,6 +48,7 @@ for img in pyr_imgs[3:]:
             #print('white_ratio', white_ratio)
             white_ratio = 255 - abs(white_ratio * 255 - 150)
             if white_ratio > 220:
+            #if white_ratio > 0:
                 cv2.rectangle(img_draw, (x,y,1,1), (0,0,white_ratio))
                 promising_points.append((x,y))
     cv2.imwrite(str(root_dir / f'{img_i}_pyr_img_pixel_neighbors.png'),img_draw)
@@ -138,6 +139,7 @@ for img in pyr_imgs[3:]:
     kernel = np.asarray([-255,0,255], dtype=np.float32)
     gy_img = cv2.filter2D(img, -1, kernel)
     gy_img = cv2.GaussianBlur(gy_img,(blur_kernel_size,blur_kernel_size),0)
+    gy_img[(gy_img > 30) & (gy_img < 220)] = 127
     #ret, gy_img = cv2.threshold(gy_img, 60, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_y_img.png'), gy_img)
     gy_img = gy_img.astype(np.float32)
@@ -147,6 +149,7 @@ for img in pyr_imgs[3:]:
     kernel = cv2.transpose(kernel)
     gx_img = cv2.filter2D(img, -1, kernel)
     gx_img = cv2.GaussianBlur(gx_img,(blur_kernel_size,blur_kernel_size),0)
+    gx_img[(gx_img > 30) & (gx_img < 220)] = 127
     #ret, gx_img = cv2.threshold(gx_img, 60, 255, cv2.THRESH_TOZERO)
     cv2.imwrite(str(root_dir / f'{img_i}_kernelled_x_img.png'), gx_img)
     gx_img = gx_img.astype(np.float32)
@@ -202,7 +205,7 @@ for img in pyr_imgs[3:]:
         #                 bins[i] += mag_array_window[x, y]
         #                 break
         hist, bin_edges = np.histogram(ang_array_window, bins=20, range=(-math.pi, math.pi))#, weights=mag_array_window)
-        #print(f'img_id {img_i}, ppoint {ppoint}, hist {hist}, bin_edges {bin_edges}, bbox, {(x_min, y_min, x_max, y_max)}')
+        print(f'img_id {img_i}, ppoint {ppoint}, hist {hist}, bin_edges {bin_edges}, bbox, {(x_min, y_min, x_max, y_max)}')
         
         peaks = []
         hist[2] = 0
