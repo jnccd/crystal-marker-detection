@@ -169,6 +169,14 @@ Albumentations is a popular Python library for image augmentation, primarily des
 
 PyTorch is an open-source machine learning library for Python that has gained significant popularity in the deep learning and artificial intelligence research communities. Originally developed by Facebook's AI Research lab (FAIR) and now maintained by the Linux Foundation, PyTorch offers a flexible and dynamic computational graph, making it particularly well-suited for developing and training neural networks.
 
+\section{SAHI}
+
+The Python package \ac{SAHI} is a lightweight vision library designed to perform large scale object detection and instance segmentation \cite{akyon2022sahi,obss2021sahi}. It was developed to address the challenges of detecting small objects and performing inference on large images, which are common issues in practical usage. 
+
+Fundamentally \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap there is support for bounding box prediction combination. Since models only see input images at a fixes resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
+
+\ac{SAHI} is framework agnostic and so can be modified to work with any model. However it has YOLOX, YOLOv5, MMDetection and Detectron2 support by default.
+
 \section{HyperOpt}
 
 Hyperopt is a Python package designed for hyperparameter optimization, a fundamental aspect of machine learning model development \cite{bergstra2013making}. It systematically explores the hyperparameter space using a variety of optimization algorithms, most notably \ac{TPE}, aiming to discover the parameter combination that optimizes a predefined objective function. 
@@ -407,6 +415,7 @@ A paper from Elgendy et al proposes a navigation system for people with visual i
 \acro{AUC}{area under the curve}
 \acro{UAV}{Unmanned Aerial Vehicle}
 \acro{YOLO}{You Only Look Once}
+\acro{SAHI}{Slicing Aided Hyper Inference}
 
 \end{acronym}
 
