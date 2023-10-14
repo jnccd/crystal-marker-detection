@@ -299,6 +299,8 @@ The \ac{COCO} scores usefulness lies in its measurement of how tight a predictio
 \chapter{Related Work}
 \label{chap:relatedw}
 
+In the following paragraphs papers focusing on difficult \ac{ArUco} marker detection using neural networks as well as papers focusing on image augmentation techniques are shortly introduced.
+
 \section{ArUco Marker Detection}
 
 Another use case in which robust detection of \ac{ArUco} markers is essential is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage markers can become occluded and other visual artifacts can make detection difficult. Therefore Li et al used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based networks can be more stable than classic detection systems. For training the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for subsequent processing speed. To make the training data more realistic black and white objects were placed on the floor to simulate occluding objects. For the test set images were taken similarly but markers were partly occluded by laying a white paper cutout on top of it, with occlusion ratios from 10\% to 40\%. 
