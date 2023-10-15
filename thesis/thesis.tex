@@ -365,6 +365,32 @@ Elgendi et al. also asked radiologists whether the augmentations used here made 
 
 They conclude that \cite[optimization over each geometric augmentation is needed. For example, defining an “acceptable” range of rotation.]{elgendi2021effectiveness}
 
+\subsection{Comparison of augmentations on aerial image labeling}
+
+As part of the paper that introduced Albumentations Buslaev et al. showed the usefulness of Albumentations augmentations on the Inria Aerial Image Labeling dataset \cite{info11020125,maggiori2017can}. They applied random crop to a random square patch size of $[384;640]$ and resized the cropped region to an image size of 512x512. Afterwards they used augmentations bundled into none, light, medium and heavy on the images.
+
+\begin{enumerate}
+  \item No augmentations: no further changes to the image
+  \item Light augmentations: Random horizontal flips, change of brightness, change of contrast, change of color, random affine transformation, random perspective transformation
+  \item Medium augmentations, extending Light with: Gaussian blur, sharpening, coarse dropout, removal of some buildings, randomly generated fog
+  \item Hard augmentations, extending Medium with: Random rotation by 90 degrees, image grid shuffle, elastic transformations, gamma adjustments, and contrast-limited adaptive histogram equalization
+\end{enumerate}
+
+\begin{table}
+  \begin{tabular}{ c c c c c c }
+   Augmentations & Train IoU & Valid IoU & Best Epoch & Data Time (sec/batch) & Model Time (sec/batch) \\ 
+   \hline
+   None & 84.67 & 73.89 & 45/100 & 0.09 & 0.6\\
+   Light & 84.84 & 77.50 & 90/100 & 0.09 & 0.6\\
+   Medium & 83.52 & 76.94 & 96/100 & 0.11 & 0.6\\
+   Heavy & 79.78 & 78.34 & 95/100 & 0.13 & 0.6\\
+   \hline
+  \end{tabular}
+  \caption{\label{tab:alb-iou}Results of augmentation comparison from Buslaev et al. \cite{info11020125}.}
+\end{table}
+
+With more augmentations on this dataset the validation \ac{IoU} score improved and the training epoch with the best validation \ac{IoU} was later, indicating that overfitting was prevented, as seen in Table \ref{tab:alb-iou}.
+
 \chapter{Networks}
 \label{chap:netw}
 
