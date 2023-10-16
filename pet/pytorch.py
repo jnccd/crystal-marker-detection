@@ -18,7 +18,6 @@ from torchsummary import summary
 
 from utils import *
 
-LR = 1e-3
 EPOCHS = 400
 BATCH_SIZE = 128
 DEVICE = "cuda"
@@ -285,7 +284,8 @@ val_loader = DataLoader(
 # Set up training 
 model = get_model().to(DEVICE)
 summary(model, input_size=(3, IMG_SIZE, IMG_SIZE))
-optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.1)
 loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -322,9 +322,10 @@ for i_epoch in range(EPOCHS):
             # Backprop
             optimizer.zero_grad()
             loss.backward()
+            scheduler.step()
             optimizer.step()
             
-            pbar.set_description(f"Ep {i_epoch}, L {np.average(batch_losses):.4f} 上VaL {avg_val_loss}, " + 
+            pbar.set_description(f"Ep {i_epoch}, L {np.average(batch_losses):.4f} 上VaL {avg_val_loss}, LR {optimizer.param_groups[0]['lr']}, " + 
                 ', '.join([metric.__name__ + ' ' + str(torch.mean(metric(label_pred, label_batch)).item()) for metric in metrics]))
             pbar.update(1)
     avg_loss = np.average(batch_losses)
