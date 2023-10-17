@@ -19,7 +19,7 @@ from torchsummary import summary
 from utils import *
 
 EPOCHS = 400
-BATCH_SIZE = 128
+BATCH_SIZE = 64
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
@@ -27,7 +27,7 @@ IMG_SIZE = 224
 MODEL = 'mobilenet'
 
 root_dir = Path(__file__).resolve().parent
-dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet'
+dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
 output_folder = create_dir_if_not_exists(root_dir / 'output/pt')
@@ -47,10 +47,10 @@ class DataseriesLoader(Dataset):
             self.transform = A.Compose([
                     A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                     A.RandomRotate90(),
-                    A.Transpose(),
-                    A.ShiftScaleRotate(shift_limit=0.15, scale_limit=0),
-                    A.Perspective(),
-                    A.Affine(shear=(-20, 20))
+                    # A.Transpose(),
+                    A.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.01),
+                    A.Perspective(scale=(0.01, 0.04)),
+                    # A.Affine(shear=(-20, 20))
                     # A.HueSaturationValue(),
                     # A.ColorJitter(),
                 ],  
@@ -190,17 +190,45 @@ def get_model():
         class CustomHead(nn.Module):
             def __init__(self, in_features, num_classes):
                 super(CustomHead, self).__init__()
-                self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
                 self.fc = nn.Sequential(
+                    nn.AdaptiveAvgPool2d((1, 1)),
                     nn.Flatten(),
                     nn.Linear(in_features, 512),
                     nn.ReLU(),
                     nn.Dropout(0.5),
                     nn.Linear(512, num_classes),
                 )
+                # self.fc = nn.Sequential(
+                #     nn.Conv2d(1280, 320, kernel_size=1),
+                #     nn.BatchNorm2d(320),
+                #     nn.ReLU(),
+                #     nn.Conv2d(320, 160, kernel_size=3, stride=2),
+                #     nn.BatchNorm2d(160),
+                #     nn.ReLU(),
+                #     nn.Conv2d(160, 40, kernel_size=3, stride=2),
+                #     nn.BatchNorm2d(40),
+                #     nn.ReLU(),
+                #     nn.Conv2d(40, 20, kernel_size=1),
+                #     nn.BatchNorm2d(20),
+                #     nn.ReLU(),
+                #     nn.Conv2d(20, num_classes, kernel_size=1),
+                #     nn.BatchNorm2d(num_classes),
+                #     nn.ReLU(),
+                #     nn.Flatten(),
+                # )
+                # self.fc = nn.Sequential(
+                #     nn.Conv2d(1280, 320, kernel_size=1, stride=2),
+                #     nn.BatchNorm2d(320),
+                #     nn.ReLU(),
+                #     nn.AdaptiveAvgPool2d((1, 1)),
+                #     nn.Flatten(),
+                #     nn.Linear(320, 128),
+                #     nn.ReLU(),
+                #     nn.Dropout(0.5),
+                #     nn.Linear(128, num_classes),
+                # )
 
             def forward(self, x):
-                x = self.avgpool(x)
                 x = self.fc(x)
                 return x
 
@@ -285,7 +313,7 @@ val_loader = DataLoader(
 model = get_model().to(DEVICE)
 summary(model, input_size=(3, IMG_SIZE, IMG_SIZE))
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.1)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.2)
 loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
