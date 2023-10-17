@@ -213,10 +213,7 @@ def get_model():
                 #     nn.Conv2d(160, 40, kernel_size=3, stride=2),
                 #     nn.BatchNorm2d(40),
                 #     nn.ReLU(),
-                #     nn.Conv2d(40, 20, kernel_size=1),
-                #     nn.BatchNorm2d(20),
-                #     nn.ReLU(),
-                #     nn.Conv2d(20, num_classes, kernel_size=1),
+                #     nn.Conv2d(40, num_classes, kernel_size=1),
                 #     nn.BatchNorm2d(num_classes),
                 #     nn.ReLU(),
                 #     nn.Flatten(),
@@ -229,8 +226,17 @@ def get_model():
                 #     nn.Flatten(),
                 #     nn.Linear(320, 128),
                 #     nn.ReLU(),
-                #     nn.Dropout(0.5),
+                #     #nn.Dropout(0.5),
                 #     nn.Linear(128, num_classes),
+                # )
+                # self.fc = nn.Sequential(
+                #     nn.AdaptiveAvgPool2d((1, 1)),
+                #     nn.Flatten(),
+                #     nn.Linear(in_features, 1024),
+                #     nn.ReLU(),
+                #     nn.Linear(1024, 256),
+                #     nn.ReLU(),
+                #     nn.Linear(256, num_classes),
                 # )
 
             def forward(self, x):
@@ -318,6 +324,7 @@ val_loader = DataLoader(
 model = get_model().to(DEVICE)
 summary(model, input_size=(3, IMG_SIZE, IMG_SIZE))
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+#optimizer = torch.optim.SGD(model.parameters(), lr=1e-3, momentum=0.95, weight_decay=0.001)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.2)
 loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
