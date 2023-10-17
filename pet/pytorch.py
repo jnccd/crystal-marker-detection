@@ -48,12 +48,12 @@ class DataseriesLoader(Dataset):
                     A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                     A.RandomRotate90(),
                     # A.Transpose(),
-                    A.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.01),
-                    A.Perspective(scale=(0.01, 0.04)),
+                    A.ShiftScaleRotate(shift_limit=0.05, rotate_limit=270, scale_limit=0.01, p=1),
+                    A.Perspective(scale=(0.01, 0.06)),
                     # A.Affine(shear=(-20, 20))
                     # A.HueSaturationValue(),
                     # A.ColorJitter(),
-                ],  
+                ],
                 keypoint_params=A.KeypointParams(
                     format='xy',
                     remove_invisible = False
@@ -61,8 +61,13 @@ class DataseriesLoader(Dataset):
             )
         else:
             self.transform = A.Compose([
-                A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
-            ], keypoint_params=A.KeypointParams(format='xy'))
+                    A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
+                    #A.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.01, p=1),
+                ], keypoint_params=A.KeypointParams(
+                    format='xy',
+                    remove_invisible = False
+                ),
+            )
 
         print(f"Found {len(self.image_label_filenames)} images in {dataseries_dir}")
 
