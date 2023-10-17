@@ -200,3 +200,4 @@ python traindata-creator/createDataset.py -n best-yolov5s-hyp-search-set -s 640 
 
 # pet pipeline
 python traindata-creator/createDataset.py -n man-pet -t pet -s 0 -tf traindata-creator/dataseries/coco-man-pet/ -r 0.1
+python traindata-creator/createDataset.py -n man-pet-v2 -t pet -s 0 -tf traindata-creator/dataseries/coco-labels_my-project-name_2023-10-17-03-53-09/ -r 0.12
