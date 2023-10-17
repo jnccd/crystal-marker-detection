@@ -62,9 +62,9 @@ def hyp_param_run(param_dict: dict):
     if yolov5_pattern.match(args.model):
         os.system(f'python batch_train/yolov5.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} -m {args.model} {"-us" if args.use_sahi else ""} -snr -o {training_folder}')
     elif yolov8_pattern.match(args.model):
-        os.system(f'python batch_train/yolov8.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} -m {args.model} {"-us" if args.use_sahi else ""} -snr -o {training_folder}')
+        os.system(f'python batch_train/yolov8.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} -m {args.model} {"-us" if args.use_sahi else ""} -o {training_folder}')
     elif yolo_nas_pattern.match(args.model):
-        os.system(f'python batch_train/yolo_nas.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} -m {args.model} {"-us" if args.use_sahi else ""} -snr -o {training_folder}')
+        os.system(f'python batch_train/yolo_nas.py -d {dataset_folder} -t {testset_path} -e {int(param_dict["epochs"])} -m {args.model} {"-us" if args.use_sahi else ""} -o {training_folder}')
     else:
         print('What model is that? ' + args.model)
         sys.exit(1)
