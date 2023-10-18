@@ -402,7 +402,13 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \section{Yolo}
 
-\ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO} however is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. 
+\ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO} however is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
+
+\begin{figure}
+  \caption{Visualization of the most important layers of the \ac{YOLO} network with modified proportions created using the \href{https://github.com/HarisIqbal88/PlotNeuralNet}{PlotNeuralNet tool}}
+  \includegraphics[width=\textwidth]{image/yolo_structure}
+  \label{fig:yolo}
+\end{figure}
 
 \ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore all fully connected layers are removed from the \ac{YOLO}v2 network architecture. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function.
 
