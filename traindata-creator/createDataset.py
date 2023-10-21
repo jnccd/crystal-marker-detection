@@ -220,6 +220,8 @@ def main():
         build_od_csv_dataset(in_imgs, target_polys)
     elif args.type == 'pet':
         build_pet_dataset(in_imgs, target_polys)
+    elif args.type == 'segpet':
+        build_segpet_dataset(in_imgs, target_polys)
     elif args.type == 'alb-test':
         build_alb_test_dataset(in_imgs, target_polys)
     else:
@@ -354,6 +356,67 @@ def build_pet_dataset(in_imgs, target_polys):
                         crop_img, 
                         str(poly.exterior.coords[:-1]), 
                         f'{i}_{j}_p.txt'
+                    )
+                )
+        
+    # Shuffle mixed group data, regroup, write
+    random.Random(42).shuffle(mixed_group_data)
+    i = 0
+    for group in data_groups:
+        shuffled_group_data = mixed_group_data[i:i+sum([len(x) for x in target_polys[group]])]
+        
+        for data in shuffled_group_data:
+            cv2.imwrite(str(dir[group] / data[0]), data[1])
+            write_textfile(data[2], dir[group] / data[3])
+        
+        i += len(in_imgs[group])
+        
+        print(f'Built {len(in_imgs[group])} {group}data!')
+        
+def build_segpet_dataset(in_imgs, target_polys):
+    global data_groups, dataset_name, dataset_dir, background_color, border_type
+    pet_target_size = 160
+    
+    # Create train / val dirs
+    dir = {}
+    for group in data_groups:
+        dir[group] = create_dir_if_not_exists(dataset_dir / group)
+    
+    # Build mixed groups data
+    mixed_group_data = [] # [img_path, img, vertices, verts_path]
+    for group in data_groups:
+        for i, (in_img, polys) in enumerate(zip(in_imgs[group], target_polys[group])):
+            for j, poly in enumerate(polys):
+                # Prepare bbox
+                poly: Polygon = poly # For linting
+                b = [int(x) for x in inflate_bbox_xyxy(poly.bounds, 0.3)]
+                
+                # Prepare img cutout
+                crop_img = in_img[b[1]:b[3], b[0]:b[2]]
+                if crop_img.shape[0] <= 0 or crop_img.shape[1] <= 0:
+                    continue
+                crop_img_size_wh = tuple(reversed(crop_img.shape[:2]))
+                poly: Polygon = transform(poly, lambda x: np.array([(p[0] - b[0], p[1] - b[1]) for p in x] ))
+                # Rotate
+                rotation_angle = (random.random() - 0.5) * 2 * 270
+                crop_img, [poly] = homogeneous_mat_transform(crop_img, [poly], crop_img_size_wh, 
+                    cv2.getRotationMatrix2D(
+                        (crop_img.shape[1]/2, crop_img.shape[0]/2), 
+                        rotation_angle, 
+                        0.9), 
+                    background_color=background_color, 
+                    border_type=border_type, 
+                    min_label_visiblity=0.1)
+                # Resize and pad
+                crop_img, [poly] = resize_and_pad_with_labels(crop_img, pet_target_size, [poly], background_color, border_type)
+                
+                # Store cutout output in mixed_group_data
+                mixed_group_data.append(
+                    (
+                        f'{i}_{j}_in.png', 
+                        crop_img, 
+                        str(poly.exterior.coords[:-1]), 
+                        f'{i}_{j}_p.png'
                     )
                 )
         
