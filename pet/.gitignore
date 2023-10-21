@@ -1,3 +1,5 @@
 *.png
 *.h5
 *.pt
+
+output/seg/*
