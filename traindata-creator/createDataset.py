@@ -414,7 +414,7 @@ def build_segpet_dataset(in_imgs, target_polys):
                 seg_image = np.zeros(crop_img.shape[:2] + (1,), dtype = np.uint8)
                 pts = np.array([(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]], dtype=np.int32)
                 seg_image = cv2.polylines(seg_image, pts=[pts], isClosed=True, color=255)
-                seg_image = cv2.blur(seg_image,(9,9))
+                seg_image = cv2.GaussianBlur(seg_image, (9,9), 0)
                 max_brightness = np.max(seg_image)
                 seg_image = (seg_image.astype('float32') * (255 / max_brightness)).astype('uint8')
                 
@@ -424,7 +424,7 @@ def build_segpet_dataset(in_imgs, target_polys):
                         f'{i}_{j}_in.png', 
                         crop_img, 
                         seg_image, 
-                        f'{i}_{j}_p.png'
+                        f'{i}_{j}_seg.png'
                     )
                 )
         
