@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 
-from utils import *
+from utility import *
 
 def main():
     # Parse

@@ -72,6 +72,6 @@ for run_paths_dict in runs_paths:
         os.system(f'python evaluation/analyze.py -av {training_run_folder / test_folder_name}')
     else:
         if current_run_type == 'yolov5':
-            os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {testset_path}/ -ct {args.confidence_threshold} -bis {args.border_ignore_size} -sqt {args.squareness_threshold} -tn {test_folder_name}')
+            os.system(f'python batch_train/yolov5_evaluate.py -r {training_run_folder} -t {testset_path}/ -ct {args.confidence_threshold} -bis {args.border_ignore_size} -sqt {args.squareness_threshold} -tn {test_folder_name}')
         elif current_run_type == 'yolov8':
             os.system(f'python batch_train/yolov8_evaluate.py -r {training_run_folder} -t {testset_path}/')

@@ -12,7 +12,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from utils import *
+from utility import *
 
 def main():
     global Trainer, models, dataloaders, DetectionMetrics_050, DetectionMetrics_050_095, PPYoloELoss, PPYoloEPostPredictionCallback
