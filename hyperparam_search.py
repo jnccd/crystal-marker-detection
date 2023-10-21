@@ -28,7 +28,6 @@ if args.name == None:
 
 testset_path = Path(args.testset_path)
 dataset_folder = create_dir_if_not_exists(Path(args.dataset_folder) / f'hyp-param-search-{args.name}')
-training_folder = create_dir_if_not_exists(Path(args.training_folder) / f'hyp-param-search-{args.name}')
 
 def_aug_params = [
     ("asgsc", 0, 1),
