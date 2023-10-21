@@ -10,6 +10,7 @@ from hyperopt import fmin, tpe, hp, STATUS_OK
 from evaluation.utility import *
 
 parser = argparse.ArgumentParser(prog='', description='.')
+parser.add_argument('-n','--name', type=str, help='.')
 parser.add_argument('-t','--testset-path', type=str, help='.')
 parser.add_argument('-df','--dataset-folder', type=str, default='traindata-creator/dataset/_hyp-param-search', help='.') # /data/pcmd/dataset/hyp-param-search
 parser.add_argument('-tf','--training-folder', type=str, default='training/hyp-param-search', help='.') # /data/pcmd/training/hyp-param-search
@@ -21,9 +22,13 @@ parser.add_argument('-emax','--max-evals', type=int, default=3, help='Sets the m
 parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
 args = parser.parse_args()
 
+if args.name == None:
+    print('I need a name!')
+    sys.exit(0)
+
 testset_path = Path(args.testset_path)
-dataset_folder = create_dir_if_not_exists(Path(args.dataset_folder), clear=True)
-training_folder = create_dir_if_not_exists(Path(args.training_folder), clear=True)
+dataset_folder = create_dir_if_not_exists(Path(args.dataset_folder) / f'hyp-param-search-{args.name}')
+training_folder = create_dir_if_not_exists(Path(args.training_folder) / f'hyp-param-search-{args.name}')
 
 def_aug_params = [
     ("asgsc", 0, 1),
@@ -74,7 +79,7 @@ def hyp_param_run(param_dict: dict):
     eval_dict = json.loads(read_textfile(eval_json_path).replace("    ", "").replace("\n", ""))
     
     if eval_dict[opt_score] > best_score:
-        copy_tree(str(training_folder / training_subfolder), str(training_folder.parent / 'hyp-best-run'))
+        copy_tree(str(training_folder / training_subfolder), str(training_folder.parent / f'hyp-best-run-{args.name}'))
         best_score = eval_dict[opt_score]
         
     float_param_dict_values = [float(x) for x in param_dict.values()]
