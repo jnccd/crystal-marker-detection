@@ -2,4 +2,4 @@
 *.h5
 *.pt
 
-output/seg/*
+output/tf-seg/*
