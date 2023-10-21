@@ -6,7 +6,7 @@ import sys
 import time
 from pathlib import Path
 
-from utils import *
+from utility import *
 
 def main():
     # Parse
@@ -43,6 +43,7 @@ def main():
                     and not str(x).__contains__("-valset")]
     datasets_dirs.sort(key=lambda d: d.stem)
     testset_path = root_dir.parent / args.testset_path
+    output_folder = create_dir_if_not_exists(Path(Path(args.output_path)))
     
     dd_n = len(datasets_dirs)
     if args.worker_index >= 0 and args.worker_count > 0:
@@ -97,7 +98,7 @@ def main():
     end_time = time.time()
     diff_time = end_time  - start_time
     parsed_time = time.strftime("%H:%M:%S", time.gmtime(diff_time))
-    write_textfile(f'{diff_time}\n{parsed_time}', Path(args.output_path) / 'train_time.txt')
+    write_textfile(f'{diff_time}\n{parsed_time}', output_folder / 'train_time.txt')
     print(f'Training took: {parsed_time}')
 
 def yolov5_train_loop(dataset_path, 
@@ -159,7 +160,7 @@ def yolov5_train_loop(dataset_path,
     os.system(f'python repos/yolov5/train.py --name {run_name} --img {img_size} --batch {batch_size} --epochs {epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml {yolov5_args}')
     os.system(f'rm {model}.pt')
     print('--- Evaluating...')
-    os.system(f'python repos/yolov5_evaluate.py -r {training_run_folder} -t {valset_path}/ {"-us" if use_sahi else ""} -bis {border_ignore_size} -ct {confidence_threshold}')
+    os.system(f'python batch_train/yolov5_evaluate.py -r {training_run_folder} -t {valset_path}/ {"-us" if use_sahi else ""} -bis {border_ignore_size} -ct {confidence_threshold}')
     write_textfile(json.dumps(train_def_dict, indent=4), training_run_folder / 'training-def.json')
 
 if __name__ == '__main__':

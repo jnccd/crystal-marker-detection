@@ -13,7 +13,7 @@ import numpy as np
 import torch
 from ultralytics import YOLO
 
-from utils import *
+from utility import *
 
 def main():
     # Parse

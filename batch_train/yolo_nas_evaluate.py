@@ -18,7 +18,7 @@ from super_gradients.training import models
 from super_gradients.training.utils.checkpoint_utils import adaptive_load_state_dict
 from super_gradients.training.utils.predict import ImagesDetectionPrediction
 
-from utils import *
+from utility import *
 
 def main():
     # Parse
