@@ -410,12 +410,20 @@ def build_segpet_dataset(in_imgs, target_polys):
                 # Resize and pad
                 crop_img, [poly] = resize_and_pad_with_labels(crop_img, pet_target_size, [poly], background_color, border_type)
                 
+                # Convert poly to seg img
+                seg_image = np.zeros(crop_img.shape[:2] + (1,), dtype = np.uint8)
+                pts = np.array([(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]], dtype=np.int32)
+                seg_image = cv2.polylines(seg_image, pts=[pts], isClosed=True, color=255)
+                seg_image = cv2.blur(seg_image,(9,9))
+                max_brightness = np.max(seg_image)
+                seg_image = (seg_image.astype('float32') * (255 / max_brightness)).astype('uint8')
+                
                 # Store cutout output in mixed_group_data
                 mixed_group_data.append(
                     (
                         f'{i}_{j}_in.png', 
                         crop_img, 
-                        str(poly.exterior.coords[:-1]), 
+                        seg_image, 
                         f'{i}_{j}_p.png'
                     )
                 )
@@ -428,7 +436,7 @@ def build_segpet_dataset(in_imgs, target_polys):
         
         for data in shuffled_group_data:
             cv2.imwrite(str(dir[group] / data[0]), data[1])
-            write_textfile(data[2], dir[group] / data[3])
+            cv2.imwrite(str(dir[group] / data[3]), data[2])
         
         i += len(in_imgs[group])
         
