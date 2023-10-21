@@ -17,4 +17,8 @@ python hyperparam_search.py -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ens
 # Yolov8s GPV2 Sahi
 python hyperparam_search.py -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -df /data/pcmd/dataset/hyp-param-search -tf /data/pcmd/training/hyp-param-search -mine 30 -maxe 400 -ds " -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2" -emax 300 -us -m yolov8s
 ---
-WIP
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 300/300 [33:30:57<00:00, 402.19s/trial, best loss: -0.6283410683881572]{'abdc': 0.8539862669545024, 'agnc': 0.7802137470863273, 'agns': 10.586148581598728, 'alcc': 0.7642379844957939, 'alm2c': 0.8861669136478816, 'almc': 0.43986604686355213, 'andrc': 0.00865172327822536, 'apc': 0.5321897291815003, 'apldc': 0.8179642220691326, 'aps': 0.35799778754522654, 'arc': 0.30890101919800533, 'arc2c': 0.133413608004902, 'arcc': 0.00017220987103017116, 'ars': 338.0170555159073, 'asgsc': 0.41835592033827923, 'epochs': 141.28629789643992, 'seed': 7335}
+
+# Yolov5m GPV2 Sahi
+python hyperparam_search.py -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -df /data/pcmd/dataset -tf /data/pcmd/training -mine 30 -maxe 400 -ds " -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2" -emax 300 -us -n yolov5m-sahi -m yolov5m
+---
