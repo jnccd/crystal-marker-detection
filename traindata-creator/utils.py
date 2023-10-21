@@ -225,7 +225,7 @@ def resize_and_pad_with_labels(img: Mat, desired_size: int, polys: List[Polygon]
     
     return rp_img, polys
 
-def rasterize_polys(draw_img: Mat, polys: List[Polygon], draw_color: tuple = (255, 255, 255)):
+def rasterize_polys(draw_img: Mat, polys: List[Polygon], draw_color: tuple = (255, 255, 255), fill: bool = True):
     # print(polys)
     polys = list(filter(lambda poly: 
         poly is not Point and 
@@ -243,7 +243,10 @@ def rasterize_polys(draw_img: Mat, polys: List[Polygon], draw_color: tuple = (25
     for vertices in vertices_per_obj:
         if vertices != []:
             np_vertices = np.array(vertices)
-            cv2.fillPoly(draw_img, pts=[np_vertices], color=draw_color)
+            if fill:
+                cv2.fillPoly(draw_img, pts=[np_vertices], color=draw_color)
+            else:
+                cv2.polylines(draw_img, pts=[np_vertices], isClosed=False, color=draw_color)
         
     return draw_img
 
