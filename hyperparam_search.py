@@ -56,7 +56,7 @@ def hyp_param_run(param_dict: dict):
     global best_score, opt_score
     print(f'Hyp params: {param_dict}')
     
-    training_folder = create_dir_if_not_exists(Path(args.training_folder),)
+    training_folder = create_dir_if_not_exists(Path(args.training_folder) / f'hyp-param-search-{args.name}', clear=True)
     
     dataset_image_size = 640
     dataset_name = 'hyp-search-set'
