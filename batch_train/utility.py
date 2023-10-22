@@ -43,8 +43,10 @@ def handle_model_out(
     confidence_threshold, 
     border_ignore_size, 
     squareness_threshold,
-    build_debug_output
+    build_debug_output = False,
+    mask = None,
     ):
+    
     # Filter model out
     #print('boxes', boxes)
     if border_ignore_size > 0:
@@ -56,6 +58,9 @@ def handle_model_out(
     if squareness_threshold > 0:
         boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
     boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
+    if mask != None:
+        boxes = list(filter(lambda box: np.average(mask[box[1]:box[3], box[0]:box[2]]) > 80, boxes))
+    
     # Rasterize Segmentation image
     if build_debug_output:
         sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
