@@ -27,6 +27,7 @@ def main():
     parser.add_argument('-ct','--confidence-threshold', type=float, default=0.5, help='The minimum confidence of considered predictions.')
     parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
+    parser.add_argument('-utm','--use-test-masks', action='store_true', help='Use testset segment masks for inference.')
     
     parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
     parser.add_argument('-wc','--worker-count', type=int, default=-1, help='.')
@@ -93,6 +94,7 @@ def main():
             use_sahi=args.use_sahi,
             border_ignore_size=args.border_ignore_size,
             confidence_threshold=args.confidence_threshold,
+            use_test_masks=args.use_test_masks,
         )
         
     end_time = time.time()
@@ -113,6 +115,7 @@ def yolov5_train_loop(dataset_path,
                       init_random_weights = False, 
                       no_aug = False,
                       use_sahi = False,
+                      use_test_masks = False,
                       border_ignore_size = 0,
                       confidence_threshold = 0.5,
                       ):
@@ -160,7 +163,7 @@ def yolov5_train_loop(dataset_path,
     os.system(f'python repos/yolov5/train.py --name {run_name} --img {img_size} --batch {batch_size} --epochs {epochs} --project {project_folder} --data {dataset_path}/{dataset_path.stem}.yaml {yolov5_args}')
     os.system(f'rm {model}.pt')
     print('--- Evaluating...')
-    os.system(f'python batch_train/yolov5_evaluate.py -r {training_run_folder} -t {valset_path}/ {"-us" if use_sahi else ""} -bis {border_ignore_size} -ct {confidence_threshold}')
+    os.system(f'python batch_train/yolov5_evaluate.py -r {training_run_folder} -t {valset_path}/ {"-us" if use_sahi else ""} {"-utm" if use_test_masks else ""} -bis {border_ignore_size} -ct {confidence_threshold}')
     write_textfile(json.dumps(train_def_dict, indent=4), training_run_folder / 'training-def.json')
 
 if __name__ == '__main__':
