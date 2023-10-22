@@ -83,7 +83,7 @@ def handle_model_out(
         print(boxes)
         box_windows = [mask[int(box[1]):int(box[3]), int(box[0]):int(box[2])] for box in boxes]
         print(mask.shape, box_windows, [np.max(x) for x in box_windows])
-        boxes = list(filter(lambda box: np.average(mask[box[1]:box[3], box[0]:box[2]]) > 80, boxes))
+        boxes = list(filter(lambda box: np.average(mask[int(box[1]):int(box[3]), int(box[0]):int(box[2])]) > 80, boxes))
     
     # Rasterize Segmentation image
     if build_debug_output:
