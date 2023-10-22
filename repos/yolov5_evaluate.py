@@ -111,6 +111,7 @@ def gen_evaldata(
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
         
+        print(img_path, label_path, valdata_masks_paths[i])
         handle_model_out(
             i, 
             boxes,
