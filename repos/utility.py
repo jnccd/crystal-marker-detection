@@ -80,15 +80,15 @@ def handle_model_out(
         boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
     boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
     if mask is not None:
-        print(boxes)
+        # print(boxes)
         box_windows = [mask[int(box[1]):int(box[3]), int(box[0]):int(box[2])] for box in boxes]
         box_windows = [(wind, box) for wind, box in zip(box_windows, boxes) 
                        if wind.shape[0] != 0 and wind.shape[1] != 0]
-        print(box_windows)
-        print(mask.shape, [x[0].shape for x in box_windows], [np.max(x[0]) for x in box_windows])
+        # print(box_windows)
+        # print(mask.shape, [x[0].shape for x in box_windows], [np.max(x[0]) for x in box_windows])
         boxes = [box for wind, box in box_windows 
                     if np.max(wind) > 80]
-        print(boxes)
+        # print(boxes)
     
     # Rasterize Segmentation image
     if build_debug_output:
