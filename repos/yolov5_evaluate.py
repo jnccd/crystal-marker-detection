@@ -69,11 +69,6 @@ def gen_evaldata(
     
     valdata_imgs_paths = get_files_from_folders_with_ending([valdata_imgs_path], (".png", ".jpg"))
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
-    valdata_masks_paths = get_files_from_folders_with_ending([valdata_masks_path], (".png", ".jpg")) if valdata_masks_path.exists() else None
-    
-    valdata_imgs_paths.sort(key=lambda p: Path(p).stem)
-    valdata_labels_paths.sort(key=lambda p: Path(p).stem)
-    valdata_masks_paths.sort(key=lambda p: Path(p).stem)
     
     if not use_sahi:
         model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
@@ -115,7 +110,8 @@ def gen_evaldata(
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
         
-        print(img_path, label_path, valdata_masks_paths[i])
+        valdata_masks_path_i = valdata_masks_path / f'img ({int(Path(img_path).stem) + 1})'
+        print(img_path, label_path, valdata_masks_path_i)
         handle_model_out(
             i, 
             boxes,
@@ -127,7 +123,7 @@ def gen_evaldata(
             border_ignore_size, 
             squareness_threshold,
             build_debug_output,
-            cv2.imread(valdata_masks_paths[i], cv2.IMREAD_GRAYSCALE) if use_test_masks and valdata_masks_paths != None else None
+            cv2.imread(valdata_masks_path_i, cv2.IMREAD_GRAYSCALE) if use_test_masks else None
             )
     
     # Add test def dict
