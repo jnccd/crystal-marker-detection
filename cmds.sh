@@ -94,6 +94,7 @@ python batch_train/yolov5.py -d traindata-creator/dataset/ -t traindata-creator/
 python batch_train/yolo_nas.py -e 2 -d traindata-creator/dataset/coco-640-best-yolov5s-hyp-search-set -rsf -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/
 python batch_train/yolo_nas.py -e 200 -d traindata-creator/dataset/coco-640-best-yolov5s-hyp-search-set -rsf -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -o traindata-creator/training/yolo_nas/
 python batch_train/yolo_nas.py -e 200 -d /data/pcmd/dataset/coco-640-best-yolov5s-hyp-search-set -rsf -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -o /data/pcmd/training/yolo_nas/
+python batch_train/yolov5.py -d /data/pcmd/dataset/yolov5-640-best-yolov5s-hyp-search-set/ -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -e 368 -snr -rsf -o /data/pcmd/training/best-hyp-search-yolov5
 
 python -m cmd_tf -t -td traindata-creator/dataset/seg-640-on-skin-valset-v2/ -r sm-unet-aruco
 
