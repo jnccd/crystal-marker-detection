@@ -123,7 +123,7 @@ def gen_evaldata(
             border_ignore_size, 
             squareness_threshold,
             build_debug_output,
-            cv2.imread(valdata_masks_path_i, cv2.IMREAD_GRAYSCALE) if use_test_masks else None
+            cv2.imread(str(valdata_masks_path_i), cv2.IMREAD_GRAYSCALE) if use_test_masks else None
             )
     
     # Add test def dict
