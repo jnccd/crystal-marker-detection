@@ -84,7 +84,7 @@ def hyp_param_run(param_dict: dict):
     float_param_dict_values = [float(x) for x in param_dict.values()]
     float_param_dict = dict(zip(param_dict.keys(), float_param_dict_values))
     history.append((float(eval_dict[opt_score]), float(best_score), float_param_dict))
-    write_textfile(json.dumps(history, indent=4), training_folder.parent / 'hyp-param-search-history.json')
+    write_textfile(json.dumps(history, indent=4), training_folder.parent / f'hyp-param-search-{args.name}-history.json')
         
     return {'loss': -eval_dict[opt_score], 'status': STATUS_OK }
 
