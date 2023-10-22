@@ -87,7 +87,7 @@ def handle_model_out(
         # print(box_windows)
         # print(mask.shape, [x[0].shape for x in box_windows], [np.max(x[0]) for x in box_windows])
         boxes = [box for wind, box in box_windows 
-                    if np.max(wind) > 80 and np.average(wind) > 100]
+                    if np.max(wind) > 80]
         # print(boxes)
     
     # Rasterize Segmentation image
