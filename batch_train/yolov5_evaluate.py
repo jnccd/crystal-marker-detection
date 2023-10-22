@@ -22,6 +22,7 @@ def main():
     parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
     parser.add_argument('-sqt','--squareness-threshold', type=float, default=0, help='The minimum squareness of considered prediction boxes.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
+    parser.add_argument('-utm','--use-test-masks', action='store_true', help='Use testset segment masks for inference.')
     parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
     args = parser.parse_args()
     
@@ -45,6 +46,7 @@ def main():
         use_sahi= args.use_sahi,
         border_ignore_size= args.border_ignore_size,
         build_debug_output=args.debug_output_imgs,
+        use_test_masks=args.use_test_masks,
     )
     
     # Start analyze script
@@ -58,13 +60,16 @@ def gen_evaldata(
     squareness_threshold = 0,
     use_sahi = False,
     border_ignore_size = 0,
-    build_debug_output: bool = False
+    build_debug_output: bool = False,
+    use_test_masks = False,
     ):
     valdata_imgs_path = Path(valset_path) / 'val/images'
     valdata_labels_path = Path(valset_path) / 'val/labels'
+    valdata_masks_path = Path(valset_path) / 'val/masks'
     
     valdata_imgs_paths = get_files_from_folders_with_ending([valdata_imgs_path], (".png", ".jpg"))
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
+    valdata_masks_paths = get_files_from_folders_with_ending([valdata_masks_path], (".png", ".jpg")) if valdata_masks_path.exists() else None
     
     if not use_sahi:
         model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
@@ -116,7 +121,8 @@ def gen_evaldata(
             confidence_threshold, 
             border_ignore_size, 
             squareness_threshold,
-            build_debug_output
+            build_debug_output,
+            cv2.imread(valdata_masks_paths[i], cv2.IMREAD_GRAYSCALE) if use_test_masks and valdata_masks_paths != None else None
             )
     
     # Add test def dict
