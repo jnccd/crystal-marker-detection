@@ -110,7 +110,7 @@ def gen_evaldata(
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
         
-        valdata_masks_path_i = valdata_masks_path / f'img ({int(Path(img_path).stem) + 1})'
+        valdata_masks_path_i = valdata_masks_path / f'img ({int(Path(img_path).stem) + 1}).png'
         print(img_path, label_path, valdata_masks_path_i)
         handle_model_out(
             i, 
