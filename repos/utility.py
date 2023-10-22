@@ -82,6 +82,8 @@ def handle_model_out(
     if mask is not None:
         print(boxes)
         box_windows = [mask[int(box[1]):int(box[3]), int(box[0]):int(box[2])] for box in boxes]
+        box_windows = [wind for wind in box_windows 
+                       if wind.shape[0] != 0 and wind.shape[1] != 0]
         print(box_windows)
         print(mask.shape, [x.shape for x in box_windows], [np.max(x) for x in box_windows])
         boxes = [b[1] for b in filter(lambda b: np.max(box_windows[b[0]]) > 80, enumerate(boxes))]
