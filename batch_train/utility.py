@@ -58,7 +58,7 @@ def handle_model_out(
     if squareness_threshold > 0:
         boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
     boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
-    if mask != None:
+    if mask is not None:
         print(mask.shape, np.max([mask[box[1]:box[3], box[0]:box[2]] for box in boxes]))
         boxes = list(filter(lambda box: np.average(mask[box[1]:box[3], box[0]:box[2]]) > 80, boxes))
     
