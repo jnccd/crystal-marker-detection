@@ -71,9 +71,9 @@ def gen_evaldata(
     valdata_labels_paths = get_files_from_folders_with_ending([valdata_labels_path], (".txt"))
     valdata_masks_paths = get_files_from_folders_with_ending([valdata_masks_path], (".png", ".jpg")) if valdata_masks_path.exists() else None
     
-    valdata_imgs_paths.sort(key=lambda p: p.stem)
-    valdata_labels_paths.sort(key=lambda p: p.stem)
-    valdata_masks_paths.sort(key=lambda p: p.stem)
+    valdata_imgs_paths.sort(key=lambda p: Path(p).stem)
+    valdata_labels_paths.sort(key=lambda p: Path(p).stem)
+    valdata_masks_paths.sort(key=lambda p: Path(p).stem)
     
     if not use_sahi:
         model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
