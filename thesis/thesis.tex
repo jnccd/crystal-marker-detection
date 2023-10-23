@@ -17,6 +17,7 @@
 \usepackage{parcolumns}
 \usepackage[printonlyused]{acronym}
 \usepackage{bm,amsmath}
+%\usepackage{mathtools}
 \setlength{\marginparwidth}{3cm}
 \addbibresource{thesis.bib}
 
@@ -420,7 +421,13 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \subsection{Architecture}
 
-\ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the SPPF, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network.
+\ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the SPPF, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
+
+\begin{figure}
+  \caption{Visualization of the most important layers and blocks of the \ac{YOLO}v5 network with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool}}
+  \includegraphics[width=\textwidth]{image/yolov5}
+  \label{fig:yolov5}
+\end{figure}
 
 \subsection{Data Augmentation}
 
