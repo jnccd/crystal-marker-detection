@@ -400,7 +400,7 @@ Khalifa et al. compiled image augmentation techniques used in other papers \cite
 
 This chapter introduces network architectures that I used for the \ac{ArUco} marker detection.
 
-\section{Yolo}
+\section{First YOLO Versions}
 
 \ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO} however is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
 
@@ -418,7 +418,26 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \ac{YOLO}v5 was developed by Ultralytics instead of the developers of the first three \ac{YOLO} versions and further increased the mAP detection score on the COCO dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in different sizes from nano to extra large.
 
+\subsection{Architecture}
+
 \ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the SPPF, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network.
+
+\subsection{Data Augmentation}
+
+\ac{YOLO}v5 also comes with predefined augmentation techniques. 
+
+\begin{itemize}
+  \item Mosaic Augmentation: This technique places four training images next to each other in one bigger image.
+  \item Random Affine Transformations: This technique applies random rotation, scaling, translation, and shearing to the image.
+  \item HSV Augmentation: This technique applies random changes to the Hue, Saturation, and Value of pixels within a certain range for each of the values.
+  \item Random Horizontal Flip: This technique randomly flips the image around the y axis.
+\end{itemize}
+
+\ac{YOLO}v5 further defines augmentations such as Copy-Paste Augmentation and MixUp Augmentation. However these augmentations were disabled by default and I did not use them.
+
+\subsection{Loss}
+
+
 
 \section{Yolov8}
 
