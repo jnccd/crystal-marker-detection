@@ -6,7 +6,7 @@ import sys
 import time
 from pathlib import Path
 
-from utils import *
+from utility import *
 
 # Segmentation models ensemble run
 
