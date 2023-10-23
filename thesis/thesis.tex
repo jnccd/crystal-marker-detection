@@ -414,7 +414,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \ac{YOLO}v3 mainly improves the network architecture by combining approaches from \ac{YOLO}v2 and Darknet-19 to create Darknet-53, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. Darknet-53 proved to be a more efficient backbone network. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}.
 
-\section{Yolov5}
+\section{YOLOv5}
 
 \ac{YOLO}v5 was developed by Ultralytics instead of the developers of the first three \ac{YOLO} versions and further increased the mAP detection score on the COCO dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in different sizes from nano to extra large.
 
@@ -433,13 +433,11 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \item Random Horizontal Flip: This technique randomly flips the image around the y axis.
 \end{itemize}
 
-\ac{YOLO}v5 further defines augmentations such as Copy-Paste Augmentation and MixUp Augmentation. However these augmentations were disabled by default and I did not use them.
-
-\subsection{Loss}
-
-
+\ac{YOLO}v5 further defines augmentations such as Copy-Paste Augmentation and MixUp Augmentation. However these augmentations were disabled by default.
 
 \section{Yolov8}
+
+
 
 \section{YolovNAS}
 
