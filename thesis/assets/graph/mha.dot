@@ -1,0 +1,42 @@
+digraph transformer_block {
+    rankdir=TB;
+    node [shape=box, style=rounded, width=1.5, height=0.6];
+    
+    subgraph input {
+        label = "Input";
+        input;
+    }
+    
+    subgraph multihead_attention {
+        label = "Multi-Head\nSelf-Attention";
+        self_attention;
+    }
+    
+    subgraph add_norm_1 {
+        label = "Add & Layer\nNormalization";
+        add_norm_1;
+    }
+    
+    subgraph feedforward {
+        label = "Feedforward\nNeural Network";
+        feedforward;
+    }
+    
+    subgraph add_norm_2 {
+        label = "Add & Layer\nNormalization";
+        add_norm_2;
+    }
+    
+    subgraph output {
+        label = "Output";
+        output;
+    }
+    
+    input -> self_attention;
+    self_attention -> add_norm_1;
+    add_norm_1 -> feedforward;
+    feedforward -> add_norm_2;
+    add_norm_2 -> output;
+    
+    {rank=same; input; self_attention; add_norm_1; feedforward; add_norm_2; output;}
+}
