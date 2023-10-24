@@ -411,7 +411,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \label{fig:yolo}
 \end{figure}
 
-\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore all fully connected layers are removed from the \ac{YOLO}v2 network architecture. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function. The network structure of \ac{YOLO}v2 can be seen in \figureref{fig:yolov2}.
+\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers as seen in \figureref{fig:yolov2}. The first 23 layers (or 6 boxes in the figure) of the network are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function.
 
 \begin{figure}
   \caption{Visualization of the most important layers of the \ac{YOLO}v2 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$ created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
@@ -419,7 +419,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \label{fig:yolov2}
 \end{figure}
 
-\ac{YOLO}v3 mainly improves the network architecture by combining approaches from \ac{YOLO}v2 and Darknet-19 to create Darknet-53, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. Darknet-53 proved to be a more efficient backbone network. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}.
+\ac{YOLO}v3 mainly improves the network architecture by developing approaches from \ac{YOLO}v2 and Darknet-19 further to create the Darknet-53 backbone, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}.
 
 \section{YOLOv5}
 
