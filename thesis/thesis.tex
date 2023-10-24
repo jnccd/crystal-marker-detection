@@ -444,13 +444,17 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \section{YOLOv8}
 
-\ac{YOLO}v8 is the second \ac{YOLO} version from Ultralytics and provides multiple models in the same sizes as \ac{YOLO}v5\footnote{\url{https://docs.ultralytics.com/models/yolov8/}, accessed on 24.10.2023} \cite{terven2023comprehensive}. \ac{YOLO}v8 is anchor-free, which simplifies the training and decoding process. For the bounding box loss \ac{YOLO}v8 uses CIoU \cite{zheng2020distance}, which besides the overlap area is also based on the central point distance and aspect ratio of the bounding boxes, as well as DFL \cite{li2020generalized}. \ac{YOLO}v8 also provides a segmentation model.
+\ac{YOLO}v8 is the second \ac{YOLO} version from Ultralytics and provides multiple models in the same sizes as \ac{YOLO}v5\footnote{\url{https://docs.ultralytics.com/models/yolov8/}, accessed on 24.10.2023} \cite{terven2023comprehensive}. \ac{YOLO}v8 is anchor-free, which simplifies the training and decoding process. For the bounding box loss \ac{YOLO}v8 uses \ac{CIoU} \cite{zheng2020distance}, which besides the overlap area is also based on the central point distance and aspect ratio of the bounding boxes, as well as \ac{DFL} \cite{li2020generalized}. \ac{YOLO}v8 also provides a segmentation model.
 
-\section{YOLO NAS}
+\section{YOLO-NAS}
+
+\ac{YOLO}-NAS was developed by Deci, which develops production grade models \cite{terven2023comprehensive}. The architecture of \ac{YOLO}-NAS was found by Deci's proprietary \ac{NAS} technology AutoNAC and comes in three sizes: \ac{YOLO}-NAS-S, \ac{YOLO}-NAS-M and \ac{YOLO}-NAS-L. The \ac{YOLO}-NAS models were pre-trained on the Objects365 dataset, which is newer and larger than the COCO dataset and gets its name from its 365 object categories. Afterwards they were trained on the COCO dataset.
 
 \section{MobileNetV2}
 
 \section{ViTs}
+
+\acp{ViT} 
 
 \chapter{Implementation}
 \label{chap:implement}
@@ -545,7 +549,11 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \acro{SAHI}{Slicing Aided Hyper Inference}
 \acro{GAN}{Generative Adversarial Network} 
 \acro{CSP-PAN}{Cross Stage Partial Path Aggregation Network}
-\acro{SPP}{Spatial Pyramid Pooling} 
+\acro{SPP}{Spatial Pyramid Pooling}  
+\acro{CIoU}{Complete IoU}
+\acro{DFL}{Distribution Focal Loss} 
+\acro{NAS}{Neural Architecture Search}
+\acro{ViT}{Vision Transformer}
 
 \end{acronym}
 
