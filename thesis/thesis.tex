@@ -294,7 +294,7 @@ Since the VOC 2010 score takes all given recall values into account it is genera
 
 \subsection{Microsoft COCO}
 
-The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales where the ground truth masks are split by their pixel area \cite{padilla2020survey}. However for this work I focused on the most used AP score definition of \ac{COCO}, which is the AP@50:5:95 score. It refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05. \ac{COCO} also uses recall points, similar to the VOC 2007 score. However with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
+The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales where the ground truth masks are split by their pixel area \cite{padilla2020survey}. However for this work I focused on the most used AP score definition of \ac{COCO}, which is the AP@50:5:95 score. It refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points, similar to the VOC 2007 score. However with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
 The \ac{COCO} mAP score, or average mean average precision score as proposed by Redmon et al., then refers to the average of the computed mAP scores for each \ac{IoU} threshold \cite{redmon2018yolov3}. 
 
 The \ac{COCO} scores usefulness lies in its measurement of how tight a prediction bounding box is around a ground truth bounding box using higher \ac{IoU} thresholds. Both VOC scores described see a prediction as correct as soon as its \ac{IoU} is above 0.5 and make no difference between predictions with an \ac{IoU} of 0.55 or 0.9. The \ac{COCO} score therefore gives the opportunity to measure further improvements to trained models, assuming the ground truth labels of the dataset are accurate enough.
@@ -406,7 +406,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO} however is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers of the \ac{YOLO} network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, the purple box denotes two fully connected layers, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool}}
+  \caption{Visualization of the most important layers of the \ac{YOLO} network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, the purple box denotes two fully connected layers, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
   \includegraphics[width=\textwidth]{image/yolo}
   \label{fig:yolo}
 \end{figure}
@@ -417,14 +417,14 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \section{YOLOv5}
 
-\ac{YOLO}v5 was developed by Ultralytics instead of the developers of the first three \ac{YOLO} versions and further increased the mAP detection score on the COCO dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in different sizes from nano to extra large.
+\ac{YOLO}v5 was developed by Ultralytics instead of the developers of the first three \ac{YOLO} versions and further increased the mAP detection score on the COCO dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
 
 \subsection{Architecture}
 
 \ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the SPPF, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers and blocks of the \ac{YOLO}v5 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool}}
+  \caption{Visualization of the most important layers and blocks of the \ac{YOLO}v5 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
   \includegraphics[width=\textwidth]{image/yolov5}
   \label{fig:yolov5}
 \end{figure}
@@ -442,11 +442,11 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \ac{YOLO}v5 further defines augmentations such as Copy-Paste Augmentation and MixUp Augmentation. However these augmentations were disabled by default and not used over the course of this thesis.
 
-\section{Yolov8}
+\section{YOLOv8}
 
+\ac{YOLO}v8 is the second \ac{YOLO} version from Ultralytics and provides multiple models in the same sizes as \ac{YOLO}v5\footnote{\url{https://docs.ultralytics.com/models/yolov8/}, accessed on 24.10.2023} \cite{terven2023comprehensive}. \ac{YOLO}v8 is anchor-free, which simplifies the training and decoding process. For the bounding box loss \ac{YOLO}v8 uses CIoU \cite{zheng2020distance}, which besides the overlap area is also based on the central point distance and aspect ratio of the bounding boxes, as well as DFL \cite{li2020generalized}. \ac{YOLO}v8 also provides a segmentation model.
 
-
-\section{YolovNAS}
+\section{YOLO NAS}
 
 \section{MobileNetV2}
 
