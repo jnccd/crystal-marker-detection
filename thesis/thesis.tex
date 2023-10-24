@@ -406,7 +406,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO} however is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers of the \ac{YOLO} network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, the purple box denotes two fully connected layers, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \caption{Visualization of the most important layers of the \ac{YOLO} network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, the purple box denotes two fully connected layers, inspired by the visualization from Redmon et al. \cite{redmon2016you}, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
   \includegraphics[width=\textwidth]{image/yolo}
   \label{fig:yolo}
 \end{figure}
