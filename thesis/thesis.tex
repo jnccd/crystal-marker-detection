@@ -411,7 +411,13 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \label{fig:yolo}
 \end{figure}
 
-\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore all fully connected layers are removed from the \ac{YOLO}v2 network architecture. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function.
+\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore all fully connected layers are removed from the \ac{YOLO}v2 network architecture. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function. The network structure of \ac{YOLO}v2 can be seen in \figureref{fig:yolov2}.
+
+\begin{figure}
+  \caption{Visualization of the most important layers of the \ac{YOLO}v2 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$ created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \includegraphics[width=\textwidth]{image/yolov2}
+  \label{fig:yolov2}
+\end{figure}
 
 \ac{YOLO}v3 mainly improves the network architecture by combining approaches from \ac{YOLO}v2 and Darknet-19 to create Darknet-53, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. Darknet-53 proved to be a more efficient backbone network. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}.
 
@@ -424,7 +430,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the SPPF, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers and blocks of the \ac{YOLO}v5 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \caption{Visualization of the most important layers and blocks of the entire \ac{YOLO}v5 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
   \includegraphics[width=\textwidth]{image/yolov5}
   \label{fig:yolov5}
 \end{figure}
