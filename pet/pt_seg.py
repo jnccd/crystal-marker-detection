@@ -27,7 +27,7 @@ from torch.nn import functional as F
 from utils import *
 
 EPOCHS = 50
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
@@ -141,7 +141,6 @@ def get_model():
             def __init__(self, pretrained=True, out_channels=12):
                 super().__init__()
 
-
                 self.encoder = models.vgg16_bn(pretrained=pretrained).features
                 self.block1 = nn.Sequential(*self.encoder[:6])
                 self.block2 = nn.Sequential(*self.encoder[6:13])
@@ -149,10 +148,8 @@ def get_model():
                 self.block4 = nn.Sequential(*self.encoder[20:27])
                 self.block5 = nn.Sequential(*self.encoder[27:34])
 
-
                 self.bottleneck = nn.Sequential(*self.encoder[34:])
                 self.conv_bottleneck = conv(512, 1024)
-
 
                 self.up_conv6 = up_conv(1024, 512)
                 self.conv6 = conv(512 + 512, 512)
@@ -165,6 +162,8 @@ def get_model():
                 self.up_conv10 = up_conv(64, 32)
                 self.conv10 = conv(32 + 64, 32)
                 self.conv11 = nn.Conv2d(32, out_channels, kernel_size=1)
+                
+                self.sigm = nn.Sigmoid()
                 
             def forward(self, x):
                 block1 = self.block1(x)
@@ -205,6 +204,7 @@ def get_model():
 
                 x = self.conv11(x)
 
+                x = self.sigm(x)
 
                 return x
 
@@ -373,7 +373,7 @@ with torch.no_grad():
         for (vii, val_input), (voi, val_outputs), (vli, val_labels) in zip(enumerate(val_inputs), enumerate(val_outputs), enumerate(val_labels)):
             
             #print(val_input.shape, val_outputs.shape, val_labels.shape)
-            
+            # TODO: Clip values [0,1]
             val_input_np = val_input.detach().cpu().permute(1,2,0).numpy()
             val_input_np = np.ascontiguousarray((val_input_np * 255), dtype=np.uint8)
             
