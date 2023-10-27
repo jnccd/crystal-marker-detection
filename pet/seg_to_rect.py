@@ -10,6 +10,9 @@ def main():
     output_folder = create_dir_if_not_exists(root_dir / 'output/pt-seg')
     eval_folder = create_dir_if_not_exists(output_folder / 'eval')
     to_rect_output_folder = create_dir_if_not_exists(root_dir / 'output/to-rect')
+    marker_img_path = root_dir / 'assets/in-img-marker.png'
+    
+    marker_img = cv2.imread(str(marker_img_path),0)
     
     pred_img_paths = [Path(x) for x in get_files_from_folders_with_ending([eval_folder], '_pred.png')]
     in_img_paths = [Path(x) for x in get_files_from_folders_with_ending([eval_folder], '_in.png')]
@@ -55,17 +58,42 @@ def main():
         # Homography
         src_rect  = np.array([[0, in_img_h, 1], [0, 0, 1], [in_img_w, 0, 1], [in_img_w, in_img_h, 1]])
         dest_rect = corners
-        h, status = cv2.findHomography(src_rect, dest_rect)
         hi, status = cv2.findHomography(dest_rect, src_rect)
-        marker_img = cv2.warpPerspective(in_image_t, hi, (in_img_w, in_img_h))
-        cv2.imshow('image', marker_img)
+        marker_area_img = cv2.warpPerspective(in_image_t, hi, (in_img_w, in_img_h))
+        cv2.imshow('image', marker_area_img)
         if cv2.waitKey(0) & 0xFF == ord('q'):
             break
+        # Compare markers
+        res_marker_img = cv2.resize(marker_img, marker_area_img.shape[:2], interpolation=cv2.INTER_NEAREST_EXACT)
+        inv_res_marker_img = cv2.bitwise_not(res_marker_img)
+        min_diff = 9999999
+        min_i = 0
+        for i, marker_rot in enumerate([None, cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE]):
+            rot_marker_area_img = cv2.rotate(marker_area_img, marker_rot) if marker_rot is not None else marker_area_img
+            
+            marker_img_diff = np.abs(rot_marker_area_img.astype('int32') - res_marker_img.astype('int32')).astype('uint8')
+            marker_img_diff_sum = np.sum(marker_img_diff)
+            inv_marker_img_diff = np.abs(rot_marker_area_img.astype('int32') - inv_res_marker_img.astype('int32')).astype('uint8')
+            inv_marker_img_diff_sum = np.sum(inv_marker_img_diff)
+            
+            mdiff = min(marker_img_diff_sum, inv_marker_img_diff_sum)
+            if mdiff < min_diff:
+                min_diff = mdiff
+                min_i = i
+            
+            print(mdiff, i, min_i, marker_img_diff_sum, inv_marker_img_diff_sum)
+            cv2.imshow('image', cv2.hconcat([rot_marker_area_img, res_marker_img, marker_img_diff, inv_marker_img_diff]))
+            if cv2.waitKey(0) & 0xFF == ord('q'):
+                break
+            
         # Fix point order
-        
+        corners = np.roll(corners, min_i, axis=0)
+        print('---roll-----------')
+        for c in corners:
+            print(c)
         
         # Write 
-        in_image_grgb = cv2.cvtColor(in_image_t, cv2.COLOR_GRAY2RGB) #cv2.imread(str(in_img_path),0)
+        in_image_grgb = cv2.imread(str(in_img_path))#cv2.cvtColor(in_image_t, cv2.COLOR_GRAY2RGB) #
         pts = np.array([(int(point[0]), int(point[1])) for point in corners], dtype=np.int32)
         in_image_grgb = cv2.polylines(in_image_grgb, pts=[pts], isClosed=True, color=(0,255,0))
         for i, pt in enumerate(pts):
