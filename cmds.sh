@@ -168,8 +168,8 @@ python evaluation/fusion_inference.py -r evaluation/from-server/yolov5s-rot-ense
 python evaluation/analyze.py -av evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p0-yolo5aug/test_fused/
 python evaluation/fusion_inference.py -r evaluation/from-server/noise-sgs-ensemble/ -rnp yolov5-640-gpv2-sgs-10-p[0-9]*-yolo5aug
 python evaluation/analyze.py -av evaluation/from-server/noise-sgs-ensemble/yolov5-640-gpv2-sgs-10-p0-yolo5aug/test_fused/
-python batch_train/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-testset/ -us
-python batch_train/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -dbo -us -bis 0.2 -sqt 0.6
+python repos/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-testset/ -us
+python repos/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -dbo -us -bis 0.2 -sqt 0.6
 python batch_train/yolov8_evaluate.py -r evaluation/from-server/yolov8s-runs/yolov5-640-good-pics-v2-slight-mat-only/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -dbo -us -bis 0.2 -sqt 0.6 -tn test-script
 python batch_train/yolov5.py -d /data/pcmd/dataset/yolov5-640-best-yolov5s-hyp-search-set/ -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -e 368 -snr -rsf -o /data/pcmd/training/test-yolov5-with-foremasks
 
