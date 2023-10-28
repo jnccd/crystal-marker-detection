@@ -135,6 +135,7 @@ def gen_evaldata(
             'use_sahi': use_sahi,
             'border_ignore_size': border_ignore_size,
             'squareness_threshold': squareness_threshold,
+            'use_test_masks': use_test_masks,
             'build_debug_output': build_debug_output,
         }, indent=4), out_testdata_path / '_test-def.json')
 
