@@ -88,7 +88,25 @@ def handle_model_out(
         # print(mask.shape, [x[0].shape for x in box_windows], [np.max(x[0]) for x in box_windows])
         boxes = [box for wind, box in box_windows 
                     if np.max(wind) > 80]
+        all_boxes = [box for wind, box in box_windows 
+                        if True]
         # print(boxes)
+        sanity_check_image = np.zeros((img_h, img_w) + (3,), dtype = np.uint8)
+        
+        # write mask
+        cv2.imwrite(str(out_testdata_path / f'{i}_mask.png'), mask)
+        
+        # write mask diff in pred boxes
+        for box in all_boxes:
+            if box in boxes:
+                box_color = (0, 255, 0)
+            else:
+                box_color = (0, 0, 255)
+            int_box = [int(x) for x in box]
+            print(box[4])
+            cv2.rectangle(sanity_check_image, int_box[:2], int_box[2:4], box_color)
+            cv2.putText(sanity_check_image, str(round(box[4], 2)), int_box[:2], cv2.FONT_HERSHEY_SIMPLEX, 1, box_color)
+        cv2.imwrite(str(out_testdata_path / f'{i}_mask_dropout_check.png'), sanity_check_image)
     
     # Rasterize Segmentation image
     if build_debug_output:
