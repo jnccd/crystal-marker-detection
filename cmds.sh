@@ -172,6 +172,7 @@ python repos/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensemble/y
 python repos/yolov5_evaluate.py -r evaluation/from-server/yolov5s-rot-ensemble/yolov5-640-gpv2-rot-234-p1-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -dbo -us -bis 0.2 -sqt 0.6
 python batch_train/yolov8_evaluate.py -r evaluation/from-server/yolov8s-runs/yolov5-640-good-pics-v2-slight-mat-only/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -dbo -us -bis 0.2 -sqt 0.6 -tn test-script
 python batch_train/yolov5.py -d /data/pcmd/dataset/yolov5-640-best-yolov5s-hyp-search-set/ -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -e 368 -snr -rsf -o /data/pcmd/training/test-yolov5-with-foremasks
+python repos/yolov5_evaluate.py -r evaluation/from-server/single-best-hyp-search-yolov5/yolov5-640-best-yolov5s-hyp-search-set-yolo5aug/ -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -us -utm -tn utm-viz -bis 0.2
 
 # Run datasets ensemble on remote
 python batch_train/yolov5.py -d /data/pcmd/dataset/sgss/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -o training/yolov5s-sgs-ensemble-test
