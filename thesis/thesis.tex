@@ -475,11 +475,19 @@ In this chapter I describe how I structured my code and why as well as the core 
 
 Most training for this work was done on the 'lena' server of the \ac{MIP} working group of the Kiel University. This server contains 128GB RAM and eight Nvidia GeForce RTX 2080Ti \acp{GPU} with 12GB VRAM each. Local training was done on a computer with 32GB RAM and a Nvidia GeForce RTX 3060Ti \ac{GPU} with 8GB VRAM.
 
-Training on the server was done using a Docker Image and locally it happened in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same \ac{CUDA} Toolkit version 11.8 as well as on the \ac{cuDNN} version 8.4.1.50.
+Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same \ac{CUDA} Toolkit version 11.8 as well as on the \ac{cuDNN} version 8.4.1.50.
 
 \section{Software Architecture}
 
+Python has support for the structuring of script files into modules in which data could be primarily exchanged between components through function call arguments. However for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested without having to run all previous steps, for example retraining a model.
 
+\subsection{Data Pipeline}
+
+\begin{figure}
+  \caption{Overview of the data pipeline from raw data to a dataset, orange nodes stand for data and blue nodes stand for python scripts}
+  \includegraphics[width=\textwidth]{graph/arch_data}
+  \label{fig:arch_data}
+\end{figure}
 
 \section{Automated Annotations}
 
