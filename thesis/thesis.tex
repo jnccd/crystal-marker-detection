@@ -471,6 +471,10 @@ After the application of transformer blocks in natural language processing was s
 
 In this chapter I describe how I structured my code and why as well as the core ideas of some algorithms. Furthermore I describe the hardware that was used for training.
 
+\section{Goals}
+
+My goal for the implementation is to write a software framework that allows me to train the custom data given to me on a wide variety of \acp{NN} using a wide variety of training techniques and to evaluate the effectiveness of all these approaches.
+
 \section{Development Environment}
 
 Most training for this work was done on the 'lena' server of the \ac{MIP} working group of the Kiel University. This server contains 128GB RAM and eight Nvidia GeForce RTX 2080Ti \acp{GPU} with 12GB VRAM each. Local training was done on a computer with 32GB RAM and a Nvidia GeForce RTX 3060Ti \ac{GPU} with 8GB VRAM.
@@ -481,13 +485,15 @@ Training on the server was done using a Docker Image and locally it was done in 
 
 Python has support for the structuring of script files into modules in which data could be primarily exchanged between components through function call arguments. However for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested without having to run all previous steps, for example retraining a model.
 
-\subsection{Data Pipeline}
+\subsection{Data Pipeline Overview}
 
 \begin{figure}
   \caption{Overview of the data pipeline from raw data to a dataset, orange nodes stand for data and blue nodes stand for python scripts}
   \includegraphics[width=\textwidth]{graph/arch_data}
   \label{fig:arch_data}
 \end{figure}
+
+The first part of the script pipeline serves three major goals. Firstly it should define a standardized label data type, secondly it should allow for a simple way to annotate large amounts of data to keep the labeling workload low and thirdly it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results.
 
 \section{Automated Annotations}
 
