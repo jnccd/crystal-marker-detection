@@ -1,0 +1,15 @@
+digraph arch {
+    rankdir=LR
+    
+    Dataset -> BatchTrain
+
+    BatchTrain -> TrainArtefacts
+
+    TrainArtefacts -> Evaluate
+
+    Evaluate -> TestArtefacts
+
+    TestArtefacts -> Analyze
+
+    Analyze -> Scores
+}
