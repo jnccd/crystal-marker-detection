@@ -1,0 +1,21 @@
+digraph arch {
+    rankdir=LR
+    
+    raw_data [label="Raw Image Data"]
+
+    raw_data -> createArucoFrameDataseries
+    raw_data -> createCocoJsonDataseries
+    raw_data -> createManualDataseries
+    createSyntheticDataseries
+    
+    {rank=same; createArucoFrameDataseries; createCocoJsonDataseries; createManualDataseries; createSyntheticDataseries;}
+
+    createArucoFrameDataseries -> Dataseries
+    createCocoJsonDataseries -> Dataseries
+    createManualDataseries -> Dataseries
+    createSyntheticDataseries -> Dataseries
+
+    Dataseries -> createDataset
+
+    createDataset -> Dataset
+}
