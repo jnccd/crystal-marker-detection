@@ -12,7 +12,7 @@ digraph arch {
     # Mark: style="filled,rounded,dashed" fillcolor=lightblue color=red penwidth=3
 
     subgraph cluster_dataseries {
-        graph [style="filled,rounded", color=lightgray]
+        graph [style="filled,rounded", color="#e6e6e6"]
         label = "Create Dataseries";
 
         createArucoFrameDataseries [color=lightblue] 
