@@ -33,9 +33,9 @@ digraph arch {
         CSV [color="#ffd382" label="CSV Dataset"]
         COCO [color="#ffd382" label="COCO Dataset"]
         YOLO [color="#ffd382" label="YOLO Dataset"]
-        Segment [color="#ffd382" label="Segment Dataset"]
-        Pet [color="#ffd382" label="Pet Dataset"]
-        SegPet [color="#ffd382" label="SegPet Dataset"]
+        Segmentation [color="#ffd382" label="Segment Dataset"]
+        #Pet [color="#ffd382" label="Pet Dataset"]
+        #SegPet [color="#ffd382" label="SegPet Dataset"]
     }
 
     raw_data -> createArucoFrameDataseries [taillabel="n"]
