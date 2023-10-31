@@ -513,7 +513,15 @@ Image augmentation libraries have support for many datatypes to accommodate for 
 
 \subsection{Train Pipeline Overview}
 
+\begin{figure}
+  \caption{Overview of the most important data structures and scripts of the training pipeline from datasets to \ac{mAP} scores, orange nodes stand for data and blue nodes stand for python scripts}
+  \includegraphics[width=\textwidth]{graph/arch_train}
+  \label{fig:arch_train}
+\end{figure}
 
+As seen in \figureref{fig:arch_train} the training pipeline mainly consists of batch train, evaluate and analyze scripts. Batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. Batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. Batch train scripts can take multiple datasets at once for an ensemble training run.
+
+A training run folder contains the train artifacts, which refers to all files, including the model weights, that are created during training. The relation between training runs and inference tests was omitted in the figure, however training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and COCO \ac{mAP} scores, as well as intermediate results of the calculation for validation.
 
 \section{Automated Annotations}
 
