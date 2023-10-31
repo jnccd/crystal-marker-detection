@@ -421,9 +421,20 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \ac{YOLO}v3 mainly improves the network architecture by developing approaches from \ac{YOLO}v2 and Darknet-19 further to create the Darknet-53 backbone, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}.
 
+\section{YOLO Versions Timeline}
+
+\begin{figure}
+  \caption{A timeline showing different \ac{YOLO} versions over time}
+  \includegraphics[width=\textwidth]{image/timeline_fix}
+  \label{fig:yolo_timeline}
+\end{figure}
+
+While the first three \ac{YOLO} versions were developed by the same developers, starting with \ac{YOLO}v4 various developers started releasing \ac{YOLO} versions. A full timeline of the releases can be seen in \figureref{fig:yolo_timeline}. For this work I will focus on \ac{YOLO}v5, due to its popularity and its plentiful resources, as well as \ac{YOLO}v8 and \ac{YOLO}-NAS due to their recency and \ac{YOLO}v8's similarity to \ac{YOLO}v5.
+
 \section{YOLOv5}
 
-\ac{YOLO}v5 was developed by Ultralytics instead of the developers of the first three \ac{YOLO} versions and further increased the mAP detection score on the COCO dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
+%instead of the developers of the first three \ac{YOLO} versions
+\ac{YOLO}v5 was developed by Ultralytics and further increased the mAP detection score on the COCO dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
 
 \subsection{Architecture}
 
