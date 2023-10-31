@@ -424,7 +424,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \section{YOLO Versions Timeline}
 
 \begin{figure}
-  \caption{A timeline showing different \ac{YOLO} versions over time}
+  \caption{A timeline showing different \ac{YOLO} versions over time, based on the timeline from Terven et al. \cite{terven2023comprehensive}}
   \includegraphics[width=\textwidth]{image/timeline_fix}
   \label{fig:yolo_timeline}
 \end{figure}
@@ -546,15 +546,15 @@ A training run folder contains the train artifacts, which refers to all files, i
   \label{fig:af_markings}
 \end{figure}
 
-To make the annotation of training data faster we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface, the position of the plane the markers sit on in 3D space within the images can be computed based on the easily detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
+To make the annotation of training data faster we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface, the position of the plane the markers sit on in 3D space within the images can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
 
 \begin{figure}
   \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline}
-  \includegraphics[width=\textwidth]{graph/arch_data_af_focus}
+  \includegraphics[width=0.65\textwidth]{graph/arch_data_af_focus}
   \label{fig:arch_data_af_focus}
 \end{figure}
 
-The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. 
+The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. After the script starts the first image of the image series given in the command line arguments is analyzed by the built-in \ac{OpenCV} \ac{ArUco} detector. Should there be 4 detected markers, the script will attempt to find the inner rectangle, which is the largest and marked in red in \figureref{fig:af_markings}. There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, 
 
 \section{Augmentations}
 
