@@ -1,7 +1,21 @@
 digraph arch {
     rankdir=LR
+    node [shape=box style="filled,rounded" width=1.5 height=0.6];
+    graph [fontsize=10 compound=true];
+
+    subgraph cluster_dataset {
+        graph [style="filled,rounded", color=orange]
+        label = "Dataset";
+
+        CSV [color="#ffd382" label="CSV Dataset"]
+        COCO [color="#ffd382" label="COCO Dataset"]
+        YOLO [color="#ffd382" label="YOLO Dataset"]
+        Segmentation [color="#ffd382" label="Segment Dataset"]
+        #Pet [color="#ffd382" label="Pet Dataset"]
+        #SegPet [color="#ffd382" label="SegPet Dataset"]
+    }
     
-    Dataset -> BatchTrain
+    YOLO -> BatchTrain [taillabel=" n", ltail=cluster_dataset]
 
     BatchTrain -> TrainArtefacts
 
