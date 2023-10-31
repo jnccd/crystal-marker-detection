@@ -501,9 +501,9 @@ The overview seen in \figureref{fig:arch_data} shows the various dataset types, 
 
 \begin{figure}
   \centering
-  \subcaptionbox{Unrotated image and labels}
+  \subcaptionbox{Unrotated image and polygon (orange) / bounding box (blue) labels}
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_1}}
-  \subcaptionbox{Image and labels after rotation}
+  \subcaptionbox{Image and polygon (orange) / bounding box (blue) labels after 50° rotation, as well as the old bounding box data in gray}
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_2}}
   \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue, after a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information, which was already too large since it could not capture the rotation of the object, the polygon label however can be augmented with the image without loosing label accuracy by transforming the polygon points.}
   \label{fig:polygon-good}
