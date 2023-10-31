@@ -148,7 +148,7 @@ def yolo_nas_train_loop(dataset_path,
             }
     )
     
-    #train_dataloader.dataset.transforms.pop(2)
+    train_dataloader.dataset.transforms.pop(2)
     #train_dataloader.dataset.plot(plot_transformed_data=True)
 
     print('--- Training...')
