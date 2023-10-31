@@ -1,0 +1,38 @@
+digraph arch {
+    rankdir=LR
+    node [shape=box style="filled,rounded" width=1.5 height=0.6];
+    graph [fontsize=10 compound=true];
+    
+    raw_data [label="Raw Image Data" color=orange]
+    coco_labels [label="COCO Labels" color=orange]
+    Dataseries [color=orange]
+    
+    # Mark: style="filled,rounded,dashed" fillcolor=lightblue color=red penwidth=3
+
+    subgraph cluster_dataseries {
+        graph [style="filled,rounded", color="#e6e6e6"]
+        label = "Create Dataseries";
+
+        create_aruco_frame_dataseries [color=lightblue, style="filled,rounded,dashed" fillcolor=lightblue color=red penwidth=5] 
+        create_coco_json_dataseries [color=lightblue]
+        create_manual_dataseries [color=lightblue]
+        create_synthetic_dataseries [color=lightblue]
+        
+        {
+            rank = same;
+            create_synthetic_dataseries -> create_coco_json_dataseries -> create_manual_dataseries -> create_aruco_frame_dataseries [style=invis]
+        }
+    }
+
+    raw_data -> create_aruco_frame_dataseries [taillabel="n"]
+    raw_data -> create_coco_json_dataseries [taillabel="n"]
+    raw_data -> create_manual_dataseries [taillabel="n"]
+    coco_labels -> create_coco_json_dataseries [taillabel="1"]
+    
+    #{rank=same; create_aruco_frame_dataseries; create_coco_json_dataseries; create_manual_dataseries; create_synthetic_dataseries;}
+
+    create_aruco_frame_dataseries -> Dataseries [headlabel="1"]
+    create_coco_json_dataseries -> Dataseries [headlabel="1"]
+    create_manual_dataseries -> Dataseries [headlabel="1"]
+    create_synthetic_dataseries -> Dataseries [headlabel="1"]
+}
