@@ -490,6 +490,8 @@ Most training for this work was done on the 'lena' server of the \ac{MIP} workin
 
 Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same \ac{CUDA} Toolkit version 11.8 as well as on the \ac{cuDNN} version 8.4.1.50.
 
+% TODO?: \section{Classic approaches}
+
 \section{Software Architecture}
 
 Python has support for the structuring of script files into modules in which data could be primarily exchanged between components through function call arguments. However for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested without having to run all previous steps, for example retraining a model.
@@ -534,6 +536,26 @@ A training run folder contains the train artifacts, which refers to all files, i
 
 \section{Automated Annotations}
 
+\begin{figure}
+  \centering
+  \subcaptionbox{First marked image of a aruco frame dataseries}
+     {\includegraphics[width=0.45\textwidth]{image/af_markings_1}}
+  \subcaptionbox{Later marked image of a aruco frame dataseries}
+     {\includegraphics[width=0.45\textwidth]{image/af_markings_2}}
+  \caption{Two example images from the validation data of the \texttt{create\_aruco\_frame\_dataseries} script.}
+  \label{fig:af_markings}
+\end{figure}
+
+To make the annotation of training data faster we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface, the position of the plane the markers sit on in 3D space within the images can be computed based on the easily detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
+
+\begin{figure}
+  \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline}
+  \includegraphics[width=\textwidth]{graph/arch_data_af_focus}
+  \label{fig:arch_data_af_focus}
+\end{figure}
+
+The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. 
+
 \section{Augmentations}
 
 % TODO?: \section{Synthetic Data}
@@ -549,7 +571,7 @@ A training run folder contains the train artifacts, which refers to all files, i
 \chapter{Evaluation}
 \label{chap:eval}
 
-\section{Test Data}
+\section{Data}
 
 \section{Human Testing}
 
