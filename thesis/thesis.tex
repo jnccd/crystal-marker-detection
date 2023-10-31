@@ -493,13 +493,23 @@ Python has support for the structuring of script files into modules in which dat
   \label{fig:arch_data}
 \end{figure}
 
-The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data formats, making changes there difficult.
+The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type, that all dataset types can be build from. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data formats, making changes there difficult.
 
 The overview seen in \figureref{fig:arch_data} shows the various dataset types, addressing the third goal and the \texttt{createArucoFrameDataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore augmentations are added in the \texttt{createDataset} script, addressing the fourth goal.
 
 \subsubsection{Label Data Type}
 
+\begin{figure}
+  \centering
+  \subcaptionbox{Unrotated image and labels}
+     {\includegraphics[width=0.3\textwidth]{image/polygon_pog_1}}
+  \subcaptionbox{Image and labels after rotation}
+     {\includegraphics[width=0.3\textwidth]{image/polygon_pog_2}}
+  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue, after a rotation augmentation operation was applied in image two the new bounding box label could only be created based on the old labels information, which was already too large since it could not capture the rotation of the object, the polygon label however can be augmented with the image without loosing label accuracy by transforming the polygon points}
+  \label{fig:polygon-good}
+\end{figure}
 
+Image augmentation libraries have support for many datatypes to accommodate for many usecases. However Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure both bounding boxes and keypoints can be reduced to polygons. Furthermore polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore I use polygons as labels in dataseries.
 
 \subsection{Train Pipeline Overview}
 
