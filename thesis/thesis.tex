@@ -505,13 +505,15 @@ The overview seen in \figureref{fig:arch_data} shows the various dataset types, 
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_1}}
   \subcaptionbox{Image and labels after rotation}
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_2}}
-  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue, after a rotation augmentation operation was applied in image two the new bounding box label could only be created based on the old labels information, which was already too large since it could not capture the rotation of the object, the polygon label however can be augmented with the image without loosing label accuracy by transforming the polygon points}
+  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue, after a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information, which was already too large since it could not capture the rotation of the object, the polygon label however can be augmented with the image without loosing label accuracy by transforming the polygon points}
   \label{fig:polygon-good}
 \end{figure}
 
 Image augmentation libraries have support for many datatypes to accommodate for many usecases. However Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure both bounding boxes and keypoints can be reduced to polygons. Furthermore polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore I use polygons as labels in dataseries.
 
 \subsection{Train Pipeline Overview}
+
+
 
 \section{Automated Annotations}
 
