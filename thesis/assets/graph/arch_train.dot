@@ -3,6 +3,8 @@ digraph arch {
     node [shape=box style="filled,rounded" width=1.5 height=0.6];
     graph [fontsize=10 compound=true];
 
+    Analyze [color=lightblue]
+
     subgraph cluster_dataset {
         graph [style="filled,rounded", color=orange]
         label = "Dataset";
@@ -14,16 +16,63 @@ digraph arch {
         #Pet [color="#ffd382" label="Pet Dataset"]
         #SegPet [color="#ffd382" label="SegPet Dataset"]
     }
+
+    subgraph cluster_BatchTrain {
+        graph [style="filled,rounded", color="#e6e6e6"]
+        label = "Batch Train";
+
+        YOLOv5 [color=lightblue] 
+        YOLOv8 [color=lightblue]
+        YOLONAS [color=lightblue, label="YOLO NAS"]
+        
+        {
+            rank = same;
+            YOLONAS -> YOLOv8 -> YOLOv5 [style=invis]
+        }
+    }
+
+    subgraph cluster_Evaluate {
+        graph [style="filled,rounded", color="#e6e6e6"]
+        label = "Evaluate";
+
+        YOLOv5_eva [color=lightblue, label="YOLOv5 Evaluate"] 
+        YOLOv8_eva [color=lightblue, label="YOLOv8 Evaluate"]
+        YOLONAS_eva [color=lightblue, label="YOLO NAS Evaluate"]
+        
+        {
+            rank = same;
+            YOLONAS_eva -> YOLOv8_eva -> YOLOv5_eva [style=invis]
+        }
+    }
+
+    subgraph cluster_TrainArtifacts {
+        graph [style="filled,rounded", color="orange"]
+        label = "Training Run"
+
+        TrainArtifacts [color="#ffd382", label="Train Artifacts"]
+        
+        subgraph cluster_Test {
+            graph [color="#ffd382"]
+            label = "Inference Test"
+            EvalRes [color="#ffeac2", label="Evaluation Results"]
+            Scores [color="#ffeac2", label="Scores"]
+        }
+        
+        {
+            rank = same;
+            #InferenceTest -> TrainArtifacts [style=invis]
+        }
+    }
     
-    YOLO -> BatchTrain [taillabel=" n", ltail=cluster_dataset]
+    YOLO -> YOLOv8 [taillabel=" n", ltail=cluster_dataset, lhead=cluster_BatchTrain, minlen=1]
 
-    BatchTrain -> TrainArtefacts
+    YOLOv8 -> YOLOv8_eva [weight=3, label="calls", ltail=cluster_BatchTrain, lhead=cluster_Evaluate]
+    YOLOv5 -> TrainArtifacts [label="generates", ltail=cluster_BatchTrain]
 
-    TrainArtefacts -> Evaluate
+    YOLOv8_eva -> Analyze [weight=3, label="calls", ltail=cluster_Evaluate]
+    YOLOv8_eva -> TrainArtifacts [weight=0, label="uses", ltail=cluster_Evaluate]
+    YOLOv8_eva -> EvalRes [weight=0, label="generates", ltail=cluster_Evaluate]
 
-    Evaluate -> TestArtefacts
-
-    TestArtefacts -> Analyze
-
-    Analyze -> Scores
+    Analyze -> EvalRes [weight=0, label="uses"]
+    Analyze -> Scores [weight=3, label="generates"]
 }
