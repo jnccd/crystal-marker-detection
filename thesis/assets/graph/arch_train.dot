@@ -70,8 +70,8 @@ digraph arch {
     YOLOv5 -> TrainArtifacts [label="generates", ltail=cluster_BatchTrain]
 
     YOLOv8_eva -> Analyze [weight=3, label="calls", ltail=cluster_Evaluate]
-    YOLOv8_eva -> TrainArtifacts [weight=0, label="uses", ltail=cluster_Evaluate]
-    YOLOv8_eva -> EvalRes [weight=0, label="generates", ltail=cluster_Evaluate]
+    YOLOv5_eva -> TrainArtifacts [weight=0, label="uses", ltail=cluster_Evaluate]
+    YOLOv5_eva -> EvalRes [weight=0, label="generates", ltail=cluster_Evaluate]
 
     Analyze -> EvalRes [weight=0, label="uses"]
     Analyze -> Scores [weight=3, label="generates"]
