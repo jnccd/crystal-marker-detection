@@ -495,7 +495,7 @@ Python has support for the structuring of script files into modules in which dat
 
 The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type, that all dataset types can be build from. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data formats, making changes there difficult.
 
-The overview seen in \figureref{fig:arch_data} shows the various dataset types, addressing the third goal and the \texttt{createArucoFrameDataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore augmentations are added in the \texttt{createDataset} script, addressing the fourth goal.
+The overview seen in \figureref{fig:arch_data} shows the various dataset types, addressing the third goal and the \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
 
 \subsubsection{Label Data Type}
 
