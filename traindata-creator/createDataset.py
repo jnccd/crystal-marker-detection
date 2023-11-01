@@ -34,6 +34,7 @@ def main():
     parser.add_argument('-taf','--target-folder', type=str, help='The folder to build the dataset folder into.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     parser.add_argument('-sd','--seed', type=int, help='Sets the seed that defines the pseudo random dataset generation.')
+    # TODO: Add debug out for label viz in images for thesis showcase of augs
     
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.') # TODO: Update desc
