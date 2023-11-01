@@ -554,7 +554,37 @@ To make the annotation of training data faster we printed 4 \ac{ArUco} markers o
   \label{fig:arch_data_af_focus}
 \end{figure}
 
-The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. After the script starts the first image of the image series given in the command line arguments is analyzed by the built-in \ac{OpenCV} \ac{ArUco} detector. Should there be 4 detected markers, the script will attempt to find the inner rectangle, which is the largest and marked in red in \figureref{fig:af_markings}. There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, 
+The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. After the script starts the first image of the image series given in the command line arguments is analyzed by the built-in \ac{OpenCV} \ac{ArUco} detector. Should there be 4 detected markers, the script will attempt to find the inner rectangle, which is the largest marked in red in \figureref{fig:af_markings}. For the Homography calculation in the next step it is important that the corners of the inner rectangle have a stable ordering. 
+
+There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, sorts each markers corners that are the closest to the middle into a list based on the quadrant the marker is in the image. Therefore \texttt{legacy\_rect\_finding} works independent of the orientations of the markers on the paper frame, however it is dependant on the placement of the markers in the image. 
+
+The second algorithm assumes that all \ac{ArUco} markers on the paper frame have the same orientation and sorts their corners closest to the image middle into the rect based on their index in the marker as seen in \autoref{lst:irf}. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the assumptions of the two algorithms hold, they both result in a stable U-shaped ordering of the corners.
+
+\begin{figure}
+  \caption{Matching corner indices of the \ac{ArUco} rectangles and the red inner rectangle corners written on the image}
+  \includegraphics[width=0.5\textwidth]{image/af_markings_3}
+  \label{fig:inner_rect_indices}
+\end{figure}
+
+\begin{lstlisting}[caption={Inner Rectangle Finding},captionpos=b,label=lst:irf]
+  def find_inner_rect(each_arucos_corners, center):
+    inner_rect = [None, None, None, None]
+
+    for corners in each_arucos_corners:
+        # Get index of closest corner to image center in aruco marker rectangle
+        min_i, _ = min([(i, distance(v, center)) for i, v in enumerate(corners)], 
+                       key=lambda x: x[1])
+                
+        # The markers corner closest to the middle is the min_i'th vertex of the inner rect
+        min_vert = corners[min_i]
+        inner_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
+        
+    return inner_rect
+\end{lstlisting}
+
+Afterwards a homography from the inner rect corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in a \ac{OpenCV} \ac{GUI} window.
+
+Once the user is done the labels are transferred to each other image by finding the aruco frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image. However this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
 
 \section{Augmentations}
 
@@ -632,7 +662,7 @@ The position of this script within the pipeline can be seen in \figureref{fig:ar
 \acro{TP}{true positive}
 \acro{FP}{false positive}
 \acro{FN}{false negative}
-\acro{TN}{true negative}  
+\acro{TN}{true negative}
 \acro{AUC}{area under the curve}
 \acro{COCO}{common objects in contex}
 \acro{UAV}{Unmanned Aerial Vehicle}
