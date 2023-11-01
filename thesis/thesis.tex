@@ -584,7 +584,7 @@ The second algorithm assumes that all \ac{ArUco} markers on the paper frame have
 
 Afterwards a homography from the inner rect corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in a \ac{OpenCV} \ac{GUI} window.
 
-Once the user is done the labels are transferred to each other image by finding the aruco frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image. However this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
+Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image. However this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
 
 \section{Augmentations}
 
