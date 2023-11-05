@@ -737,13 +737,13 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
 
 \begin{figure}
   \centering
-  \subcaptionbox{Training Image before augmentation}
+  \subcaptionbox{Training image before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before}}
-  \subcaptionbox{Training Image after augmentation}
+  \subcaptionbox{Training image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after}}
-  \subcaptionbox{Training Image before augmentation}
+  \subcaptionbox{Training image before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before2}}
-  \subcaptionbox{Training Image after augmentation}
+  \subcaptionbox{Training image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after2}}
   \caption{Two examples for smart grid shuffling with similar initial label arrangement.}
   \label{fig:aug_sgs_example}
@@ -765,7 +765,17 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
 
 To further discourage the model from learning label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the label from the image and removes the label entry. The label is removed from the image by taking its polygon, scaling it around its centroid by 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \autoref{fig:aug_pld_example}.
 
+\subsection{Homogeneous Matrix Transform}
 
+\subsection{Random Crop}
+
+\subsection{Label Move}
+
+\subsection{Black Dot}
+
+\subsection{Label Curving}
+
+\subsection{Gauss Noise}
 
 % TODO?: \section{Synthetic Data}
 
