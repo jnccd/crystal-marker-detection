@@ -758,6 +758,7 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
 The smart grid shuffling augmentation cuts and reassembles the image such that as much of the possibly important surrounding pixels of the polygon labels are preserved, but that still removes any reoccurring patterns in the image, in which the labels may be arranged by, as seen in \autoref{fig:aug_sgs_example}.
 
 \subsection{Label Dropout}
+\label{sec:aug_ld}
 
 \begin{figure}
   \centering
@@ -790,7 +791,7 @@ For most augmentations there is a chance setting and possibly a strength setting
 \subsubsection{Out of Bounds Cases}
 \label{sec:oob}
 
-After the transformation cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, since many labels can be hard to see even if the whole label is in the image in the training data. To compute visibility first the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries of the image. Should it pass the visibility check but still intersect with the image border, then the label is set to be the intersection from earlier, effectively clipping it within the image space.
+After the transformation cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, since many labels can be hard to see even if the whole label is in the image in the training data. To compute visibility, first the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries of the image and the remaining area, where the label was, is painted over as described in \autoref{sec:aug_ld}. Should it pass the visibility check but still intersect with the image border, the label is set to be the intersection from earlier, effectively clipping it within the image space.
 
 \subsection{Random Crop}
 
@@ -808,7 +809,17 @@ The pipeline implements a random crop which crops a area of the datasets target 
 
 \subsubsection{Augmentation Versions}
 
-The data pipeline also builds \ac{JSON} files into the dataset folder to make the whole dataset build process retraceable. Because of that I did not change augmentations meaningfully besides bug fixes once they were implemented. In this case I also built a random crop which crops an area of variable size out of the source image and then rescales that cropped part to the target image size, which is therefore implemented as its own augmentation: random crop v2. Splitting the augmentations in versions this way also has the advantage that the following evaluation can detect how much better a new version of an augmentation performs and if there is regression.
+\begin{figure}
+  \centering
+  \subcaptionbox{Training Image before augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_rc2_before}}
+  \subcaptionbox{Training Image after augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_rc2_after}}
+  \caption{An example for random crop v2, also showing on the borders of image (b) how out of bounds labels, that do not pass the visibility check, are overdrawn such that the residue of the marker on the image, that is without label, does not introduce a false negative into the training data, as described in \autoref{sec:oob}.}
+  \label{fig:aug_rc2_example}
+\end{figure}
+
+The data pipeline also builds \ac{JSON} files into the dataset folder to make the whole dataset build process retraceable. Because of that I did not change augmentations meaningfully besides bug fixes once they were implemented. In this case I also built a random crop which crops an area of variable size out of the source image and then rescales that cropped part to the target image size, which is therefore implemented as its own augmentation: random crop v2. Examples for random crop v2 can be seen in \figureref{fig:aug_rc2_example}. Splitting the augmentations in versions this way also has the advantage that the following evaluation can detect how much better a new version of an augmentation performs or if there is regression.
 
 \subsection{Label Move}
 
