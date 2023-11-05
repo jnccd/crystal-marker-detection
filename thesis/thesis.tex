@@ -17,6 +17,8 @@
 \usepackage{parcolumns}
 \usepackage[printonlyused]{acronym}
 \usepackage{bm,amsmath}
+\usepackage[newfloat]{minted}
+\usepackage{caption}
 %\usepackage{mathtools}
 \setlength{\marginparwidth}{3cm}
 \addbibresource{thesis.bib}
@@ -36,6 +38,9 @@
 {%
   \clearpage
 }
+% Minted env
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\SetupFloatingEnvironment{listing}{name=Pseudocode}
 
 \newcommand{\figureref}[1]{\textbf{\autoref{#1}}}
 \newcommand{\figurereft}[2]{\textbf{\autoref{#1} #2}}
@@ -570,7 +575,10 @@ The second algorithm assumes that all \ac{ArUco} markers on the paper frame have
   \label{fig:inner_rect_indices}
 \end{figure}
 
-\begin{lstlisting}[caption={Inner Rectangle Finding},captionpos=b,label=lst:irf]
+\begin{code}
+\captionof{listing}{Inner Rectangle Finding}
+\label{lst:irf}
+\begin{minted}{python}
   def find_inner_rect(each_arucos_corners, center):
     inner_rect = [None, None, None, None]
 
@@ -584,7 +592,8 @@ The second algorithm assumes that all \ac{ArUco} markers on the paper frame have
         inner_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
         
     return inner_rect
-\end{lstlisting}
+\end{minted}
+\end{code}
 
 Afterwards a homography from the inner rect corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in a \ac{OpenCV} \ac{GUI} window.
 
@@ -592,18 +601,158 @@ Once the user is done, the labels are transferred to each other image by finding
 
 \section{Augmentations}
 
-This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of their usage can be set through the command line arguments. 
+This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of their usage can be set through the command line arguments. Furthermore the images are copied for augmentations such that the original not augmented training images and labels are kept in the dataset at least once.
 
 \subsection{Smart Grid Shuffling}
 
 The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
 
-One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however that implementation does not work on bounding boxes since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. To make grid shuffling work for this case I adapted it to not split the image on a fixed grid but on gaps between polygon labels.
+One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. To make grid shuffling work for this case I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple all cuts are axis aligned.
 
-\begin{lstlisting}[caption={Smart Grid Shuffling},captionpos=b,label=lst:sgs]
-  def sgs(b):
+\subsubsection{Implementation}
+
+The first part of smart grid shuffling traverses the polygon labels in order of their centroid position on a given axis. Should the distance between the bounding boxes of two polygons on the given axis be larger than a threshold, then the image is cut along the other axis and a segment is created, as seen in \autoref{lst:sgs_cut}.
+
+% \begin{algorithm}
+%   \SetAlgoLined
+%   \KwIn{$I$: the image, $P$ the list of polygon label for the image, $D$ the axis to work in, $p$ the minimum distance between polygons for a cut}
+%   \KwOut{$S$: list of segments}
+%   $S \leftarrow []$ 
+
+%   sort $P$ ascendingly based on polygon centroid position on axis $D$\;
+%   \For{$i\gets0$ \KwTo len($P$)-2}{
+%     $d \leftarrow$ distance between $P[i]$ and $P[i+1]$;
+
+%     \uIf{$d$ > $p$}{
+%       $e_{Last} \leftarrow S[-1]$.end;
+
+%       $e \leftarrow$ $D$ component of midpoint in area between $P[i]$ and $P[i+1]$;
+
+
+%     }
+%   }
+%   \caption{Segment generation part of smart grid shuffling}
+% \end{algorithm}
+
+% [caption={Smart Grid Shuffling Algorithm in Pseudocode},captionpos=b,label=lst:sgs_cut]
+
+\begin{code}
+\captionof{listing}{Cutting Part of Smart Grid Shuffling}
+\label{lst:sgs_cut}
+\begin{minted}{python}
+# Generate image segments by cutting the image between polygon labels through x or y
+def segment_img_between_poly_labels(
+  img: Mat, polys: List[Polygon], 
+  axis: Literal[0,1], 
+  min_cut_distance = 5):
+  img_h, img_w = img.shape[:2]
+
+  segments = []
+  
+  # Sort the polygon labels on the axis they should be cut in, 0 for x and 1 for y
+  polys = sort_polys_in(axis, polys)
+  
+  # Traverse the labels in order and generate image segments
+  for i in range(len(polys)-1):
+  axis_distance = distance_between_this_and_next_poly_on_axis(polys, i, axis)
+
+    if axis_distance > min_cut_distance:
+
+      # Get the segment cutting position on axis
+      last_end = segments[-1]['end'] if len(segments) > 0 else 0
+      end = mid_between_poly_ends(polys, i, axis)
+
+      # Generate segment
+      segment_polys = get_polys_in_segment(polys, last_end, end)
+      segment_img = img[:, last_end:end] if axis == 0 else img[last_end:end, :]
+      segments.append({
+        'end': end,
+        'polys': segment_polys,
+        'img': segment_img,
+      })
+
+  # Generate last image segment analogously with end being the image size
+  segments.append(last_segment)
+  
+  return segments
+\end{minted}
+\end{code}
+
+The second part of smart grid shuffling defines the recombination of the image segments along an axis into a common image and a common label list as seen in \autoref{lst:sgs_comb}.
+
+\begin{code}
+\captionof{listing}{Segment Combination Part of Smart Grid Shuffling}
+\label{lst:sgs_comb}
+\begin{minted}{python}
+def rebuild_img_from_segments(segments, target_img_size, axis: Literal[0,1]):
+  result_img = get_empty_image_of_size(target_img_size)
+  result_polys = []
+
+  # Traverse image and place image segments
+  pos = 0
+  for seg in segments:
+    if axis == 0: # x
+      result_img[:,pos:seg['end']] = seg['img']
+    else: # y
+      result_img[pos:seg['end'],:] = seg['img']
+        
+    result_polys.append(seg['polys'])
+    pos = seg['end']
     
-\end{lstlisting}
+  return aug_image, aug_polys
+\end{minted}
+\end{code}
+
+The last part uses the defined segment cutting and recombination operations to first segment the image along the y-axis and shuffle the resulting segments. Each segment is then further segmented on the x-axis, shuffled and recombined. Finally all y-axis segments are recombined and returned.
+
+\begin{code}
+\captionof{listing}{Segment Combination Part of Smart Grid Shuffling}
+\label{lst:sgs_main}
+\begin{minted}{python}
+# Main method
+def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
+
+  # Segment in y first
+  segments_y = segment_img_between_poly_labels(img, polys, 1)
+
+  # Shuffle the resulting y-segments
+  random.shuffle(segments_y)
+
+  # Then segment all segments_y on the x axis
+  for segment_y in segments_y:
+    segments_x = segment_img_between_poly_labels(segment_y['img'], segment_y['polys'], 0)
+
+    # Shuffle segments to change their position
+    random.shuffle(segments_x)
+    
+    # Rebuild y-segment from x-segments
+    segments_img, segments_polys = rebuild_img_from_segments(segments_x, segment_y.size(), 0)
+    
+    segment_y['img'] = segments_img
+    segment_y['corners'] = segments_polys
+
+  # Return recombined y-segments
+  return rebuild_img_from_segments(segments_y, img_size, 1)
+\end{minted}
+\end{code}
+
+\subsubsection{Example}
+
+\begin{figure}
+  \centering
+  \subcaptionbox{Training Image before augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before}}
+  \subcaptionbox{Training Image after augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after}}
+  \subcaptionbox{Training Image before augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before2}}
+  \subcaptionbox{Training Image after augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after2}}
+  \caption{Two examples for smart grid shuffling with similar initial label arrangement.}
+  \label{fig:aug_sgs_example}
+\end{figure}
+
+The smart grid shuffling augmentation cuts and reassembles the image such that as much of the possibly important surrounding pixels of the polygon labels are preserved, but that still removes any reoccurring patterns in the image, in which the labels may be arranged by, as seen in \autoref{fig:aug_sgs_example}.
 
 % TODO?: \section{Synthetic Data}
 
