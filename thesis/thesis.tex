@@ -499,8 +499,6 @@ Training on the server was done using a Docker Image and locally it was done in 
 
 \section{Classic approaches}
 
-\section{Data}
-
 \section{Software Architecture}
 
 Python has support for the structuring of script files into modules in which data could be primarily exchanged between components through function call arguments. However for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested without having to run all previous steps, for example retraining a model.
@@ -755,6 +753,8 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
 
 % TODO?: \section{Synthetic Data}
 
+\section{Inference}
+
 \section{Plotting}
 
 \section{Automated Evaluation of Multiple Ensemble Trainings}
@@ -767,6 +767,8 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
 
 \chapter{Evaluation}
 \label{chap:eval}
+
+\section{Data}
 
 \section{Human Testing}
 
