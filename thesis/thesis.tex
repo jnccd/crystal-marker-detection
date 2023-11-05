@@ -788,12 +788,17 @@ For most augmentations there is a chance setting and possibly a strength setting
 \end{figure}
 
 \subsubsection{Out of Bounds Cases}
+\label{sec:oob}
 
 After the transformation cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, since many labels can be hard to see even if the whole label is in the image in the training data. To compute visibility first the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries of the image. Should it pass the visibility check but still intersect with the image border, then the label is set to be the intersection from earlier, effectively clipping it within the image space.
 
 \subsection{Random Crop}
 
+The pipeline implements a random crop which crops a area of the datasets target image size out of the input image and moves the labels accordingly. Since this augmentation can also leave labels out of bounds the same procedure is applied on the resulting labels as described in \autoref{sec:oob}.
 
+\subsubsection{Augmentation Versions}
+
+The data pipeline also builds \ac{JSON} files into the dataset folder to make the whole dataset build process retraceable. Because of that I did not change augmentations meaningfully besides bug fixes once they were implemented. In this case I also built a random crop which crops an area of variable size out of the source image and then rescales that cropped part to the target image size, which is therefore implemented as its own augmentation: random crop v2. Splitting the augmentations in versions this way also has the advantage that the following evaluation can detect how much better a new version of an augmentation performs and if there is regression.
 
 \subsection{Label Move}
 
