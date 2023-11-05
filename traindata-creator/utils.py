@@ -451,9 +451,10 @@ def random_crop(img: Mat, polys: List[Polygon], target_size_wh: tuple):
     crop_pos_y = random.randrange(0, img.shape[0] - target_size_wh[1])
     crop_img = img[crop_pos_y:crop_pos_y+target_size_wh[1], crop_pos_x:crop_pos_x+target_size_wh[0]]
     
-    crop_area = get_poly_from_bounds((crop_pos_x,crop_pos_y,target_size_wh[0],target_size_wh[1]))
-    polys = drop_low_visibility_labels(crop_img, polys, crop_area)
     polys = [transform(p, lambda x: np.array([(p[0] - crop_pos_x, p[1] - crop_pos_y) for p in x] )) for p in polys]
+    
+    crop_img_area = get_poly_from_bounds((0,0,crop_img.shape[1],crop_img.shape[0]))
+    polys = drop_low_visibility_labels(crop_img, polys, crop_img_area)
     
     return crop_img, polys
 
