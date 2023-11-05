@@ -73,11 +73,11 @@ TODO
 
 The world faces a shortage of health workers, that is projected to endure into 2030 \cite{BMJHealthWorkforce22}, while 47\% of available health workers cared for 22\% of the worlds population in 2020. This shortage and unequal distribution of health workers drive the need for more efficient care for patients. 
 
-A part of the solution for this problem could be small and inexpensive testing equipment \cite{Fab23}, which would allow for fast and regular assessment of ones health without requiring the time of healthcare professionals \cite{POC12}. Such an approach is called \ac{POC}, since the testing and evaluation is done by and of the patient. These kits are also called \acp{POCT}. One type of \ac{POCT} are wearables. However traditional wearables are based on electrical readout systems \cite{gao2019flexible}, which necessitate conducting wires, a battery and may be invasive. To overcome the drawbacks of wearables using electrical readout systems, optical readout systems can be used instead \cite{nguyen2021wearable}. One approach for an optical readout system is using commercially available adhesive tape, which acts as a \ac{PCS}, and etching \ac{ArUco} fiducial markers into it \cite{Fab23}. This is done by first applying a negative photoresist to the tape and then shining UV light on it, while masking the parts of it that are supposed to become part of the \ac{ArUco} shape later. Then an \ac{IBE} process is applied to the tape and finally the heat resist of the first step is removed during an ultrasonic heat bath.
+A part of the solution for this problem could be small and inexpensive testing equipment \cite{Fab23}, which would allow for fast and regular assessment of ones health without requiring the time of healthcare professionals \cite{POC12}. Such an approach is called \ac{POC}, since the testing and evaluation is done by and of the patient. These kits are also called \acp{POCT}. One type of \ac{POCT} are wearables. However traditional wearables are based on electrical readout systems \cite{gao2019flexible}, which necessitate conducting wires and a battery and may be invasive. To overcome the drawbacks of wearables using electrical readout systems, optical readout systems can be used instead \cite{nguyen2021wearable}. One approach for an optical readout system is using commercially available adhesive tape, which acts as a \ac{PCS}, and etching \ac{ArUco} fiducial markers into it \cite{Fab23}. This is done by first applying a negative photoresist to the tape and then shining UV light on it, while masking the parts of it that are supposed to become part of the \ac{ArUco} shape later. Then an \ac{IBE} process is applied to the tape and finally the heat resist of the first step is removed during an ultrasonic heat bath.
 
 \section{Problem Statement}
 
-This work focuses on the detection of the \ac{ArUco} fiducial markers, that were etched into tape, using neural networks. Since the tapes should be used as \acp{POCT} by patients, the technology developed here is supposed to run on patients smart phones. While smart phones are easily carryable, they come with the drawback of not having much space or energy for large \acp{GPU}, which limits the choice of networks.
+This work focuses on the detection of the \ac{ArUco} fiducial markers, that were etched into tape, using neural networks. Since the tapes should be used as \acp{POCT} by patients, the technology developed here is supposed to run on patients smart phones. While smart phones are easily carryable, they come with the drawback of not having much space or energy for large \acp{GPU}, which limits the choice of models.
 
 % TODO: Explain difficulty with example iamges
 
@@ -477,7 +477,7 @@ After the application of transformer blocks in natural language processing was s
 
 \acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However in this work I aim to develop a detection system that would preferably run directly on patients smart phones, making large models impractical. Furthermore development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers, therefore the improvements may not stem from network architecture itself \cite{liu2022convnet}.
 
-\chapter{Implementation}
+\chapter{Methodology and Implementation}
 \label{chap:implement}
 
 In this chapter I describe how I structured my code and why as well as the core ideas of some algorithms. Furthermore I describe the hardware that was used for training.
@@ -492,7 +492,9 @@ Most training for this work was done on the 'lena' server of the \ac{MIP} workin
 
 Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same \ac{CUDA} Toolkit version 11.8 as well as on the \ac{cuDNN} version 8.4.1.50.
 
-% TODO?: \section{Classic approaches}
+\section{Classic approaches}
+
+\section{Data}
 
 \section{Software Architecture}
 
@@ -586,9 +588,22 @@ The second algorithm assumes that all \ac{ArUco} markers on the paper frame have
 
 Afterwards a homography from the inner rect corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in a \ac{OpenCV} \ac{GUI} window.
 
-Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image. However this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
+Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
 
 \section{Augmentations}
+
+This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of their usage can be set through the command line arguments. 
+
+\subsection{Smart Grid Shuffling}
+
+The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
+
+One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however that implementation does not work on bounding boxes since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. To make grid shuffling work for this case I adapted it to not split the image on a fixed grid but on gaps between polygon labels.
+
+\begin{lstlisting}[caption={Smart Grid Shuffling},captionpos=b,label=lst:sgs]
+  def sgs(b):
+    
+\end{lstlisting}
 
 % TODO?: \section{Synthetic Data}
 
@@ -600,12 +615,10 @@ Once the user is done, the labels are transferred to each other image by finding
 
 \section{Point Detection}
 
-% TODO: Point mapping accuracy in goo/bad cases and show one good anand one bad case 
+% TODO: Point mapping accuracy in good/bad cases and show one good and one bad case 
 
 \chapter{Evaluation}
 \label{chap:eval}
-
-\section{Data}
 
 \section{Human Testing}
 
