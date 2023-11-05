@@ -607,7 +607,7 @@ This section describes the augmentations that were implemented into the \texttt{
 
 The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
 
-One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. To make grid shuffling work for this case I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple all cuts are axis aligned.
+One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However in this case the speed of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
 
 \subsubsection{Implementation}
 
@@ -645,7 +645,6 @@ def segment_img_between_poly_labels(
   img: Mat, polys: List[Polygon], 
   axis: Literal[0,1], 
   min_cut_distance = 5):
-  img_h, img_w = img.shape[:2]
 
   segments = []
   
