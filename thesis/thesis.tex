@@ -773,7 +773,27 @@ To further discourage the model from learning label arrangements in the image, t
 
 \subsection{Homogeneous Matrix Transform}
 
+The rotation and perspective transformations are both combined into a homogeneous matrix transform step to prevent code duplication and to improve performance, since this step requires postprocessing.
+
+For most augmentations there is a chance setting and possibly a strength setting depending on the augmentation. Here the chance for a rotation of 90 degree multiples is combined with the chance of rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly all settings are build into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \autoref{fig:aug_mat_example}.
+
+\begin{figure}
+  \centering
+  \subcaptionbox{Training Image before augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_mat_before}}
+  \subcaptionbox{Training Image after augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_mat_after}}
+  \caption{An example for matrix transform augmentation.}
+  \label{fig:aug_mat_example}
+\end{figure}
+
+\subsubsection{Out of Bounds Cases}
+
+After the transformation cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, since many labels can be hard to see even if the whole label is in the image in the training data. To compute visibility first the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries of the image. Should it pass the visibility check but still intersect with the image border, then the label is set to be the intersection from earlier, effectively clipping it within the image space.
+
 \subsection{Random Crop}
+
+
 
 \subsection{Label Move}
 
@@ -877,6 +897,7 @@ To further discourage the model from learning label arrangements in the image, t
 \acro{MIP}{Multimedia Information Processing}
 \acro{CUDA}{NVIDIA Compute Unified Device Architecture}
 \acro{cuDNN}{NVIDIA CUDA Deep Neural Network library}
+\acro{OOB}{out of bounds}
 
 \end{acronym}
 
