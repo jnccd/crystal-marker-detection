@@ -26,3 +26,5 @@
 *.pdf
 
 *.synctex*
+
+_minted-thesis
