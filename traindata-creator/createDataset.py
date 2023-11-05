@@ -34,7 +34,7 @@ def main():
     parser.add_argument('-taf','--target-folder', type=str, help='The folder to build the dataset folder into.')
     parser.add_argument('-r','--ratio', type=float, help='Ratio of traindata to be assigned to valdata, if set overrides the -vf setting.')
     parser.add_argument('-sd','--seed', type=int, help='Sets the seed that defines the pseudo random dataset generation.')
-    # TODO: Add debug out for label viz in images for thesis showcase of augs
+    parser.add_argument('-lv','--label-viz', action='store_true', help='If set wil draw the labels on the images, not for training, just for validation and for thesis examples.')
     
     parser.add_argument('-a','--augment', action='store_true', help='Augment the training data is some way.')
     parser.add_argument('-aim','--augment-img-multiplier', type=int, default=2, help='When augmenting multiply all images since they are augmented randomly to create more variation.') # TODO: Update desc
@@ -209,6 +209,15 @@ def main():
                 img, poly = resize_and_pad_with_labels(in_img, args.size, target_poly, background_color, border_type)
                 in_imgs[group][i] = img
                 target_polys[group][i] = poly
+                
+    # Build debug out labels on imgs
+    if args.label_viz > 0:
+        for group in data_groups:
+            for i, (in_img, target_poly) in enumerate(zip(in_imgs[group], target_polys[group])):
+                for poly in target_poly:
+                    pts = np.array([(int(point[0]), int(point[1])) for point in poly.exterior.coords[:-1]], dtype=np.int32)
+                    in_img = cv2.polylines(in_img, pts=[pts], isClosed=True, color=(0,0,255))
+                in_imgs[group][i] = in_img
     
     # --- Build dataset ---
     if args.type == 'seg':
