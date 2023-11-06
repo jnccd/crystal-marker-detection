@@ -901,7 +901,7 @@ This augmentation again works similar to label move. However in this case the la
 
 While augmentations that work with labels needed to be implemented specifically for this pipeline due to the label datatype. Pixel level augmentations are already defined and work just as well here. The gaussian noise augmentation here therefore works using the Albumentations gaussian noise transformation\footnote{\url{https://albumentations.ai/docs/api\_reference/augmentations/transforms/\#albumentations.augmentations.transforms.GaussNoise}, accessed on 06.11.2023}. 
 
-Gaussian noise adds noise to each pixel in the image, with the strength of the noise being given by the normal distribution. Gaussian noise closely mimics the noise that many natural source emit\footnote{\url{https://en.wikipedia.org/wiki/Gaussian_noise}, accessed on 06.11.2023}.
+Gaussian noise adds noise to each pixel in the image, with the strength of the noise being given by the normal distribution. 
 
 Here gaussian noise is used to make sure to get a different result from similar training runs, such that the quality of a training run can be assessed.
 
