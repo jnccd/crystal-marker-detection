@@ -29,6 +29,7 @@ for img in pyr_imgs[3:]:
             cv2.THRESH_BINARY,block_size,3)
     # cv2.imshow('pyr',img_t)
     # cv2.waitKey(0)
+    cv2.imwrite(str(root_dir / f'{img_i}_pyr_img_thresh.png'), img_t)
     
     promising_points = []
     
@@ -207,6 +208,7 @@ for img in pyr_imgs[3:]:
         hist, bin_edges = np.histogram(ang_array_window, bins=20, range=(-math.pi, math.pi))#, weights=mag_array_window)
         print(f'img_id {img_i}, ppoint {ppoint}, hist {hist}, bin_edges {bin_edges}, bbox, {(x_min, y_min, x_max, y_max)}')
         
+        # --- Per Point markeryness computation
         peaks = []
         hist[2] = 0
         for i in range(len(hist)):
@@ -218,22 +220,18 @@ for img in pyr_imgs[3:]:
                 continue
             peaks.append((i, hist[i]))
         peaks.sort(key=lambda x: -x[1])
-        
         peak_heights = [x[1] for x in peaks]
         markeryness = sum(peak_heights[:2]) - sum(peak_heights[2:]) * 4 - abs(peak_heights[0] - peak_heights[1] * 2) * 2
         #print(peak_heights[:2], peak_heights[2:], peak_heights)
-        
         #print(ppoint, peak_heights)
-        
         markerynesses.append((ppoint, markeryness))
         
+    # --- Final markeryness computation
     split_markerynesses = [x[1] for x in markerynesses]
     max_markeryness = max(split_markerynesses)
     min_markeryness = min(split_markerynesses)
     mm_diff_markeryness = max_markeryness - min_markeryness
-    
     #print(min_markeryness, max_markeryness)
-    
     img_draw = np.copy(img)
     img_draw = cv2.cvtColor(img_draw, cv2.COLOR_GRAY2BGR)
     for m in markerynesses:
