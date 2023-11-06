@@ -863,9 +863,27 @@ These changes help make the reinserted label look more natural in the new spot, 
 
 \subsection{Black Dot}
 
+\begin{figure}
+  \centering
+  \subcaptionbox{Training Image before augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_bd_before}}
+  \subcaptionbox{Training Image after augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_bd_after}}
+  \caption{An example for black dot augmentation}
+  \label{fig:aug_bd_example}
+\end{figure}
 
+A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation which adds black dots on parts of the image where no marker is. 
+
+After the augmentation is started at least one black dot is added. Afterwards there is a 40\% chance that another black dot is added. If another black dot is added there is another 40\% chance for one more marker. This could continue forever, however it gets more and more unlikely to go on after each iteration. 
+
+The insertion of black dots works similarly to label move, with the difference that a completely black image is inserted and that the mask is a circle. Furthermore like in label move v2, the mask is blurred using gaussian blur to create a color transition.
+
+An example of black dot aug can be seen in \autoref{fig:aug_bd_example}.
 
 \subsection{Label Curving}
+
+
 
 \subsection{Gauss Noise}
 
