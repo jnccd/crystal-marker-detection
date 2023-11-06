@@ -540,7 +540,7 @@ There are many possible variations of this approach, such as also using the magn
 
 \section{Software Architecture}
 
-Python has support for the structuring of script files into modules in which data could be primarily exchanged between components through function call arguments. However for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested without having to run all previous steps, for example retraining a model.
+Python has support for the structuring of script files into modules in which data could be primarily exchanged between components through function call arguments. However for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, for example retraining a model.
 
 \subsection{Data Pipeline Overview}
 
@@ -552,7 +552,7 @@ Python has support for the structuring of script files into modules in which dat
 
 The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type, that all dataset types can be build from. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data formats, making changes there difficult.
 
-The overview seen in \figureref{fig:arch_data} shows the various dataset types, addressing the third goal and the \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
+The overview seen in \figureref{fig:arch_data} shows the various dataset types, that are build by the \texttt{create\_dataset} script, addressing the third goal. The \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
 
 \subsection{Label Data Type}
 
