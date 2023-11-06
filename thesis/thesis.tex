@@ -883,7 +883,19 @@ An example of black dot aug can be seen in \autoref{fig:aug_bd_example}.
 
 \subsection{Label Curving}
 
+\begin{figure}
+  \centering
+  \subcaptionbox{Training Image before augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_lc_before}}
+  \subcaptionbox{Training Image after augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_lc_after}}
+  \caption{An example for label curving augmentation}
+  \label{fig:aug_lc_example}
+\end{figure}
 
+Another reoccurrence in the test data was that the tape with the markers was rolled around a finger. Due to the nature of the training data, this case is currently not included in the fitting process. The label curving augmentation should therefore mimic the curved labels.
+
+This augmentation again works similar to label move. However in this case the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case the x coordinates stay the same but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout the label vertices are also transformed, such that the label is still located over the image structure. However the polygon cannot fully capture the curving without new vertices, but since the polygons are transformed into bounding boxes in most cases this is not a problem. An example of label curving can be seen in \autoref{fig:aug_lc_example}.
 
 \subsection{Gauss Noise}
 
