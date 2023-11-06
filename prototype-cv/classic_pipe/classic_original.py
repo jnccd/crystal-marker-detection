@@ -187,7 +187,8 @@ for img in pyr_imgs[3:5]:
         ang_array_window = ang_array[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
         mag_array_window = mag_array[ppoint[1] - window_size_div2:ppoint[1] + window_size_div2, ppoint[0] - window_size_div2: ppoint[0] + window_size_div2]
         
-        target_hist = [103, 242, 1098, 655, 334, 365, 243, 228, 84, 39, 50, 25, 50, 35, 47, 70, 104, 143, 100, 81]
+        #target_hist = [103, 242, 1098, 655, 334, 365, 243, 228, 84, 39, 50, 25, 50, 35, 47, 70, 104, 143, 100, 81]
+        target_hist = [79.39499, 228.08807, 1332.9066, 631.0332, 270.37836, 283.08273, 199.9448, 259.78207, 79.161476, 33.148876, 38.336945, 20.998154, 42.23023, 31.82178, 37.456905, 59.27768, 100.652504, 150.79129, 86.44647, 56.443363] # with mag array
         
         # hist_min = -math.pi / 2
         # hist_max = math.pi / 2
@@ -207,7 +208,7 @@ for img in pyr_imgs[3:5]:
         #             if ang_array_window[x, y] <= bin_borders[i]:
         #                 bins[i] += mag_array_window[x, y]
         #                 break
-        hist, bin_edges = np.histogram(ang_array_window, bins=20, range=(-math.pi, math.pi))#, weights=mag_array_window)
+        hist, bin_edges = np.histogram(ang_array_window, bins=20, range=(-math.pi, math.pi), weights=mag_array_window)
         
         hist_diff = np.sum(np.abs(target_hist - hist))
         markerynesses.append((ppoint, hist_diff))
