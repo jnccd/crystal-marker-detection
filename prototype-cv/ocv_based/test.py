@@ -18,11 +18,10 @@ while pyr_imgs[-1].shape[0] > 128:
 print(len(pyr_imgs))
 
 # Skip the larges images
-for img in pyr_imgs[3:]:
+for img in pyr_imgs[2:]:
     img_i = img_img_filename + '_' + str(pyr_imgs.index(img)) # Make index an identifier
     img_h, img_w = img.shape[:2]
     rows,cols = img.shape[:2]
-    cv2.imwrite(str(root_dir / f'{img_i}_pyr_img.png'), img)
     
     # block_size = 50#int(img_w/600*50)
     # block_size = block_size if block_size % 2 == 1 else block_size + 1
@@ -50,8 +49,11 @@ for img in pyr_imgs[3:]:
         for c in contours:
             peri = cv2.arcLength(c, True)
             approx = cv2.approxPolyDP(c, eps * peri, True)
-            print(approx)
+            print(approx.shape)
+            # if approx.shape[0] != 4:
+            #     continue
             cv2.drawContours(output, [approx], -1, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), 3)
+        
         text = "eps={:.4f}, num_pts={}".format(eps, len(approx))
         # cv2.putText(output, text, (0, 0 - 15), cv2.FONT_HERSHEY_SIMPLEX,
         #     0.9, (0, 255, 0), 2)
@@ -59,6 +61,8 @@ for img in pyr_imgs[3:]:
         print("[INFO] {}".format(text))
         cv2.imshow("Approximated Contour", output)
         cv2.waitKey(0)
+
+        cv2.imwrite(str(root_dir / f'{img_i}_pyr_img.png'), output)
 
     # Draw the contours on the original image
     # cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
