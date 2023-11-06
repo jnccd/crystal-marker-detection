@@ -530,9 +530,19 @@ When filtering for only polygons with four vertices, the small polygon is detect
 
 The idea of the histogram approach is, that the pixel gradient histogram distributions in a window around the marker in the image should have a similar distribution on each of the markers.
 
-For this approach firstly the image is again scaled in different steps in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards the image is traversed with a 64x64 pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in FIGGGG (a). 
+\begin{figure}
+  \centering
+  \subcaptionbox{Output of Histogram Difference, with the top left marker being the histogram baseline}
+     {\includegraphics[width=0.4\textwidth]{image/classic_hist_markerynesses}}
+  \subcaptionbox{Output of Histogram Peak based Score}
+     {\includegraphics[width=0.4\textwidth]{image/classic_markeryness}}
+  \caption{Output of the Histogram based Approach, where the pixels of middle points of all windows that passed the candidate check are repainted, the redness of the repainted pixel represents the score of its window}
+  \label{fig:markeryness_scores}
+\end{figure}
 
-There are many possible variations of this approach, such as also using the magnitude of the gradient as weights in the histogram computation or thresholding the gradients, to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=1}}p) - (\sum_{p \in (h_i)^\infty_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number large window around them. However this also results in inconclusive scores as seen in FIGGGG (b).
+For this approach firstly the image is again scaled in different steps in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards the image is traversed with a 64x64 pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \autoref{fig:markeryness_scores} (a). 
+
+There are many possible variations of this approach, such as also using the magnitude of the gradient as weights in the histogram computation or thresholding the gradients, to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=1}}p) - (\sum_{p \in (h_i)^\infty_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number large window around them. However this also results in inconclusive scores as seen in \autoref{fig:markeryness_scores} (b).
 
 \subsection{SIFT}
 
