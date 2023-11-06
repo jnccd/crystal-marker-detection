@@ -144,7 +144,7 @@ Each node in b in the \ac{MLP} as seen in \figureref{fig:mlp} is calculated like
 
 Convolutional layers work like a kernel based image filter but make the kernel trainable instead of static. This has the advantage that each convolutional neuron only processes data from its receptive field instead of the whole image. The receptive field of a neuron refers to the area of pixels in the source image that the data the neuron gets is dependent on. Using just one convolutional layer means that the neurons in the resulting tensor are just dependent on an area in the source image as big as the kernel of that convolution. Therefore \acp{CNN} tend to have many layers to be able to recognize larger shapes in the image. The resulting data of a convolutional layer is also called a feature map. 
 
-\section{Shapely}
+\section{Shapely} % TODO: Add cites or footnotes in these sections
 
 Shapely is a popular Python package for computational geometry. It provides a wide range of geometric objects and operations for working with planar geometric shapes, such as points, lines and polygons. Shapely is widely used in various domains, including geographic information systems (GIS), spatial data analysis, and computer graphics.
 
@@ -153,6 +153,7 @@ Shapely is a popular Python package for computational geometry. It provides a wi
 \ac{OpenCV} is an open-source computer vision and machine learning software library designed for various computer vision tasks such as image processing, object detection, image recognition, and more. It was originally developed by Intel and later maintained by Willow Garage and Itseez. \ac{OpenCV} is written in C++ and has interfaces for C++, Python, and other programming languages, making it widely accessible and used in both academia and industry.
 
 \subsection{ArUco Detection}
+\label{sec:aruco_det}
 
 The \ac{ArUco} library implemented into \ac{OpenCV} is based on a paper from S. Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
 and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
@@ -499,9 +500,37 @@ Most training for this work was done on the 'lena' server of the \ac{MIP} workin
 
 Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same \ac{CUDA} Toolkit version 11.8 as well as on the \ac{cuDNN} version 8.4.1.50.
 
-\section{Classic approaches}
+\section{Classic Approaches}
 
+To validate that a neural network based approach is necessary in this case, I tested some approaches using algorithms from \ac{OpenCV}, that do not require machine learning. For these tests I chose a base image from the given data, on which the markers were facing the camera and had as much visible contours as possible, which can be seen in \autoref{fig:classic_base_img}. 
 
+\begin{figure}
+  \caption{Base Image for Classic Approaches}
+  \includegraphics[width=0.7\textwidth]{image/classic_base_img}
+  \label{fig:classic_base_img}
+\end{figure}
+
+\subsection{Open CV ArUco Detection}
+
+\begin{figure}
+  \centering
+  \subcaptionbox{Detection Output with 4 Vertex Filter}
+     {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_small}}
+  \subcaptionbox{Detection Output without Filter}
+     {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_all}}
+  \caption{Detections of the \ac{OpenCV} pipeline, with each polygon colored in a random color to make them distinguishable}
+  \label{fig:classic_base_img_opencv}
+\end{figure}
+
+The built-in \ac{OpenCV} \ac{ArUco} detector does not detect any markers in the chosen base image. To find out why, I roughly recreated the \ac{ArUco} detector using \acp{OpenCV} built-in algorithm implementations up until the polygon creation step. The recreated pipeline mainly consists of the canny edge detector and the \texttt{findContours} and \texttt{approxPolyDP} methods applied to each level of an image pyramid. 
+
+When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \autoref{fig:classic_base_img_opencv} (a). The better detection accuracy of this pipeline may be due to cherry picked parameters. Without the filter in \autoref{fig:classic_base_img_opencv} (b), the problems of the polygon detection become apparent, as the contours of the markers in the image are not complete, which may in part explain the findings in \autoref{sec:aruco_det}.
+
+\subsection{Histogram}
+
+\subsection{SIFT}
+
+\subsection{Conclusion}
 
 \section{Software Architecture}
 
