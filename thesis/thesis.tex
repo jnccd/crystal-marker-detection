@@ -502,10 +502,10 @@ Training on the server was done using a Docker Image and locally it was done in 
 
 \section{Classic Approaches}
 
-To validate that a neural network based approach is necessary in this case, I tested some approaches using algorithms from \ac{OpenCV}, that do not require machine learning. For these tests I chose a base image from the given data, on which the markers were facing the camera and had as much visible contours as possible, which can be seen in \autoref{fig:classic_base_img}. 
+To validate that a neural network based approach is necessary in this case, I tested some approaches using algorithms from \ac{OpenCV}, that do not require machine learning. For these tests I chose a test image from the given data, on which the markers were facing the camera and had as much visible contours as possible, which can be seen in \autoref{fig:classic_base_img}. 
 
 \begin{figure}
-  \caption{Base Image for Classic Approaches}
+  \caption{Test Image for Classic Approaches}
   \includegraphics[width=0.7\textwidth]{image/classic_base_img}
   \label{fig:classic_base_img}
 \end{figure}
@@ -524,11 +524,15 @@ To validate that a neural network based approach is necessary in this case, I te
 
 The built-in \ac{OpenCV} \ac{ArUco} detector does not detect any markers in the chosen base image. To find out why, I roughly recreated the \ac{ArUco} detector using \acp{OpenCV} built-in algorithm implementations up until the polygon creation step. The recreated pipeline mainly consists of the canny edge detector and the \texttt{findContours} and \texttt{approxPolyDP} methods applied to each level of an image pyramid. 
 
-When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \autoref{fig:classic_base_img_opencv} (a). The better detection accuracy of this pipeline may be due to cherry picked parameters. Without the filter in \autoref{fig:classic_base_img_opencv} (b), the problems of the polygon detection become apparent, as the contours of the markers in the image are not complete, which may in part explain the findings in \autoref{sec:aruco_det}.
+When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \autoref{fig:classic_base_img_opencv} (a). The better detection accuracy here may be due to cherry picked parameters. Without the filter in \autoref{fig:classic_base_img_opencv} (b), the problems of the polygon detection become apparent, as the contours of the markers in the image are not complete, which may in part explain the findings in \autoref{sec:aruco_det}.
 
 \subsection{Histogram}
 
-The idea of the histogram approach is that the pixel gradient histogram distributions in a window around the marker in the image should have a similar distribution on each of the markers.
+The idea of the histogram approach is, that the pixel gradient histogram distributions in a window around the marker in the image should have a similar distribution on each of the markers.
+
+For this approach firstly the image is again scaled in different steps in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards the image is traversed with a 64x64 pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in FIGGGG (a). 
+
+There are many possible variations of this approach, such as also using the magnitude of the gradient as weights in the histogram computation or thresholding the gradients, to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=1}}p) - (\sum_{p \in (h_i)^\infty_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number larger window around them. However this also reasults in inconclusive scores as seen in FIGGGG (b).
 
 \subsection{SIFT}
 
