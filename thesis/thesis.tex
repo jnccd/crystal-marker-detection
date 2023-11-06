@@ -183,7 +183,7 @@ PyTorch is an open-source machine learning library for Python that has gained si
 
 The Python package \ac{SAHI} is a lightweight vision library designed to perform large scale object detection and instance segmentation \cite{akyon2022sahi,obss2021sahi}. It was developed to address the challenges of detecting small objects and performing inference on large images, which are common issues in practical usage. 
 
-Fundamentally \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap there is support for bounding box prediction combination. Since models only see input images at a fixes resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
+Fundamentally \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
 
 \ac{SAHI} is framework agnostic and so can be modified to work with any model. However it has YOLOX, YOLOv5, YOLOv8, MMDetection and Detectron2 support by default.
 
@@ -500,6 +500,8 @@ Most training for this work was done on the 'lena' server of the \ac{MIP} workin
 Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same \ac{CUDA} Toolkit version 11.8 as well as on the \ac{cuDNN} version 8.4.1.50.
 
 \section{Classic approaches}
+
+
 
 \section{Software Architecture}
 
