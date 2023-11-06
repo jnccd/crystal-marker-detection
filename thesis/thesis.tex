@@ -889,7 +889,7 @@ An example of black dot aug can be seen in \autoref{fig:aug_bd_example}.
      {\includegraphics[width=0.45\textwidth]{image/aug_lc_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_lc_after}}
-  \caption{An example for label curving augmentation}
+  \caption{An example for label curving augmentation on the marker in the bottom left}
   \label{fig:aug_lc_example}
 \end{figure}
 
@@ -897,11 +897,19 @@ Another reoccurrence in the test data was that the tape with the markers was rol
 
 This augmentation again works similar to label move. However in this case the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case the x coordinates stay the same but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout the label vertices are also transformed, such that the label is still located over the image structure. However the polygon cannot fully capture the curving without new vertices, but since the polygons are transformed into bounding boxes in most cases this is not a problem. An example of label curving can be seen in \autoref{fig:aug_lc_example}.
 
-\subsection{Gauss Noise}
+\subsection{Gaussian Noise}
+
+While augmentations that work with labels needed to be implemented specifically for this pipeline due to the label datatype. Pixel level augmentations are already defined and work just as well here. The gaussian noise augmentation here therefore works using the Albumentations gaussian noise transformation\footnote{\url{https://albumentations.ai/docs/api\_reference/augmentations/transforms/\#albumentations.augmentations.transforms.GaussNoise}, accessed on 06.11.2023}. 
+
+Gaussian noise adds noise to each pixel in the image, with the strength of the noise being given by the normal distribution. Gaussian noise closely mimics the noise that many natural source emit\footnote{\url{https://en.wikipedia.org/wiki/Gaussian_noise}, accessed on 06.11.2023}.
+
+Here gaussian noise is used to make sure to get a different result from similar training runs, such that the quality of a training run can be assessed.
 
 % TODO?: \section{Synthetic Data}
 
 \section{Inference}
+
+
 
 \section{Plotting}
 
