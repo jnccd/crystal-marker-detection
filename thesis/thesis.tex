@@ -753,7 +753,7 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before2}}
   \subcaptionbox{Training image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after2}}
-  \caption{Two examples for smart grid shuffling with similar initial label arrangement.}
+  \caption{Two examples for smart grid shuffling with similar initial label arrangement}
   \label{fig:aug_sgs_example}
 \end{figure}
 
@@ -768,7 +768,7 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
      {\includegraphics[width=0.45\textwidth]{image/aug_pld_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_pld_after}}
-  \caption{An example for label dropout.}
+  \caption{An example for label dropout}
   \label{fig:aug_pld_example}
 \end{figure}
 
@@ -786,7 +786,7 @@ For most augmentations there is a chance setting and possibly a strength setting
      {\includegraphics[width=0.45\textwidth]{image/aug_mat_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_mat_after}}
-  \caption{An example for matrix transform augmentation.}
+  \caption{An example for matrix transform augmentation}
   \label{fig:aug_mat_example}
 \end{figure}
 
@@ -803,7 +803,7 @@ After the transformation cases of \ac{OOB} labels have to be handled, as labels 
      {\includegraphics[width=0.45\textwidth]{image/aug_rc_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc_after}}
-  \caption{An example for random crop.}
+  \caption{An example for random crop}
   \label{fig:aug_rc_example}
 \end{figure}
 
@@ -831,7 +831,7 @@ The data pipeline also builds \ac{JSON} files into the dataset folder to make th
      {\includegraphics[width=0.45\textwidth]{image/aug_lm_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_lm_after}}
-  \caption{An example for label move.}
+  \caption{An example for label move}
   \label{fig:aug_lm_example}
 \end{figure}
 
@@ -839,7 +839,31 @@ Label move works similar to label dropout as described in \autoref{sec:aug_ld}. 
 
 Since inserting of images into other images in OpenCV works by copying slices only \ac{AABB} areas can be inserted at once. However when reinserting the labels image structure at another position, only the \ac{ArUco} marker structure should be inserted and not the surrounding image content. Therefore before inserting the labels image structure back, a mask is applied to it. That mask is just the labels polygon rasterized in white onto a black image. Using the mask as weights, the labels image structure is then reinserted.
 
+\subsubsection{Label Move v2}
+
+\begin{figure}
+  \centering
+  \subcaptionbox{Training Image before augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_lm2_before}}
+  \subcaptionbox{Training Image after label move augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_lm2_after_old}}
+  \subcaptionbox{Training Image after label move v2 augmentation}
+     {\includegraphics[width=0.45\textwidth]{image/aug_lm2_after}}
+  \caption{An example for label move v2, in which the label is moved from the middle to the bottom left and despite the background color differences is not as noticeable}
+  \label{fig:aug_lm2_example}
+\end{figure}
+
+In the second version of label move has two additions to the operations of label move. 
+
+Firstly the color of the labels image structure is roughly adapted to the target positions color. For this both the average RGB values of the image target area slice and the average RGB values of the labels image structure are computed. Then each pixel of the labels image structure is recolored based on the difference of the average RGB values before it is reinserted into the image.
+
+Secondly gaussian blur is applied to the mask, which is a rasterized version of the labels polygon. Due to this change, the inserted labels image structure does not have strong contours anymore and gets a small color transition at its borders.
+
+These changes help make the reinserted label look more natural in the new spot, as seen in \autoref{fig:aug_lm2_example}.
+
 \subsection{Black Dot}
+
+
 
 \subsection{Label Curving}
 
