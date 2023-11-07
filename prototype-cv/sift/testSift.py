@@ -46,5 +46,6 @@ print(n)
 
 img3 = cv2.drawMatches(img1, kpl, final_img, kp2, matches[:int(n/2)], final_img, flags=2)
 
+cv2.imwrite('full_sift_matches.png',img3)
 cv2.imshow('SIFT',img3)
 cv2.waitKey(0)

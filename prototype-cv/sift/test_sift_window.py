@@ -8,12 +8,14 @@ from utils import *
 root_dir = Path(__file__).resolve().parent
 border_marker_img_path = root_dir/'sift-base'/'border-marker.png'
 in_img_marker_img_path = root_dir/'sift-base'/'in-img-marker.png'
-test_img_path = Path("N:\Downloads\Archives\FabioBilder\\the_good_pics_for_sift\DSC_3741.JPG")
+test_img_path = Path("N:\Downloads\Archives\FabioBilder\\the_good_pics_for_sift\Screenshot_9223371263231576445_i_view32.png")
 
 marker_img = cv2.imread(str(in_img_marker_img_path))
 test_img = cv2.imread(str(test_img_path))
+print(test_img.shape)
 
 marker_img = cv2.resize(marker_img, dsize=(200,200), interpolation=cv2.INTER_NEAREST)
+#marker_img = cv2.flip(marker_img, 0)
 test_img = keep_image_size_in_check(test_img)
 img_h, img_w = test_img.shape[:2]
 
@@ -22,6 +24,7 @@ img_t = cv2.cvtColor(test_img, cv2.COLOR_BGR2GRAY)
 img_t = cv2.adaptiveThreshold(img_t,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
             cv2.THRESH_BINARY,101,2)
 img_t = 255-img_t
+cv2.imwrite(str(root_dir / f'{test_img_path.stem}_thresh_sift_matches.png'), img_t)
 
 # cv2.imshow('img',img_t)
 # cv2.waitKey(0)
