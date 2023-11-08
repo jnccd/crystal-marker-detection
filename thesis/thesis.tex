@@ -544,9 +544,27 @@ For this approach firstly the image is again scaled in different steps in an ima
 
 There are many possible variations of this approach, such as also using the magnitude of the gradient as weights in the histogram computation or thresholding the gradients, to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean, that there are two directions, in which gradients mainly occur in the window. In this case two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^\infty_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram, that are the highest in a 2 number large window around them. However this also results in inconclusive scores as seen in \autoref{fig:markeryness_scores} (b).
 
-\subsection{SIFT}
+\subsection{Feature Matching}
 
+\begin{figure}
+  \caption{\ac{SIFT} matches between a \ac{ArUco} marker image and the thresholded test image}
+  \includegraphics[width=0.9\textwidth]{image/classic_sift_matches}
+  \label{fig:classic_sift_matches}
+\end{figure}
 
+\begin{figure}
+  \caption{Detections of the marker middle using the \ac{SIFT} approach, using a sliding window and postprocessing}
+  \includegraphics[width=0.7\textwidth]{image/classic_sift_final_matches}
+  \label{fig:classic_sift_final_matches}
+\end{figure}
+
+\begin{figure}
+  \caption{Adaptive thresholding on a image from the real test set}
+  \includegraphics[width=0.4\textwidth]{image/classic_sift_thresh_on_finger}
+  \label{fig:classic_sift_thresh_on_finger}
+\end{figure}
+
+Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \autoref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and a image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate its matches across the repeating marker structures, as seen in \autoref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally the positions of the matches in the image are moved by the difference of their position in the marker image and the middle of the marker image to cluster them. The results of that process can be seen in \autoref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However when using this matching process on an image of the real test set, nothing is detected, since the thresholded image there does not preserve the structure of the \ac{ArUco} marker, as seen in \autoref{fig:classic_sift_thresh_on_finger}.
 
 \subsection{Conclusion}
 
@@ -1050,7 +1068,8 @@ Gaussian noise adds noise to each pixel in the image, with the strength of the n
 \acro{MIP}{Multimedia Information Processing}
 \acro{CUDA}{NVIDIA Compute Unified Device Architecture}
 \acro{cuDNN}{NVIDIA CUDA Deep Neural Network library}
-\acro{OOB}{out of bounds}
+\acro{OOB}{out of bounds} 
+\acro{SIFT}{Scale-invariant feature transform} 
 
 \end{acronym}
 
