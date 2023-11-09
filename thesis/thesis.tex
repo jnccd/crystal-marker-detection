@@ -993,6 +993,14 @@ Gaussian noise adds noise to each pixel in the image, with the strength of the n
 
 \section{Data}
 
+I got batches of images for the training data over the course of the time I was working on the thesis. In total I received 261 images with an \ac{ArUco} frame and 118 of tapes directly on skin at the time of writing. 
+
+Of the images, that were meant for training data and work with the \texttt{create\_aruco\_frame\_dataseries} script, I manually filtered the images for ones, on which I could recognize at least the majority of the markers, such that the training data is not too diluted. During development I build more and more dataseries from these batches of images and refined old dataseries. I then named datasets that use specific sets of these dataseries \texttt{gpv1}, \texttt{gpv2} and \texttt{gpv3}, for the version and the folder called \texttt{good pics} I filtered usable images into. \texttt{gpv1} datasets are build from 67 images, \texttt{gpv2} datasets from 35 images and \texttt{gpv3} datasets from 140 images. For the creation of the \texttt{gpv3} set I visited the material science department of the Kiel University and could take a glass plate with marker tapes home. I then combined dataseries from \texttt{gpv2} with a new dataseries from images we took at the material science department and a dataseries from 67 images I took with my phone at home of the glass plate to create \texttt{gpv3}.
+
+During dataset creation a set percentage of images and their labels are randomly chosen as the validation data for the dataset and therefore the validation data also comes from the aforementioned dataseries.
+
+From the 118 images of tapes directly on skin I build the test data...
+
 \section{Human Testing}
 
 \section{Augmenting from Zero}
