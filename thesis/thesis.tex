@@ -942,7 +942,7 @@ These changes help make the reinserted label look more natural in the new spot, 
   \label{fig:aug_bd_example}
 \end{figure}
 
-A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation which adds black dots on parts of the image where no marker is. 
+A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is, that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation which adds black dots on parts of the image where no marker is. 
 
 After the augmentation is started at least one black dot is added. Afterwards there is a 40\% chance that another black dot is added. If another black dot is added there is another 40\% chance for one more marker. This could continue forever, however it gets more and more unlikely to go on after each iteration. 
 
@@ -1006,6 +1006,8 @@ Given a set of dataseries as base and parameters for dataset creation, training 
 The top level scripts necessary for this are currently only implemented to work with the \ac{MIP} server structure, but could be ported to any \ac{GPU} server with Docker support.
 
 \section{Hyperparameter Optimization}
+
+
 
 \section{Point Detection}
 
