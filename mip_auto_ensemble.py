@@ -26,7 +26,6 @@ def aug_ensemble_workflow(aug_token: str, aug_name: str, aug_arg: str):
     other_aug_params_list = list(filter(lambda x: x[0] != f'-{aug_arg}', unflatten(opt_aug_params.split(' '), 2)))
     other_aug_params_str = ' '.join(flatten(other_aug_params_list))
     
-    # Use these again when using sahi
     train_folder = f'/data/pcmd/training/_augments-hypsear-params-sahi-ensemble-2/yolov5s-{aug_token}-ensemble/'
     plot_name = f'hyperparameter-search-based-{aug_token}-sahi-ensemble-2'
     
