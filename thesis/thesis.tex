@@ -989,8 +989,8 @@ The inference on test data using previously trained models happens in the evalua
 Furthermore the bounding boxes from the inference results can be filtered independently of the model they come from. The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this the size of a border along the the image bounds can be set and all bounding box predictions that fall within this border are filtered out. Additionally to filter predictions which are not square enough, which the \ac{ArUco} marker usually are not, a minimum squareness can be set. Squareness is here defined as $$ 
 s(w,h)=
 \begin{dcases}
-    \frac{w}{h},& \text{if } w\leq h\\
-    \frac{h}{w},              & \text{otherwise}
+    \frac{w}{h}, & \text{if } w\leq h\\
+    \frac{h}{w}, & \text{otherwise}
 \end{dcases} $$ where $w$ refers to the bounding boxes width and $h$ to its height. Due to the definition, the squareness score always lies between 0 and 1.
 
 \subsection{Fusion Inference}
@@ -1028,7 +1028,7 @@ From the 118 images of tapes directly on skin I used 55 good ones to build the t
 
 The third version of the test data was labeled using makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better accuracy than the \texttt{create\_manual\_dataseries} script, which currently lacks a zoom feature. The labels were exported as polygons in the COCO JSON format, were then converted to a dataseries using the \texttt{create\_coco\_json\_dataseries} script and finally build into a dataset.
 
-While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine that creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes, that we had, and therefore could not build more test data on my own.
+While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine that creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes that we had, and therefore could not build more test data on my own.
 
 \section{Human Testing}
 
