@@ -13,8 +13,12 @@ from evaluation.utility import *
 # epochs = 368
 
 # --- Basic ensemble
-opt_aug_params = " "
-epochs = 300
+# opt_aug_params = " "
+# epochs = 300
+
+# --- After yolov5s aug hyp opt 2
+opt_aug_params = "-asgsc 0.008982257070160649 -apldc 0.9450952906618159 -apc 0.6573674532026004 -aps 0.2804576787977128 -arc 0.5427787640299094 -ars 324.55179667010617 -andrc 0.6035650010036894 -arcc 0.6817057409388554 -arc2c 0.39548280581255923 -almc 0.4601560149315024 -alm2c 0.03810201058767085 -abdc 0.770387100335939 -alcc 0.5298416478024052 -agnc 0.5099200084102142 -agns 22.830199041806175"
+epochs = 347
 
 docker_image = 'ncarstensen/pcmd:0.13'
 def aug_ensemble_workflow(aug_token: str, aug_name: str, aug_arg: str):
