@@ -977,12 +977,25 @@ Gaussian noise adds noise to each pixel in the image, with the strength of the n
 \section{Inference}
 
 \begin{figure}
-  \caption{Position of evaluation in the pipeline}
+  \caption{Position of evaluation inference in the pipeline}
   \includegraphics[width=0.75\textwidth]{graph/arch_train_eval_focus}
   \label{fig:arch_train_eval_focus}
 \end{figure}
 
+The inference on test data using previously trained models happens in the evaluation scripts, as shown in \autoref{fig:arch_train_eval_focus}. The inference can be optimized using additional filters and other techniques. One such technique is \ac{SAHI}. However since each type of model has its own evaluate script, because each type of model works slightly differently, certain techniques have to be implemented separately. Therefore \ac{SAHI} is currently not supported for \ac{YOLO}-NAS.
 
+\subsection{Bounding Box Filters}
+
+Furthermore the bounding boxes from the inference results can be filtered independently of the model they come from. The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this the size of a border along the the image bounds can be set and all bounding box predictions that fall within this border are filtered out. Additionally to filter predictions which are not square enough, which the \ac{ArUco} marker usually are not, a minimum squareness can be set. Squareness is here defined as $$ 
+s(w,h)=
+\begin{dcases}
+    \frac{w}{h},& \text{if } w\leq h\\
+    \frac{h}{w},              & \text{otherwise}
+\end{dcases} $$ where $w$ refers to the bounding boxes width and $h$ to its height. Due to the definition, the squareness score always lies between 0 and 1.
+
+\subsection{Fusion Inference}
+
+As an post processing step that happens on multiple finished training runs, the \texttt{fusion\_inference} script combines the predictions of these training runs similarly to \ac{SAHI}. However here the output of the whole image from different fitted models is combined into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}.
 
 \section{Plotting}
 
