@@ -999,7 +999,11 @@ As an post processing step that happens on multiple finished training runs, the 
 
 % TODO?: \section{Plotting}
 
-\section{Automated Ensemble Training}
+\section{Automated Ensembles}
+
+Given a set of dataseries as base and parameters for dataset creation, training and inference, the entire process for ensemble learning can now be automated. Furthermore, by starting multiple batch train instances and giving each information about its worker index and the total worker count, the training load on multiple datasets can be split among multiple \acp{GPU}. Finally, given a consistent naming scheme, the score results of the training runs can also be automatically plotted.
+
+The top level scripts necessary for this are currently only implemented to work with the \ac{MIP} server structure.
 
 \section{Hyperparameter Optimization}
 
