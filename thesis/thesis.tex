@@ -1017,9 +1017,21 @@ This section describes the development of the second part of the inference. Afte
 
 For the training of models of this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
 
+\begin{figure}
+  \caption{Addition of new dataset types for point detection training}
+  \includegraphics[width=0.6\textwidth]{graph/arch_data_pet_focus}
+  \label{fig:arch_data_pet_focus}
+\end{figure}
+
+Furthermore, since I annotated multiple markers in each image and I only need one image per label, I added new dataset types to the data pipeline, as seen in \autoref{fig:arch_data_pet_focus}. 
+
+A Pet dataset contains a image and point label pair for each label that was in the source images. During export to a pet dataset, the area around the labels polygon is cut out of the image and resized to a set size for each label. Afterwards the polygons vertices are also transformed onto the new images coordinate system and written into a file. 
+
+A SegPet dataset is similar but instead of having the vertex coordinates in a label file, here a mask is build by rasterizing a filled version of the polygon label.
+
 \subsection{Point Head Approach}
 
-For this approach I used a 
+For this approach I used a MobileNetV2 as base...
 
 \subsection{Segmentation Approach}
 
