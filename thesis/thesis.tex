@@ -1013,7 +1013,13 @@ To find an optimal combination of augmentations from the implemented ones, a hyp
 
 This section describes the development of the second part of the inference. After the areas of interest were found by the model, which works on the whole image, this part finds the corner points of the marker within that area of interest.
 
+\subsection{Data}
+
+For the training of models of this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
+
 \subsection{Point Head Approach}
+
+For this approach I used a 
 
 \subsection{Segmentation Approach}
 
@@ -1040,7 +1046,7 @@ During dataset creation a set percentage of images and their labels are randomly
 
 From the 118 images of tapes directly on skin I used 55 good ones to build the third version of the test data. There were concerns, that choosing fitted models based on their \ac{mAP} score on the test set would lead to overfitting. At the same time I wanted to test against images that were close to the real world use case. Therefore the test set was split into two sets, one for evaluation in ensemble runs and for hyperparameter search and one for a final test at the end. The test sets were split manually, but such that the score of a model tested on a previous version test set was similar in both sets, and such that both sets contain a variety of hand poses, that are at the same time not so similar that overfitting on one set would lead to a good score on the other. Since some pairs of the 55 original test images were similar, a random split would have been prone to putting images that are too similar in the ensemble and in the final test set, such that both would not have been different enough. This split then resulted in a 25 image ensemble test set and a 30 image final test set.
 
-The third version of the test data was labeled using makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better accuracy than the \texttt{create\_manual\_dataseries} script, which currently lacks a zoom feature. The labels were exported as polygons in the COCO JSON format, were then converted to a dataseries using the \texttt{create\_coco\_json\_dataseries} script and finally build into a dataset.
+The third version of the test data was labeled using makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better accuracy than the \texttt{create\_manual\_dataseries} script, which currently lacks a zoom feature. The labels were exported as polygons in the \ac{COCO} \ac{JSON} format, were then converted to a dataseries using the \texttt{create\_coco\_json\_dataseries} script and finally build into a dataset.
 
 While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine that creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes that we had and therefore could not build more test data on my own.
 
