@@ -1,0 +1,25 @@
+digraph arch {
+    rankdir=LR
+    node [shape=box style="filled,rounded" width=1.5 height=0.6];
+    graph [fontsize=10 compound=true];
+    
+    Dataseries [color=orange]
+    #Dataset [color=orange]
+    create_dataset [color=lightblue]
+
+    subgraph cluster_dataset {
+        graph [style="filled,rounded", color=orange]
+        label = "Dataset";
+
+        CSV [color="#ffd382" label="CSV Dataset"]
+        COCO [color="#ffd382" label="COCO Dataset"]
+        YOLO [color="#ffd382" label="YOLO Dataset"]
+        Segmentation [color="#ffd382" label="Segment Dataset"]
+        Pet [color="#ffd382" label="Pet Dataset", style="filled,rounded,dashed" fillcolor="#ffd382" color=red penwidth=5]
+        SegPet [color="#ffd382" label="SegPet Dataset", style="filled,rounded,dashed" fillcolor="#ffd382" color=red penwidth=5]
+    }
+
+    Dataseries -> create_dataset [taillabel="1-3"]
+
+    create_dataset -> YOLO [headlabel="1", lhead=cluster_dataset]
+}
