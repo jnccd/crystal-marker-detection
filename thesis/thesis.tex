@@ -1027,7 +1027,21 @@ Furthermore, since I annotated multiple markers in each image and I only need on
 
 A Pet dataset contains a image and point label pair for each label that was in the source images. During export to a pet dataset, the area around the labels polygon is cut out of the image and resized to a set size for each label. Afterwards the polygons vertices are also transformed onto the new images coordinate system and written into a file. 
 
-A SegPet dataset is similar but instead of having the vertex coordinates in a label file, here a mask is build by rasterizing a filled version of the polygon label.
+\begin{figure}
+  \centering
+  \subcaptionbox{Segpet input image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_in}}
+  \subcaptionbox{Segpet mask image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_seg}}
+  \subcaptionbox{Segpet input image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_in}}
+  \subcaptionbox{Segpet mask image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_seg}}
+  \caption{Example of segpet training images and their masks}
+  \label{fig:segpet_example}
+\end{figure}
+
+A SegPet dataset is similar but instead of having the vertex coordinates in a label file, here a mask is build by rasterizing a filled version of the polygon label, as seen in \autoref{fig:segpet_example}.
 
 \subsection{Point Head Approach}
 
