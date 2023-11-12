@@ -158,7 +158,7 @@ Shapely is a popular Python package for computational geometry. It provides a wi
 The \ac{ArUco} library implemented into \ac{OpenCV} is based on a paper from S. Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
 and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
 
-This algorithm is however based on the assumption that the marker contour is always visible. If it isn't detections can become skewed or nothing is detected as seen in \figureref{fig:aruco-det}.
+This algorithm is however based on the assumption that the marker contour is always visible. If it is not, detections can become skewed or nothing is detected as seen in \figureref{fig:aruco-det}.
 
 \begin{figure}
   \centering
@@ -1007,7 +1007,7 @@ The top level scripts necessary for this are currently only implemented to work 
 
 \section{Hyperparameter Optimization}
 
-
+To find an optimal combination of augmentations from the implemented ones, a hyperparameter optimization is implemented using Hyperopt. More precisely the search space for this usage of Hyperopt contains the chances for each augment to be applied on an image during dataset generation. Furthermore the strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. The epochs that should be trained for are also part of the search space. Since the validation data in the datasets used here can be similar to the training data, the hyperparameter optimization, which unlike the training runs on the test data, can then choose an earlier stopping point for the training, if further training does not increase the score further or in other words would overfit on the validation data. Finally the random seed for the dataset creation is also part of the search space, such that the best training run during the optimization is fully reproducible.
 
 \section{Point Detection}
 
