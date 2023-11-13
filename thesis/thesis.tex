@@ -1053,6 +1053,8 @@ For this approach I used a MobileNetV2 as base, since this part should also be l
 
 The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoint label. The augmentations used include image shifting, rotation, scaling and perspective effects, such that variation in marker positions is created.
 
+The learn rate used here starts at $0.001$ and decays every $100$ epochs by a factor $0.2$. The total number of epochs is 400.
+
 \begin{figure}
   \centering
   \subcaptionbox{Predictions on validation data}
@@ -1067,7 +1069,7 @@ The loss used here was \ac{MSE} loss at first, which is the standard for keypoin
 
 \subsection{Segmentation Approach}
 
-Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. 
+Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. 
 
 \subsubsection{Mask Interpretation}
 
