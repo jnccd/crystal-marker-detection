@@ -1051,7 +1051,7 @@ A SegPet dataset is similar but instead of having the vertex coordinates in a la
 
 For this approach I used a MobileNetV2 as base, since this part should also be lightweight, and added custom head layers to the network architecture. The custom head outputs eight numbers which are interpreted as the x- and y-coordinates of the 4 corners points of the marker. I tested different head architectures, such as a fully convolutional head. However the lowest loss was achieved with two linear layers.
 
-The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoint label. The augmentations used include image shifting, rotation, scaling and perspective effects, such that variation in marker positions is created.
+The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoint label. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation.
 
 The learn rate used here starts at $0.001$ and decays every $100$ epochs by a factor $0.2$. The total number of epochs is 400.
 
