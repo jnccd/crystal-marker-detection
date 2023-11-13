@@ -1047,9 +1047,25 @@ A SegPet dataset is similar but instead of having the vertex coordinates in a la
 
 \subsection{Point Head Approach}
 
-For this approach I used a MobileNetV2 as base...
+For this approach I used a MobileNetV2 as base, since this part should also be lightweight, and added custom head layers to the network architecture. The custom head outputs eight numbers which are interpreted as the x- and y-coordinates of the 4 corners points of the marker. I tested different head architectures, such as a fully convolutional head. However the lowest loss was achieved with two linear layers.
+
+The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoint label. The augmentations used include image shifting, rotation, scaling and perspective effects, such that variation in marker positions is created.
+
+\begin{figure}
+  \centering
+  \subcaptionbox{Predictions on validation data}
+     {\includegraphics[width=0.2\textwidth]{image/pet_val_no_rot}}
+  \subcaptionbox{Predictions on rotated validation data}
+     {\includegraphics[width=0.2\textwidth]{image/pet_val_rot}}
+  \caption{Example of keypoint detection output with and without rotated validation data}
+  \label{fig:pet_rot_example}
+\end{figure}
+
+The loss used here was \ac{MSE} loss at first, which is the standard for keypoint detection. However the loss stayed high and the training was prone to overfitting. Afterwards I switched to sinkhorn loss, which unlike \ac{MSE} works with any permutation of points. Removing the requirement of getting the right point order from the network improved the loss. The outputs now predicted the position of markers in the validation data well. However when adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict more than 2 to 3 rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}.
 
 \subsection{Segmentation Approach}
+
+Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. 
 
 \subsubsection{Mask Interpretation}
 
@@ -1155,6 +1171,7 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 \acro{cuDNN}{NVIDIA CUDA Deep Neural Network library}
 \acro{OOB}{out of bounds} 
 \acro{SIFT}{Scale-invariant feature transform} 
+\acro{MSE}{mean squared error}
 
 \end{acronym}
 
