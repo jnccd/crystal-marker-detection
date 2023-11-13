@@ -409,7 +409,7 @@ Khalifa et al. compiled image augmentation techniques used in other papers \cite
 \chapter{Networks}
 \label{chap:netw}
 
-This chapter introduces network architectures that I used for the \ac{ArUco} marker detection. Since the models are supposed to run on smart phones, they should be as small as possible. Furthermore inference in real time would make the usage easier. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures, a majority of this chapter will focus on them.
+This chapter introduces network architectures that I used for the \ac{ArUco} marker detection and their history. Since the models are supposed to run on smart phones, they should be as small as possible. Furthermore inference in real time would make the usage easier. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures, a majority of this chapter will focus on them.
 
 \section{First YOLO Versions}
 
@@ -484,6 +484,8 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
 After the application of transformer blocks in natural language processing was successful they were also introduced into other domains, such as visual processing, resulting In \acp{ViT}. The application of transformers on vision tasks works by slicing the input image into many patches \cite{dosovitskiy2020image}. The pixel data of these patches is  further divided and interpreted as word vectors. These "visual words" can then be fed into a transformer based network. 
 
 \acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However in this work I aim to develop a detection system that would preferably run directly on patients smart phones, making large models impractical. Furthermore development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers, therefore the improvements may not stem from network architecture itself \cite{liu2022convnet}.
+
+% TODO?: \section{Unet}
 
 \chapter{Methodology and Implementation}
 \label{chap:implement}
