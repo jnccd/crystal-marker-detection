@@ -1069,7 +1069,7 @@ The loss used here was \ac{MSE} loss at first, which is the standard for keypoin
 
 \subsection{Segmentation Approach}
 
-Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. 
+Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The used here instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore there is extra logic required for interpreting the segmentation mask. Nonetheless, the prediction results of rotated markers fit closer to the marker corners, as seen in \autoref{}. % TODO: proper rotated markers pls, x/y swap in export?
 
 \subsubsection{Mask Interpretation}
 
@@ -1175,7 +1175,8 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 \acro{cuDNN}{NVIDIA CUDA Deep Neural Network library}
 \acro{OOB}{out of bounds} 
 \acro{SIFT}{Scale-invariant feature transform} 
-\acro{MSE}{mean squared error}
+\acro{MSE}{mean squared error} 
+\acro{MB}{Megabyte}
 
 \end{acronym}
 
