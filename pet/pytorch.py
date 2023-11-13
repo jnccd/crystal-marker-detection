@@ -48,11 +48,10 @@ class DataseriesLoader(Dataset):
                     A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                     A.RandomRotate90(),
                     # A.Transpose(),
-                    A.ShiftScaleRotate(shift_limit=0.05, rotate_limit=270, scale_limit=0.01, p=1),
-                    A.Perspective(scale=(0.01, 0.06)),
+                    A.ShiftScaleRotate(shift_limit=0.05, rotate_limit=270, border_mode=cv2.BORDER_CONSTANT, p=1),
+                    A.Perspective(scale=(0, 0)),
                     # A.Affine(shear=(-20, 20))
-                    # A.HueSaturationValue(),
-                    # A.ColorJitter(),
+                    A.ColorJitter(hue=0.8),
                 ],
                 keypoint_params=A.KeypointParams(
                     format='xy',
