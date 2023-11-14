@@ -1112,7 +1112,13 @@ For the mask interpretation I use the Harris corner detector. Afterwards each tr
 
 \subsection{Point Sorting}
 
-For now the different approaches only output points. However to detect how the marker lies in 3D space, it is also nessecary to sort the points based on the rotation of the marker. 
+\begin{figure}
+  \caption{Pixel comparisons between the \ac{ArUco} marker image and the theresholded and projected image}
+  \includegraphics[width=0.4\textwidth]{image/pet_point_sorting_compare}
+  \label{fig:pet_point_sorting_compare}
+\end{figure}
+
+For now the different approaches only output points. However to detect how the marker lies in 3D space, it is also nessecary to sort the points based on the rotation of the marker. For this, the input image is theresholded using \acp{OpenCV} adaptive thershold implementation. Afterwards a homography is computed to map the given rectangle in the image onto another image. Finally, using pixel comparisons each 90 degree rotation of the projected and thersholded image is tested against the \ac{ArUco} marker, as seen in \autoref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
 
 \chapter{Evaluation}
 \label{chap:eval}
