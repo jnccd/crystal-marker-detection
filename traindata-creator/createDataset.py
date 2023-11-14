@@ -369,13 +369,19 @@ def build_pet_dataset(in_imgs, target_polys):
                 # Resize and pad
                 crop_img, [poly] = resize_and_pad_with_labels(crop_img, pet_target_size, [poly], background_color, border_type)
                 
+                # Convert poly to seg img
+                seg_image = np.zeros(crop_img.shape[:2] + (1,), dtype = np.uint8)
+                seg_image = rasterize_polys(seg_image, [poly])
+                
                 # Store cutout output in mixed_group_data
                 mixed_group_data.append(
                     (
                         f'{i}_{j}_in.png', 
                         crop_img, 
                         str(poly.exterior.coords[:-1]), 
-                        f'{i}_{j}_p.txt'
+                        f'{i}_{j}_p.txt',
+                        seg_image, 
+                        f'{i}_{j}_seg.png'
                     )
                 )
         
@@ -388,6 +394,7 @@ def build_pet_dataset(in_imgs, target_polys):
         for data in shuffled_group_data:
             cv2.imwrite(str(dir[group] / data[0]), data[1])
             write_textfile(data[2], dir[group] / data[3])
+            cv2.imwrite(str(dir[group] / data[5]), data[4])
         
         i += len(in_imgs[group])
         
