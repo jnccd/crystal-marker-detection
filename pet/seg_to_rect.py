@@ -79,7 +79,7 @@ def main():
                     
                     # Get score
                     score = angle_score + distance_rato_score + size_score
-                    print(f'score {score}, \t{angle_score}, {distance_rato_score}, {size_score}')
+                    #print(f'score {score}, \t{angle_score}, {distance_rato_score}, {size_score}')
                     markery_corners.append((score, a,b,c))
         best_corners = sorted(markery_corners, key = lambda x: x[0])[0]
         print(f'best_corners: {best_corners}')
