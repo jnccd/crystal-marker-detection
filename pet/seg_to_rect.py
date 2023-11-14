@@ -151,6 +151,7 @@ def main():
         for i, pt in enumerate(pts):
             in_image_grgb = cv2.putText(in_image_grgb, str(i), pt, cv2.FONT_HERSHEY_SIMPLEX, 1, 
                   (0,0,255), 2, cv2.LINE_AA, False)
+        write_textfile(str([(x[0], x[1]) for x in corners]), to_rect_output_folder / f'{pred_img_path.stem}_p.txt')
         cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_rect.png'), in_image_grgb)
         cv2.imshow('image', in_image_grgb)
         if cv2.waitKey(0) & 0xFF == ord('q'):
