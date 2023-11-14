@@ -18,7 +18,7 @@ from torchsummary import summary
 
 from utils import *
 
-EPOCHS = 400
+EPOCHS = 100
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
@@ -30,7 +30,7 @@ root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/pt-vgg16-2')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt-vgg16-3')
 eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
@@ -457,4 +457,4 @@ with torch.no_grad():
             k = cv2.waitKey(0)
             if k == ord('q'):
                     break
-
+write_textfile(f'best validation loss: {best_vloss}\n', eval_folder / 'eval.txt')
