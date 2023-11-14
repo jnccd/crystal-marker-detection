@@ -19,18 +19,18 @@ from torchsummary import summary
 from utils import *
 
 EPOCHS = 400
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
 IMG_SIZE = 224
-MODEL = 'mobilenet'
+MODEL = 'vgg16'
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/pt')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt-vgg16-2')
 eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ class DataseriesLoader(Dataset):
                     A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
                     A.RandomRotate90(),
                     # A.Transpose(),
-                    A.ShiftScaleRotate(shift_limit=0.05, rotate_limit=270, border_mode=cv2.BORDER_CONSTANT, p=1),
+                    A.ShiftScaleRotate(shift_limit=0.05, rotate_limit=180, border_mode=cv2.BORDER_CONSTANT, p=1),
                     A.Perspective(scale=(0, 0)),
                     # A.Affine(shear=(-20, 20))
                     A.ColorJitter(hue=0.8),
@@ -163,7 +163,7 @@ def get_model():
                 return x
         model = SimpleCNN()
     elif MODEL == 'vgg16':
-        vgg16 = models.vgg16(weights=models.MobileNet_V2_Weights.DEFAULT)
+        vgg16 = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
         vgg16 = vgg16.features
         class CustomVGG16Head(nn.Module):
             def __init__(self, num_keypoints):
@@ -324,7 +324,7 @@ model = get_model().to(DEVICE)
 summary(model, input_size=(3, IMG_SIZE, IMG_SIZE))
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 #optimizer = torch.optim.SGD(model.parameters(), lr=1e-3, momentum=0.95, weight_decay=0.001)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.2)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.5)
 loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
 metrics = [loss_mse, loss_repulsion]
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
