@@ -1087,9 +1087,32 @@ Since a minimal approach did not lead to satisfactory results, I switched to usi
 
 \subsubsection{Mask Interpretation}
 
-% TODO: Point mapping accuracy in good/bad cases and show one good and one bad case 
+\begin{figure}
+  \centering
+  \subcaptionbox{Harris Corner Ouput}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_8_pred_corners}}
+  \subcaptionbox{Rectangle prediction on the input image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_8_pred_rect}}
+  \subcaptionbox{Harris Corner Ouput}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_10_pred_corners}}
+  \subcaptionbox{Rectangle prediction on the input image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_10_pred_rect}}
+  \subcaptionbox{Harris Corner Ouput}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_6_pred_corners}}
+  \subcaptionbox{Rectangle prediction on the input image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_6_pred_rect}}
+  \caption{Examples of the segmentation mask interpretation output}
+  \label{fig:segpet_rect_interp}
+\end{figure}
 
+For the mask interpretation I use the Harris corner detector. Afterwards each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$ and finally the length of $\overline{BA}$ and $\overline{BC}$. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \autoref{fig:segpet_rect_interp}.
+
+% TODO: Point mapping accuracy in good/bad cases and show one good and one bad case 
 % For eval: 75% of point order assessments correct
+
+\subsection{Point Sorting}
+
+For now the different approaches only output points. However to detect how the marker lies in 3D space, it is also nessecary to sort the points based on the rotation of the marker. 
 
 \chapter{Evaluation}
 \label{chap:eval}
