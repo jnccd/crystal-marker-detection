@@ -65,23 +65,21 @@ def main():
                     ba = diff(corners[a],corners[b])
                     bc = diff(corners[c],corners[b])
                     dot_prod = dot_product(ba, bc)
-                    angle_score = dot_prod * 0.001
+                    angle_score = (dot_prod if dot_prod > 0 else -dot_prod) * 0.005
                     
                     # Distances similarity check
                     distance_rato = distance(corners[a],corners[b]) / distance(corners[b],corners[c])
                     if distance_rato > 1:
                         distance_rato = 1 / distance_rato
-                    distance_rato_score = (1-distance_rato) * 10
+                    distance_rato_score = (1-distance_rato) * 20
                     
                     # Size 
                     size = distance(corners[a],corners[b]) * distance(corners[b],corners[c])
-                    size_score = (1 / size) * 40_000
+                    size_score = (1 / size) * 10_000
                     
                     # Get score
                     score = angle_score + distance_rato_score + size_score
                     print(f'score {score}, \t{angle_score}, {distance_rato_score}, {size_score}')
-                    if score < 0:
-                        score = -score
                     markery_corners.append((score, a,b,c))
         best_corners = sorted(markery_corners, key = lambda x: x[0])[0]
         print(f'best_corners: {best_corners}')
