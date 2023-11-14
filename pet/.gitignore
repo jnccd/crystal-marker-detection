@@ -1,5 +1,6 @@
 *.png
 *.h5
 *.pt
+*.txt
 
 output/tf-seg/*
