@@ -26,7 +26,7 @@ from torch.nn import functional as F
 
 from utils import *
 
-EPOCHS = 400
+EPOCHS = 100
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
