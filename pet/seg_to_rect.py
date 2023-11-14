@@ -120,6 +120,7 @@ def main():
         inv_res_marker_img = cv2.bitwise_not(res_marker_img)
         min_diff = 9999999
         min_i = 0
+        concat_imgs = []
         for i, marker_rot in enumerate([None, cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE]):
             rot_marker_area_img = cv2.rotate(marker_area_img, marker_rot) if marker_rot is not None else marker_area_img
             
@@ -134,9 +135,12 @@ def main():
                 min_i = i
             
             print(mdiff, i, min_i, marker_img_diff_sum, inv_marker_img_diff_sum)
-            cv2.imshow('image', cv2.hconcat([rot_marker_area_img, res_marker_img, marker_img_diff, inv_marker_img_diff]))
+            concat_img = cv2.hconcat([res_marker_img, rot_marker_area_img, marker_img_diff])
+            concat_imgs.append(concat_img)
+            cv2.imshow('image', concat_img)
             if cv2.waitKey(0) & 0xFF == ord('q'):
                 break
+        cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_roll_compare.png'), cv2.vconcat(concat_imgs))
             
         # Fix point order
         corners = np.roll(corners, min_i, axis=0)
