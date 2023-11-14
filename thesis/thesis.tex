@@ -1065,11 +1065,25 @@ The learn rate used here starts at $0.001$ and decays every $100$ epochs by a fa
   \label{fig:pet_rot_example}
 \end{figure}
 
-The loss used here was \ac{MSE} loss at first, which is the standard for keypoint detection. However the loss stayed high and the training was prone to overfitting. Afterwards I switched to sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike \ac{MSE} works with any permutation of points. Removing the requirement of getting the right point order from the network improved the loss. The outputs now predicted the position of markers in the validation data well. However the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}.
+The loss used here was \ac{MSE} loss at first, which is the standard for keypoint detection. However the loss stayed high and the training was prone to overfitting. Afterwards I switched to sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike \ac{MSE} works with any permutation of points. Removing the requirement of getting the right point order from the network improved the loss. The outputs now predicted the position of markers in the validation data well. However the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
 
 \subsection{Segmentation Approach}
 
-Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The used here instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore there is extra logic required for interpreting the segmentation mask. Nonetheless, the prediction results of rotated markers fit closer to the marker corners, as seen in \autoref{}. 
+\begin{figure}
+  \centering
+  \subcaptionbox{Validation data}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_1_in}}
+  \subcaptionbox{Predictions on validation data}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_1_pred}}
+  \subcaptionbox{Validation data}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_3_in}}
+  \subcaptionbox{Predictions on validation data}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_3_pred}}
+  \caption{Examples of segmentation approach output}
+  \label{fig:segpet_preds_example}
+\end{figure}
+
+Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The used here instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore there is extra logic required for interpreting the segmentation mask. Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \autoref{fig:segpet_preds_example}. 
 
 \subsubsection{Mask Interpretation}
 
