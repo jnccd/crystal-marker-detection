@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 import random
 import cv2
@@ -26,26 +27,76 @@ def main():
         gray = np.float32(gray)
         
         # Get corners
-        dst = cv2.cornerHarris(gray,17,9,0.04)
+        dst = cv2.cornerHarris(gray,11,7,0.04)
         ret, dst = cv2.threshold(dst,0.1*dst.max(),255,0)
         dst = np.uint8(dst)
         ret, labels, stats, centroids = cv2.connectedComponentsWithStats(dst)
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
         corners: np.ndarray = cv2.cornerSubPix(gray,np.float32(centroids),(5,5),(-1,-1),criteria)
         pred_img[dst>0.1*dst.max()]=[0,0,255]
+        for corner in corners:
+            cv2.circle(pred_img, (int(corner[0]), int(corner[1])), 5, (0,255,0))
         cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_corners.png'), pred_img)
-        if cv2.waitKey(0) & 0xFF == ord('q'):
-            break
         
-        if len(corners) != 5:
-            continue
+        # --- Get best corner combination
+        def distance(p1, p2):
+            return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
+        def add(p1, p2):
+            return (p1[0] + p2[0], p1[1] + p2[1])
+        
+        def diff(p1, p2):
+            return (p1[0] - p2[0], p1[1] - p2[1])
+        
+        def dot_product(p1, p2):
+            return p1[0] * p2[0] + p1[1] * p2[1]
+
+        # Group and get most markery corners
+        corners = corners[1:, :]
+        print(f'pre corners: {corners}')
+        markery_corners = []
+        for a in range(len(corners)):
+            for b in [x for x in range(len(corners)) if x != a]:
+                for c in [x for x in range(len(corners)) if x != a and x != b]:
+                    # print(a,b,c)
+                    # print(corners[a], corners[b], corners[c])
+                    
+                    # Angle check
+                    ba = diff(corners[a],corners[b])
+                    bc = diff(corners[c],corners[b])
+                    dot_prod = dot_product(ba, bc)
+                    angle_score = dot_prod * 0.001
+                    
+                    # Distances similarity check
+                    distance_rato = distance(corners[a],corners[b]) / distance(corners[b],corners[c])
+                    if distance_rato > 1:
+                        distance_rato = 1 / distance_rato
+                    distance_rato_score = (1-distance_rato) * 10
+                    
+                    # Size 
+                    size = distance(corners[a],corners[b]) * distance(corners[b],corners[c])
+                    size_score = (1 / size) * 40_000
+                    
+                    # Get score
+                    score = angle_score + distance_rato_score + size_score
+                    print(f'score {score}, \t{angle_score}, {distance_rato_score}, {size_score}')
+                    if score < 0:
+                        score = -score
+                    markery_corners.append((score, a,b,c))
+        best_corners = sorted(markery_corners, key = lambda x: x[0])[0]
+        print(f'best_corners: {best_corners}')
+        best_corners_resolved = [corners[best_corners[1]], corners[best_corners[2]], corners[best_corners[3]]]
+        best_corners_resolved_bc = best_corners_resolved[2] - best_corners_resolved[1]
+        best_corners_resolved.append(add(best_corners_resolved[0], best_corners_resolved_bc))
+        corners = np.array(best_corners_resolved)
+        # ---
         
         # Swap last 2 corners and delete first entry
-        print(corners.shape)
-        corners = corners[1:, :]
-        swap = corners[2].copy()
-        corners[2] = corners[3].copy()
-        corners[3] = swap
+        # print(corners.shape)
+        # corners = corners[1:, :]
+        # swap = corners[2].copy()
+        # corners[2] = corners[3].copy()
+        # corners[3] = swap
         # print corners
         print(f'---{pred_img_path.stem}-----------')
         for c in corners:
