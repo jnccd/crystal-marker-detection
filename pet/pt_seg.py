@@ -26,7 +26,7 @@ from torch.nn import functional as F
 
 from utils import *
 
-EPOCHS = 300
+EPOCHS = 400
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
@@ -54,12 +54,12 @@ class DataseriesLoader(Dataset):
         if aug:
             self.transform = A.Compose([
                     A.Resize(IMG_SIZE, IMG_SIZE, always_apply=True),
-                    A.RandomRotate90(),
+                    #A.RandomRotate90(),
                     # A.Transpose(),
-                    A.ShiftScaleRotate(shift_limit=0.05, rotate_limit=270, border_mode=cv2.BORDER_CONSTANT, p=1),
-                    A.Perspective(scale=(0, 0)),
+                    A.ShiftScaleRotate(shift_limit=0.05, rotate_limit=180, scale_limit=0.1, border_mode=cv2.BORDER_CONSTANT, p=1),
+                    #A.Perspective(),
                     # A.Affine(shear=(-20, 20))
-                    A.ColorJitter(hue=0.8),
+                    A.ColorJitter(),
                 ],
             )
         else:
