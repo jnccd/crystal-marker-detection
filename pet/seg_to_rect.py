@@ -33,6 +33,9 @@ def main():
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
         corners: np.ndarray = cv2.cornerSubPix(gray,np.float32(centroids),(5,5),(-1,-1),criteria)
         pred_img[dst>0.1*dst.max()]=[0,0,255]
+        cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_corners.png'), pred_img)
+        if cv2.waitKey(0) & 0xFF == ord('q'):
+            break
         
         if len(corners) != 5:
             continue
@@ -44,7 +47,7 @@ def main():
         corners[2] = corners[3].copy()
         corners[3] = swap
         # print corners
-        print('--------------')
+        print(f'---{pred_img_path.stem}-----------')
         for c in corners:
             print(c)
         
