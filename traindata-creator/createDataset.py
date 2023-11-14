@@ -394,7 +394,7 @@ def build_pet_dataset(in_imgs, target_polys):
         for data in shuffled_group_data:
             cv2.imwrite(str(dir[group] / data[0]), data[1])
             write_textfile(data[2], dir[group] / data[3])
-            cv2.imwrite(str(dir[group] / data[5]), data[4])
+            #cv2.imwrite(str(dir[group] / data[5]), data[4])
         
         i += len(in_imgs[group])
         
