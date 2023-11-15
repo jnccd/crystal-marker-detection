@@ -1065,7 +1065,7 @@ The learn rate used here starts at $0.001$ and decays every $100$ epochs by a fa
   \label{fig:pet_rot_example}
 \end{figure}
 
-The loss used here was \ac{MSE} loss at first, which is the standard for keypoint detection. However the loss stayed high and the training was prone to overfitting. Afterwards I switched to sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike \ac{MSE} works with any permutation of points. Removing the requirement of getting the right point order from the network improved the loss. The outputs now predicted the position of markers in the validation data well. However the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
+The loss used here was \ac{MSE} loss at first, which is the standard for keypoint detection. However the loss stayed high and the training was prone to overfitting. Afterwards I switched to Sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike \ac{MSE} works with any permutation of points. Removing the requirement of getting the right point order from the network improved the loss. The outputs now predicted the position of markers in the validation data well. However the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
 
 \subsection{Segmentation Approach}
 
@@ -1150,6 +1150,19 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 \section{Augmenting from Optimum}
 
 \section{Point Detection}
+
+\begin{table}
+  \begin{tabular}{ c c }
+   Approach & Sinkhorn Loss \\ 
+   \hline
+   Mobilenet with custom 2 linear layer head & 469.87 \\
+   Mobilenet with custom 3 linear layer head & 454.20 \\
+   VGG16 with custom head & 470.69 \\
+   Harris corner interpretation of U-Net masks & 382.75 \\
+   \hline
+  \end{tabular}
+  \caption{\label{tab:pet_valdata_results}Results of Sinkhorn loss comparison on validation data for different point detection approaches}
+\end{table}
 
 \section{Discussion}
 
