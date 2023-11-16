@@ -13,12 +13,12 @@ from evaluation.utility import *
 # epochs = 368
 
 # --- Basic ensemble
-# opt_aug_params = " "
-# epochs = 300
+opt_aug_params = " "
+epochs = 300
 
 # --- After yolov5s aug hyp opt 2
-opt_aug_params = "-asgsc 0.008982257070160649 -apldc 0.9450952906618159 -apc 0.6573674532026004 -aps 0.2804576787977128 -arc 0.5427787640299094 -ars 324.55179667010617 -andrc 0.6035650010036894 -arcc 0.6817057409388554 -arc2c 0.39548280581255923 -almc 0.4601560149315024 -alm2c 0.03810201058767085 -abdc 0.770387100335939 -alcc 0.5298416478024052 -agnc 0.5099200084102142 -agns 22.830199041806175"
-epochs = 347
+# opt_aug_params = "-asgsc 0.008982257070160649 -apldc 0.9450952906618159 -apc 0.6573674532026004 -aps 0.2804576787977128 -arc 0.5427787640299094 -ars 324.55179667010617 -andrc 0.6035650010036894 -arcc 0.6817057409388554 -arc2c 0.39548280581255923 -almc 0.4601560149315024 -alm2c 0.03810201058767085 -abdc 0.770387100335939 -alcc 0.5298416478024052 -agnc 0.5099200084102142 -agns 22.830199041806175"
+# epochs = 347
 
 docker_image = 'ncarstensen/pcmd:0.13'
 def aug_ensemble_workflow(aug_token: str, aug_name: str, aug_arg: str):
@@ -26,8 +26,8 @@ def aug_ensemble_workflow(aug_token: str, aug_name: str, aug_arg: str):
     other_aug_params_list = list(filter(lambda x: x[0] != f'-{aug_arg}', unflatten(opt_aug_params.split(' '), 2)))
     other_aug_params_str = ' '.join(flatten(other_aug_params_list))
     
-    train_folder = f'/data/pcmd/training/_augments-hypsear-params-sahi-ensemble-2/yolov5s-{aug_token}-ensemble/'
-    plot_name = f'hyperparameter-search-based-{aug_token}-sahi-ensemble-2'
+    train_folder = f'/data/pcmd/training/_augments-zero-sahi-ensemble-2/yolov5s-{aug_token}-ensemble/'
+    plot_name = f'zero-based-{aug_token}-sahi-ensemble-2'
     
     os.system(f'with_gpu -n 1 sudo mip-docker-run --gpus \'"device=$CUDA_VISIBLE_DEVICES"\' {docker_image} python mip_create_ensemble_datasets.py -n gpv2-{aug_token} -op "-tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2 -t yolov5 -s 640 {other_aug_params_str} -{aug_arg}"')
     os.system(f'python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-ensemble-gpv2-{aug_token}/ -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -e {epochs} -snr -us -o {train_folder}"')
@@ -36,12 +36,12 @@ def aug_ensemble_workflow(aug_token: str, aug_name: str, aug_arg: str):
     
 os.system(f'bash mip_worker_await.sh')
 
+aug_ensemble_workflow(aug_token='sgs', aug_name='smart grid shuffling', aug_arg='asgsc')
 aug_ensemble_workflow(aug_token='rc', aug_name='random crop', aug_arg='arcc')
 aug_ensemble_workflow(aug_token='rc2', aug_name='random crop v2', aug_arg='arc2c')
 aug_ensemble_workflow(aug_token='bd', aug_name='black dot', aug_arg='abdc')
 aug_ensemble_workflow(aug_token='persp', aug_name='perspective', aug_arg='apc')
 aug_ensemble_workflow(aug_token='rot', aug_name='rotation', aug_arg='arc')
-aug_ensemble_workflow(aug_token='sgs', aug_name='smart grid shuffling', aug_arg='asgsc')
 aug_ensemble_workflow(aug_token='gn', aug_name='gauss noise', aug_arg='agnc')
 aug_ensemble_workflow(aug_token='ld', aug_name='label dropout', aug_arg='apldc')
 aug_ensemble_workflow(aug_token='ndr', aug_name='ninety deg rotation', aug_arg='andrc')
