@@ -174,7 +174,9 @@ This algorithm is however based on the assumption that the marker contour is alw
 
 \section{Albumentations}
 
-Albumentations is a popular Python library for image augmentation, primarily designed for use in computer vision and deep learning tasks \cite{info11020125}. Image augmentation is a technique used to artificially expand a dataset by applying various transformations to the existing images. This helps improve the performance and generalization of machine learning models, especially in scenarios where the training data is limited.
+Albumentations is a Python library for image augmentation \cite{info11020125}. Image augmentation is a technique used to artificially expand a dataset by applying various transformations to the existing images. This helps improve the performance and generalization of machine learning models, especially in scenarios where the training data is limited. 
+
+Albumentations was primarily build for high performance, such that its usage in dataloaders does not slow down the training process \cite{info11020125}. It transforms the image, as well as keypoint, bounding box and mask labels of the training sample, if the selected augmentation transformations support the label format. 
 
 \section{Pytorch}
 
