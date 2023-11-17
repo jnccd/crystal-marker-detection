@@ -1,7 +1,9 @@
+import math
 from pathlib import Path
 import random
 import cv2
 import numpy as np
+from shapely import box, LineString, normalize, Polygon, intersection
 
 from utils import *
 
@@ -9,7 +11,7 @@ def main():
     root_dir = Path(__file__).resolve().parent
     output_folder = create_dir_if_not_exists(root_dir / 'output/pt-seg')
     eval_folder = create_dir_if_not_exists(output_folder / 'eval')
-    to_rect_output_folder = create_dir_if_not_exists(root_dir / 'output/to-rect-2')
+    to_rect_output_folder = create_dir_if_not_exists(root_dir / 'output/to-rect')
     marker_img_path = root_dir / 'assets/in-img-marker.png'
     
     marker_img = cv2.imread(str(marker_img_path),0)
@@ -23,32 +25,42 @@ def main():
         pred_img_h, pred_img_w = pred_img.shape[:2]
         
         gray = cv2.cvtColor(pred_img, cv2.COLOR_BGR2GRAY)
-        gray = np.float32(gray)
         
-        # Get corners
-        dst = cv2.cornerHarris(gray,17,9,0.04)
-        ret, dst = cv2.threshold(dst,0.1*dst.max(),255,0)
-        dst = np.uint8(dst)
-        ret, labels, stats, centroids = cv2.connectedComponentsWithStats(dst)
-        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
-        corners: np.ndarray = cv2.cornerSubPix(gray,np.float32(centroids),(5,5),(-1,-1),criteria)
-        pred_img[dst>0.1*dst.max()]=[0,0,255]
-        
-        cv2.imshow('image', pred_img)
-        if cv2.waitKey(0) & 0xFF == ord('q'):
-            break
-        
-        if len(corners) != 5:
+        # Canny Edge
+        (T, img_thresh) = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
+        img_edges = cv2.Canny(img_thresh, 50, 300, None, 5)
+        # Prevent canny from predicting edges near image edge
+        edge_border_size_x = int(in_img_w/8)
+        edge_border_size_y = int(in_img_h/8)
+        img_edges = cv2.rectangle(img_edges, (0, 0), (edge_border_size_x, in_img_h), (0,0,0), thickness=-1)
+        img_edges = cv2.rectangle(img_edges, (0, 0), (in_img_w, edge_border_size_y), (0,0,0), thickness=-1)
+        img_edges = cv2.rectangle(img_edges, (in_img_w - edge_border_size_x, 0), (in_img_w, in_img_h), (0,0,0), thickness=-1)
+        img_edges = cv2.rectangle(img_edges, (0, in_img_h - edge_border_size_y), (in_img_w, in_img_h), (0,0,0), thickness=-1)
+        # ---
+        cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_canny_edges.png'), img_edges)
+        cv2.imshow('image',img_edges)
+        cv2.waitKey(0)
+        # Hough Transform
+        linesP = cv2.HoughLinesP(img_edges, 1, np.pi / 40, 20, None, 1, 10)
+        img_draw = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+        if linesP is not None:
+            print(f"Found {len(linesP)} lines")
+            for i in range(0, len(linesP)):
+                l = linesP[i][0]
+                cv2.line(img_draw, (l[0], l[1]), (l[2], l[3]), (0,255,255), 1, cv2.LINE_AA)
+        else:
             continue
+        cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_hough_lines.png'), img_draw)
+        cv2.imshow('image',img_draw)
+        cv2.waitKey(0)
         
-        # Swap last 2 corners and delete first entry
-        print(corners.shape)
-        corners = corners[1:, :]
-        swap = corners[2].copy()
-        corners[2] = corners[3].copy()
-        corners[3] = swap
-        # print corners
-        print('--------------')
+        # Interpret Hough Lines (TODO)
+        print(f"lines: {linesP}")
+        
+        corners = []
+        
+        print(corners)
+        print(f'---{pred_img_path.stem}-----------')
         for c in corners:
             print(c)
         
@@ -64,14 +76,15 @@ def main():
         dest_rect = corners
         hi, status = cv2.findHomography(dest_rect, src_rect)
         marker_area_img = cv2.warpPerspective(in_image_t, hi, (in_img_w, in_img_h))
-        cv2.imshow('image', marker_area_img)
-        if cv2.waitKey(0) & 0xFF == ord('q'):
-            break
+        # cv2.imshow('image', marker_area_img)
+        # if cv2.waitKey(0) & 0xFF == ord('q'):
+        #     break
         # Compare markers
         res_marker_img = cv2.resize(marker_img, marker_area_img.shape[:2], interpolation=cv2.INTER_NEAREST_EXACT)
         inv_res_marker_img = cv2.bitwise_not(res_marker_img)
         min_diff = 9999999
         min_i = 0
+        concat_imgs = []
         for i, marker_rot in enumerate([None, cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE]):
             rot_marker_area_img = cv2.rotate(marker_area_img, marker_rot) if marker_rot is not None else marker_area_img
             
@@ -86,9 +99,12 @@ def main():
                 min_i = i
             
             print(mdiff, i, min_i, marker_img_diff_sum, inv_marker_img_diff_sum)
-            cv2.imshow('image', cv2.hconcat([rot_marker_area_img, res_marker_img, marker_img_diff, inv_marker_img_diff]))
-            if cv2.waitKey(0) & 0xFF == ord('q'):
-                break
+            concat_img = cv2.hconcat([res_marker_img, rot_marker_area_img, marker_img_diff])
+            concat_imgs.append(concat_img)
+            # cv2.imshow('image', concat_img)
+            # if cv2.waitKey(0) & 0xFF == ord('q'):
+            #     break
+        cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_roll_compare.png'), cv2.vconcat(concat_imgs))
             
         # Fix point order
         corners = np.roll(corners, min_i, axis=0)
@@ -103,6 +119,7 @@ def main():
         for i, pt in enumerate(pts):
             in_image_grgb = cv2.putText(in_image_grgb, str(i), pt, cv2.FONT_HERSHEY_SIMPLEX, 1, 
                   (0,0,255), 2, cv2.LINE_AA, False)
+        write_textfile(str([(x[0], x[1]) for x in corners]), to_rect_output_folder / f'{pred_img_path.stem}_p.txt')
         cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_rect.png'), in_image_grgb)
         cv2.imshow('image', in_image_grgb)
         if cv2.waitKey(0) & 0xFF == ord('q'):
