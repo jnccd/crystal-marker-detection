@@ -3,9 +3,18 @@ from pathlib import Path
 import random
 import cv2
 import numpy as np
-from shapely import box, LineString, normalize, Polygon, intersection
+from shapely import box, LineString, normalize, Polygon, Point, intersection, intersection_all
 
 from utils import *
+
+def eelongate(l: LineString, mult: float):
+    x, y = l.xy
+    x_diff = x[1] - x[0]
+    y_diff = y[1] - y[0]
+    return LineString([(x[0] - x_diff * mult, y[0] - y_diff * mult), (x[1] + x_diff * mult, y[1] + y_diff * mult)])
+
+def distance(p1, p2):
+    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
 
 def main():
     root_dir = Path(__file__).resolve().parent
@@ -50,14 +59,56 @@ def main():
                 cv2.line(img_draw, (l[0], l[1]), (l[2], l[3]), (0,255,255), 1, cv2.LINE_AA)
         else:
             continue
+        # Visualize Lines
         cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_hough_lines.png'), img_draw)
         cv2.imshow('image',img_draw)
         cv2.waitKey(0)
         
-        # Interpret Hough Lines (TODO)
-        print(f"lines: {linesP}")
+        if len(linesP) < 4:
+            print('not enough lines :c')
+            continue
         
-        corners = []
+        # Interpret Hough Lines
+        print(f"lines: {linesP}")
+        shapely_lines = [LineString([(l[0][0], l[0][1]), (l[0][2], l[0][3])]) for l in linesP]
+        # # Take 4 longest
+        # shapely_lines = sorted(shapely_lines, key=lambda x: -x.length)
+        # shapely_lines = shapely_lines[:4]
+        # Make longer
+        shapely_lines = [eelongate(x, 5) for x in shapely_lines]
+        print(shapely_lines)
+        # Get intersects
+        intersect_points = []
+        for i in range(len(shapely_lines)):
+            for j in range(i + 1, len(shapely_lines)):
+                intersect = intersection(shapely_lines[i], shapely_lines[j])
+                print(f"intersect {intersect}, {intersect.geom_type}")
+                if str(intersect.geom_type) == 'Point': # Yes, this is the best way to check the type
+                    #print('is pooint')
+                    intersect: Point = intersect # Linting C:
+                    intersect_points.append((intersect.centroid.x, intersect.centroid.y))
+        print(f'intersect_points {intersect_points}')
+        # Remove intersect duplicates 
+        i = 0
+        while i < len(intersect_points):
+            j = i + 1
+            while j < len(intersect_points):
+                if distance(intersect_points[i], intersect_points[j]) < 5:
+                    intersect_points.pop(j)
+                    j -= 1
+                    if j < i:
+                        i -= 1
+                j += 1
+            i += 1
+        print(f'intersect_points {intersect_points}')
+        # Visualize Intersects
+        for corner in intersect_points:
+            cv2.circle(img_draw, (int(corner[0]), int(corner[1])), 5, (255,0,0))
+        cv2.imshow('image',img_draw)
+        cv2.waitKey(0)
+        # Take 4 intersects closest to middle
+        img_middle_point = (in_img_w/2, in_img_h/2)
+        corners = sorted(intersect_points, key=lambda x: distance(x, img_middle_point))[:4]
         
         print(corners)
         print(f'---{pred_img_path.stem}-----------')
@@ -73,7 +124,7 @@ def main():
         
         # Homography
         src_rect  = np.array([[0, in_img_h, 1], [0, 0, 1], [in_img_w, 0, 1], [in_img_w, in_img_h, 1]])
-        dest_rect = corners
+        dest_rect = np.array([(int(x[0]), int(x[1])) for x in corners])
         hi, status = cv2.findHomography(dest_rect, src_rect)
         marker_area_img = cv2.warpPerspective(in_image_t, hi, (in_img_w, in_img_h))
         # cv2.imshow('image', marker_area_img)
