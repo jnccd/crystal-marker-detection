@@ -8,7 +8,7 @@ root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-input_folder = create_dir_if_not_exists(root_dir / 'output/to-rect')
+input_folder = create_dir_if_not_exists(root_dir / 'output/to-rect-lines')
 eval_folder = create_dir_if_not_exists(input_folder / 'eval')
 
 loss = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
