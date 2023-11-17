@@ -1001,7 +1001,7 @@ s(w,h)=
 
 \subsection{Fusion Inference}
 
-As an post processing step that works with multiple finished training runs, the \texttt{fusion\_inference} script combines the predictions of these training runs similarly to \ac{SAHI}. However here the output of the whole image from different fitted models is combined into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}.
+The \texttt{fusion\_inference} script combines the predictions of multiple finished training runs as a post processing step. In comparison to \ac{SAHI}, \texttt{fusion\_inference} combines the output of the whole image from different fitted models is into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}.
 
 % TODO?: \section{Plotting}
 
