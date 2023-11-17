@@ -16,11 +16,23 @@ def eelongate(l: LineString, mult: float):
 def distance(p1, p2):
     return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
 
+def add(p1, p2):
+    return (p1[0] + p2[0], p1[1] + p2[1])
+
+def diff(p1, p2):
+    return (p1[0] - p2[0], p1[1] - p2[1])
+
+def scalar_mult(p, s):
+    return (p[0] * s, p[1] * s)
+
+def dot_product(p1, p2):
+    return p1[0] * p2[0] + p1[1] * p2[1]
+
 def main():
     root_dir = Path(__file__).resolve().parent
     output_folder = create_dir_if_not_exists(root_dir / 'output/pt-seg')
     eval_folder = create_dir_if_not_exists(output_folder / 'eval')
-    to_rect_output_folder = create_dir_if_not_exists(root_dir / 'output/to-rect')
+    to_rect_output_folder = create_dir_if_not_exists(root_dir / 'output/to-rect-lines')
     marker_img_path = root_dir / 'assets/in-img-marker.png'
     
     marker_img = cv2.imread(str(marker_img_path),0)
@@ -56,7 +68,7 @@ def main():
             print(f"Found {len(linesP)} lines")
             for i in range(0, len(linesP)):
                 l = linesP[i][0]
-                cv2.line(img_draw, (l[0], l[1]), (l[2], l[3]), (0,255,255), 1, cv2.LINE_AA)
+                cv2.line(img_draw, (l[0], l[1]), (l[2], l[3]), (0,0,255), 1, cv2.LINE_AA)
         else:
             continue
         # Visualize Lines
@@ -106,9 +118,50 @@ def main():
             cv2.circle(img_draw, (int(corner[0]), int(corner[1])), 5, (255,0,0))
         cv2.imshow('image',img_draw)
         cv2.waitKey(0)
-        # Take 4 intersects closest to middle
+        # Group and get most markery Intersects
+        corners = np.array(intersect_points)
+        print(f'pre corners: {corners}')
         img_middle_point = (in_img_w/2, in_img_h/2)
-        corners = sorted(intersect_points, key=lambda x: distance(x, img_middle_point))[:4]
+        markery_corners = []
+        for a in range(len(corners)):
+            for b in [x for x in range(len(corners)) if x != a]:
+                for c in [x for x in range(len(corners)) if x != a and x != b]:
+                    # print(a,b,c)
+                    # print(corners[a], corners[b], corners[c])
+                    
+                    # Angle check
+                    ba = diff(corners[a],corners[b])
+                    bc = diff(corners[c],corners[b])
+                    dot_prod = dot_product(ba, bc)
+                    angle_score = (dot_prod if dot_prod > 0 else -dot_prod) * 0.002
+                    
+                    # Distances similarity check
+                    distance_rato = distance(corners[a],corners[b]) / distance(corners[b],corners[c])
+                    if distance_rato > 1:
+                        distance_rato = 1 / distance_rato
+                    distance_rato_score = (1-distance_rato) * 40
+                    
+                    # Size 
+                    size = distance(corners[a],corners[b]) * distance(corners[b],corners[c])
+                    size_score = (1 / size) * 10_000
+                    
+                    # Middles Distance
+                    #print(add(corners[a], scalar_mult(diff(corners[c], corners[a]), 0.5)))
+                    middles_distance = distance(
+                        add(corners[a], scalar_mult(diff(corners[c], corners[a]), 0.5)), # Approx rect middle
+                        img_middle_point)
+                    middles_distance_score = middles_distance * 0.05
+                    
+                    # Get score
+                    score = angle_score + distance_rato_score + size_score + middles_distance_score
+                    print(f'score {score}, \t{angle_score}, {distance_rato_score}, {size_score}, {middles_distance_score}')
+                    markery_corners.append((score, a,b,c))
+        best_corners = sorted(markery_corners, key = lambda x: x[0])[0]
+        print(f'best_corners: {best_corners}')
+        best_corners_resolved = [corners[best_corners[1]], corners[best_corners[2]], corners[best_corners[3]]]
+        best_corners_resolved_bc = best_corners_resolved[2] - best_corners_resolved[1]
+        best_corners_resolved.append(add(best_corners_resolved[0], best_corners_resolved_bc))
+        corners = np.array(best_corners_resolved)
         
         print(corners)
         print(f'---{pred_img_path.stem}-----------')
