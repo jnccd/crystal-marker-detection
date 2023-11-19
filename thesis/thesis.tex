@@ -1023,7 +1023,7 @@ This section describes the development of the second part of the inference. Afte
 
 For this approach I mainly used a MobileNetV2 as base, since this part should also be lightweight, and added custom head layers to the network architecture. For testing of larger models I also tested a VGG16 \ac{CNN} as the base network architecture. The custom head outputs eight numbers which are interpreted as the x- and y-coordinates of the 4 corners points of the marker. I tested different head architectures, such as a fully convolutional head, a two linear layer head and a three linear layer head.
 
-The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoint label. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation, to simulate different situations in real world data.
+The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoints label. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation, to simulate different situations in real world data.
 
 The learn rate used here starts at $0.001$ and decays every $100$ epochs by a factor $0.2$. 
 
