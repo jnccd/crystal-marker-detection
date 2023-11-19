@@ -1154,16 +1154,17 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 \section{Point Detection}
 
 \begin{table}
-  \begin{tabular}{ c c }
-   Approach & Sinkhorn Loss \\ 
+  \begin{tabular}{ c c c }
+   Approach & Mean Point Distance & Sinkhorn Loss \\ 
    \hline
-   MobilenetV2 with custom 2 linear layer head & 469.87 \\
-   MobilenetV2 with custom 3 linear layer head & 454.20 \\
-   VGG16 with custom head & 470.69 \\
-   Harris corner interpretation of U-Net masks & 382.75 \\
+   MobilenetV2 with custom 2 linear layer head & 15.83 & 169.16 \\
+   MobilenetV2 with custom 3 linear layer head & 25.46 & 457.67 \\
+   VGG16 with custom head & 27.34 & 506.89 \\
+   Harris corner based interpretation of U-Net masks & 29.54 & 382.75 \\
+   Hough lines based interpretation of U-Net masks & 25.64 & 345.99 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Results of Sinkhorn loss comparison on validation data for different point detection approaches}
+  \caption{\label{tab:pet_valdata_results}Comparison of lowewst achieved Sinkhorn loss and mean point distance on validation data for different point detection approaches}
 \end{table}
 
 \section{Discussion}
