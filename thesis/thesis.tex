@@ -1019,55 +1019,26 @@ To find an optimal combination of augmentations from the implemented ones, a hyp
 
 This section describes the development of the second part of the inference. After the areas of interest were found by the model which works on the whole image, this part finds the corner points of the marker within that area of interest.
 
-\subsection{Data}
-
-For the training of models of this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
-
-\begin{figure}
-  \caption{Addition of new dataset types for point detection training}
-  \includegraphics[width=0.6\textwidth]{graph/arch_data_pet_focus}
-  \label{fig:arch_data_pet_focus}
-\end{figure}
-
-Furthermore, since I annotated multiple markers in each image and I only need one image per label, I added new dataset types to the data pipeline, as seen in \autoref{fig:arch_data_pet_focus}. 
-
-A Pet dataset contains a image and point label pair for each label that was in the source images. During export to a pet dataset, the area around the labels polygon is cut out of the image and resized to a set size for each label. Afterwards the polygons vertices are also transformed onto the new images coordinate system and written into a file. 
-
-\begin{figure}
-  \centering
-  \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_in}}
-  \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_seg}}
-  \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_in}}
-  \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_seg}}
-  \caption{Example of segpet training images and their masks}
-  \label{fig:segpet_example}
-\end{figure}
-
-A SegPet dataset is similar but instead of having the vertex coordinates in a label file, here a mask is build by rasterizing a filled version of the polygon label, as seen in \autoref{fig:segpet_example}.
-
 \subsection{Point Head Approach}
 
-For this approach I used a MobileNetV2 as base, since this part should also be lightweight, and added custom head layers to the network architecture. The custom head outputs eight numbers which are interpreted as the x- and y-coordinates of the 4 corners points of the marker. I tested different head architectures, such as a fully convolutional head. However the lowest loss was achieved with two linear layers.
+For this approach I mainly used a MobileNetV2 as base, since this part should also be lightweight, and added custom head layers to the network architecture. For testing of larger models I also tested a VGG16 \ac{CNN} as the base network architecture. The custom head outputs eight numbers which are interpreted as the x- and y-coordinates of the 4 corners points of the marker. I tested different head architectures, such as a fully convolutional head, a two linear layer head and a three linear layer head.
 
-The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoint label. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation.
+The training dataloader for this approach uses a albumentations augmentation pipeline for the images and keypoint label. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation, to simulate different situations in real world data.
 
-The learn rate used here starts at $0.001$ and decays every $100$ epochs by a factor $0.2$. The total number of epochs is 400.
+The learn rate used here starts at $0.001$ and decays every $100$ epochs by a factor $0.2$. 
 
-\begin{figure}
-  \centering
-  \subcaptionbox{Predictions on validation data}
-     {\includegraphics[width=0.2\textwidth]{image/pet_val_no_rot}}
-  \subcaptionbox{Predictions on rotated validation data}
-     {\includegraphics[width=0.2\textwidth]{image/pet_val_rot}}
-  \caption{Example of keypoint detection output with and without rotated validation data}
-  \label{fig:pet_rot_example}
-\end{figure}
+% \begin{figure}
+%   \centering
+%   \subcaptionbox{Predictions on validation data}
+%      {\includegraphics[width=0.2\textwidth]{image/pet_val_no_rot}}
+%   \subcaptionbox{Predictions on rotated validation data}
+%      {\includegraphics[width=0.2\textwidth]{image/pet_val_rot}}
+%   \caption{Example of keypoint detection output with and without rotated validation data}
+%   \label{fig:pet_rot_example}
+% \end{figure}
 
-The loss used here was \ac{MSE} loss at first, which is the standard for keypoint detection. However the loss stayed high and the training was prone to overfitting. Afterwards I switched to Sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike \ac{MSE} works with any permutation of points. Removing the requirement of getting the right point order from the network improved the loss. The outputs now predicted the position of markers in the validation data well. However the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
+The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike the standard loss for keypoint detection, \ac{MSE}, works with any permutation of points, removing the requirement of getting the right point order from the network. 
+% The outputs predicted the position of markers in the validation data well. However the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
 
 \subsection{Segmentation Approach}
 
@@ -1085,9 +1056,11 @@ The loss used here was \ac{MSE} loss at first, which is the standard for keypoin
   \label{fig:segpet_preds_example}
 \end{figure}
 
-Since a minimal approach did not lead to satisfactory results, I switched to using a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The used here instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore there is extra logic required for interpreting the segmentation mask. Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \autoref{fig:segpet_preds_example}. 
+As an alternative I also tested a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The used here instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore there is extra logic required for interpreting the segmentation mask. 
+%Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \autoref{fig:segpet_preds_example}. 
+Examples for the U-Net output on validation data can be seen in \autoref{fig:segpet_preds_example}. 
 
-\subsubsection{Mask Interpretation}
+\subsubsection{Harris Corner Based Mask Interpretation}
 
 \begin{figure}
   \centering
@@ -1107,10 +1080,14 @@ Since a minimal approach did not lead to satisfactory results, I switched to usi
   \label{fig:segpet_rect_interp}
 \end{figure}
 
-For the mask interpretation I use the Harris corner detector. Afterwards each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$ and finally the length of $\overline{BA}$ and $\overline{BC}$. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \autoref{fig:segpet_rect_interp}. % perspective eischränkung
+Using the output of \acp{OpenCV} implementation of Harris corner detector, each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$ and finally the length of $\overline{BA}$ and $\overline{BC}$. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \autoref{fig:segpet_rect_interp}. It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly, since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However using three points improves the stability, since a whole corner may be misidentified in the segmentation mask.
 
 % TODO: Point mapping accuracy in good/bad cases and show one good and one bad case 
 % For eval: 75% of point order assessments correct
+
+\subsubsection{Hough Lines Based Mask Interpretation}
+
+
 
 \subsection{Point Sorting}
 
@@ -1152,6 +1129,40 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 \section{Augmenting from Optimum}
 
 \section{Point Detection}
+
+\subsection{Data}
+
+For the training of models of this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
+
+\begin{figure}
+  \caption{Addition of new dataset types for point detection training}
+  \includegraphics[width=0.6\textwidth]{graph/arch_data_pet_focus}
+  \label{fig:arch_data_pet_focus}
+\end{figure}
+
+Furthermore, since I annotated multiple markers in each image and I only need one image per label, I added new dataset types to the data pipeline, as seen in \autoref{fig:arch_data_pet_focus}. 
+
+A Pet dataset contains a image and point label pair for each label that was in the source images. During export to a pet dataset, the area around the labels polygon is cut out of the image and resized to a set size for each label. Afterwards the polygons vertices are also transformed onto the new images coordinate system and written into a file. 
+
+\begin{figure}
+  \centering
+  \subcaptionbox{SegPet input image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_in}}
+  \subcaptionbox{SegPet mask image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_seg}}
+  \subcaptionbox{SegPet input image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_in}}
+  \subcaptionbox{SegPet mask image}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_seg}}
+  \caption{Example of segpet training images and their masks}
+  \label{fig:segpet_example}
+\end{figure}
+
+A SegPet dataset is similar but instead of having the vertex coordinates in a label file, here a mask is build by rasterizing a filled version of the polygon label, as seen in \autoref{fig:segpet_example}.
+
+\subsection{Comparison}
+
+As seen in \autoref{tab:pet_valdata_results}, yeah
 
 \begin{table}
   \begin{tabular}{ c c c }
