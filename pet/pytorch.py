@@ -24,13 +24,13 @@ DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
 IMG_SIZE = 224
-MODEL = 'vgg16'
+MODEL = 'mobilenet'
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/pt-vgg166-4')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-lin-2')
 eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
@@ -332,6 +332,7 @@ model_path = output_folder / f'best_{MODEL}.pt'
 
 avg_val_loss = 0.0
 best_vloss = 999_999
+best_mAPD = 999_999
 loss_history = []
 val_loss_history = []
 
@@ -373,6 +374,7 @@ for i_epoch in range(EPOCHS):
     # Validate
     model.eval()
     running_vloss = 0.0
+    running_mAPD = 0.0
     with torch.no_grad():
         for i, val_data in enumerate(val_loader):
             # Get Input
@@ -395,12 +397,14 @@ for i_epoch in range(EPOCHS):
                 val_loss = torch.mean(val_loss)
             
             running_vloss += val_loss
+            running_mAPD += mAPD_2D(val_output.cpu().numpy(), val_labels.cpu().numpy())
     avg_val_loss = running_vloss / (i + 1)
     val_loss_history.append(avg_val_loss.to('cpu').detach().numpy())
     
     # Track best performance, and save the model's state
     if val_loss_history[-1] < best_vloss:
         best_vloss = val_loss_history[-1]
+        best_mAPD = running_mAPD
         torch.save(model.state_dict(), model_path)
 
 if EPOCHS > 2:
@@ -423,6 +427,8 @@ val_loader = DataLoader(
     batch_size=BATCH_SIZE
 )
 val_img_idx = 0
+pds = []
+final_vlosses = []
 with torch.no_grad():
     for i, vdata in enumerate(val_loader):
         val_inputs, val_labels = vdata
@@ -432,6 +438,13 @@ with torch.no_grad():
         val_outputs = model(val_inputs)
         val_outputs = val_outputs.view(-1, NUM_KEYPOINTS, DIM_KEYPOINTS)
         # print(val_inputs.shape, val_outputs.shape, val_labels.shape)
+        
+        val_loss = loss_fn(val_outputs, val_labels)
+        if len(val_loss.shape) != 0:
+            val_loss = torch.mean(val_loss)
+        final_vlosses.append(val_loss.to('cpu').detach().numpy())
+        
+        pds.append(mAPD_2D(val_outputs.cpu().numpy(), val_labels.cpu().numpy()))
        
         for (vii, val_input), (voi, val_outputs), (vli, val_labels) in zip(enumerate(val_inputs), enumerate(val_outputs), enumerate(val_labels)):
             
@@ -457,4 +470,6 @@ with torch.no_grad():
             k = cv2.waitKey(0)
             if k == ord('q'):
                     break
-write_textfile(f'best validation loss: {best_vloss}\n', eval_folder / 'eval.txt')
+eval_text = f'best validation loss: {best_vloss}\nbest mAPD:{best_mAPD}\nfinal_mAPDs: {pds}\nfinal_vlosses: {final_vlosses}', eval_folder / 'eval.txt'
+print(eval_text)
+write_textfile(eval_text)
