@@ -7,27 +7,6 @@ from shapely import box, LineString, normalize, Polygon, Point, intersection, in
 
 from utils import *
 
-def eelongate(l: LineString, mult: float):
-    x, y = l.xy
-    x_diff = x[1] - x[0]
-    y_diff = y[1] - y[0]
-    return LineString([(x[0] - x_diff * mult, y[0] - y_diff * mult), (x[1] + x_diff * mult, y[1] + y_diff * mult)])
-
-def distance(p1, p2):
-    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
-
-def add(p1, p2):
-    return (p1[0] + p2[0], p1[1] + p2[1])
-
-def diff(p1, p2):
-    return (p1[0] - p2[0], p1[1] - p2[1])
-
-def scalar_mult(p, s):
-    return (p[0] * s, p[1] * s)
-
-def dot_product(p1, p2):
-    return p1[0] * p2[0] + p1[1] * p2[1]
-
 def main():
     root_dir = Path(__file__).resolve().parent
     output_folder = create_dir_if_not_exists(root_dir / 'output/pt-seg')

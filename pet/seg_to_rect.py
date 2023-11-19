@@ -39,18 +39,6 @@ def main():
         cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_corners.png'), pred_img)
         
         # --- Get best corner combination
-        def distance(p1, p2):
-            return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
-
-        def add(p1, p2):
-            return (p1[0] + p2[0], p1[1] + p2[1])
-        
-        def diff(p1, p2):
-            return (p1[0] - p2[0], p1[1] - p2[1])
-        
-        def dot_product(p1, p2):
-            return p1[0] * p2[0] + p1[1] * p2[1]
-
         # Group and get most markery corners
         corners = corners[1:, :]
         print(f'pre corners: {corners}')
