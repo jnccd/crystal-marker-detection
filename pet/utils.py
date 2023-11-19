@@ -78,6 +78,7 @@ def dot_product(p1, p2):
 def mAPD_2D(preds_batch: Tensor, gts_batch: Tensor, max_possible_distance: float = 226) -> float:
     
     mPDs = []
+    #print(preds_batch, gts_batch)
     
     for preds, gts in zip(preds_batch, gts_batch):
         mPD_table = []
