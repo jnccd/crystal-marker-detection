@@ -30,7 +30,7 @@ root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-lin-2')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-longer-lin-2')
 eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
@@ -194,14 +194,14 @@ def get_model():
         class CustomHead(nn.Module):
             def __init__(self, in_features, num_classes):
                 super(CustomHead, self).__init__()
-                self.fc = nn.Sequential(
-                    nn.AdaptiveAvgPool2d((1, 1)),
-                    nn.Flatten(),
-                    nn.Linear(in_features, 512),
-                    nn.ReLU(),
-                    #nn.Dropout(0.5),
-                    nn.Linear(512, num_classes),
-                )
+                # self.fc = nn.Sequential(
+                #     nn.AdaptiveAvgPool2d((1, 1)),
+                #     nn.Flatten(),
+                #     nn.Linear(in_features, 512),
+                #     nn.ReLU(),
+                #     #nn.Dropout(0.5),
+                #     nn.Linear(512, num_classes),
+                # )
                 # self.fc = nn.Sequential(
                 #     nn.Conv2d(1280, 320, kernel_size=1),
                 #     nn.BatchNorm2d(320),
@@ -228,15 +228,15 @@ def get_model():
                 #     #nn.Dropout(0.5),
                 #     nn.Linear(128, num_classes),
                 # )
-                # self.fc = nn.Sequential(
-                #     nn.AdaptiveAvgPool2d((1, 1)),
-                #     nn.Flatten(),
-                #     nn.Linear(in_features, 1024),
-                #     nn.ReLU(),
-                #     nn.Linear(1024, 256),
-                #     nn.ReLU(),
-                #     nn.Linear(256, num_classes),
-                # )
+                self.fc = nn.Sequential(
+                    nn.AdaptiveAvgPool2d((1, 1)),
+                    nn.Flatten(),
+                    nn.Linear(in_features, 1024),
+                    nn.ReLU(),
+                    nn.Linear(1024, 256),
+                    nn.ReLU(),
+                    nn.Linear(256, num_classes),
+                )
 
             def forward(self, x):
                 x = self.fc(x)
@@ -470,6 +470,6 @@ with torch.no_grad():
             k = cv2.waitKey(0)
             if k == ord('q'):
                     break
-eval_text = f'best validation loss: {best_vloss}\nbest mAPD:{best_mAPD}\nfinal_mAPDs: {pds}\nfinal_vlosses: {final_vlosses}', eval_folder / 'eval.txt'
+eval_text = f'best validation loss: {best_vloss}\nbest mAPD:{best_mAPD}\nfinal_mAPDs: {pds}\nfinal_vlosses: {final_vlosses}'
 print(eval_text)
-write_textfile(eval_text)
+write_textfile(eval_text, eval_folder / 'eval.txt')
