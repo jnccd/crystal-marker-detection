@@ -1080,14 +1080,30 @@ Examples for the U-Net output on validation data can be seen in \autoref{fig:seg
   \label{fig:segpet_rect_interp}
 \end{figure}
 
-Using the output of \acp{OpenCV} implementation of Harris corner detector, each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$ and finally the length of $\overline{BA}$ and $\overline{BC}$. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \autoref{fig:segpet_rect_interp}. It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly, since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However using three points improves the stability, since a whole corner may be misidentified in the segmentation mask.
+Using the output of \acp{OpenCV} implementation of Harris corner detector, each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$ and finally the length of $\overline{BA}$ and $\overline{BC}$. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \autoref{fig:segpet_rect_interp}. 
+
+It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly, since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However using three points improves the stability, since a whole corner may be misidentified in the segmentation mask.
 
 % TODO: Point mapping accuracy in good/bad cases and show one good and one bad case 
 % For eval: 75% of point order assessments correct
 
-\subsubsection{Hough Lines Based Mask Interpretation}
+\subsubsection{Hough Transform Based Mask Interpretation}
 
+\begin{figure}
+  \centering
+  \subcaptionbox{Harris corner ouput}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_pred_corners}}
+  \subcaptionbox{Rectangle prediction based on Harris corners}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_pred_rect}}
+  \subcaptionbox{Hough transform output lines and line intersections}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_pred_intersects}}
+  \subcaptionbox{Rectangle prediction based on line intersections}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_lines_pred_rect}}
+  \caption{Example of improved mask interpretation using Hough transform}
+  \label{fig:segpet_lines_improvement}
+\end{figure}
 
+The \acp{OpenCV} implementation of Hough transform results in predicted lines on the mask edges. These lines are then lengthened such that the span the image and intersection points of these lines are computed. These intersection points are then used as in the harris corner approach. The advantage of using line intersections is that, if multiple corners of the mask are not clearly defined, all 4 corners of the marker can still be predicted as seen in \autoref{fig:segpet_lines_improvement}.
 
 \subsection{Point Sorting}
 
@@ -1172,7 +1188,7 @@ As seen in \autoref{tab:pet_valdata_results}, yeah
    MobilenetV2 with custom 3 linear layer head & 25.46 & 457.67 \\
    VGG16 with custom head & 27.34 & 506.89 \\
    Harris corner based interpretation of U-Net masks & 11.32 & 93.64 \\
-   Hough lines based interpretation of U-Net masks & 6.36 & 36.83 \\
+   Hough transform based interpretation of U-Net masks & 6.36 & 36.83 \\
    \hline
   \end{tabular}
   \caption{\label{tab:pet_valdata_results}Comparison of lowewst achieved Sinkhorn loss and mean point distance on validation data for different point detection approaches}
