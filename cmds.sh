@@ -208,3 +208,5 @@ python batch_train/yolov5.py -d /data/pcmd/dataset/yolov5-640-best-yolov5s-hyp-s
 python traindata-creator/createDataset.py -n man-pet -t pet -s 0 -tf traindata-creator/dataseries/coco-man-pet/ -r 0.1
 python traindata-creator/createDataset.py -n man-pet-v2 -t pet -s 0 -tf traindata-creator/dataseries/coco-labels_my-project-name_2023-10-17-03-53-09/ -r 0.12
 python traindata-creator/createDataset.py -n man-pet-v2 -t segpet -s 0 -tf traindata-creator/dataseries/coco-labels_my-project-name_2023-10-17-03-53-09/ -r 0.12
+
+python evaluation/evaluate_human_results.py -i /n/Downloads/pcmd-test-images -t traindata-creator/dataset/yolov5-0-on-skin-valset-v3-testset/
