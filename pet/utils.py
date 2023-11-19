@@ -81,12 +81,13 @@ def mAPD_2D(preds_batch: Tensor, gts_batch: Tensor, max_possible_distance: float
     #print(preds_batch, gts_batch)
     
     for preds, gts in zip(preds_batch, gts_batch):
+        #print(f'shapes {preds.shape}, {gts.shape}')
         mPD_table = []
         
         for j, pred in enumerate(preds):
             best_fits = [[distance(x, pred), i] for i, x in enumerate(gts)]
             best_fits = sorted(best_fits, key=lambda x: x[0])
-            #print(f'best_fits {best_fits}')
+            print(f'best_fits {best_fits}')
             best_fit = best_fits[0] # [distance, i(gt)]
             
             mPD_table.append(best_fit)
@@ -97,10 +98,12 @@ def mAPD_2D(preds_batch: Tensor, gts_batch: Tensor, max_possible_distance: float
         distances = []
         used_gt_indices = []
         for entry in mPD_table:
+            #print(f'used_gt_indices {used_gt_indices}')
             if not entry[1] in used_gt_indices:
                 distances.append(entry[0])
                 used_gt_indices.append(entry[1])
             else:
+                #print('MAX')
                 distances.append(max_possible_distance)
         
         mPDs.append(np.mean(distances))
