@@ -5,10 +5,10 @@ from geomloss import SamplesLoss
 from utils import *
 
 root_dir = Path(__file__).resolve().parent
-dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
+dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2-ordered-val'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-input_folder = create_dir_if_not_exists(root_dir / 'output/to-rect-lines')
+input_folder = create_dir_if_not_exists(root_dir / 'output/to-rect')
 eval_folder = create_dir_if_not_exists(input_folder / 'eval')
 
 loss = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
