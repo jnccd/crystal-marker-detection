@@ -90,7 +90,7 @@ def mAPD_2D(preds_batch: Tensor, gts_batch: Tensor, max_possible_distance: float
             mPD_table.append(best_fit)
             
         mPD_table = sorted(mPD_table, key=lambda x: x[0])
-        print(mPD_table)
+        #print(mPD_table)
         
         distances = []
         used_gt_indices = []
