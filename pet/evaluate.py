@@ -37,4 +37,4 @@ print(torch.mean(loss_out))
 print('---')
 
 mAPD_score = mAPD_2D(pred_tensor, val_tensor)
-print(f'mAPD_score: {mAPD_score}')
+print(f'mAPD: {mAPD_score}')
