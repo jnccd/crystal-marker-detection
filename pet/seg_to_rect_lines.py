@@ -94,7 +94,8 @@ def main():
         print(f'intersect_points {intersect_points}')
         # Visualize Intersects
         for corner in intersect_points:
-            cv2.circle(img_draw, (int(corner[0]), int(corner[1])), 5, (255,0,0))
+            cv2.circle(img_draw, (int(corner[0]), int(corner[1])), 5, (255,255,0))
+        cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_intersects.png'), img_draw)
         cv2.imshow('image',img_draw)
         cv2.waitKey(0)
         # Group and get most markery Intersects
