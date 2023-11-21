@@ -1140,6 +1140,19 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 
 \section{Human Testing}
 
+To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk isntance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process. The labeling was done on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023}, since it does not require an installation and instead works in the browser, while also containing all nessecary tools and, since the dataset is small enough to be distributed directly as files. In total there were 7 participats who returned their marked labels. For the evaluation I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
+
+\begin{table}
+  \begin{tabular}{ c c c }
+   & Pascal VOC 2010 \ac{mAP} & COCO \ac{mAP} \\ 
+   \hline
+   Best Result & 84.37\% & 75.41\% \\
+   Average Result & 46.52\% & 37.58\% \\
+   \hline
+  \end{tabular}
+  \caption{\label{tab:human_test_result}Results of human labeling accuracy tests}
+\end{table}
+
 \section{Augmenting from Zero}
 
 \section{Augmenting from Optimum}
@@ -1191,7 +1204,7 @@ As seen in \autoref{tab:pet_valdata_results}, yeah
    Hough transform based interpretation of U-Net masks & 6.36 & 36.83 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Comparison of lowewst achieved Sinkhorn loss and mean point distance on validation data for different point detection approaches}
+  \caption{\label{tab:pet_valdata_results}Comparison of lowest achieved Sinkhorn loss and mean point distance on validation data for different point detection approaches}
 \end{table}
 
 \section{Discussion}
