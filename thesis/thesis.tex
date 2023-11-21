@@ -1223,14 +1223,14 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
   \begin{tabular}{ c c }
    Inference Filter & Pascal VOC 2010 \ac{mAP} in \% \\ 
    \hline
-   Min Confidence 50\% & 20.52 \\
-   Min Confidence 50\% + \ac{SAHI} & 70.80 \\
-   Min Confidence 50\% + \ac{SAHI} + Squareness Thershold 50\% & 70.95 \\
-   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 10\% & 72.24 \\
-   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 10\% + Squareness Thershold 50\% & 72.24 \\
-   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 20\% & 73.72 \\
-   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 30\% & 73.29 \\
-   Min Confidence 50\% + \ac{SAHI} + Foreground Mask & 74.12 \\
+   \ac{MC} 50\% & 20.52 \\
+   \ac{MC} 50\% + \ac{SAHI} & 70.80 \\
+   \ac{MC} 50\% + \ac{SAHI} + \ac{SQT} 50\% & 70.95 \\
+   \ac{MC} 50\% + \ac{SAHI} + \ac{BIS} 10\% & 72.24 \\
+   \ac{MC} 50\% + \ac{SAHI} + \ac{BIS} 10\% + \ac{SQT} 50\% & 72.24 \\
+   \ac{MC} 50\% + \ac{SAHI} + \ac{BIS} 20\% & 73.72 \\
+   \ac{MC} 50\% + \ac{SAHI} + \ac{BIS} 30\% & 73.29 \\
+   \ac{MC} 50\% + \ac{SAHI} + Foreground Mask & 74.12 \\
    \hline
   \end{tabular}
   \caption{\label{tab:inference_parameters}Evaluation of different inference parameters}
@@ -1361,6 +1361,9 @@ As seen in \autoref{tab:pet_valdata_results}, yeah
 \acro{SIFT}{Scale-invariant feature transform} 
 \acro{MSE}{mean squared error} 
 \acro{MB}{Megabyte}
+\acro{MC}{Min Confidence}
+\acro{SQT}{Squareness Thershold}
+\acro{BIS}{Border Ignore Size}
 
 \end{acronym}
 
