@@ -1012,6 +1012,7 @@ Given a set of dataseries as base and parameters for dataset creation, training 
 The top level scripts necessary for this are currently only implemented to work with the \ac{MIP} server structure, but could be ported to any \ac{GPU} server with Docker support.
 
 \section{Hyperparameter Optimization}
+\label{sec:hyper_opt}
 
 To find an optimal combination of augmentations from the implemented ones, a hyperparameter optimization is implemented using Hyperopt. More precisely the search space for this usage of Hyperopt contains the chances for each augment to be applied on an image during dataset generation. Furthermore the strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. The epochs that should be trained for are also part of the search space. Since the validation data in the datasets used here can be similar to the training data, the hyperparameter optimization, which unlike the training runs on the test data, can then choose an earlier stopping point for the training, if further training does not increase the score further or in other words would overfit on the validation data. Finally the random seed for the dataset creation is also part of the search space, such that the best training run during the optimization is fully reproducible.
 
@@ -1157,9 +1158,13 @@ To get a score that I can compare the evaluation results to, I gathered scores t
 
 As a first test for the usefulness of the added augmentations, I ramped up the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation to evaluate.
 
-\section{Hyperparameter Search}
+% TODO: show graphs
 
+\section{Hyperparameter Optimization}
 
+To find an optimal combination of parameters, I did a hyperparameter optimization as described in \autoref{sec:hyper_opt}. The optimal found paramters are as follows.
+
+% TODO: add params graph? or table
 
 \section{Augmenting from Optimum}
 
