@@ -1163,8 +1163,6 @@ To get a score that I can compare the evaluation results to, I gathered scores t
 
 In this section I describe some of the fixed parameters during the testing. Since this work introduces many variables, such as model type, augmentation parameters and model specific hyperparameters, some of them need to be fixed to keep the scope simple enough. These constraints are based on earlier and smaller scale tests.
 
-% TODO: explain why: gpv2, yolov5s (informal?), plots look very bad but only proof Ive got so lets go
-
 \subsection{Model}
 
 After the implementation of the \ac{YOLO}v8 models into the training and testing pipeline, using the \ac{YOLO}v8 models instead of \ac{YOLO}v5 models did not increase the test scores on initial tests. \ac{YOLO}-NAS-S only achieved a \ac{mAP} score of 4\% on initial tests and 6\% after two built in augmentations were disabled.
