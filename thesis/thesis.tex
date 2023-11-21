@@ -999,6 +999,10 @@ s(w,h)=
     \frac{h}{w}, & \text{otherwise}
 \end{dcases} $$ where $w$ refers to the bounding boxes width and $h$ to its height. Due to the definition, the squareness score always lies between 0 and 1.
 
+\subsection{Foreground Mask}
+
+To test whether the addition of a pretrained foreground segmentation network would improve the detection scores, I added support for masking of bounding box predictions. Since this is just for testing, this is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. 
+
 \subsection{Fusion Inference}
 
 The \texttt{fusion\_inference} script combines the predictions of multiple finished training runs as a post processing step. In comparison to \ac{SAHI}, \texttt{fusion\_inference} combines the output of the whole image from different fitted models is into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}.
@@ -1173,7 +1177,7 @@ Due to these results, and since smaller models can be used on more devices, most
 During inital testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3} the maximum scores did not increase. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results can be seen in \autoref{fig:initial_dataset_compare}. % TODO: redo this with newer runs?
 
 \begin{figure}
-  \caption{Results of initial comparison of datasets on yolov5s, with built in yolov5 augmentations enabled and using two manually defined sets of augmentations \texttt{def} and \texttt{def2}, as well as runs without dataset augmentation}
+  \caption{Results of initial comparison of datasets on yolov5s, with built in yolov5 augmentations enabled and using two manually defined sets of augmentations \texttt{def} and \texttt{def2}, as well as runs without dataset augmentation, with 9 configurations and 5 runs per configurations for a total of 45 training runs}
   \includegraphics[width=\textwidth]{image/yolov5s-dataset-compare}
   \label{fig:initial_dataset_compare}
 \end{figure}
