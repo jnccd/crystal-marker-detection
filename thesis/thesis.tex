@@ -1306,6 +1306,8 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
 
 \section{Discussion}
 
+While we previously reached \ac{mAP} scores above 70\% on the ensemble testset, using the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization with \ac{SAHI} and a 20\% \ac{BIS} still results in a Pascal VOC 2010 \ac{mAP} score of 45.14\% on the final testset. This may indicate that the hyperparameter search already overfitted the chosen augmentations to the ensemble testset. However, given that the testsets consists of images with tapes on skin, and, that the training sets consist of images with markers on glass plates with skinless backgrounds, indicates that the fitted model has some amount generalization over the two image domains.
+
 %\subsection{Confusion Matrix in Object Detection}
 
 \chapter{Conclusion}
