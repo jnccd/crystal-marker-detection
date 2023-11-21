@@ -65,7 +65,7 @@ def plot_augment_params(name: str, params: dict):
     ax.set_xticklabels([x.replace("_", " ") for x in params.keys()], rotation=30, ha='right')
 
     fig.tight_layout()
-    plt.gcf().set_size_inches(20, 9)
+    plt.gcf().set_size_inches(12, 5)
 
     plt.savefig(plot_dir / f'{name}.pdf', dpi=300)
 
