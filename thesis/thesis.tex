@@ -1001,7 +1001,8 @@ s(w,h)=
 
 \subsection{Foreground Mask}
 
-To test whether the addition of a pretrained foreground segmentation network would improve the detection scores, I added support for masking of bounding box predictions. Since this is just for testing, this is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. 
+Since markers in the images are usually part of the foreground, a pretrained foreground segmentation network could help improve the detection scores.
+To test this, I added support for masking of bounding box predictions. Since this is just for testing, this is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. Using the average instead of the maximum pixel value lead the lower scores.
 
 \subsection{Fusion Inference}
 
@@ -1212,9 +1213,28 @@ While the results of the hyperparameter optimization run show what works, they d
 
 % TODO: add text, show graphs
 
-\section{Inference Options}
+\section{Inference Parameters}
 
+Based on the training run from the hyperparameter optimzation, I tested different combinations of inference parameters as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However here this is especially pronouced, since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise using a Border Ignore Size improves the score further. However this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness thereshold improves the score, but only if it is used alone. 
 
+The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the testset images. The usage of these masks lead to the highest score on the ensemble testset. However it is debatable if it would be worth the uplift in score for the increased memomry usage and inference time.
+
+\begin{table}
+  \begin{tabular}{ c c }
+   Inference Filter & Pascal VOC 2010 \ac{mAP} in \% \\ 
+   \hline
+   Min Confidence 50\% & 20.52 \\
+   Min Confidence 50\% + \ac{SAHI} & 70.80 \\
+   Min Confidence 50\% + \ac{SAHI} + Squareness Thershold 50\% & 70.95 \\
+   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 10\% & 72.24 \\
+   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 10\% + Squareness Thershold 50\% & 72.24 \\
+   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 20\% & 73.72 \\
+   Min Confidence 50\% + \ac{SAHI} + Border Ignore Size 30\% & 73.29 \\
+   Min Confidence 50\% + \ac{SAHI} + Foreground Mask & 74.12 \\
+   \hline
+  \end{tabular}
+  \caption{\label{tab:inference_parameters}Evaluation of different inference parameters}
+\end{table}
 
 \section{Point Detection}
 
