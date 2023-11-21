@@ -1217,7 +1217,7 @@ While the results of the hyperparameter optimization run show what works, they d
 
 Based on the training run from the hyperparameter optimzation, I tested different combinations of inference parameters as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However here this is especially pronouced, since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise using a Border Ignore Size improves the score further. However this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness thereshold improves the score, but only if it is used alone. 
 
-The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the testset images. The usage of these masks lead to the highest score on the ensemble testset. However it is debatable if it would be worth the uplift in score for the increased memomry usage and inference time.
+The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the testset images. The usage of these masks lead to the highest score on the ensemble testset. However it is debatable if it would be worth the uplift in score for the possibly increased memory usage and inference time.
 
 \begin{table}
   \begin{tabular}{ c c }
@@ -1234,7 +1234,7 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
    \hline
   \end{tabular}
   \caption{\label{tab:inference_parameters}Evaluation of different inference parameters}
-\end{table}
+\end{table} % TODO: Measure inference time
 
 \section{Point Detection}
 
