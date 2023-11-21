@@ -1171,6 +1171,8 @@ After the implementation of the \ac{YOLO}v8 models into the training and testing
 
 The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
 
+The preprint of the paper from Treven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a score of 56.3\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0 and \ac{YOLO}v5, which achieved a score of 55.8. However \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
+
 Due to these results, and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
 
 \subsection{Dataset}
@@ -1306,7 +1308,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
 
 \section{Discussion}
 
-While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble testset, using the model obtained from the hyperparameter optimization with \ac{SAHI} and a 20\% \ac{BIS} still results in a Pascal VOC 2010 \ac{mAP} score of 45.14\% on the final testset. This may indicate that the hyperparameter search already overfitted the chosen augmentations to the ensemble testset. However, given that the testsets consists of images with tapes on skin, and, that the training sets consist of images with markers on glass plates with skinless backgrounds, indicates that the fitted model has some amount generalization over the two image domains.
+While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble testset, using the model obtained from the hyperparameter optimization with \ac{SAHI} and a 20\% \ac{BIS} still results in a Pascal VOC 2010 \ac{mAP} score of 45.14\% on the final testset. This may indicate that the hyperparameter search already overfitted the chosen augmentations to the ensemble testset. However, given that the testsets consists of images with tapes on skin, and, that the training sets consist of images with markers on glass plates with skinless backgrounds, indicates that the fitted model has attained some amount generalization over the two image domains.
 
 %\subsection{Confusion Matrix in Object Detection}
 
