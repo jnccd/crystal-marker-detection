@@ -70,21 +70,21 @@ def plot_augment_params(name: str, params: dict):
     plt.savefig(plot_dir / f'{name}.pdf', dpi=300)
 
 
-plot_augment_params('test', {
-    "smart_grid_shuffle_chance": 0.16536455065004735,
-    "label_dropout_chance": 0.3406092762590903,
-    "perspective_chance": 0.9026868390392013,
-    "perspective_strength": 0.44744759491769104,
-    "rotation_chance": 0.8397534486075489,
-    "rotation_strength": 269.5297433583759,
-    "ninety_deg_rotation_chance": 0.4779575209987885,
-    "random_crop_chance": 0.07811140975400804,
-    "random_crop_v2_chance": 0.09484458554495206,
-    "label_move_chance": 0.3281069403856025,
-    "label_move_v2_chance": 0.04946212899649677,
-    "gauss_noise_chance": 0.2850102716939429,
-    "black_dot_chance": 0.5932304638260782,
-    "label_curving_chance": 0.09002886339102176
+plot_augment_params('best_hyp_run_params', {
+    "smart_grid_shuffle_chance": 0.5957674648691555,
+    "label_dropout_chance": 0.11627988386742999,
+    "perspective_chance": 0.38962228204161486,
+    "perspective_strength": 0.053798371264325705,
+    "rotation_chance": 0.9574902580520345,
+    "rotation_strength": 225.68980145685168,
+    "ninety_deg_rotation_chance": 0.3210464611326854,
+    "random_crop_chance": 0.19082095693663023,
+    "random_crop_v2_chance": 0.2917059831924972,
+    "label_move_chance": 0.8596426612346463,
+    "label_move_v2_chance": 0.09746777692869586,
+    "gauss_noise_chance": 0.8379006635369325,
+    "black_dot_chance": 0.8862369463349596,
+    "label_curving_chance": 0.6975898700345569
 })
 
 
