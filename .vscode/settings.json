@@ -1,9 +1,10 @@
 {
     "cSpell.words": [
-        "Albumentations",
-        "bboxes",
-        "verts"
-    ],
+		"Albumentations",
+		"bboxes",
+		"makesense",
+		"verts"
+	],
     "latex.linter.enabled": false,
     "latex-workshop.latex.tools": [
 		{

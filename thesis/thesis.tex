@@ -1114,12 +1114,12 @@ The \acp{OpenCV} implementation of Hough transform results in predicted lines on
 \subsection{Point Sorting}
 
 \begin{figure}
-  \caption{Pixel comparisons between the \ac{ArUco} marker image and the theresholded image snippet}
+  \caption{Pixel comparisons between the \ac{ArUco} marker image and the thresholded image snippet}
   \includegraphics[width=0.4\textwidth]{image/pet_point_sorting_compare}
   \label{fig:pet_point_sorting_compare}
 \end{figure}
 
-For now the different approaches only output points. However to detect how the marker lies in 3D space, it is also nessecary to sort the points based on the rotation of the marker. For this, the input image is theresholded using \acp{OpenCV} adaptive thershold implementation. Afterwards a homography is computed to map the given rectangle in the image onto another image. Finally, using pixel comparisons each 90 degree rotation of the projected and thersholded image is tested against the \ac{ArUco} marker, as seen in \autoref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
+For now the different approaches only output points. However to detect how the marker lies in 3D space, it is also necessary to sort the points based on the rotation of the marker. For this, the input image is thresholded using \acp{OpenCV} adaptive threshold implementation. Afterwards a homography is computed to map the given rectangle in the image onto another image. Finally, using pixel comparisons each 90 degree rotation of the projected and thresholded image is tested against the \ac{ArUco} marker, as seen in \autoref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
 
 \chapter{Evaluation}
 \label{chap:eval}
@@ -1146,7 +1146,7 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 
 \section{Human Testing}
 
-To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk isntance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process. The labeling was done on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023}, since it does not require an installation and instead works in the browser, while also containing all nessecary tools and, since the dataset is small enough to be distributed directly as files. In total there were 7 participats who returned their marked labels. For the evaluation I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
+To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk instance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process. The labeling was done on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023}, since it does not require an installation and instead works in the browser, while also containing all nessecary tools and, since the dataset is small enough to be distributed directly as files. In total there were 7 participants who returned their marked labels. For the evaluation I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -1161,7 +1161,7 @@ To get a score that I can compare the evaluation results to, I gathered scores t
 
 \section{Testing Scope}
 
-In this section I describe some of the fixed parameters during the testing. Since this work introduces many varaibles, such as model type, augmentation parameters and model specific hyperparameters, some of them need to be fixed to keep the scope simple enough. These constraints are based on eariler and smaller scale tests.
+In this section I describe some of the fixed parameters during the testing. Since this work introduces many variables, such as model type, augmentation parameters and model specific hyperparameters, some of them need to be fixed to keep the scope simple enough. These constraints are based on earlier and smaller scale tests.
 
 % TODO: explain why: gpv2, yolov5s (informal?), plots look very bad but only proof Ive got so lets go
 
@@ -1175,7 +1175,7 @@ Due to these results, and since smaller models can be used on more devices, most
 
 \subsection{Dataset}
 
-During inital testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3} the maximum scores did not increase. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results can be seen in \autoref{fig:initial_dataset_compare}. % TODO: redo this with newer runs?
+During initial testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3} the maximum scores did not increase. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results can be seen in \autoref{fig:initial_dataset_compare}. % TODO: redo this with newer runs?
 
 \begin{figure}
   \caption{Results of initial comparison of datasets on yolov5s, with built in yolov5 augmentations enabled and using two manually defined sets of augmentations \texttt{def} and \texttt{def2}, as well as runs without dataset augmentation, with 9 configurations and 5 runs per configurations for a total of 45 training runs}
@@ -1185,7 +1185,7 @@ During inital testing of the datasets using yolov5s as the model to train, there
 
 \subsection{Inference}
 
-Of the available inference parameters I mainly used \ac{SAHI} in the tests, since the markers in the testset were small and \ac{SAHI} incrased the \ac{mAP} score in initial tests, or none.
+Of the available inference parameters I mainly used \ac{SAHI} in the tests, since the markers in the testset were small and \ac{SAHI} increased the \ac{mAP} score in initial tests, or none.
 
 \section{Augmenting from Zero}
 
@@ -1209,13 +1209,13 @@ To find an optimal combination of parameters, I did hyperparameter optimizations
 
 \section{Augmenting from Optimum}
 
-While the results of the hyperparameter optimization run show what works, they do not nessecarily indicate which augmentations have the biggest impact on the score. For this purpose I chose to do follow up ensemble runs, where one parameter again changes from 0 to its maximum value and all other parameters are fixed at their optimal value.
+While the results of the hyperparameter optimization run show what works, they do not necessarily indicate which augmentations have the biggest impact on the score. For this purpose I chose to do follow up ensemble runs, where one parameter again changes from 0 to its maximum value and all other parameters are fixed at their optimal value.
 
 % TODO: add text, show graphs
 
 \section{Inference Parameters}
 
-Based on the training run from the hyperparameter optimzation, I tested different combinations of inference parameters as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However here this is especially pronouced, since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise using a Border Ignore Size improves the score further. However this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness thereshold improves the score, but only if it is used alone. 
+Based on the training run from the hyperparameter optimization, I tested different combinations of inference parameters as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However here this is especially pronounced, since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise using a Border Ignore Size improves the score further. However this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness threshold improves the score, but only if it is used alone. 
 
 The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the testset images. The usage of these masks lead to the highest score on the ensemble testset. However it is debatable if it would be worth the uplift in score for the possibly increased memory usage and inference time.
 
@@ -1238,7 +1238,7 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
 
 \section{Point Detection}
 
-This section describes the data used and the results of the evalation of the appraoches for the point detection part of the pipeline.
+This section describes the data used and the results of the evaluation of the approaches for the point detection part of the pipeline.
 
 \subsection{Data}
 
