@@ -1166,7 +1166,7 @@ After the implementation of the \ac{YOLO}v8 models into the training and testing
 
 The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
 
-Due to these results, and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5-s.
+Due to these results, and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
 
 \subsection{Dataset}
 
@@ -1180,11 +1180,13 @@ During inital testing of the datasets using yolov5s as the model to train, there
 
 \subsection{Inference}
 
-Of the available inference parameters I mainly used \ac{SAHI} in the tests, since the markers in the testset were small and \ac{SAHI} incrased the \ac{mAP} score in initial tests.
+Of the available inference parameters I mainly used \ac{SAHI} in the tests, since the markers in the testset were small and \ac{SAHI} incrased the \ac{mAP} score in initial tests, or none.
 
 \section{Augmenting from Zero}
 
-As a first test for the usefulness of the added augmentations, I ramped up the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation to evaluate.
+As a test for the usefulness of the added augmentations, I ramped up the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation.
+
+
 
 % TODO: show graphs
 
