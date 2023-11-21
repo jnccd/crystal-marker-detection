@@ -1170,17 +1170,17 @@ Due to these results, and since smaller models can be used on more devices, most
 
 \subsection{Dataset}
 
-During inital testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3} the maximum scores did not increase. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly focused on testing with \texttt{gpv2} instead. The results can be seen in \autoref{fig:initial_dataset_compare}. % TODO: redo this with newer runs
+During inital testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3} the maximum scores did not increase. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results can be seen in \autoref{fig:initial_dataset_compare}. % TODO: redo this with newer runs?
 
 \begin{figure}
   \caption{Results of initial comparison of datasets on yolov5s, with built in yolov5 augmentations enabled and using two manually defined sets of augmentations \texttt{def} and \texttt{def2}, as well as runs without dataset augmentation}
-  \includegraphics[width=0.8\textwidth]{image/yolov5s-dataset-compare}
+  \includegraphics[width=\textwidth]{image/yolov5s-dataset-compare}
   \label{fig:initial_dataset_compare}
 \end{figure}
 
 \subsection{Inference}
 
-
+Of the available inference parameters I mainly used \ac{SAHI} in the tests, since the markers in the testset were small and \ac{SAHI} incrased the \ac{mAP} score in initial tests.
 
 \section{Augmenting from Zero}
 
