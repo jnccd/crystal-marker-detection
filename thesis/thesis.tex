@@ -1109,7 +1109,7 @@ It is worth noting, that using point triplets and predicting the last point come
   \label{fig:segpet_lines_improvement}
 \end{figure}
 
-The \acp{OpenCV} implementation of Hough transform results in predicted lines on the mask edges. These lines are then lengthened such that the span the image and intersection points of these lines are computed. These intersection points are then used as in the harris corner approach. The advantage of using line intersections is that, if multiple corners of the mask are not clearly defined, all 4 corners of the marker can still be predicted as seen in \autoref{fig:segpet_lines_improvement}.
+The \acp{OpenCV} implementation of Hough transform results in predicted lines on the mask edges. These lines are then lengthened such that the span the image and intersection points of these lines are computed. These intersection points are then used as in the harris corner approach. The advantage of using line intersections is that, if multiple corners of the mask are not clearly defined, all 4 corners of the marker can still be predicted as seen in \autoref{fig:segpet_lines_improvement}. % TODO: Found hough parameters manually trough heuristic
 
 \subsection{Point Sorting}
 
@@ -1307,7 +1307,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
    Hough transform based interpretation of U-Net masks & 6.36 & 36.83 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Comparison of lowest achieved Sinkhorn loss and mean point distance on validation data for different point detection approaches}
+  \caption{\label{tab:pet_valdata_results}Comparison of lowest achieved Sinkhorn loss and mean point distance on validation data for different point detection approaches}  %TODO add image size
 \end{table}
 
 \section{Discussion}
