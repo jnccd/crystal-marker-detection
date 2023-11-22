@@ -213,6 +213,5 @@ for data_line in data_lines:
 ax.legend(handles=legend_patches)
 
 fig.tight_layout()
-plt.gcf().set_size_inches(20, 9)
-
-plt.savefig(root_dir / 'plots' / f'{args.name}.pdf', dpi=300)
+plt.gcf().set_size_inches(12, 5)
+plt.savefig(root_dir / 'plots' / f'{args.name}.pdf', dpi=300, bbox_inches='tight')
