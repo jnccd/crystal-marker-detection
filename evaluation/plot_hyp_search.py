@@ -73,8 +73,12 @@ for max_change in max_changes:
         cur_y += annot_padding
     else:
         cur_y = max_change[3]
-    ax.annotate(f'{max_change[0]}: {"+" if max_change[1] > 0 else ""}{round(max_change[1], 2)}',
-        xy=(max_change[2], cur_y),
+    cur_x = max_change[2]
+    if cur_x < 18:
+        cur_x = 18
+    print(cur_x)
+    ax.annotate(f'{max_change[0]}: {"+" if max_change[1] > 0 else ""}{round(max_change[1], 2) * 100}%',
+        xy=(cur_x, cur_y),
         xytext=(0, 0),
         textcoords="offset points",
         ha='right', va='bottom')
