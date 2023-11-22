@@ -3,7 +3,7 @@ import shutil
 import numpy as np
 from pathlib import Path
 from graphviz import Digraph, Graph, Source
-from matplotlib import colors, pyplot as plt
+from matplotlib import colors, pyplot as plt, patches as mpatches
 
 # Utility
 
@@ -63,10 +63,15 @@ def plot_augment_params(name: str, params: dict):
     ax.set_xticks(bar_x)
     ax.set_xlabel('Augmentations')
     ax.set_xticklabels([x.replace("_", " ") for x in params.keys()], rotation=30, ha='right')
+    
+    # Add legend
+    legend_patches = []
+    legend_patches.append(mpatches.Patch(color=colors.to_hex((0.15, 0.4, 1)), label='Chance Parameter'))
+    legend_patches.append(mpatches.Patch(color=colors.to_hex((1, 0.6, 0)), label='Strength Parameter'))
+    ax.legend(handles=legend_patches)
 
     fig.tight_layout()
     plt.gcf().set_size_inches(12, 5)
-
     plt.savefig(plot_dir / f'{name}.pdf', dpi=300, bbox_inches='tight')
 
 
