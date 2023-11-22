@@ -189,6 +189,7 @@ python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble-yolov5aug -r eva
 python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble-yolov5aug -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -ci 4 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
 python evaluation/plot_ensemble.py -n yolov5-noise-sgs-ensemble-yolov5aug -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -ci 4 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset" -bfl -cu 10% -xl 'Probability for each image in the dataset to be augmented by smart grid shuffeling' -ct box
 python evaluation/plot_ensemble.py -n yolov5-noise-gp-tv3old -r evaluation/from-server/noise-sgs-ensemble/ -pi 5 -rnp '.*yolo5aug$' -t "mAP scores for a given chance of smart grid shuffle augmentation in the dataset"
+python evaluation/plot_hyp_search.py -j evaluation/from-server/hyp-search/hyp-param-search-yolov5s-sahi-rc-fix-history.json
 
 # Worker ensemble
 with_gpu -n 1 sudo mip-docker-run --rm --gpus '"device=$CUDA_VISIBLE_DEVICES"' ncarstensen/pcmd:0.1 python batch_train/yolov5.py -d /data/pcmd/dataset/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 10 -o /data/pcmd/training/worker_test/ -wi 0 -wc 2
