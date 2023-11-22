@@ -1203,7 +1203,7 @@ As a test for the usefulness of the added augmentations, I ramped up the usage r
   \label{fig:optimal_augment_params}
 \end{figure}
 
-To find an optimal combination of parameters, I did hyperparameter optimizations as described in \autoref{sec:hyper_opt}. The optimal found augmentation paramters using \ac{YOLO}v5, \texttt{gpv2} and \ac{SAHI} can be seen in \autoref{fig:optimal_augment_params}. The learning cutoff point found by the search is at 347 epochs, which indicates that long training can benefit the score in this case even though the training and testing images are not of the same domain and not completely similar. The run achieved a Pascal VOC 2010 \ac{mAP} score of 70.8\%.
+To find an optimal combination of parameters, I did hyperparameter optimizations as described in \autoref{sec:hyper_opt}. The optimal found augmentation paramters using \ac{YOLO}v5, \texttt{gpv2} and \ac{SAHI} can be seen in \autoref{fig:optimal_augment_params}. The learning cutoff point found by the search is at 347 epochs, which indicates that long training can benefit the score in this case even though the training and testing images are not of the same domain and not completely similar. The run achieved a Pascal VOC 2010 \ac{mAP} score of 70.78\%.
 
 % TODO: add params graph? or table
 
@@ -1238,7 +1238,7 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
    Inference Filter & VOC 2010 \ac{mAP} in \% \\ 
    \hline
    \ac{MC} 50\% & 20.52 \\
-   \ac{MC} 50\% + \ac{SAHI} & 70.80 \\
+   \ac{MC} 50\% + \ac{SAHI} & 70.78 \\
    \ac{MC} 50\% + \ac{SAHI} + \ac{SQT} 50\% & 70.95 \\
    \ac{MC} 50\% + \ac{SAHI} + \ac{BIS} 10\% & 72.24 \\
    \ac{MC} 50\% + \ac{SAHI} + \ac{BIS} 10\% + \ac{SQT} 50\% & 72.24 \\
