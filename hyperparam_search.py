@@ -58,9 +58,8 @@ def hyp_param_run(param_dict: dict):
     
     training_folder = create_dir_if_not_exists(Path(args.training_folder) / f'hyp-param-search-{args.name}', clear=True)
     
-    dataset_image_size = 0 if args.use_sahi else 640
     dataset_name = 'hyp-search-set'
-    dataset_creation_command = f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s {dataset_image_size} -sd {param_dict["seed"]} {args.dataseries_sources} -t yolov5 -a -aim 4 ' + ' '.join([f'-{x[0]} {param_dict[x[0]]}' for x in def_aug_params])
+    dataset_creation_command = f'python traindata-creator/createDataset.py -n {dataset_name} -taf {dataset_folder} -s 640 -sd {param_dict["seed"]} {args.dataseries_sources} -t yolov5 -a -aim 4 ' + ' '.join([f'-{x[0]} {param_dict[x[0]]}' for x in def_aug_params])
     print(f'dataset creation command: {dataset_creation_command}')
     os.system(dataset_creation_command)
     
