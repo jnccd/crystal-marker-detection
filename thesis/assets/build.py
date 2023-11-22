@@ -67,7 +67,7 @@ def plot_augment_params(name: str, params: dict):
     fig.tight_layout()
     plt.gcf().set_size_inches(12, 5)
 
-    plt.savefig(plot_dir / f'{name}.pdf', dpi=300)
+    plt.savefig(plot_dir / f'{name}.pdf', dpi=300, bbox_inches='tight')
 
 
 plot_augment_params('best_hyp_run_params', {
