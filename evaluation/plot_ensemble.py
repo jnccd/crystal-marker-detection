@@ -194,7 +194,7 @@ if args.best_fit_lines:
         r = np.corrcoef(lx, y)
         ax.annotate(str(round(r[1, 0], 2)),
             xy=(x[-1], y_line[-1]),
-            xytext=(70 * width * 3, -3),
+            xytext=(75 * width * 3, -3),
             textcoords="offset points",
             ha='left', va='bottom')
 
