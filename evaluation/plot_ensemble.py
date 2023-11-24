@@ -29,7 +29,7 @@ parser.add_argument('-pi','--part-index', type=int, help='Index of the part numb
 parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name split by "-", if set displays this number in x axis.')
 parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
 
-parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a degree 1 best fit line over the data.')
+parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a exponential function based best fit line over the data.')
 parser.add_argument('-ct','--chart-type', type=str, default='bar', help='The type of chart the data is plotted to, "bar", "box", "scatter".')
 args = parser.parse_args()
 
