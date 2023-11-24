@@ -1188,6 +1188,7 @@ During initial testing of the datasets using yolov5s as the model to train, ther
 Of the available inference parameters I mainly used \ac{SAHI} in the tests, since the markers in the testset were small and \ac{SAHI} increased the \ac{mAP} score in initial tests, or none.
 
 \section{Augmenting from Zero} % TODO: Did I talk about randomness in training runs for ensembles anywhere?
+\label{sec:aug_ens_zero}
 
 As a test for the usefulness of the added augmentations, I ramped up the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation. Using more training runs per configuration would make the values here more accurate, but would also take longer and use more electricity. The results shown here can therefore not be perfectly accurate, but give an idea of how the usage of an augmentation generally changes the scores.
 
@@ -1255,9 +1256,27 @@ To find an optimal combination of parameters, I did hyperparameter optimizations
 
 While the results of the hyperparameter optimization run show what works, they do not necessarily indicate which augmentations have the biggest impact on the score. For this purpose I chose to do follow up ensemble runs, where one parameter again changes from 0 to its maximum value and all other parameters are fixed at their optimal value.
 
-The results here generally do not show differences that are as large as in the earlier ensemble runs. As multiple techniques which increase the score build up the influence of a single technique can become overshadowed.
+The results here generally do not show differences that are as large as in the earlier ensemble runs. As multiple techniques which increase the score build up, the influence of a single technique can become overshadowed.
 
-% TODO: add text, show graphs
+\begin{figure}
+  \caption{Results of Rotation ensemble run based on optimal hyperparameters with \ac{SAHI}}
+  \includegraphics[width=\textwidth]{image/hyp-based-rot-sahi-ensemble-2-thesis}
+  \label{fig:hyp_based_rot_plot}
+\end{figure}
+
+\begin{figure}
+  \caption{Results of Random Crop v2 ensemble run based on optimal hyperparameters with \ac{SAHI}}
+  \includegraphics[width=\textwidth]{image/hyp-based-rc2-sahi-ensemble-2-thesis}
+  \label{fig:hyp_based_rc2_plot}
+\end{figure}
+
+\begin{figure}
+  \caption{Results of Smart Grid Shuffle ensemble run based on optimal hyperparameters with \ac{SAHI}}
+  \includegraphics[width=\textwidth]{image/hyp-based-sgs-sahi-ensemble-2-thesis}
+  \label{fig:hyp_based_sgs_plot}
+\end{figure}
+
+However, the rotation augmentation still has an impact on the score as seen in \autoref{fig:hyp_based_rot_plot} and still has a VOC 2010 score correlation of 50\% and a COCO correlation of 11\%. The negative impact of the Random Crop v2 augmentation is less pronounced here than in \autoref{sec:aug_ens_zero}, as seen in \autoref{fig:hyp_based_rc2_plot}. The impact of Smart Grid Shuffle has flattened out more given the optimal other parameters, as seen in \autoref{fig:hyp_based_sgs_plot}.
 
 \section{Inference Parameters}
 
