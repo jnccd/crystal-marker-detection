@@ -1223,7 +1223,7 @@ The rotation augmentation is the one which improved the scores the most, as seen
 
 \subsection{Random Crop v2}
 
-Random Crop v2 had the worst impact on scores, as seen in \autoref{fig:zero_rc2_plot}. This may be because it zooms too far into the image. Default Random Crop did not show similar impact on the scores.
+Random Crop v2 had the worst impact on scores, as seen in \autoref{fig:zero_rc2_plot}. The correlation for the VOC 2010 score here is -43\% and for COCO is -30\%. This may be, because it zooms too far into the image and such large markers do not appear in the test set. Default Random Crop did not show similar impact on the scores.
 
 \begin{figure}
   \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}}
@@ -1233,7 +1233,7 @@ Random Crop v2 had the worst impact on scores, as seen in \autoref{fig:zero_rc2_
 
 \subsection{Other}
 
-Other augmentations, such as Label Move, showed a slight score increase at low usage rates and 
+Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase at low usage rates and leveled out quickly, while having a similar but smaller impact when using in conjunction with \ac{SAHI}, like Smart Grid Shuffle. Other augmentations showed little impact on the \ac{mAP} score.
 
 \section{Hyperparameter Optimization}
 
