@@ -189,7 +189,7 @@ if args.best_fit_lines:
             return a*np.exp(-c*x)+d
         popt, pcov = scipy.optimize.curve_fit(func, lx+1, y)#, sigma=fitting_weights)
         y_line = func(x+1, *popt)
-        ax.plot(x + data_lines_x_offset[data_line], y_line, c = data_colors[data_line])
+        ax.plot(x + data_lines_x_offset[data_line], y_line, c = data_colors[data_line], alpha=0.5)
         
         r = np.corrcoef(lx, y)
         ax.annotate(str(round(r[1, 0], 2)),
