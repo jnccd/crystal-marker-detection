@@ -31,6 +31,7 @@ parser.add_argument('-cu','--config-unit', type=str, help='How should the config
 
 parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a exponential function based best fit line over the data.')
 parser.add_argument('-ct','--chart-type', type=str, default='bar', help='The type of chart the data is plotted to, "bar", "box", "scatter".')
+parser.add_argument('-da','--disable-annots', action='store_true', help='Disable extra annotations of plotted values.')
 args = parser.parse_args()
 
 name_pattern = re.compile(args.run_name_pattern) if args.run_name_pattern is not None else None
@@ -150,8 +151,9 @@ if args.chart_type == 'bar':
                 color=  data_colors[data_line],
                 )
             )
-    for bar in charts:
-        autolabel(bar, ax)
+    if not args.disable_annots:
+        for bar in charts:
+            autolabel(bar, ax)
 elif args.chart_type == 'box':
     for data_line in data_lines:
         charts.append(
@@ -192,11 +194,13 @@ if args.best_fit_lines:
         ax.plot(x + data_lines_x_offset[data_line], y_line, c = data_colors[data_line], alpha=0.5)
         
         r = np.corrcoef(lx, y)
-        ax.annotate(str(round(r[1, 0], 2)),
-            xy=(x[-1], y_line[-1]),
-            xytext=(75 * width * 3, -3),
-            textcoords="offset points",
-            ha='left', va='bottom')
+        print(data_line, str(round(r[1, 0], 2)), r)
+        if not args.disable_annots:
+            ax.annotate(str(round(r[1, 0], 2)),
+                xy=(x[-1], y_line[-1]),
+                xytext=(75 * width * 3, -3),
+                textcoords="offset points",
+                ha='left', va='bottom')
 
 # Set labels and layout
 ax.set_ylim((0, max([np.max([x[data_line] for x in chart_entries]) for data_line in data_lines]) * 1.1))
