@@ -1211,7 +1211,15 @@ With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}.
 
 \subsection{Rotation}
 
-\subsection{Perspective}
+The rotation augmentation is the one which improved the scores the most, as seen in \autoref{fig:zero_rot_plot}. Here more usage rate is needed before the score gains level out. The correlation for the VOC 2010 score is 54\% and for the COCO score is 21\% here. This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
+
+\begin{figure}
+  \caption{Results of Rotation ensemble run with \ac{SAHI}}
+  \includegraphics[width=\textwidth]{image/zero-based-rot-ensemble-2-thesis}
+  \label{fig:zero_rot_plot}
+\end{figure}
+
+% TODO: Add sahi plot
 
 \subsection{Other?}
 
