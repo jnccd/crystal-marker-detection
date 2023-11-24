@@ -1255,6 +1255,8 @@ To find an optimal combination of parameters, I did hyperparameter optimizations
 
 While the results of the hyperparameter optimization run show what works, they do not necessarily indicate which augmentations have the biggest impact on the score. For this purpose I chose to do follow up ensemble runs, where one parameter again changes from 0 to its maximum value and all other parameters are fixed at their optimal value.
 
+The results here generally do not show differences that are as large as in the earlier ensemble runs. As multiple techniques which increase the score build up the influence of a single technique can become overshadowed.
+
 % TODO: add text, show graphs
 
 \section{Inference Parameters}
@@ -1352,7 +1354,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
 
 While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble testset, using the model obtained from the hyperparameter optimization with \ac{SAHI} and a 20\% \ac{BIS} still results in a Pascal VOC 2010 \ac{mAP} score of 45.14\% on the final testset. This may indicate that the hyperparameter search already overfitted the chosen augmentations to the ensemble testset. However, given that the testsets consists of images with tapes on skin, and, that the training sets consist of images with markers on glass plates with skinless backgrounds, indicates that the fitted model has attained some amount of generalization over the two image domains.
 
-With more or more stable tapes, more training data which is closer to the real world usecase could be created. Since the data transformations, the training and evaluation are automated in the scripts developed during this work, new models could quickly be developed using the new data.
+With more or more stable tapes, more training data which is closer to the real world usecase could be created. Since the data transformations, the training and evaluation are automated in the scripts developed during this work, new models could quickly be developed once new data becomes available.
 
 %\subsection{Confusion Matrix in Object Detection}
 
@@ -1366,6 +1368,8 @@ With more or more stable tapes, more training data which is closer to the real w
 \subsection{Other Models}
 
 % YOLO v7 looking kinda good
+
+\subsection{3D Augmentations}
 
 \subsection{Deploying on Mobile}
 
