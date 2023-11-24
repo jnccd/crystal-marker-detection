@@ -1187,11 +1187,9 @@ During initial testing of the datasets using yolov5s as the model to train, ther
 
 Of the available inference parameters I mainly used \ac{SAHI} in the tests, since the markers in the testset were small and \ac{SAHI} increased the \ac{mAP} score in initial tests, or none.
 
-\section{Augmenting from Zero}
+\section{Augmenting from Zero} % TODO: Did I talk about randomness in training runs for ensembles anywhere?
 
-As a test for the usefulness of the added augmentations, I ramped up the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation.
-
-
+As a test for the usefulness of the added augmentations, I ramped up the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation. Using more training runs per configuration would make the values here more accurate, but would also take longer and use more electricity. The results shown here can therefore not be perfectly accurate, but give an idea of how the usage of an augmentation generally changes the scores.
 
 
 
@@ -1312,7 +1310,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
 
 \section{Discussion}
 
-While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble testset, using the model obtained from the hyperparameter optimization with \ac{SAHI} and a 20\% \ac{BIS} still results in a Pascal VOC 2010 \ac{mAP} score of 45.14\% on the final testset. This may indicate that the hyperparameter search already overfitted the chosen augmentations to the ensemble testset. However, given that the testsets consists of images with tapes on skin, and, that the training sets consist of images with markers on glass plates with skinless backgrounds, indicates that the fitted model has attained some amount generalization over the two image domains.
+While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble testset, using the model obtained from the hyperparameter optimization with \ac{SAHI} and a 20\% \ac{BIS} still results in a Pascal VOC 2010 \ac{mAP} score of 45.14\% on the final testset. This may indicate that the hyperparameter search already overfitted the chosen augmentations to the ensemble testset. However, given that the testsets consists of images with tapes on skin, and, that the training sets consist of images with markers on glass plates with skinless backgrounds, indicates that the fitted model has attained some amount of generalization over the two image domains.
 
 %\subsection{Confusion Matrix in Object Detection}
 
