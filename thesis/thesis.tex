@@ -68,7 +68,12 @@
 \selectlanguage{english}
 \setcounter{page}{3}
 \chapter*{Abstract}
-TODO
+
+As part of the development of a new kind of \ac{POCT} for medical purposes, this work addresses the construction of a detection system for partially invisible \ac{ArUco} marker structures on flexible photonic crystals within tape. The usecase for this detection is the reconstruction of the camera pose from the markers on the smartphone of the user. The detection task is split into two parts. 
+
+The first part addresses the detection of areas of interest in the image using object detection networks. Due to a shortage of training data, a number of augmentations are defined and prebuilt into the dataset, such that the same augmentation can be tested with many model architectures without changing the dataloader for each one. The impact of the augmentations on the resulting \ac{mAP} scores are then measured using ensemble runs and hyperparameter optimizations. Furthermore inference techniques such as \ac{SAHI} are used to increase the detection performance and are evaluated. Despite dissimilarity of training and test data for this part, the augmentation, training and inference techniques can increase the VOC 2010 \ac{mAP} score by more than 65\% when used with yolov5s.
+
+The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here a number of approaches using keypoint detection and segmentation networks are tested. Finally the best performing approach is found using a combination of an U-Net and Hough transform.
 
 \tableofcontents
 \listoffigures
