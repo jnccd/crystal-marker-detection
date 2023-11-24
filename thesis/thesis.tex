@@ -1394,15 +1394,23 @@ Furthermore I worked on a technique which works on top of the object detection m
 
 Since this is a large task for which many approaches could be used and since the development of new approaches can be time consuming, not all approaches for this task could be tested. However, promising ideas and unfinished development work for real world usage is summarized here.
 
-\subsection{Other Models}
+\subsection{More Training Data}
 
-% YOLO v7 looking kinda good
+Once more stable and more tapes with \ac{ArUco} markers could become available, the acquisition and manual labeling of more training data which is closer to the final usecase could be beneficial for the performance of the models of both parts of the detection pipeline.
 
 \subsection{3D Synthetic Data}
 
+Should the training data continue to be hard to get, good synthetic data could be created using 3D models of hands and a 3D engine such as Blender.
+
+\subsection{Other Models}
+
+Based on the findings of Treven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising. However in their findings \ac{YOLO}v7 only achieved a COCO \ac{mAP} score that was 1\% higher than the one they got using \ac{YOLO}v5.
+
 \subsection{Deploying on Mobile}
 
-\subsection{Tracking}
+Since this project is supposed to be used on phones, the next step which has currently not been completed is the deployment on phones. In theory this should work without further problems for \ac{YOLO}v5s, since it is just 14 \ac{MB} big. For the point detection U-Net this could be more difficult as it is 167.98 \acp{MB} big. Depending on the phone model the U-Net may still work but likely with increased battery usage. The implementation on phones itself should work well, since PyTorch has Android support \footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
+
+%\subsection{Tracking}
 
 \chapter{Appendix}
 
