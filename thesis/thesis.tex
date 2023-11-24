@@ -1380,9 +1380,19 @@ With more or more stable tapes, more training data which is closer to the real w
 \chapter{Conclusion}
 \label{chap:conclusion}
 
+This work introduces a new data preparation and model training pipeline, as well as new augmentations and implements techniques to find an optimal combinations of augmentations. This system is then used to train object detection models for the detection of \ac{ArUco} markers as part of the development of a \ac{POCT} device. 
+
+Furthermore techniques are developed and compared for locating the corners of the \ac{ArUco} markers in the image.
+
 \section{Summary}
 
+For the development of a \ac{POCT}, I worked on a robust \ac{ArUco} marker detector that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model fo this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore the data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from COCO and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimization to find close to optimal compositions for datasets. 
+
+Furthermore I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this I tested multiple approaches and concluded on a U-Net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
+
 \section{Future Work}
+
+Since this is a large task for which many approaches could be used and since the development of new approaches can be time consuming, not all approaches for this task could be tested. However, promising ideas and unfinished development work for real world usage is summarized here.
 
 \subsection{Other Models}
 
