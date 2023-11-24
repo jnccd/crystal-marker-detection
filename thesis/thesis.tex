@@ -1193,7 +1193,27 @@ As a test for the usefulness of the added augmentations, I ramped up the usage r
 
 \subsection{Smart Grid Shuffle}
 
+Without the application of \ac{SAHI} a slight uplift in scores is visible throughout the plot, as seen in \autoref{fig:zero_sgs_plot}. Furthermore the correlation between the chance of augmentation usage and the \ac{mAP} score values of the training runs is 43\% for the VOC 2010 \ac{mAP} score and 52\% for COCO, showing that there is a moderate positive correlation.
 
+\begin{figure}
+  \caption{Results of Smart Grid Shuffle ensemble run without \ac{SAHI}}
+  \includegraphics[width=\textwidth]{image/zero-based-sgs-ensemble-2-thesis}
+  \label{fig:zero_sgs_plot}
+\end{figure}
+
+With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}. Furthermore improvements flatten out earlier and stagnate after 10\% of usage chance.
+
+\begin{figure}
+  \caption{Results of Smart Grid Shuffle ensemble run with \ac{SAHI}}
+  \includegraphics[width=\textwidth]{image/zero-based-sgs-sahi-ensemble-2-thesis}
+  \label{fig:zero_sgs_sahi_plot}
+\end{figure}
+
+\subsection{Rotation}
+
+\subsection{Perspective}
+
+\subsection{Other?}
 
 \section{Hyperparameter Optimization}
 
