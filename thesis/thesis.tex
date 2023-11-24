@@ -1214,14 +1214,26 @@ With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}.
 The rotation augmentation is the one which improved the scores the most, as seen in \autoref{fig:zero_rot_plot}. Here more usage rate is needed before the score gains level out. The correlation for the VOC 2010 score is 54\% and for the COCO score is 21\% here. This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
 
 \begin{figure}
-  \caption{Results of Rotation ensemble run with \ac{SAHI}}
+  \caption{Results of Rotation ensemble run without \ac{SAHI}}
   \includegraphics[width=\textwidth]{image/zero-based-rot-ensemble-2-thesis}
   \label{fig:zero_rot_plot}
 \end{figure}
 
 % TODO: Add sahi plot
 
-\subsection{Other?}
+\subsection{Random Crop v2}
+
+Random Crop v2 had the worst impact on scores, as seen in \autoref{fig:zero_rc2_plot}. This may be because it zooms too far into the image. Default Random Crop did not show similar impact on the scores.
+
+\begin{figure}
+  \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}}
+  \includegraphics[width=\textwidth]{image/zero-based-rc2-ensemble-2-thesis}
+  \label{fig:zero_rc2_plot}
+\end{figure}
+
+\subsection{Other}
+
+Other augmentations, such as Label Move, showed a slight score increase at low usage rates and 
 
 \section{Hyperparameter Optimization}
 
