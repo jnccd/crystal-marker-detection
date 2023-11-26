@@ -115,11 +115,11 @@ The term dataset\footnote{\url{https://en.wikipedia.org/wiki/Data_set}, accessed
 
 \section{Neural Networks}
 
-This section gives a brief overview over \acp{ANN}. Since this thesis is written from a computer science perspective the term \acp{NN} is used interchangeably with \acp{ANN}.
+This section gives a brief overview over \acp{ANN}. Since this thesis is written from a computer science perspective, the term \acp{NN} is used interchangeably with \acp{ANN}.
 
 \subsection{History}
 
-Neural network interest and therefore research happened in waves over the last decades, starting with McCulloch and Pitts' work on logical operations on neurons in 1943 \cite{mcculloch1943logical,485891}. 
+Neural network interest and research happened in waves over the last decades, starting with McCulloch and Pitts' work on logical operations on neurons in 1943 \cite{mcculloch1943logical,485891}. 
 
 \begin{figure}
   \caption{Visualization of a perceptron}
@@ -147,7 +147,7 @@ The third and ongoing wave started in the early 1980ies with Hopfield's energy a
   \label{fig:mlp} 
 \end{figure}
 
-Each node in b in the \ac{MLP} as seen in \figureref{fig:mlp} is calculated like the node y in \figureref{fig:perceptron}. That also means that every node combination between the layers has a weight. Such a combination of layers is called a fully connected layer. When there is a lot of correlation between all the nodes, then such a fully connected layer is useful as it is also fully utilized. However, particularly when the nodes of the input layer represent the pixels of an image and the task is some form of recognition of objects in the image, most connections are not well utilized, since pixels that are further away from each other tend to have no meaningful connection \cite{aghdam2017guide}.
+Each node in b in the \ac{MLP} as seen in \figureref{fig:mlp} is calculated like the node y in \figureref{fig:perceptron}. That also means that every node combination between the layers has a weight. Such a combination of layers is called a fully connected layer. If there is a high degree of correlation between all the nodes, then such a fully connected layer is useful as it is also fully utilized. However, particularly when the nodes of the input layer represent the pixels of an image and the task is some form of recognition of objects in the image, most connections are not well utilized, since pixels that are further away from each other tend to have no meaningful connection \cite{aghdam2017guide}.
 
 Convolutional layers work like a kernel based image filter but make the kernel trainable instead of static. This has the advantage that each convolutional neuron only processes data from its receptive field instead of the whole image. The receptive field of a neuron refers to the area of pixels in the source image that the data the neuron gets is dependent on. Using just one convolutional layer means that the neurons in the resulting tensor are just dependent on an area in the source image as big as the kernel of that convolution. Therefore, \acp{CNN} tend to have many layers to be able to recognize larger shapes in the image. The resulting data of a convolutional layer is also called a feature map. 
 
@@ -162,10 +162,10 @@ Shapely is a popular Python package for computational geometry. It provides a wi
 \subsection{ArUco Detection}
 \label{sec:aruco_det}
 
-The \ac{ArUco} library implemented into \ac{OpenCV} is based on a paper from S. Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
-and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
+The \ac{ArUco} detector implemented into \ac{OpenCV} is based on a paper from Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
+and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons using the Douglas Peucker algorithm \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
 
-This algorithm is, however, based on the assumption that the marker contour is always visible. If it is not, detections can become skewed or nothing is detected as seen in \figureref{fig:aruco-det}.
+This algorithm is, however, based on the assumption that the marker contours are always visible. If they are not, detections can become skewed or nothing is detected, as seen in \figureref{fig:aruco-det}.
 
 \begin{figure}
   \centering
@@ -187,23 +187,23 @@ Albumentations was primarily build for high performance, such that its usage in 
 
 \section{Pytorch}
 
-PyTorch is an open-source machine learning library for Python that has gained significant popularity in the deep learning and artificial intelligence research communities. Originally developed by Facebook's AI Research lab (FAIR) and now maintained by the Linux Foundation, PyTorch offers a flexible and dynamic computational graph, making it particularly well-suited for developing and training neural networks.
+PyTorch is an open-source machine learning library for Python that has gained significant popularity in the deep learning and artificial intelligence research communities. It was originally developed by Facebook's AI Research lab (FAIR) and is now maintained by the Linux Foundation. %PyTorch offers a flexible and dynamic computational graph, making it particularly well-suited for developing and training neural networks.
 
 \section{SAHI}
 
-The Python package \ac{SAHI} is a lightweight vision library designed to perform large scale object detection and instance segmentation \cite{akyon2022sahi,obss2021sahi}. It was developed to address the challenges of detecting small objects and performing inference on large images, which are common issues in practical usage. 
+The Python package \ac{SAHI} is a lightweight vision library designed to perform large scale object detection and instance segmentation \cite{akyon2022sahi,obss2021sahi}. It was developed to address the challenges of detecting small objects and performing inference on large images, which are common issues in the practical usage of object detection models. 
 
-Fundamentally \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
+Fundamentally, \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled this sliding window approach helps with detection on large images. 
 
 \ac{SAHI} is framework agnostic and so can be modified to work with any model. However, it has YOLOX, YOLOv5, YOLOv8, MMDetection and Detectron2 support by default.
 
 \section{HyperOpt}
 
-Hyperopt is a Python package designed for hyperparameter optimization, a fundamental aspect of machine learning model development \cite{bergstra2013making}. It systematically explores the hyperparameter space using a variety of optimization algorithms, most notably \ac{TPE}, aiming to discover the parameter combination that optimizes a predefined objective function. 
+Hyperopt is a Python package designed for hyperparameter optimization, a fundamental aspect of machine learning model development \cite{bergstra2013making}. It systematically explores the hyperparameter space using a variety of optimization algorithms, such as \ac{TPE}, aiming to discover the parameter combination that optimizes a predefined objective function. 
 
-Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function, this is the best choice for optimizing hyperparameters.
+Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function this is the best choice for optimizing hyperparameters.
 
-A combination of grid search and manual search are widely used to optimize hyperparameters. However, it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs, but afterwards it uses the sampling history to find promising new parameter combinations \cite{bergstra2011algorithms}. 
+A combination of grid search and manual search are widely used to optimize hyperparameters. However, it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs. However afterwards, it uses the sampling history to find promising new parameter combinations \cite{bergstra2011algorithms}. 
 % \ac{TPE} roughly works in these steps:
 
 % \begin{enumerate}
@@ -228,7 +228,7 @@ A combination of grid search and manual search are widely used to optimize hyper
   \label{fig:iou}
 \end{figure}
 
-The metric commonly chosen to measure the prediction quality between a prediction and ground truth label is the \ac{IoU} \cite{padilla2020survey}. The \ac{IoU} is a measurement based on the  Jaccard Index, a coefficient representing the similarity of two sets of data \cite{jaccard1901etude}. In the object detection context the \ac{IoU} measures the area of overlap divided by the area of union between two bounding boxes as shown in \figureref{fig:iou}.
+The metric commonly chosen to measure the prediction quality between a prediction and ground truth label is the \ac{IoU} \cite{padilla2020survey}. The \ac{IoU} is a measurement based on the Jaccard Index, a coefficient representing the similarity of two sets of data \cite{jaccard1901etude}. In the object detection context, the \ac{IoU} measures the area of overlap divided by the area of union between two bounding boxes, as shown in \figureref{fig:iou}.
 
 \subsection{Precision and Recall}
 
@@ -248,7 +248,7 @@ $$R = \frac{TP}{TP + FN} = \frac{TP}{\text{all ground truths}}$$
 
 Precision measures the percentage of correct predictions among all predictions and recall measures the percentage of correct predictions among all ground truth boxes. 
 
-The difference becomes most apparent when thinking about the extreme cases. If a model would output every possible bounding box on an image the recall would be 100\%, since for each ground truth bounding box there is an exact same prediction bounding box. If a model would instead output a perfect prediction for one ground truth bounding box and nothing for any other ground truth bounding boxes, the precision would be 100\%, since each made prediction is correct. Since both cases are undesirable but still result in an high score in one of the metrics a combination of both is needed.
+The difference becomes most apparent when thinking about the extreme cases. If a model would output every possible bounding box on an image, the recall would be 100\% since for each ground truth bounding box there is an exact same prediction bounding box. If a model would instead output a perfect prediction for one ground truth bounding box and nothing for any other ground truth bounding boxes, the precision would be 100\% since each made prediction is correct. Since both cases are undesirable but still result in an high score in one of the metrics a combination of both is needed.
 
 \subsection{Table}
 
@@ -260,7 +260,7 @@ The difference becomes most apparent when thinking about the extreme cases. If a
 
 The first part of the \ac{mAP} calculation are the same across all scores considered. That unified part of the computation is described here using the example\footnote{\url{https://kharshit.github.io/blog/2019/09/20/evaluation-metrics-for-object-detection-and-segmentation}, accessed on 08.10.2023} shown in \figureref{fig:preds}. 
 
-Firstly a table of all predictions over all images in a given dataseries is created as seen in Table \ref{tab:mAP}. The table is sorted by prediction confidence. If there are multiple predictions for a single ground truth label, the prediction with the highest confidence is considered TP, if its \ac{IoU} is over the threshold, and all others FP, as seen with prediction P3. 
+Firstly, a table of all predictions over all images in a given dataseries is created as seen in Table \ref{tab:mAP}. The table is sorted by prediction confidence. If there are multiple predictions for a single ground truth label, the prediction with the highest confidence is considered TP, if its \ac{IoU} is over the threshold, and all others FP, as seen with prediction P3. 
 
 \begin{table}
   \begin{tabular}{ c c c c c c c c }
@@ -275,7 +275,7 @@ Firstly a table of all predictions over all images in a given dataseries is crea
   \caption{\label{tab:mAP}\ac{mAP} table of the example given in \figureref{fig:preds}.}
 \end{table}
 
-As the table is stepped through from highest confidence predictions to lowest, the accumulated TP and FP are incremented based on whether the prediction was correct or incorrect and saved into each table row \cite{padilla2020survey}. By computing $\text{acc \ac{TP}} / (\text{acc \ac{TP}} + \text{acc \ac{FP}})$ a preliminary precision is computed for each row. Similarly a preliminary recall value is calculated for each table row by dividing the accumulated \ac{TP} by the total number of ground truth labels of all images. Its important to note that recall values due to their computation formula here are monotonically increasing as the table rows are visited. When plotting the precision and recall values of the table rows as y and x components of points, the \ac{PR curve} is obtained as seen in \figureref{fig:pr-curve}.
+As the table is stepped through from highest confidence predictions to lowest, the accumulated \ac{TP} and \ac{FP} are incremented based on whether the prediction was correct or incorrect and saved into each table row \cite{padilla2020survey}. By computing $\text{acc \ac{TP}} / (\text{acc \ac{TP}} + \text{acc \ac{FP}})$ a preliminary precision is computed for each row. Similarly, a preliminary recall value is calculated for each table row by dividing the accumulated \ac{TP} by the total number of ground truth labels of all images. Its important to note, that recall values due to their computation formula here are monotonically increasing as the table rows are visited. When plotting the precision and recall values of the table rows as y and x components of points, the \ac{PR curve} is obtained as seen in \figureref{fig:pr-curve}.
 
 \begin{figure}
   \caption{Example of a \ac{PR curve} plot taken from training with real data}
