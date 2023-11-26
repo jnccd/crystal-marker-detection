@@ -71,7 +71,7 @@
 
 As part of the development of a new kind of \ac{POCT} for medical purposes, this work addresses the construction of a detection system for partially invisible \ac{ArUco} marker structures on flexible photonic crystals within tape. The usecase for this detection is the reconstruction of the camera pose from the markers on the smartphone of the user. The detection task is split into two parts. 
 
-The first part addresses the detection of areas of interest in the image using object detection networks. Due to a shortage of training data, a number of augmentations are defined and prebuilt into the dataset, such that the same augmentation can be tested with many model architectures without changing the dataloader for each one. The impact of the augmentations on the resulting \ac{mAP} scores are then measured using ensemble runs and hyperparameter optimizations. Furthermore inference techniques such as \ac{SAHI} are evaluated and used to increase the detection performance. Despite dissimilarity of training and test data for this part, the augmentation, training and inference techniques can increase the VOC 2010 \ac{mAP} score by more than 65\% when used with yolov5s.
+The first part addresses the detection of areas of interest in the image using object detection networks. Due to a shortage of training data, a number of augmentations are defined and prebuilt into the dataset, such that the same augmentation can be tested with many model architectures without changing the dataloader for each one. The impact of the augmentations on the resulting \ac{mAP} scores are then measured using ensemble runs and hyperparameter optimizations. Furthermore, inference techniques such as \ac{SAHI} are evaluated and used to increase the detection performance. Despite dissimilarity of training and test data for this part, the augmentation, training and inference techniques can increase the VOC 2010 \ac{mAP} score by more than 65\% when used with yolov5s.
 
 The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here a number of approaches using keypoint detection and segmentation networks are tested. Finally the best performing approach is found using a combination of an U-Net and Hough transform.
 
@@ -87,7 +87,7 @@ During treatment, measuring the biomarkers of a patient is essential. However, a
 
 However, the optical readout from photonic crystal slabs is challenging, since its optical properties are angle dependant. For the camera of a handheld device, the optical response would therefore change depending on the angle of incidence. To correct this angular readout error, Kraft et al. added \ac{ArUco} fiducial marker structures into the flexible photonic crystal slabs. These marker structures can be detected and the angle of the marker plane to the camera can be computed by existing software from \ac{OpenCV}. However, the marker structures resulting from the current flexible photonic crystal slab construction process have scratches and are incomplete. Due to this and the angle dependant optical properties of the photonic crystal slabs, the existing software is not able to detect the marker structures on the flexible photonic crystal slabs.
 
-% A part of the solution for this problem could be small and inexpensive testing equipment \cite{Fab23}, which would allow for fast and regular assessment of ones health without requiring the time of healthcare professionals \cite{POC12}. Such an approach is called \ac{POC}, since the testing and evaluation is done by and of the patient. These kits are also called \acp{POCT}. One type of \ac{POCT} are wearables. However traditional wearables are based on electrical readout systems \cite{gao2019flexible}, which necessitate conducting wires and a battery and may be invasive. To overcome the drawbacks of wearables using electrical readout systems, optical readout systems can be used instead \cite{nguyen2021wearable}. One approach for an optical readout system is using commercially available adhesive tape, which acts as a \ac{PCS}, and etching \ac{ArUco} fiducial markers into it \cite{Fab23}. This is done by first applying a negative photoresist to the tape and then shining UV light on it, while masking the parts of it that are supposed to become part of the \ac{ArUco} shape later. Then an \ac{IBE} process is applied to the tape and finally the heat resist of the first step is removed during an ultrasonic heat bath.
+% A part of the solution for this problem could be small and inexpensive testing equipment \cite{Fab23}, which would allow for fast and regular assessment of ones health without requiring the time of healthcare professionals \cite{POC12}. Such an approach is called \ac{POC}, since the testing and evaluation is done by and of the patient. These kits are also called \acp{POCT}. One type of \ac{POCT} are wearables. However, traditional wearables are based on electrical readout systems \cite{gao2019flexible}, which necessitate conducting wires and a battery and may be invasive. To overcome the drawbacks of wearables using electrical readout systems, optical readout systems can be used instead \cite{nguyen2021wearable}. One approach for an optical readout system is using commercially available adhesive tape, which acts as a \ac{PCS}, and etching \ac{ArUco} fiducial markers into it \cite{Fab23}. This is done by first applying a negative photoresist to the tape and then shining UV light on it, while masking the parts of it that are supposed to become part of the \ac{ArUco} shape later. Then an \ac{IBE} process is applied to the tape and finally the heat resist of the first step is removed during an ultrasonic heat bath.
 
 \section{Problem Statement}
 
@@ -104,7 +104,7 @@ The later chapters of this thesis are based on a number of technologies and conc
 
 \section{Definitions}
 
-The term dataset\footnote{\url{https://en.wikipedia.org/wiki/Data_set}, accessed on 01.10.2023} is central to machine learning as it defines what is learned from. However this term is ambiguous as it describes both a series of images and labels\footnote{\url{https://pytorch.org/tutorials/beginner/introyt/trainingyt.html}, accessed on 01.10.2023} as well as a set of series of images and labels \cite{lin2014microsoft}. In other subfields of machine learning a dataset may contain different data types other than images. For this thesis however dataset and similar terms are defined as follows to make the later parts more easily understandable:
+The term dataset\footnote{\url{https://en.wikipedia.org/wiki/Data_set}, accessed on 01.10.2023} is central to machine learning as it defines what is learned from. However, this term is ambiguous as it describes both a series of images and labels\footnote{\url{https://pytorch.org/tutorials/beginner/introyt/trainingyt.html}, accessed on 01.10.2023} as well as a set of series of images and labels \cite{lin2014microsoft}. In other subfields of machine learning a dataset may contain different data types other than images. For this thesis, however, dataset and similar terms are defined as follows to make the later parts more easily understandable:
 
 \begin{description}
   \item[Label] A \textit{label} or \textit{annotation} refers to extra data that belongs to an image and describes a subset of the images contents. \textit{Labels} are usually created using human input and describe the desired output of a machine learning model on that image.
@@ -135,7 +135,7 @@ The second wave started in the early 1960ies with Rosenblatt's perceptron conver
     0, & \text{otherwise}
 \end{cases}
 \]
-Setting $w1$ and $w2$ to 1 yields a perceptron that implements the logical or operation. As McCulloch and Pitts' work showed, the perceptron is able to model all simple logical operations such as: and, or, not. However the second wave slowed as Minsky and Papert showed that the perceptron is unable to model the XOR operation \cite{minsky1969perceptron} even though the \ac{MLP} that Rosenblatt already proposed at the time could model XOR through the combination of multiple perceptrons \cite{schmidhuber2022annotated}.
+Setting $w1$ and $w2$ to 1 yields a perceptron that implements the logical or operation. As McCulloch and Pitts' work showed, the perceptron is able to model all simple logical operations such as: and, or, not. However, the second wave slowed as Minsky and Papert showed that the perceptron is unable to model the XOR operation \cite{minsky1969perceptron} even though the \ac{MLP} that Rosenblatt already proposed at the time could model XOR through the combination of multiple perceptrons \cite{schmidhuber2022annotated}.
 
 The third and ongoing wave started in the early 1980ies with Hopfield's energy approach \cite{hopfield1982neural} as well as the introduction and refinement of back-propagation for \acp{MLP} \cite{werbos1974beyond,rumelhart1986parallel}.
 
@@ -147,9 +147,9 @@ The third and ongoing wave started in the early 1980ies with Hopfield's energy a
   \label{fig:mlp} 
 \end{figure}
 
-Each node in b in the \ac{MLP} as seen in \figureref{fig:mlp} is calculated like the node y in \figureref{fig:perceptron}. That also means that every node combination between the layers has a weight. Such a combination of layers is called a fully connected layer. When there is a lot of correlation between all the nodes, then such a fully connected layer is useful as it is also fully utilized. However particularly when the nodes of the input layer represent the pixels of an image and the task is some form of recognition of objects in the image, most connections are not well utilized, since pixels that are further away from each other tend to have no meaningful connection \cite{aghdam2017guide}.
+Each node in b in the \ac{MLP} as seen in \figureref{fig:mlp} is calculated like the node y in \figureref{fig:perceptron}. That also means that every node combination between the layers has a weight. Such a combination of layers is called a fully connected layer. When there is a lot of correlation between all the nodes, then such a fully connected layer is useful as it is also fully utilized. However, particularly when the nodes of the input layer represent the pixels of an image and the task is some form of recognition of objects in the image, most connections are not well utilized, since pixels that are further away from each other tend to have no meaningful connection \cite{aghdam2017guide}.
 
-Convolutional layers work like a kernel based image filter but make the kernel trainable instead of static. This has the advantage that each convolutional neuron only processes data from its receptive field instead of the whole image. The receptive field of a neuron refers to the area of pixels in the source image that the data the neuron gets is dependent on. Using just one convolutional layer means that the neurons in the resulting tensor are just dependent on an area in the source image as big as the kernel of that convolution. Therefore \acp{CNN} tend to have many layers to be able to recognize larger shapes in the image. The resulting data of a convolutional layer is also called a feature map. 
+Convolutional layers work like a kernel based image filter but make the kernel trainable instead of static. This has the advantage that each convolutional neuron only processes data from its receptive field instead of the whole image. The receptive field of a neuron refers to the area of pixels in the source image that the data the neuron gets is dependent on. Using just one convolutional layer means that the neurons in the resulting tensor are just dependent on an area in the source image as big as the kernel of that convolution. Therefore, \acp{CNN} tend to have many layers to be able to recognize larger shapes in the image. The resulting data of a convolutional layer is also called a feature map. 
 
 \section{Shapely} % TODO: Add cites or footnotes in these sections
 
@@ -165,7 +165,7 @@ Shapely is a popular Python package for computational geometry. It provides a wi
 The \ac{ArUco} library implemented into \ac{OpenCV} is based on a paper from S. Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
 and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
 
-This algorithm is however based on the assumption that the marker contour is always visible. If it is not, detections can become skewed or nothing is detected as seen in \figureref{fig:aruco-det}.
+This algorithm is, however, based on the assumption that the marker contour is always visible. If it is not, detections can become skewed or nothing is detected as seen in \figureref{fig:aruco-det}.
 
 \begin{figure}
   \centering
@@ -195,7 +195,7 @@ The Python package \ac{SAHI} is a lightweight vision library designed to perform
 
 Fundamentally \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
 
-\ac{SAHI} is framework agnostic and so can be modified to work with any model. However it has YOLOX, YOLOv5, YOLOv8, MMDetection and Detectron2 support by default.
+\ac{SAHI} is framework agnostic and so can be modified to work with any model. However, it has YOLOX, YOLOv5, YOLOv8, MMDetection and Detectron2 support by default.
 
 \section{HyperOpt}
 
@@ -203,7 +203,7 @@ Hyperopt is a Python package designed for hyperparameter optimization, a fundame
 
 Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function, this is the best choice for optimizing hyperparameters.
 
-A combination of grid search and manual search are widely used to optimize hyperparameters. However it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs, but afterwards it uses the sampling history to find promising new parameter combinations \cite{bergstra2011algorithms}. 
+A combination of grid search and manual search are widely used to optimize hyperparameters. However, it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs, but afterwards it uses the sampling history to find promising new parameter combinations \cite{bergstra2011algorithms}. 
 % \ac{TPE} roughly works in these steps:
 
 % \begin{enumerate}
@@ -218,7 +218,7 @@ A combination of grid search and manual search are widely used to optimize hyper
 
 \section{mAP Scores}
 
-\ac{mAP} scores are a class of commonly used metrics in the field of object detection to evaluate the performance of an object detection model \cite{padilla2020survey}. They aim to provide a measure of how well the model can identify and locate objects within an image. However there is a lack of consensus about the \ac{mAP} calculation. I will therefore focus on three popular \ac{mAP} scores. 
+\ac{mAP} scores are a class of commonly used metrics in the field of object detection to evaluate the performance of an object detection model \cite{padilla2020survey}. They aim to provide a measure of how well the model can identify and locate objects within an image. However, there is a lack of consensus about the \ac{mAP} calculation. I will therefore focus on three popular \ac{mAP} scores. 
 
 \subsection{IoU}
 
@@ -313,7 +313,7 @@ Since the VOC 2010 score takes all given recall values into account it is genera
 
 \subsection{Microsoft COCO}
 
-The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales where the ground truth masks are split by their pixel area \cite{padilla2020survey}. However for this work I focused on the most used AP score definition of \ac{COCO}, which is the AP@50:5:95 score. It refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points, similar to the VOC 2007 score. However with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
+The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales where the ground truth masks are split by their pixel area \cite{padilla2020survey}. However, for this work I focused on the most used AP score definition of \ac{COCO}, which is the AP@50:5:95 score. It refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points, similar to the VOC 2007 score. However, with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
 The \ac{COCO} mAP score, or average mean average precision score as proposed by Redmon et al., then refers to the average of the computed mAP scores for each \ac{IoU} threshold \cite{redmon2018yolov3}. 
 
 The \ac{COCO} scores usefulness lies in its measurement of how tight a prediction bounding box is around a ground truth bounding box using higher \ac{IoU} thresholds. Both VOC scores described see a prediction as correct as soon as its \ac{IoU} is above 0.5 and make no difference between predictions with an \ac{IoU} of 0.55 or 0.9. The \ac{COCO} score therefore gives the opportunity to measure further improvements to trained models, assuming the ground truth labels of the dataset are accurate enough.
@@ -325,17 +325,17 @@ In the following paragraphs papers focusing on difficult \ac{ArUco} marker detec
 
 \section{ArUco Marker Detection}
 
-\ac{ArUco} markers can usually be detected well enough for most usecases by \ac{OpenCV}'s own detection algorithm. However there are a number of more difficult usecases. In the following they are shortly introduced.
+\ac{ArUco} markers can usually be detected well enough for most usecases by \ac{OpenCV}'s own detection algorithm. However, there are a number of more difficult usecases. In the following they are shortly introduced.
 
 \subsection{UAV pose estimation}
 
-Another use case in which robust detection of \ac{ArUco} markers is essential is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage markers can become occluded and other visual artifacts can make detection difficult. Therefore Li et al used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based networks can be more stable than classic detection systems. For training the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for subsequent processing speed. To make the training data more realistic black and white objects were placed on the floor to simulate occluding objects. For the test set images were taken similarly but markers were partly occluded by laying a white paper cutout on top of it, with occlusion ratios from 10\% to 40\%. 
+Another use case in which robust detection of \ac{ArUco} markers is essential is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However, during real world usage markers can become occluded and other visual artifacts can make detection difficult. Therefore, Li et al used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based networks can be more stable than classic detection systems. For training the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for subsequent processing speed. To make the training data more realistic black and white objects were placed on the floor to simulate occluding objects. For the test set images were taken similarly but markers were partly occluded by laying a white paper cutout on top of it, with occlusion ratios from 10\% to 40\%. 
 
 Markers in test images which had occluded borders still had high detection rates even at high cover ratios while markers in which the middle was occluded had worse detection rates, showing that the marker pattern itself was most important for \ac{CNN} detection \cite{li2020aruco}.
 
 \subsection{Deep ChArUco}
 
-Other papers, which focus on neural network aided detection of \ac{ArUco} markers, do not address occlusion. However Hu et al's paper on ChArUcoNet and RefineNet covers keypoint detection of the marker corners in an postprocessing step after the bounding box detection under low light conditions \cite{hu2019deep}. Therefore the augmentations also focus on noise, blur and brightness as well as shadow effects and a homographic transform. Deep ChArUco is able to detect the markers reliably even at higher darkness degrees while the \ac{ArUco} detection algorithm fails earlier. 
+Other papers, which focus on neural network aided detection of \ac{ArUco} markers, do not address occlusion. However, Hu et al's paper on ChArUcoNet and RefineNet covers keypoint detection of the marker corners in an postprocessing step after the bounding box detection under low light conditions \cite{hu2019deep}. Therefore, the augmentations also focus on noise, blur and brightness as well as shadow effects and a homographic transform. Deep ChArUco is able to detect the markers reliably even at higher darkness degrees while the \ac{ArUco} detection algorithm fails earlier. 
 
 \subsection{Helping people with visual impairment}
 
@@ -345,7 +345,7 @@ A paper from Elgendy et al proposes a navigation system for people with visual i
 
 Image Augmentation is of large importance for generalization. Since a model is build in training by optimizing the similarity of its output on training images to target output, it will also only perform well on examples it was trained on or that are similar. Through variation in training, models can attain a level of generalization that allows them to perform well despite differences in lighting, occlusion, background, scale, etc. \cite{shorten2019survey}. A lack of such an ability of generalization leads to previously working models being unable to classify images if a single pixel changes color \cite{8601309}. Often this variation can come from a large dataset, but if real data is in short supply or if the labeling is too time consuming, image augmentation can replace it.
 
-Image augmentations can be any kind of image transformation. However depending on the task and the dataset the effectiveness of different types of augmentations can vary dramatically. Nonetheless in the following I will introduce available papers with empirical comparisons or meta analyses of image augmentations.
+Image augmentations can be any kind of image transformation. However, depending on the task and the dataset the effectiveness of different types of augmentations can vary dramatically. Nonetheless in the following I will introduce available papers with empirical comparisons or meta analyses of image augmentations.
 
 \subsection{Comparison of augmentations on the Caltech101 dataset}
 
@@ -418,11 +418,11 @@ Khalifa et al. compiled image augmentation techniques used in other papers \cite
 \chapter{Networks}
 \label{chap:netw}
 
-This chapter introduces network architectures that I used for the \ac{ArUco} marker detection and their history. Since the models are supposed to run on smart phones, they should be as small as possible. Furthermore inference in real time would make the usage easier. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures, a majority of this chapter will focus on them.
+This chapter introduces network architectures that I used for the \ac{ArUco} marker detection and their history. Since the models are supposed to run on smart phones, they should be as small as possible. Furthermore, inference in real time would make the usage easier. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures, a majority of this chapter will focus on them.
 
 \section{First YOLO Versions}
 
-\ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO} however is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
+\ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO}, however, is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
 
 \begin{figure}
   \caption{Visualization of the most important layers of the \ac{YOLO} network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, the purple box denotes two fully connected layers, inspired by the visualization from Redmon et al. \cite{redmon2016you}, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
@@ -430,7 +430,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \label{fig:yolo}
 \end{figure}
 
-\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers as seen in \figureref{fig:yolov2}. The first 23 layers (or 6 boxes in the figure) of the network are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function.
+\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore, all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers as seen in \figureref{fig:yolov2}. The first 23 layers (or 6 boxes in the figure) of the network are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function.
 
 \begin{figure}
   \caption{Visualization of the most important layers of the \ac{YOLO}v2 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$ created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
@@ -476,7 +476,7 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
   \item Random Horizontal Flip: This technique randomly flips the image around the y axis.
 \end{itemize}
 
-\ac{YOLO}v5 further defines augmentations such as Copy-Paste Augmentation and MixUp Augmentation. However these augmentations were disabled by default and not used over the course of this thesis.
+\ac{YOLO}v5 further defines augmentations such as Copy-Paste Augmentation and MixUp Augmentation. However, these augmentations were disabled by default and not used over the course of this thesis.
 
 \section{YOLOv8}
 
@@ -492,14 +492,14 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
 
 After the application of transformer blocks in natural language processing was successful they were also introduced into other domains, such as visual processing, resulting In \acp{ViT}. The application of transformers on vision tasks works by slicing the input image into many patches \cite{dosovitskiy2020image}. The pixel data of these patches is  further divided and interpreted as word vectors. These "visual words" can then be fed into a transformer based network. 
 
-\acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However in this work I aim to develop a detection system that would preferably run directly on patients smart phones, making large models impractical. Furthermore development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers, therefore the improvements may not stem from network architecture itself \cite{liu2022convnet}.
+\acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However, in this work I aim to develop a detection system that would preferably run directly on patients smart phones, making large models impractical. Furthermore, development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers, therefore the improvements may not stem from network architecture itself \cite{liu2022convnet}.
 
 % TODO?: \section{Unet}
 
 \chapter{Methodology and Implementation}
 \label{chap:implement}
 
-In this chapter I describe how I structured my code and why as well as the core ideas of some algorithms. Furthermore I describe the hardware that was used for training.
+In this chapter I describe how I structured my code and why as well as the core ideas of some algorithms. Furthermore, I describe the hardware that was used for training.
 
 \section{Goals}
 
@@ -555,7 +555,7 @@ The idea of the histogram approach is, that the pixel gradient histogram distrib
 
 For this approach firstly the image is again scaled in different steps in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards the image is traversed with a 64x64 pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \autoref{fig:markeryness_scores} (a). 
 
-There are many possible variations of this approach, such as also using the magnitude of the gradient as weights in the histogram computation or thresholding the gradients, to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean, that there are two directions, in which gradients mainly occur in the window. In this case two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^\infty_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram, that are the highest in a 2 number large window around them. However this also results in inconclusive scores as seen in \autoref{fig:markeryness_scores} (b).
+There are many possible variations of this approach, such as also using the magnitude of the gradient as weights in the histogram computation or thresholding the gradients, to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean, that there are two directions, in which gradients mainly occur in the window. In this case two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^\infty_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram, that are the highest in a 2 number large window around them. However, this also results in inconclusive scores as seen in \autoref{fig:markeryness_scores} (b).
 
 \subsection{Feature Matching}
 
@@ -577,7 +577,7 @@ There are many possible variations of this approach, such as also using the magn
   \label{fig:classic_sift_thresh_on_finger}
 \end{figure}
 
-Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \autoref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and a image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate its matches across the repeating marker structures, as seen in \autoref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally the positions of the matches in the image are moved by the difference of their position in the marker image and the middle of the marker image to cluster them. The results of that process can be seen in \autoref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However when using this matching process on an image of the real test set, nothing is detected, since the thresholded image there does not preserve the structure of the \ac{ArUco} marker, as seen in \autoref{fig:classic_sift_thresh_on_finger}.
+Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \autoref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and a image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate its matches across the repeating marker structures, as seen in \autoref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally the positions of the matches in the image are moved by the difference of their position in the marker image and the middle of the marker image to cluster them. The results of that process can be seen in \autoref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However, when using this matching process on an image of the real test set, nothing is detected, since the thresholded image there does not preserve the structure of the \ac{ArUco} marker, as seen in \autoref{fig:classic_sift_thresh_on_finger}.
 
 \subsection{Conclusion}
 
@@ -585,7 +585,7 @@ While I cannot try out all combinations of data transformations and image algori
 
 \section{Software Architecture}
 
-Python has support for the structuring of script files into modules in which data can be primarily exchanged between components through function call arguments. However for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, for example retraining a model.
+Python has support for the structuring of script files into modules in which data can be primarily exchanged between components through function call arguments. However, for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore, should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, for example retraining a model.
 
 \subsection{Data Pipeline Overview}
 
@@ -597,7 +597,7 @@ Python has support for the structuring of script files into modules in which dat
 
 The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type, that all dataset types can be build from. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data formats, making changes there difficult.
 
-The overview seen in \figureref{fig:arch_data} shows the various dataset types, that are build by the \texttt{create\_dataset} script, addressing the third goal. The \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
+The overview seen in \figureref{fig:arch_data} shows the various dataset types, that are build by the \texttt{create\_dataset} script, addressing the third goal. The \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore, augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
 
 \subsection{Label Data Type}
 
@@ -607,11 +607,11 @@ The overview seen in \figureref{fig:arch_data} shows the various dataset types, 
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_1}}
   \subcaptionbox{Image and polygon (orange) / bounding box (blue) labels after 50° rotation, as well as the old bounding box data in gray}
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_2}}
-  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue, after a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information, which was already too large since it could not capture the rotation of the object, the polygon label however can be augmented with the image without loosing label accuracy by transforming the polygon points.}
+  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue, after a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information, which was already too large since it could not capture the rotation of the object, the polygon label However, can be augmented with the image without loosing label accuracy by transforming the polygon points.}
   \label{fig:polygon-good}
 \end{figure}
 
-Image augmentation libraries have support for many datatypes to accommodate for many usecases. However Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure both bounding boxes and keypoints can be reduced to polygons. Furthermore polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore I use polygons as labels in dataseries and throughout most of the \texttt{create\_dataset} script. Afterwards the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation dataset.
+Image augmentation libraries have support for many datatypes to accommodate for many usecases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout most of the \texttt{create\_dataset} script. Afterwards the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation dataset.
 
 \subsection{Train Pipeline Overview}
 
@@ -623,7 +623,7 @@ Image augmentation libraries have support for many datatypes to accommodate for 
 
 As seen in \figureref{fig:arch_train} the training pipeline mainly consists of batch train, evaluate and analyze scripts. Batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. Batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. Batch train scripts can take multiple datasets at once for an ensemble training run.
 
-A training run folder contains the train artifacts, which refers to all files, including the model weights, that are created during training. The relation between training runs and inference tests was omitted in the figure, however training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and COCO \ac{mAP} scores, as well as intermediate results of the calculation for validation.
+A training run folder contains the train artifacts, which refers to all files, including the model weights, that are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and COCO \ac{mAP} scores, as well as intermediate results of the calculation for validation.
 
 \section{Automated Annotations}
 
@@ -647,7 +647,7 @@ To make the annotation of training data faster we printed 4 \ac{ArUco} markers o
 
 The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. After the script starts the first image of the image series given in the command line arguments is analyzed by the built-in \ac{OpenCV} \ac{ArUco} detector. Should there be 4 detected markers, the script will attempt to find the inner rectangle, which is the largest marked in red in \figureref{fig:af_markings}. For the Homography calculation in the next step it is important that the corners of the inner rectangle have a stable ordering. 
 
-There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, sorts each markers corners that are the closest to the middle into a list based on the quadrant the marker is in the image. Therefore \texttt{legacy\_rect\_finding} works independent of the orientations of the markers on the paper frame, however it is dependant on the placement of the markers in the image. 
+There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, sorts each markers corners that are the closest to the middle into a list based on the quadrant the marker is in the image. Therefore, \texttt{legacy\_rect\_finding} works independent of the orientations of the markers on the paper frame. However, it is dependant on the placement of the markers in the image. 
 
 The second algorithm assumes that all \ac{ArUco} markers on the paper frame have the same orientation and sorts their corners closest to the image middle into the rect based on their index in the marker as seen in \autoref{lst:irf}. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the assumptions of the two algorithms hold, they both result in a stable U-shaped ordering of the corners.
 
@@ -679,11 +679,11 @@ The second algorithm assumes that all \ac{ArUco} markers on the paper frame have
 
 Afterwards a homography from the inner rect corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in a \ac{OpenCV} \ac{GUI} window.
 
-Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
+Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However, this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
 
 \section{Augmentations}
 
-This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their strength can be set through the command line arguments. Furthermore the images are copied for augmentations such that the original not augmented training images and labels are kept in the dataset at least once. The position of the augmentations in the pipeline is shown in \autoref{fig:arch_data_aug_focus}.
+This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their strength can be set through the command line arguments. Furthermore, the images are copied for augmentations such that the original not augmented training images and labels are kept in the dataset at least once. The position of the augmentations in the pipeline is shown in \autoref{fig:arch_data_aug_focus}.
 
 \begin{figure}
   \caption{Position of augmentations in the pipeline}
@@ -693,9 +693,9 @@ This section describes the augmentations that were implemented into the \texttt{
 
 \subsection{Smart Grid Shuffling}
 
-The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
+The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However, these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
 
-One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However in this case the speed of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
+One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however, that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However, in this case the speed of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
 
 \subsubsection{Implementation}
 
@@ -917,9 +917,9 @@ The data pipeline also builds \ac{JSON} files into the dataset folder to make th
   \label{fig:aug_lm_example}
 \end{figure}
 
-Label move works similar to label dropout as described in \autoref{sec:aug_ld}. However after removing the label from the image it is reinserted at a different place including the image structure, that the label describes, as seen in \autoref{fig:aug_lm_example}. 
+Label move works similar to label dropout as described in \autoref{sec:aug_ld}. However, after removing the label from the image it is reinserted at a different place including the image structure, that the label describes, as seen in \autoref{fig:aug_lm_example}. 
 
-Since inserting of images into other images in OpenCV works by copying slices only \ac{AABB} areas can be inserted at once. However when reinserting the labels image structure at another position, only the \ac{ArUco} marker structure should be inserted and not the surrounding image content. Therefore before inserting the labels image structure back, a mask is applied to it. That mask is just the labels polygon rasterized in white onto a black image. Using the mask as weights, the labels image structure is then reinserted.
+Since inserting of images into other images in OpenCV works by copying slices only \ac{AABB} areas can be inserted at once. However, when reinserting the labels image structure at another position, only the \ac{ArUco} marker structure should be inserted and not the surrounding image content. Therefore, before inserting the labels image structure back, a mask is applied to it. That mask is just the labels polygon rasterized in white onto a black image. Using the mask as weights, the labels image structure is then reinserted.
 
 \subsubsection{Label Move v2}
 
@@ -957,9 +957,9 @@ These changes help make the reinserted label look more natural in the new spot, 
 
 A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is, that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation which adds black dots on parts of the image where no marker is. 
 
-After the augmentation is started at least one black dot is added. Afterwards there is a 40\% chance that another black dot is added. If another black dot is added there is another 40\% chance for one more marker. This could continue forever, however it gets more and more unlikely to go on after each iteration. 
+After the augmentation is started at least one black dot is added. Afterwards there is a 40\% chance that another black dot is added. If another black dot is added there is another 40\% chance for one more marker. This could continue forever, however, it gets more and more unlikely to go on after each iteration. 
 
-The insertion of black dots works similarly to label move, with the difference that a completely black image is inserted and that the mask is a circle. Furthermore like in label move v2, the mask is blurred using gaussian blur to create a color transition.
+The insertion of black dots works similarly to label move, with the difference that a completely black image is inserted and that the mask is a circle. Furthermore, like in label move v2, the mask is blurred using gaussian blur to create a color transition.
 
 An example of black dot aug can be seen in \autoref{fig:aug_bd_example}.
 
@@ -977,7 +977,7 @@ An example of black dot aug can be seen in \autoref{fig:aug_bd_example}.
 
 Another reoccurrence in the test data was that the tape with the markers was rolled around a finger. Due to the nature of the training data, this case is currently not included in the fitting process. The label curving augmentation should therefore mimic the curved labels.
 
-This augmentation again works similar to label move. However in this case the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case the x coordinates stay the same but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout the label vertices are also transformed, such that the label is still located over the image structure. However the polygon cannot fully capture the curving without new vertices, but since the polygons are transformed into bounding boxes in most cases this is not a problem. An example of label curving can be seen in \autoref{fig:aug_lc_example}.
+This augmentation again works similar to label move. However, in this case the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case the x coordinates stay the same but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout the label vertices are also transformed, such that the label is still located over the image structure. However, the polygon cannot fully capture the curving without new vertices, but since the polygons are transformed into bounding boxes in most cases this is not a problem. An example of label curving can be seen in \autoref{fig:aug_lc_example}.
 
 \subsection{Gaussian Noise}
 
@@ -995,11 +995,11 @@ Gaussian noise adds noise to each pixel in the image, with the strength of the n
   \label{fig:arch_train_eval_focus}
 \end{figure}
 
-The inference on test data using previously trained models happens in the evaluation scripts, as shown in \autoref{fig:arch_train_eval_focus}. The inference can be optimized using additional filters and other techniques. One such technique is \ac{SAHI}. However since each type of model has its own evaluate script, because each type of model works slightly differently, certain techniques have to be implemented separately. Therefore \ac{SAHI} is currently not supported for \ac{YOLO}-NAS within this project.
+The inference on test data using previously trained models happens in the evaluation scripts, as shown in \autoref{fig:arch_train_eval_focus}. The inference can be optimized using additional filters and other techniques. One such technique is \ac{SAHI}. However, since each type of model has its own evaluate script, because each type of model works slightly differently, certain techniques have to be implemented separately. Therefore, \ac{SAHI} is currently not supported for \ac{YOLO}-NAS within this project.
 
 \subsection{Bounding Box Filters}
 
-Furthermore the bounding boxes from the inference results can be filtered independently of the model they come from. The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this the size of a border along the the image bounds can be set and all bounding box predictions that fall within this border are filtered out. Additionally to filter predictions which are not square enough, which the \ac{ArUco} marker usually are not, a minimum squareness can be set. Squareness is here defined as $$ 
+Furthermore, the bounding boxes from the inference results can be filtered independently of the model they come from. The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this the size of a border along the the image bounds can be set and all bounding box predictions that fall within this border are filtered out. Additionally to filter predictions which are not square enough, which the \ac{ArUco} marker usually are not, a minimum squareness can be set. Squareness is here defined as $$ 
 s(w,h)=
 \begin{dcases}
     \frac{w}{h}, & \text{if } w\leq h\\
@@ -1026,7 +1026,7 @@ The top level scripts necessary for this are currently only implemented to work 
 \section{Hyperparameter Optimization}
 \label{sec:hyper_opt}
 
-To find an optimal combination of augmentations from the implemented ones, a hyperparameter optimization is implemented using Hyperopt. More precisely the search space for this usage of Hyperopt contains the chances for each augment to be applied on an image during dataset generation. Furthermore the strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. The epochs that should be trained for are also part of the search space. Since the validation data in the datasets used here can be similar to the training data, the hyperparameter optimization, which unlike the training runs on the test data, can then choose an earlier stopping point for the training, if further training does not increase the score further or in other words would overfit on the validation data. Finally the random seed for the dataset creation is also part of the search space, such that the best training run during the optimization is fully reproducible.
+To find an optimal combination of augmentations from the implemented ones, a hyperparameter optimization is implemented using Hyperopt. More precisely the search space for this usage of Hyperopt contains the chances for each augment to be applied on an image during dataset generation. Furthermore, the strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. The epochs that should be trained for are also part of the search space. Since the validation data in the datasets used here can be similar to the training data, the hyperparameter optimization, which unlike the training runs on the test data, can then choose an earlier stopping point for the training, if further training does not increase the score further or in other words would overfit on the validation data. Finally the random seed for the dataset creation is also part of the search space, such that the best training run during the optimization is fully reproducible.
 
 \section{Point Detection}
 
@@ -1051,7 +1051,7 @@ The learn rate used here starts at $0.001$ and decays every $100$ epochs by a fa
 % \end{figure}
 
 The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike the standard loss for keypoint detection, \ac{MSE}, works with any permutation of points, removing the requirement of getting the right point order from the network. 
-% The outputs predicted the position of markers in the validation data well. However the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
+% The outputs predicted the position of markers in the validation data well. However, the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \autoref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
 
 \subsection{Segmentation Approach}
 
@@ -1069,7 +1069,7 @@ The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019int
   \label{fig:segpet_preds_example}
 \end{figure}
 
-As an alternative I also tested a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The used here instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore there is extra logic required for interpreting the segmentation mask. 
+As an alternative I also tested a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The used here instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
 %Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \autoref{fig:segpet_preds_example}. 
 Examples for the U-Net output on validation data can be seen in \autoref{fig:segpet_preds_example}. 
 
@@ -1095,7 +1095,7 @@ Examples for the U-Net output on validation data can be seen in \autoref{fig:seg
 
 Using the output of \acp{OpenCV} implementation of Harris corner detector, each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$ and finally the length of $\overline{BA}$ and $\overline{BC}$. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \autoref{fig:segpet_rect_interp}. 
 
-It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly, since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However using three points improves the stability, since a whole corner may be misidentified in the segmentation mask.
+It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly, since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However, using three points improves the stability, since a whole corner may be misidentified in the segmentation mask.
 
 % TODO: Point mapping accuracy in good/bad cases and show one good and one bad case 
 % For eval: 75% of point order assessments correct
@@ -1126,7 +1126,7 @@ The \acp{OpenCV} implementation of Hough transform results in predicted lines on
   \label{fig:pet_point_sorting_compare}
 \end{figure}
 
-For now the different approaches only output points. However to detect how the marker lies in 3D space, it is also necessary to sort the points based on the rotation of the marker. For this, the input image is thresholded using \acp{OpenCV} adaptive threshold implementation. Afterwards a homography is computed to map the given rectangle in the image onto another image. Finally, using pixel comparisons each 90 degree rotation of the projected and thresholded image is tested against the \ac{ArUco} marker, as seen in \autoref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
+For now the different approaches only output points. However, to detect how the marker lies in 3D space, it is also necessary to sort the points based on the rotation of the marker. For this, the input image is thresholded using \acp{OpenCV} adaptive threshold implementation. Afterwards a homography is computed to map the given rectangle in the image onto another image. Finally, using pixel comparisons each 90 degree rotation of the projected and thresholded image is tested against the \ac{ArUco} marker, as seen in \autoref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
 
 \chapter{Evaluation}
 \label{chap:eval}
@@ -1145,7 +1145,7 @@ During dataset creation a set percentage of images and their labels are randomly
 
 \subsection{Test Data}
 
-From the 118 images of tapes directly on skin I used 55 good ones to build the third version of the test data. There were concerns, that choosing fitted models based on their \ac{mAP} score on the test set would lead to overfitting. At the same time I wanted to test against images that were close to the real world use case. Therefore the test set was split into two sets, one for evaluation in ensemble runs and for hyperparameter search and one for a final test at the end. The test sets were split manually, but such that the score of a model tested on a previous version test set was similar in both sets, and such that both sets contain a variety of hand poses, that are at the same time not so similar that overfitting on one set would lead to a good score on the other. Since some pairs of the 55 original test images were similar, a random split would have been prone to putting images that are too similar in the ensemble and in the final test set, such that both would not have been different enough. This split then resulted in a 25 image ensemble test set and a 30 image final test set.
+From the 118 images of tapes directly on skin I used 55 good ones to build the third version of the test data. There were concerns, that choosing fitted models based on their \ac{mAP} score on the test set would lead to overfitting. At the same time I wanted to test against images that were close to the real world use case. Therefore, the test set was split into two sets, one for evaluation in ensemble runs and for hyperparameter search and one for a final test at the end. The test sets were split manually, but such that the score of a model tested on a previous version test set was similar in both sets, and such that both sets contain a variety of hand poses, that are at the same time not so similar that overfitting on one set would lead to a good score on the other. Since some pairs of the 55 original test images were similar, a random split would have been prone to putting images that are too similar in the ensemble and in the final test set, such that both would not have been different enough. This split then resulted in a 25 image ensemble test set and a 30 image final test set.
 
 The third version of the test data was labeled using makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better accuracy than the \texttt{create\_manual\_dataseries} script, which currently lacks a zoom feature. The labels were exported as polygons in the \ac{COCO} \ac{JSON} format, were then converted to a dataseries using the \texttt{create\_coco\_json\_dataseries} script and finally build into a dataset.
 
@@ -1176,7 +1176,7 @@ After the implementation of the \ac{YOLO}v8 models into the training and testing
 
 The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
 
-The preprint of the paper from Treven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
+The preprint of the paper from Treven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
 
 Due to these results, and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
 
@@ -1201,7 +1201,7 @@ As a test for the usefulness of the added augmentations, I ramped up the usage r
 
 \subsection{Smart Grid Shuffle}
 
-Without the application of \ac{SAHI} a slight uplift in scores is visible throughout the plot, as seen in \autoref{fig:zero_sgs_plot}. Furthermore the correlation between the chance of augmentation usage and the \ac{mAP} score values of the training runs is 43\% for the VOC 2010 \ac{mAP} score and 52\% for COCO, showing that there is a moderate positive correlation.
+Without the application of \ac{SAHI} a slight uplift in scores is visible throughout the plot, as seen in \autoref{fig:zero_sgs_plot}. Furthermore, the correlation between the chance of augmentation usage and the \ac{mAP} score values of the training runs is 43\% for the VOC 2010 \ac{mAP} score and 52\% for COCO, showing that there is a moderate positive correlation.
 
 \begin{figure}
   \caption{Results of Smart Grid Shuffle ensemble run without \ac{SAHI}}
@@ -1209,7 +1209,7 @@ Without the application of \ac{SAHI} a slight uplift in scores is visible throug
   \label{fig:zero_sgs_plot}
 \end{figure}
 
-With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}. Furthermore improvements flatten out earlier and stagnate after 10\% of usage chance.
+With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}. Furthermore, improvements flatten out earlier and stagnate after 10\% of usage chance.
 
 \begin{figure}
   \caption{Results of Smart Grid Shuffle ensemble run with \ac{SAHI}}
@@ -1219,7 +1219,7 @@ With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}.
 
 \subsection{Rotation}
 
-The rotation augmentation is the one which improved the scores the most, as seen in \autoref{fig:zero_rot_plot}. The correlation for the VOC 2010 score is 54\% and for the COCO score is 21\% here. This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
+The rotation augmentation is the one which improved the scores the most, as seen in \autoref{fig:zero_rot_plot}. The correlation for the VOC 2010 score is 54\% and for the COCO score is 21\% here. This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However, at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
 
 \begin{figure}
   \caption{Results of Rotation ensemble run without \ac{SAHI}}
@@ -1287,7 +1287,7 @@ However, the rotation augmentation still has an impact on the score as seen in \
 
 \section{Inference Parameters}
 
-Based on the training run from the hyperparameter optimization, I tested different combinations of inference parameters as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However here this is especially pronounced, since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise using a Border Ignore Size improves the score further. However this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness threshold improves the score, but only if it is used alone. 
+Based on the training run from the hyperparameter optimization, I tested different combinations of inference parameters as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However, here this is especially pronounced, since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise using a Border Ignore Size improves the score further. However, this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness threshold improves the score, but only if it is used alone. 
 
 \begin{figure}
   \centering
@@ -1303,7 +1303,7 @@ Based on the training run from the hyperparameter optimization, I tested differe
   \label{fig:foreground_mask_examples}
 \end{figure}
 
-The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the testset images as seen in \autoref{fig:foreground_mask_examples}. The usage of these masks lead to the highest score on the ensemble testset. However the implementation of an extra segmentation model into the inference is still debatable, because the uplift in score may not be worth it for the possibly increased memory usage and inference time.
+The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the testset images as seen in \autoref{fig:foreground_mask_examples}. The usage of these masks lead to the highest score on the ensemble testset. However, the implementation of an extra segmentation model into the inference is still debatable, because the uplift in score may not be worth it for the possibly increased memory usage and inference time.
 
 \begin{table}
   \begin{tabular}{ c c }
@@ -1358,9 +1358,9 @@ A SegPet dataset is similar but instead of having the vertex coordinates in a la
 
 \subsection{Results}
 
-As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches generally achieve better scores. While this table shows only the best training runs, the 2 linear layer head MobilenetV2 also ended up at a sinkhorn loss of about 500 in most training runs. This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. However for now the models fit to a specific subset of all marker rotations and chose the closest to the marker rotation in the image instead of learning all possible rotations even if all marker rotations have the same chance of appearing in the training data through augmentations. 
+As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches generally achieve better scores. While this table shows only the best training runs, the 2 linear layer head MobilenetV2 also ended up at a sinkhorn loss of about 500 in most training runs. This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. However, for now the models fit to a specific subset of all marker rotations and chose the closest to the marker rotation in the image instead of learning all possible rotations even if all marker rotations have the same chance of appearing in the training data through augmentations. 
 
-For the U-Net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions. However for the usecase of accurate camera pose prediction even more precision may be needed.
+For the U-Net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions. However, for the usecase of accurate camera pose prediction even more precision may be needed.
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -1389,13 +1389,13 @@ With more or more stable tapes, more training data which is closer to the real w
 
 This work introduces a new data preparation and model training pipeline, as well as new augmentations and implements techniques to find an optimal combinations of augmentations. This system is then used to train object detection models for the detection of \ac{ArUco} markers as part of the development of a \ac{POCT} device. 
 
-Furthermore techniques are developed and compared for locating the corners of the \ac{ArUco} markers in the image.
+Furthermore, techniques are developed and compared for locating the corners of the \ac{ArUco} markers in the image.
 
 \section{Summary}
 
-For the development of a \ac{POCT}, I worked on a robust \ac{ArUco} marker detector that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model fo this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore the data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from COCO and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimization to find close to optimal compositions for datasets. 
+For the development of a \ac{POCT}, I worked on a robust \ac{ArUco} marker detector that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model fo this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from COCO and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimization to find close to optimal compositions for datasets. 
 
-Furthermore I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this I tested multiple approaches and concluded on a U-Net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
+Furthermore, I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this I tested multiple approaches and concluded on a U-Net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
 
 \section{Future Work}
 
@@ -1411,7 +1411,7 @@ Should the training data continue to be hard to get, good synthetic data could b
 
 \subsection{Other Models}
 
-Based on the findings of Treven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising, since they achieved a better score with them than with \ac{YOLO}v5. However the COCO \ac{mAP} score difference was 1\%.
+Based on the findings of Treven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising, since they achieved a better score with them than with \ac{YOLO}v5. However, the COCO \ac{mAP} score difference was 1\%.
 
 \subsection{Deploying on Mobile}
 
