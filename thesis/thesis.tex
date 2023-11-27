@@ -197,7 +197,7 @@ PyTorch is an open-source machine learning library for Python that has gained si
 
 The Python package \ac{SAHI} is a lightweight vision library designed to perform large scale object detection and instance segmentation \cite{akyon2022sahi,obss2021sahi}. It was developed to address the challenges of detecting small objects and performing inference on large images, which are common issues in the practical usage of object detection models. 
 
-Fundamentally, \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled this sliding window approach helps with detection on large images. 
+Fundamentally, \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap, there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
 
 \ac{SAHI} is framework agnostic and so can be modified to work with any model. However, it has YOLOX, YOLOv5, YOLOv8, MMDetection and Detectron2 support by default.
 
@@ -205,7 +205,7 @@ Fundamentally, \ac{SAHI} uses a sliding window over the input image to split it 
 
 Hyperopt is a Python package designed for hyperparameter optimization, a fundamental aspect of machine learning model development \cite{bergstra2013making}. It systematically explores the hyperparameter space using a variety of optimization algorithms, such as \ac{TPE}, aiming to discover the parameter combination that optimizes a predefined objective function. 
 
-Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function this is the best choice for optimizing hyperparameters.
+Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function, this is the best choice for optimizing hyperparameters.
 
 A combination of grid search and manual search are widely used to optimize hyperparameters. However, it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs. However afterwards, it uses the sampling history to find promising new parameter combinations \cite{bergstra2011algorithms}. 
 % \ac{TPE} roughly works in these steps:
@@ -252,7 +252,7 @@ $$R = \frac{TP}{TP + FN} = \frac{TP}{\text{all ground truths}}$$
 
 Precision measures the percentage of correct predictions among all predictions and recall measures the percentage of correct predictions among all ground truth boxes. 
 
-The difference becomes most apparent when thinking about the extreme cases. If a model would output every possible bounding box on an image, the recall would be 100\% since for each ground truth bounding box there is an exact same prediction bounding box. If a model would instead output a perfect prediction for one ground truth bounding box and nothing for any other ground truth bounding boxes, the precision would be 100\% since each made prediction is correct. Since both cases are undesirable but still result in an high score in one of the metrics a combination of both is needed.
+The difference becomes most apparent when thinking about the extreme cases. If a model would output every possible bounding box on an image, the recall would be 100\% since for each ground truth bounding box there is an exact same prediction bounding box. If a model would instead output a perfect prediction for one ground truth bounding box and nothing for any other ground truth bounding boxes, the precision would be 100\% since each made prediction is correct. Since both cases are undesirable but still result in an high score in one of the metrics, a combination of both is needed.
 
 \subsection{Table}
 
@@ -348,7 +348,7 @@ A paper from Elgendy et al. proposes a navigation system for people with visual 
 
 \section{Training Image Augmentation}
 
-Image Augmentation is of large importance for generalization. Since a model is build in training by optimizing the similarity of its output on training images to target output it will also only perform well on examples it was trained on or that are similar. Through variation in training, models can attain a level of generalization that allows them to perform well despite differences in lighting, occlusion, background, scale, etc. \cite{shorten2019survey}. A lack of such an ability of generalization leads to previously working models being unable to classify images if a single pixel changes color \cite{8601309}. Often this variation can come from a large dataset, but if real data is in short supply or if the labeling is too time consuming, image augmentation can replace it.
+Image Augmentation is of large importance for generalization. Since a model is build in training by optimizing the similarity of its output on training images to target output, it will also only perform well on examples it was trained on or that are similar. Through variation in training, models can attain a level of generalization that allows them to perform well despite differences in lighting, occlusion, background, scale, etc. \cite{shorten2019survey}. A lack of such an ability of generalization leads to previously working models being unable to classify images if a single pixel changes color \cite{8601309}. Often this variation can come from a large dataset, but if real data is in short supply or if the labeling is too time consuming, image augmentation can replace it.
 
 Image augmentations can be any kind of image transformation. However, depending on the task and the dataset the effectiveness of different types of augmentations can vary dramatically. Nonetheless, in the following I will introduce available papers with empirical comparisons or meta analyses of image augmentations.
 
@@ -423,7 +423,7 @@ Khalifa et al. compiled image augmentation techniques used in other papers \cite
 \chapter{Networks}
 \label{chap:netw}
 
-This chapter introduces network architectures that I used for the \ac{ArUco} marker detection and their history. Since the models are supposed to run on smart phones they should be as small as possible. Furthermore, inference in real time would make the usage easier. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures a majority of this chapter will focus on them.
+This chapter introduces network architectures that I used for the \ac{ArUco} marker detection and their history. Since the models are supposed to run on smart phones they should be as small as possible. Furthermore, inference in real time would make the usage easier. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures, a majority of this chapter will focus on them.
 
 \section{First YOLO Versions}
 
@@ -642,7 +642,7 @@ A training run folder contains the train artifacts, which refers to all files, i
   \label{fig:af_markings}
 \end{figure}
 
-To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface the position of the plane the markers sit on in 3D space within the images can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
+To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface the position of the plane, the markers sit on in 3D space within the images can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
 
 \begin{figure}
   \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline}
@@ -894,7 +894,7 @@ After the transformation, cases of \ac{OOB} labels have to be handled, as labels
   \label{fig:aug_rc_example}
 \end{figure}
 
-The pipeline implements a random crop, which crops an area of the datasets target image size out of the input image and moves the labels accordingly as seen in \figureref{fig:aug_rc_example}. Since this augmentation can also leave labels out of bounds the same procedure is applied on the resulting labels as described in \autoref{sec:oob}.
+The pipeline implements a random crop, which crops an area of the datasets target image size out of the input image and moves the labels accordingly as seen in \figureref{fig:aug_rc_example}. Since this augmentation can also leave labels out of bounds, the same procedure is applied on the resulting labels as described in \autoref{sec:oob}.
 
 \subsubsection{Augmentation Versions}
 
@@ -1161,7 +1161,7 @@ From the 118 images of tapes directly on skin I used 55 good ones to build the t
 
 The third version of the test data was labeled using makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better accuracy than the \texttt{create\_manual\_dataseries} script, which currently lacks a zoom feature. The labels were exported as polygons in the \ac{COCO} \ac{JSON} format, were then converted to a dataseries using the \texttt{create\_coco\_json\_dataseries} script and finally build into a dataset.
 
-While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine that creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes that we had and therefore could not build more test data on my own.
+While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine which creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes that we had and therefore could not build more test data on my own.
 
 \section{Human Testing}
 
