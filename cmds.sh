@@ -197,6 +197,7 @@ python3 mip_worker_batch_train.py -c "python batch_train/yolov5.py -d /data/pcmd
 python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-rots/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-rot-ensemble/"
 python3 mip_worker_batch_train.py -n 9 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v2/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensemble/"
 python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-gp-compare/ -t /data/pcmd/dataset/yolov5-640-on-skin-valset-v3-ensemble-test/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensemble-tv3/"
+python3 mip_worker_batch_train.py -n 6 -c "python batch_train/yolov5.py -d /data/pcmd/dataset/_noise-gp-compare-v2/ -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -e 300 -snr -o /data/pcmd/training/yolov5s-gp-ensemble-v2/"
 
 # hyp param search
 python hyperparam_search.py -t /data/pcmd/dataset/yolov5-0-on-skin-valset-v3-ensemble-test/ -df /data/pcmd/dataset/hyp-param-search -tf /data/pcmd/training/hyp-param-search -mine 200 -maxe 400 -ds " -tf /data/pcmd/dataseries/af-the_good_pics_for_nn2_s1/ /data/pcmd/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2" -emax 300
