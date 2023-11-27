@@ -499,7 +499,7 @@ After the application of transformer blocks in natural language processing was s
 
 \acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However, in this work I aim to develop a detection system that would preferably run directly on patients smart phones, making large models impractical. Furthermore, development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers. Therefore, the improvements may not stem from network architecture itself \cite{liu2022convnet}.
 
-% TODO?: \section{Unet}
+% TODO?: \section{U-net}
 
 \chapter{Methodology and Implementation}
 \label{chap:implement}
@@ -590,7 +590,7 @@ While I cannot try out all combinations of data transformations and image algori
 
 \section{Software Architecture}
 
-Python has support for the structuring of script files into modules in which data can be primarily exchanged between components through function call arguments. However, for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore, should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, for example retraining a model.
+Python has support for the structuring of script files into modules in which data can be primarily exchanged between components through function call arguments. However, for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore, should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, such as retraining a model.
 
 \subsection{Data Pipeline Overview}
 
@@ -600,9 +600,9 @@ Python has support for the structuring of script files into modules in which dat
   \label{fig:arch_data}
 \end{figure}
 
-The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type, that all dataset types can be build from. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data formats, making changes there difficult.
+The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type that all dataset types can be build from. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data, such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data formats, making changes there difficult.
 
-The overview seen in \figureref{fig:arch_data} shows the various dataset types, that are build by the \texttt{create\_dataset} script, addressing the third goal. The \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore, augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
+The overview seen in \figureref{fig:arch_data} shows the various dataset types that are build by the \texttt{create\_dataset} script, addressing the third goal. The \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore, augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
 
 \subsection{Label Data Type}
 
@@ -616,7 +616,7 @@ The overview seen in \figureref{fig:arch_data} shows the various dataset types, 
   \label{fig:polygon-good}
 \end{figure}
 
-Image augmentation libraries have support for many datatypes to accommodate for many usecases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout most of the \texttt{create\_dataset} script. Afterwards the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation dataset.
+Image augmentation libraries have support for many data types to accommodate for many use cases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout most of the \texttt{create\_dataset} script. Afterwards the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation dataset.
 
 \subsection{Train Pipeline Overview}
 
@@ -626,9 +626,9 @@ Image augmentation libraries have support for many datatypes to accommodate for 
   \label{fig:arch_train}
 \end{figure}
 
-As seen in \figureref{fig:arch_train} the training pipeline mainly consists of batch train, evaluate and analyze scripts. Batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. Batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. Batch train scripts can take multiple datasets at once for an ensemble training run.
+As seen in \figureref{fig:arch_train}, the training pipeline mainly consists of batch train, evaluate and analyze scripts. Batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. Batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. Batch train scripts can take multiple datasets at once for an ensemble training run.
 
-A training run folder contains the train artifacts, which refers to all files, including the model weights, that are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and COCO \ac{mAP} scores, as well as intermediate results of the calculation for validation.
+A training run folder contains the train artifacts, which refers to all files, including the model weights, which are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and COCO \ac{mAP} scores, as well as intermediate results of the calculation for validation.
 
 \section{Automated Annotations}
 
@@ -642,7 +642,7 @@ A training run folder contains the train artifacts, which refers to all files, i
   \label{fig:af_markings}
 \end{figure}
 
-To make the annotation of training data faster we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface, the position of the plane the markers sit on in 3D space within the images can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
+To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface the position of the plane the markers sit on in 3D space within the images can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
 
 \begin{figure}
   \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline}
@@ -654,7 +654,8 @@ The position of this script within the pipeline can be seen in \figureref{fig:ar
 
 There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, sorts each markers corners that are the closest to the middle into a list based on the quadrant the marker is in the image. Therefore, \texttt{legacy\_rect\_finding} works independent of the orientations of the markers on the paper frame. However, it is dependant on the placement of the markers in the image. 
 
-The second algorithm assumes that all \ac{ArUco} markers on the paper frame have the same orientation and sorts their corners closest to the image middle into the rect based on their index in the marker as seen in \autoref{lst:irf}. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the assumptions of the two algorithms hold, they both result in a stable U-shaped ordering of the corners.
+The second algorithm assumes that all printed \ac{ArUco} markers on the paper frame have the same orientation and that the corner list of the marker is sorted in an U-shape. Their respective corner closest to the image middle is then sorted into the inner rectangle corner list based on the corners index within the marker. %as seen in \autoref{lst:irf}. 
+The inner rectangles corners are now sorted too. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the respective assumptions of the two algorithms hold, they both result in a stable U-shaped ordering of the corners.
 
 \begin{figure}
   \caption{Matching corner indices of the \ac{ArUco} rectangles and the red inner rectangle corners written on the image}
@@ -662,29 +663,28 @@ The second algorithm assumes that all \ac{ArUco} markers on the paper frame have
   \label{fig:inner_rect_indices}
 \end{figure}
 
-\begin{code}
-\captionof{listing}{Inner Rectangle Finding}
-\label{lst:irf}
-\begin{minted}{python}
-  def find_inner_rect(each_arucos_corners, center):
-    inner_rect = [None, None, None, None]
+% \begin{code}
+% \captionof{listing}{Inner Rectangle Finding}
+% \label{lst:irf}
+% \begin{minted}{python}
+%   def find_inner_rect(each_arucos_corners, center):
+%     inner_rect = [None, None, None, None]
 
-    for corners in each_arucos_corners:
-        # Get index of closest corner to image center in aruco marker rectangle
-        min_i, _ = min([(i, distance(v, center)) for i, v in enumerate(corners)], 
-                       key=lambda x: x[1])
+%     for corners in each_arucos_corners:
+%         # Get index of closest corner to image center in aruco marker rectangle
+%         min_i, _ = min([(i, distance(v, center)) for i, v in enumerate(corners)], 
+%                        key=lambda x: x[1])
                 
-        # The markers corner closest to the middle is the min_i'th vertex of the inner rect
-        min_vert = corners[min_i]
-        inner_rect[min_i] = (int(min_vert[0]), int(min_vert[1]))
+%         # The markers corner closest to the middle is the min_i'th vertex of the inner rect
+%         inner_rect[min_i] = corners[min_i]
         
-    return inner_rect
-\end{minted}
-\end{code}
+%     return inner_rect
+% \end{minted}
+% \end{code}
 
-Afterwards a homography from the inner rect corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in a \ac{OpenCV} \ac{GUI} window.
+Afterwards, a homography from the inner rectangle corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in an \ac{OpenCV} \ac{GUI} window.
 
-Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However, this time the homography is computed from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rect corners.
+Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However, this time the homography is computed the other way around from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rectangle corners.
 
 \section{Augmentations}
 
@@ -700,7 +700,7 @@ This section describes the augmentations that were implemented into the \texttt{
 
 The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However, these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
 
-One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling, however, that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However, in this case the speed of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
+One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling. However, that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However, in this case the speed of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
 
 \subsubsection{Implementation}
 
@@ -859,13 +859,13 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
   \label{fig:aug_pld_example}
 \end{figure}
 
-To further discourage the model from learning label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the label from the image and removes the label entry. The label is removed from the image by taking its polygon, scaling it around its centroid by 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \autoref{fig:aug_pld_example}.
+To further discourage the model from fitting to certain label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the label from the image and removes the label entry. The label is removed from the image by taking its polygon, scaling it around its centroid by 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \autoref{fig:aug_pld_example}.
 
 \subsection{Homogeneous Matrix Transform}
 
 The rotation and perspective transformations are both combined into a homogeneous matrix transform step to prevent code duplication and to improve performance, since this step requires postprocessing.
 
-For most augmentations there is a chance setting and possibly a strength setting depending on the augmentation. Here the chance for a rotation of 90 degree multiples is combined with the chance of rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly all settings are build into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \autoref{fig:aug_mat_example}.
+For most augmentations there is a chance setting and possibly a strength setting depending on the augmentation. Here the available settings are the chance for a rotation of 90 degree multiples, the chance for rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly, all settings are build into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \autoref{fig:aug_mat_example}.
 
 \begin{figure}
   \centering
@@ -880,7 +880,7 @@ For most augmentations there is a chance setting and possibly a strength setting
 \subsubsection{Out of Bounds Cases}
 \label{sec:oob}
 
-After the transformation cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, since many labels can be hard to see even if the whole label is in the image in the training data. To compute visibility, first the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries of the image and the remaining area, where the label was, is painted over as described in \autoref{sec:aug_ld}. Should it pass the visibility check but still intersect with the image border, the label is set to be the intersection from earlier, effectively clipping it within the image space.
+After the transformation, cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, such that all markers which should be detected are still clearly visible. To compute visibility, first the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries and the remaining area, where the label was, is painted over, as in the label dropout described in \autoref{sec:aug_ld}. Should it pass the visibility check but still intersect with the image border, the label polygon is set to be the intersection from earlier, effectively clipping it within the image space.
 
 \subsection{Random Crop}
 
