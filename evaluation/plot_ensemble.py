@@ -127,7 +127,7 @@ for runs_paths_group in runs_paths_grouped:
 
 if args.config_index is not None:
     chart_entries.sort(key=lambda x: float(x['config']))
-elif args.config_unit != 'dataset':
+else:
     chart_entries.sort(key=lambda x: x['label'])
 
 # --- Create chart
