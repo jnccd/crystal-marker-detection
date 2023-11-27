@@ -96,8 +96,8 @@ for runs_paths_group in runs_paths_grouped:
         elif args.config_unit == 'deg%':
             chart_entry['label'] = f'{float(chart_entry["config"])}°'
     if args.config_unit == 'dataset':
-        version_pattern = re.compile("\bv([0-9]+)\b")
-        aug_pattern = re.compile("\b([a-zA-Z]+)-aug\b")
+        version_pattern = re.compile("-v([0-9]+)")
+        aug_pattern = re.compile("-([a-zA-Z]+)-aug")
         
         print(run_name)
         print(version_pattern.findall(run_name))
