@@ -1000,7 +1000,13 @@ Gaussian noise adds noise to each pixel in the image, with the strength of the n
   \label{fig:arch_train_eval_focus}
 \end{figure}
 
-The inference on test data using previously trained models happens in the evaluation scripts, as shown in \autoref{fig:arch_train_eval_focus}. The inference can be optimized using additional filters and other techniques. One such technique is \ac{SAHI}. However, since each type of model has its own evaluate script, because each type of model works slightly differently, certain techniques have to be implemented separately. Therefore, \ac{SAHI} is currently not supported for \ac{YOLO}-NAS within this project.
+The inference on test data using previously trained models happens in the evaluation scripts, as shown in \autoref{fig:arch_train_eval_focus}. The inference can be optimized using additional filters and other techniques. 
+
+\subsection{SAHI}
+
+One such technique is \ac{SAHI}. 
+%However, since each type of model has its own evaluate script, because each type of model works slightly differently, certain techniques have to be implemented separately. Therefore, \ac{SAHI} is currently not supported for \ac{YOLO}-NAS within this project. 
+I set the \ac{SAHI} window size to 640x640 pixels since this is the native input size for the used \ac{YOLO} models. Furthermore, I used a window overlap of 20\% on the x and y axis.
 
 \subsection{Bounding Box Filters}
 
