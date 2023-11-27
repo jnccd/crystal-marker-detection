@@ -1194,11 +1194,11 @@ Due to these results and since smaller models can be used on more devices, most 
 
 \subsection{Dataset}
 
-During initial testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3} the maximum scores did not increase. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results can be seen in \autoref{fig:initial_dataset_compare}. % TODO: redo this with newer runs?
+During initial testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results of the dataset focused ensemble can be seen in \autoref{fig:initial_dataset_compare}.
 
 \begin{figure}
-  \caption{Results of initial comparison of datasets on yolov5s, with built in yolov5 augmentations enabled and using two manually defined sets of augmentations \texttt{def} and \texttt{def2}, as well as runs without dataset augmentation, with 9 configurations and 5 runs per configurations for a total of 45 training runs} % TODO: Mention epochs
-  \includegraphics[width=\textwidth]{image/yolov5s-dataset-compare}
+  \caption{Results of initial comparison of datasets on yolov5s, with built in yolov5 augmentations enabled and using two manually defined sets of augmentations \texttt{weak} and \texttt{strong}, as well as runs without dataset augmentation, with 9 configurations and 6 runs per configurations for a total of 54 training runs of 300 epochs each}
+  \includegraphics[width=\textwidth]{image/gp-compare-v2-thesis}
   \label{fig:initial_dataset_compare}
 \end{figure}
 
