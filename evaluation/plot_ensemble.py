@@ -27,7 +27,7 @@ parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter fo
 
 parser.add_argument('-pi','--part-index', type=int, help='Index of the part number in the run name split by "-", if set runs are grouped.')
 parser.add_argument('-ci','--config-index', type=int, help='Index of the config number in the run name split by "-", if set displays this number in x axis.')
-parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg".')
+parser.add_argument('-cu','--config-unit', type=str, help='How should the config be understood? "%", "10%", "deg", "dataset".')
 
 parser.add_argument('-bfl','--best-fit-lines', action='store_true', help='Adds a exponential function based best fit line over the data.')
 parser.add_argument('-ct','--chart-type', type=str, default='bar', help='The type of chart the data is plotted to, "bar", "box", "scatter".')
@@ -95,6 +95,15 @@ for runs_paths_group in runs_paths_grouped:
             chart_entry['label'] = f'{str(chart_entry["config"]).lstrip("0")}0%'
         elif args.config_unit == 'deg%':
             chart_entry['label'] = f'{float(chart_entry["config"])}°'
+    if args.config_unit == 'dataset':
+        version_pattern = re.compile("\bv([0-9]+)\b")
+        aug_pattern = re.compile("\b([a-zA-Z]+)-aug\b")
+        
+        print(run_name)
+        print(version_pattern.findall(run_name))
+        print(aug_pattern.findall(run_name))
+        
+        chart_entry['label'] = f'gpv{version_pattern.findall(run_name)[0]} {aug_pattern.findall(run_name)}-aug'
     
     chart_entry['voc2007_mAPs'] = group_voc2007_mAPs
     chart_entry['voc2010_mAPs'] = group_voc2010_mAPs
