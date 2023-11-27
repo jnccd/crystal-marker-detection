@@ -2,8 +2,20 @@
     "cSpell.words": [
 		"Albumentations",
 		"bboxes",
+		"Buslaev",
+		"Darknet",
+		"Deci",
+		"Detectron",
+		"Elgendi",
+		"Elgendy",
+		"Hyperopt",
+		"interp",
 		"makesense",
-		"verts"
+		"Redmon",
+		"Terven",
+		"Ultralytics",
+		"verts",
+		"YOLO"
 	],
     "latex.linter.enabled": false,
     "latex-workshop.latex.tools": [
