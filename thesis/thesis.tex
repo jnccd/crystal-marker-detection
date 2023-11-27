@@ -499,7 +499,15 @@ After the application of transformer blocks in natural language processing was s
 
 \acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However, in this work I aim to develop a detection system that would preferably run directly on patients smart phones, making large models impractical. Furthermore, development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers. Therefore, the improvements may not stem from network architecture itself \cite{liu2022convnet}.
 
-% TODO?: \section{U-net}
+\section{U-Net}
+
+\begin{figure}
+  \caption{Visualization of a U-Net, taken from the examples of the \href{https://github.com/HarisIqbal88/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \includegraphics[width=0.8\textwidth]{image/Unet_ushape}
+  \label{fig:unet}
+\end{figure}
+
+An U-Net is a \ac{CNN} that was developed for biomedical image segmentation \cite{DBLP:journals/corr/RonnebergerFB15}. Its architecture is based on the fully convolutional network proposed by Long et al. \cite{DBLP:journals/corr/LongSD14} and extends the contracting network by following upsampling layers. Visualizing the layers such that their y position is based on the amount of feature maps they output yields the characteristic u-shape for the network, as seen in \autoref{fig:unet}. Furthermore, it uses feature channels to propagate context information from earlier layers to provide the upsampling path with missing information which may be lost during the contracting layers. This missing information can then help in generating high resolution segmentation masks.
 
 \chapter{Methodology and Implementation}
 \label{chap:implement}
