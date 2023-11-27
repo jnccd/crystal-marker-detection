@@ -99,11 +99,11 @@ for runs_paths_group in runs_paths_grouped:
         version_pattern = re.compile("-v([0-9]+)")
         aug_pattern = re.compile("-([a-zA-Z]+)-aug")
         
-        print(run_name)
-        print(version_pattern.findall(run_name))
-        print(aug_pattern.findall(run_name))
+        # print(run_name)
+        # print(version_pattern.findall(run_name))
+        # print(aug_pattern.findall(run_name))
         
-        chart_entry['label'] = f'gpv{version_pattern.findall(run_name)[0]} {aug_pattern.findall(run_name)}-aug'
+        chart_entry['label'] = f'gpv{version_pattern.findall(run_name)[0]} {aug_pattern.findall(run_name)[0]}-aug'
     
     chart_entry['voc2007_mAPs'] = group_voc2007_mAPs
     chart_entry['voc2010_mAPs'] = group_voc2010_mAPs
@@ -127,7 +127,7 @@ for runs_paths_group in runs_paths_grouped:
 
 if args.config_index is not None:
     chart_entries.sort(key=lambda x: float(x['config']))
-else:
+elif args.config_unit != 'dataset':
     chart_entries.sort(key=lambda x: x['label'])
 
 # --- Create chart
