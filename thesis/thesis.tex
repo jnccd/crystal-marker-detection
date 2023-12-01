@@ -1280,7 +1280,7 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
 \section{Hyperparameter Optimization}
 
 \begin{figure}
-  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run, with blue bars referring to augmentation application chance parameters and orange bars referring to augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
+  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run, with blue bars referring to augmentation application chance parameters and orange bars referring to maximum augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
   \includegraphics[width=\textwidth]{plot/best_hyp_run_params}
   \label{fig:optimal_augment_params} 
 \end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x lables here for later plots
@@ -1367,7 +1367,7 @@ In the best case, I want to create a detection system which runs completely on t
 \end{figure}
 
 \begin{figure}
-  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run with \ac{YOLO}v5x and \texttt{gpv3}, with blue bars referring to augmentation application chance parameters and orange bars referring to augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
+  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run with \ac{YOLO}v5x and \texttt{gpv3}, with blue bars referring to augmentation application chance parameters and orange bars referring to maximum augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
   \includegraphics[width=\textwidth]{plot/best_yolov5x_hyp_run_params}
   \label{fig:optimal_yolov5x_augment_params} 
 \end{figure}
