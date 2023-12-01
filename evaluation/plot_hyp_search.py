@@ -20,6 +20,8 @@ from utility import *
 parser = argparse.ArgumentParser(prog='', description='.')
 parser.add_argument('-t','--title', type=str, help='.')
 parser.add_argument('-j','--json-path', type=str, help='.')
+parser.add_argument('-lxp','--label-x-padding', default=18, type=int, help='Label x padding at the start of the plot.')
+parser.add_argument('-lap','--label-annotation-padding', default=0.035, type=float, help='Label annotation padding to other labels.')
 args = parser.parse_args()
 
 root_dir = Path(__file__).resolve().parent
@@ -67,17 +69,17 @@ ax.plot(range(len(hyp_history_scores)), hyp_history_scores, c = score_color)
 ax.plot(range(len(hyp_history_scores)), hyp_history_highest_scores, c = highest_score_color)
 
 cur_y = 0
-annot_padding = 0.035
+annot_padding = args.label_annotation_padding
 for max_change in max_changes:
     if cur_y > max_change[3] - annot_padding:
         cur_y += annot_padding
     else:
         cur_y = max_change[3]
     cur_x = max_change[2]
-    if cur_x < 18:
-        cur_x = 18
+    if cur_x < args.label_x_padding:
+        cur_x = args.label_x_padding
     print(cur_x)
-    ax.annotate(f'{max_change[0]}: {"+" if max_change[1] > 0 else ""}{round(max_change[1], 2) * 100}%',
+    ax.annotate(f'{max_change[0]}: {"+" if max_change[1] > 0 else ""}{round(max_change[1] * 100) }%',
         xy=(cur_x, cur_y),
         xytext=(0, 0),
         textcoords="offset points",
