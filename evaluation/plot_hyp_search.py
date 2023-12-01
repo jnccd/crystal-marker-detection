@@ -71,14 +71,15 @@ ax.plot(range(len(hyp_history_scores)), hyp_history_highest_scores, c = highest_
 cur_y = 0
 annot_padding = args.label_annotation_padding
 for max_change in max_changes:
-    if cur_y > max_change[3] - annot_padding:
+    if cur_y > max_change[3] - annot_padding and cur_x > max_change[2] - 5:
         cur_y += annot_padding
+        #print(f'move y by {annot_padding}')
     else:
         cur_y = max_change[3]
     cur_x = max_change[2]
     if cur_x < args.label_x_padding:
         cur_x = args.label_x_padding
-    print(cur_x)
+    print(f'Cur pos: ({cur_x}, {cur_y})')
     ax.annotate(f'{max_change[0]}: {"+" if max_change[1] > 0 else ""}{round(max_change[1] * 100) }%',
         xy=(cur_x, cur_y),
         xytext=(0, 0),
