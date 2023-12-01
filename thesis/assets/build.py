@@ -5,6 +5,8 @@ from pathlib import Path
 from graphviz import Digraph, Graph, Source
 from matplotlib import colors, pyplot as plt, patches as mpatches
 
+# Builds thesis assets
+
 # Utility
 
 def read_textfile(tf_path):
@@ -92,4 +94,19 @@ plot_augment_params('best_hyp_run_params', {
     "label_curving_chance": 0.6975898700345569
 })
 
-
+plot_augment_params('best_yolov5x_hyp_run_params', {
+    "smart_grid_shuffle_chance": 0.9125011445663909,
+    "label_dropout_chance": 0.4430951366920807,
+    "perspective_chance": 0.24048048589640159,
+    "perspective_strength": 0.2050714290011732,
+    "rotation_chance": 0.6633745302023243,
+    "rotation_strength": 276.10864127774676,
+    "ninety_deg_rotation_chance": 0.19574655157913862,
+    "random_crop_chance": 0.1508244109311726,
+    "random_crop_v2_chance": 0.2358564741460183,
+    "label_move_chance": 0.7784878511979403,
+    "label_move_v2_chance": 0.13450190128811593,
+    "gauss_noise_chance": 0.5156663099080511,
+    "black_dot_chance": 0.24682219566533978,
+    "label_curving_chance": 0.33631078642701195
+})
