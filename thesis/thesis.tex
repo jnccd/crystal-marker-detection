@@ -1320,6 +1320,7 @@ The results here generally do not show differences that are as large as in the e
 However, the rotation augmentation still has an impact on the score as seen in \autoref{fig:hyp_based_rot_plot} and still has a VOC 2010 score correlation of 50\% and a COCO correlation of 11\%. The negative impact of the Random Crop v2 augmentation is less pronounced here than in \autoref{sec:aug_ens_zero}, as seen in \autoref{fig:hyp_based_rc2_plot}. The impact of Smart Grid Shuffle has flattened out more given the optimal other parameters, as seen in \autoref{fig:hyp_based_sgs_plot}.
 
 \section{Inference Parameters}
+\label{sec:inference_params}
 
 Based on the training run from the hyperparameter optimization, I tested different combinations of inference parameters as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However, here this effect is especially pronounced since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise, using a Border Ignore Size improves the score further. However, this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness threshold improves the score, but only if it is used alone. 
 
@@ -1358,7 +1359,7 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
 
 \section{Server based Approach}
 
-In the best case, I want to create a detection system which runs completely on the patients smartphone itself. However despite higher complexity in the implementation, the detection could also work as a cloud based service. In this case, the constraint of a small network size is removed. Due to this and because I wanted to validate my testing scope, I did another hyperparameter search using \ac{YOLO}v5x and \texttt{gpv3}.
+In the best case, I want to create a detection system which runs completely on the patients smartphone itself. However despite higher complexity in the implementation, the detection could also work as a cloud based service. In this case, the constraint of a small network size is removed. Due to this and because I wanted to validate my testing scope, I did another hyperparameter search using \ac{YOLO}v5x and \texttt{gpv3} which also uses \ac{SAHI} as an extra inference option.
 
 \begin{figure}
   \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}, where after each improvement to the highest score the largest change to the parameters, which is shown in percent of the defined search space range, from the last highest score is visualized as annotations}
@@ -1377,7 +1378,8 @@ Since training with a larger model and a larger dataset takes more then four tim
 \section{Evaluation on Final Testset}
 \label{sec:final_eval}
 
-On the final testset, the best fitted yolov5s model created during the hyper parameter optimization on \texttt{gpv2} scores \acp{mAP} of 49.13\% on VOC 2010 and 26.4\% on COCO. The best fitted yolov5x model from the hyperparameter optimization for the server based approach scores \acp{mAP} of 53.04\% on VOC 2010 and 33.4\% on COCO.
+For the final evaluation, I tested the best models created during the hyperparameter optimization on the final testset. For the inference options, I used \ac{SAHI} and a \ac{BIS} of 20\% since those resulted in the best scores during inference for all fully implemented options, as discussed in \autoref{sec:inference_params}.
+The best fitted \ac{YOLO}v5s model created during the hyper parameter optimization on \texttt{gpv2} scores \acp{mAP} of 49.13\% on VOC 2010 and 26.4\% on COCO. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization for the server based approach scores \acp{mAP} of 53.04\% on VOC 2010 and 33.4\% on COCO.
 
 \section{Point Detection}
 
