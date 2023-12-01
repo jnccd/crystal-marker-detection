@@ -30,6 +30,8 @@ hyp_history = ast.literal_eval(read_textfile(args.json_path))
 hyp_history_scores = [x[0] for x in hyp_history]
 hyp_history_highest_scores = [x[1] for x in hyp_history]
 
+print(f'Hyp runs: {len(hyp_history_scores)}')
+
 def normalize_param_dict(param_dict: dict) -> dict:
     param_dict['ars'] /= 360.0
     param_dict['epochs'] /= 400.0
