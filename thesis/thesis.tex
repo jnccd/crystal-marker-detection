@@ -1283,7 +1283,7 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
   \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run, with blue bars referring to augmentation application chance parameters and orange bars referring to augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
   \includegraphics[width=\textwidth]{plot/best_hyp_run_params}
   \label{fig:optimal_augment_params} 
-\end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x lables here for later plots hihi
+\end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x lables here for later plots
 
 \begin{figure}
   \caption{Hyper Parameter Optimization History, where after each improvement to the highest score the largest change to the parameters, which is shown in percent of the defined search space range, from the last highest score is visualized as annotations}
@@ -1318,12 +1318,6 @@ The results here generally do not show differences that are as large as in the e
 \end{figure}
 
 However, the rotation augmentation still has an impact on the score as seen in \autoref{fig:hyp_based_rot_plot} and still has a VOC 2010 score correlation of 50\% and a COCO correlation of 11\%. The negative impact of the Random Crop v2 augmentation is less pronounced here than in \autoref{sec:aug_ens_zero}, as seen in \autoref{fig:hyp_based_rc2_plot}. The impact of Smart Grid Shuffle has flattened out more given the optimal other parameters, as seen in \autoref{fig:hyp_based_sgs_plot}.
-
-\section{Server based Approach}
-
-In the best case, I want to create a detection system which runs completely on the patients smartphone itself. However despite higher complexity in the implementation, the detection could also work as a cloud based service. In this case, the constraint of a small network size is removed. Due to this and because I wanted to validate my testing scope, I did another hyperparameter search using \ac{YOLO}v5x and \texttt{gpv3}.
-
-
 
 \section{Inference Parameters}
 
@@ -1361,6 +1355,28 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
   \end{tabular}
   \caption{\label{tab:inference_parameters}Evaluation of different inference parameters}
 \end{table} % TODO: Measure inference time
+
+\section{Server based Approach}
+
+In the best case, I want to create a detection system which runs completely on the patients smartphone itself. However despite higher complexity in the implementation, the detection could also work as a cloud based service. In this case, the constraint of a small network size is removed. Due to this and because I wanted to validate my testing scope, I did another hyperparameter search using \ac{YOLO}v5x and \texttt{gpv3}.
+
+\begin{figure}
+  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}, where after each improvement to the highest score the largest change to the parameters, which is shown in percent of the defined search space range, from the last highest score is visualized as annotations}
+  \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5x_gpv3_hyp_test-history}
+  \label{fig:yolov5x_hyp_hist}
+\end{figure}
+
+\begin{figure}
+  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run with \ac{YOLO}v5x and \texttt{gpv3}, with blue bars referring to augmentation application chance parameters and orange bars referring to augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
+  \includegraphics[width=\textwidth]{plot/best_yolov5x_hyp_run_params}
+  \label{fig:optimal_yolov5x_augment_params} 
+\end{figure}
+
+Since training with a larger model and a larger dataset takes more then four times longer than a smaller training run, this hyperparameter search ran for 132 runs instead of the 300 runs from before, as seen in \autoref{fig:yolov5x_hyp_hist}. However, the scores on the ensemble testset did improve moderately with a Pascal VOC 2010 mAP score of 78,74\% in the best run. The new best composition for the augmentation usage rates can be seen in \autoref{fig:optimal_yolov5x_augment_params}.
+
+\section{Evaluation on Final Testset}
+
+
 
 \section{Point Detection}
 
