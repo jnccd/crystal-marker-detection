@@ -464,7 +464,7 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
 \section{YOLOv5}
 
 %instead of the developers of the first three \ac{YOLO} versions
-\ac{YOLO}v5 was developed by Ultralytics and further increased the mAP detection score on the COCO dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
+\ac{YOLO}v5 was developed by Ultralytics and further increased the mAP detection score on the \ac{COCO} dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
 
 \subsection{Architecture}
 
@@ -495,7 +495,7 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
 
 \section{YOLO-NAS}
 
-\ac{YOLO}-NAS was developed by Deci, which develops production grade models \cite{terven2023comprehensive}. The architecture of \ac{YOLO}-NAS was found by Deci's proprietary \ac{NAS} technology AutoNAC and comes in three sizes: \ac{YOLO}-NAS-S, \ac{YOLO}-NAS-M and \ac{YOLO}-NAS-L. The \ac{YOLO}-NAS models were pre-trained on the Objects365 dataset, which is newer and larger than the COCO dataset and gets its name from its 365 object categories \cite{shao2019objects365}. Afterwards they were trained on the COCO dataset.
+\ac{YOLO}-NAS was developed by Deci, which develops production grade models \cite{terven2023comprehensive}. The architecture of \ac{YOLO}-NAS was found by Deci's proprietary \ac{NAS} technology AutoNAC and comes in three sizes: \ac{YOLO}-NAS-S, \ac{YOLO}-NAS-M and \ac{YOLO}-NAS-L. The \ac{YOLO}-NAS models were pre-trained on the Objects365 dataset, which is newer and larger than the \ac{COCO} dataset and gets its name from its 365 object categories \cite{shao2019objects365}. Afterwards they were trained on the \ac{COCO} dataset.
 
 % TODO?: \section{MobileNetV2}
 
@@ -642,7 +642,7 @@ Image augmentation libraries have support for many data types to accommodate for
 
 As seen in \figureref{fig:arch_train}, the training pipeline mainly consists of batch train, evaluate and analyze scripts. Batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. Batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. Batch train scripts can take multiple datasets at once for an ensemble training run.
 
-A training run folder contains the train artifacts, which refers to all files, including the model weights, which are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and COCO \ac{mAP} scores, as well as intermediate results of the calculation for validation.
+A training run folder contains the train artifacts, which refers to all files, including the model weights, which are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and \ac{COCO} \ac{mAP} scores, as well as intermediate results of the calculation for validation.
 
 \section{Automated Annotations}
 
@@ -1189,7 +1189,7 @@ To get a score that I can compare the evaluation results to, I gathered scores t
 
 \begin{table}
   \begin{tabular}{ c c c }
-   & Pascal VOC 2010 \ac{mAP} & COCO \ac{mAP} \\ 
+   & Pascal VOC 2010 \ac{mAP} & \ac{COCO} \ac{mAP} \\ 
    \hline
    Best Result & 84.37\% & 46.52\% \\
    Average Result & 75.41\% & 37.58\% \\
@@ -1208,7 +1208,7 @@ After the implementation of the \ac{YOLO}v8 models into the training and testing
 
 The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
 
-The preprint of the paper from Terven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a COCO \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
+The preprint of the paper from Terven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a \ac{COCO} \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
 
 Due to these results and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
 
@@ -1235,7 +1235,7 @@ As a test for the usefulness of the added augmentations, I ramped up the usage r
 
 \subsection{Smart Grid Shuffle}
 
-Without the application of \ac{SAHI}, a slight uplift in scores is visible throughout the plot, as seen in \autoref{fig:zero_sgs_plot}. Furthermore, the correlation between the chance of augmentation usage and the \ac{mAP} score values of the training runs is 43\% for the VOC 2010 \ac{mAP} score and 52\% for COCO, showing that there is a moderate positive correlation.
+Without the application of \ac{SAHI}, a slight uplift in scores is visible throughout the plot, as seen in \autoref{fig:zero_sgs_plot}. Furthermore, the correlation between the chance of augmentation usage and the \ac{mAP} score values of the training runs is 43\% for the VOC 2010 \ac{mAP} score and 52\% for \ac{COCO}, showing that there is a moderate positive correlation.
 
 \begin{figure}
   \caption{Results of Smart Grid Shuffle ensemble run without \ac{SAHI}}
@@ -1253,7 +1253,7 @@ With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}.
 
 \subsection{Rotation}
 
-The rotation augmentation is the one which improved the scores the most, as seen in \autoref{fig:zero_rot_plot}. The correlation for the VOC 2010 score is 54\% and for the COCO score is 21\% here, indicating that rotation may improve the general marker detection more than the tightness of the predictions. %This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However, at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
+The rotation augmentation is the one which improved the scores the most, as seen in \autoref{fig:zero_rot_plot}. The correlation for the VOC 2010 score is 54\% and for the \ac{COCO} score is 21\% here, indicating that rotation may improve the general marker detection more than the tightness of the predictions. %This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However, at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
 
 \begin{figure}
   \caption{Results of Rotation ensemble run without \ac{SAHI}}
@@ -1265,7 +1265,7 @@ The rotation augmentation is the one which improved the scores the most, as seen
 
 \subsection{Random Crop v2}
 
-Random Crop v2 had the worst impact on scores, as seen in \autoref{fig:zero_rc2_plot}. The correlation for the VOC 2010 score here is -43\% and for COCO is -30\%. This may occur since the second version zooms too far into the image and since such large markers do not appear in the test set. Default Random Crop did not show similar impact on the scores.
+Random Crop v2 had the worst impact on scores, as seen in \autoref{fig:zero_rc2_plot}. The correlation for the VOC 2010 score here is -43\% and for \ac{COCO} is -30\%. This may occur since the second version zooms too far into the image and since such large markers do not appear in the test set. Default Random Crop did not show similar impact on the scores.
 
 \begin{figure}
   \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}}
@@ -1325,7 +1325,7 @@ The results here generally do not show differences that are as large as in the e
   \label{fig:hyp_based_sgs_plot}
 \end{figure}
 
-However, the rotation augmentation still has an impact on the score as seen in \autoref{fig:hyp_based_rot_plot} and still has a VOC 2010 score correlation of 50\% and a COCO correlation of 11\%. The negative impact of the Random Crop v2 augmentation is less pronounced here than in \autoref{sec:aug_ens_zero}, as seen in \autoref{fig:hyp_based_rc2_plot}. The impact of Smart Grid Shuffle has flattened out more given the optimal other parameters, as seen in \autoref{fig:hyp_based_sgs_plot}.
+However, the rotation augmentation still has an impact on the score as seen in \autoref{fig:hyp_based_rot_plot} and still has a VOC 2010 score correlation of 50\% and a \ac{COCO} correlation of 11\%. The negative impact of the Random Crop v2 augmentation is less pronounced here than in \autoref{sec:aug_ens_zero}, as seen in \autoref{fig:hyp_based_rc2_plot}. The impact of Smart Grid Shuffle has flattened out more given the optimal other parameters, as seen in \autoref{fig:hyp_based_sgs_plot}.
 
 \section{Inference Parameters}
 \label{sec:inference_params}
@@ -1466,7 +1466,7 @@ Furthermore, techniques are developed and compared for locating the corners of t
 
 \section{Summary}
 
-For the development of a \ac{POCT}, I worked on a robust \ac{ArUco} marker detector for markers on photonic crystals within tape that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model for this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the base data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from COCO and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimizations to find close to optimal compositions for datasets. 
+For the development of a \ac{POCT}, I worked on a robust \ac{ArUco} marker detector for markers on photonic crystals within tape that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model for this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the base data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from \ac{COCO} and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimizations to find close to optimal compositions for datasets. 
 
 Furthermore, I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this I tested multiple approaches and concluded on a U-Net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
 
@@ -1486,7 +1486,7 @@ Should the training data continue to be hard to get, good synthetic data could b
 
 %\subsection{Other Models}
 
-Based on the findings of Terven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising since they achieved a better score with them than with \ac{YOLO}v5. However, the COCO \ac{mAP} score difference was 1\%.
+Based on the findings of Terven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising since they achieved a better score with them than with \ac{YOLO}v5. However, the \ac{COCO} \ac{mAP} score difference was 1\%.
 
 %\subsection{Deploying on Mobile}
 
