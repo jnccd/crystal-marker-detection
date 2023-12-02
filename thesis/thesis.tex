@@ -1101,6 +1101,7 @@ The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019int
   \label{fig:segpet_preds_example}
 \end{figure}
 
+% TODO: Mention VGG16 based unet?
 As an alternative, I also implemented a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The implemented U-Net instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
 %Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \autoref{fig:segpet_preds_example}. 
 Examples for the U-Net output on validation data can be seen in \autoref{fig:segpet_preds_example}. 
