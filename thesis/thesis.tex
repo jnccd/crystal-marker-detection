@@ -173,7 +173,7 @@ Shapely is a popular Python package for computational geometry. It provides a wi
 \label{sec:aruco_det}
 
 The \ac{ArUco} detector implemented into \ac{OpenCV} is based on a paper from Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
-and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons using the Douglas Peucker algorithm \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
+and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons using the Douglas-Peucker algorithm \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
 
 This algorithm is, however, based on the assumption that the marker contours are always visible. If they are not, detections can become skewed or nothing is detected, as seen in \figureref{fig:aruco-det}.
 
@@ -205,7 +205,7 @@ The Python package \ac{SAHI} is a lightweight vision library designed to perform
 
 Fundamentally, \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap, there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
 
-\ac{SAHI} is framework agnostic and so can be modified to work with any model. However, it has YOLOX, YOLOv5, YOLOv8, MMDetection and Detectron2 support by default.
+\ac{SAHI} is framework agnostic and so can be modified to work with any model. However, it has \ac{YOLO}X, \ac{YOLO}v5, \ac{YOLO}v8, MMDetection and Detectron2 support by default.
 
 \section{HyperOpt}
 
@@ -468,7 +468,7 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
 
 \subsection{Architecture}
 
-\ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the SPPF, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
+\ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the \ac{SPPF}, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
 
 \begin{figure}
   \caption{Visualization of the most important layers and blocks of the entire \ac{YOLO}v5 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
@@ -685,7 +685,7 @@ The inner rectangles corners are now sorted too. The relationship between the in
 %     inner_rect = [None, None, None, None]
 
 %     for corners in each_arucos_corners:
-%         # Get index of closest corner to image center in aruco marker rectangle
+%         # Get index of closest corner to image center in ArUco marker rectangle
 %         min_i, _ = min([(i, distance(v, center)) for i, v in enumerate(corners)], 
 %                        key=lambda x: x[1])
                 
@@ -1208,18 +1208,18 @@ After the implementation of the \ac{YOLO}v8 models into the training and testing
 
 The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
 
-The preprint of the paper from Treven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a COCO \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
+The preprint of the paper from Terven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a COCO \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
 
 Due to these results and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
 
 \subsection{Dataset}
 
-During initial testing of the datasets using yolov5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results of the dataset focused ensemble can be seen in \autoref{fig:initial_dataset_compare}.
+During initial testing of the datasets using \ac{YOLO}v5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results of the dataset focused ensemble can be seen in \autoref{fig:initial_dataset_compare}.
 
 % TODO: Show strong / weak aug compositions
 
 \begin{figure}
-  \caption{Results of initial comparison of datasets on yolov5s, with built in yolov5 augmentations enabled and using two manually defined sets of augmentations \texttt{weak} and \texttt{strong}, as well as runs without dataset augmentation, with 9 configurations and 6 runs per configurations for a total of 54 training runs of 300 epochs each}
+  \caption{Results of initial comparison of datasets on \ac{YOLO}v5s, with built in \ac{YOLO}v5 augmentations enabled and using two manually defined sets of augmentations \texttt{weak} and \texttt{strong}, as well as runs without dataset augmentation, with 9 configurations and 6 runs per configurations for a total of 54 training runs of 300 epochs each}
   \includegraphics[width=\textwidth]{image/gp-compare-v2-thesis}
   \label{fig:initial_dataset_compare}
 \end{figure}
@@ -1261,7 +1261,7 @@ The rotation augmentation is the one which improved the scores the most, as seen
   \label{fig:zero_rot_plot}
 \end{figure}
 
-% TODO: Add sahi plot
+% TODO: Add SAHI plot
 
 \subsection{Random Crop v2}
 
@@ -1283,7 +1283,7 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
   \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run, with blue bars referring to augmentation application chance parameters and orange bars referring to maximum augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
   \includegraphics[width=\textwidth]{plot/best_hyp_run_params}
   \label{fig:optimal_augment_params} 
-\end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x lables here for later plots
+\end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x labels here for later plots
 
 \begin{figure}
   \caption{Hyper Parameter Optimization History, where after each improvement to the highest score the largest change to the parameters, which is shown in percent of the defined search space range, from the last highest score is visualized as annotations}
@@ -1291,7 +1291,15 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
   \label{fig:hyp_hist}
 \end{figure}
 
-To find an optimal combination of parameters, I did hyperparameter optimizations as described in \autoref{sec:hyper_opt}. The optimal found augmentation paramters using \ac{YOLO}v5, \texttt{gpv2} and \ac{SAHI} can be seen in \autoref{fig:optimal_augment_params} and the change in score over the training runs can be seen in \autoref{fig:hyp_hist}. The learning cutoff point found by the search is at 347 epochs, which indicates that long training can benefit the score in this case even though the training and testing images are not of the same domain and not completely similar. The run achieved a Pascal VOC 2010 \ac{mAP} score of 70.78\%.
+% \begin{figure}
+%   \caption{Confusion amtrix}
+%   \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5s-sahi-rc-fix-history}
+%   \label{fig:hyp_hist}
+% \end{figure}
+
+To find an optimal combination of parameters, I did hyperparameter optimizations as described in \autoref{sec:hyper_opt}. The optimal found augmentation parameters using \ac{YOLO}v5, \texttt{gpv2} and \ac{SAHI} can be seen in \autoref{fig:optimal_augment_params} and the change in score over the training runs can be seen in \autoref{fig:hyp_hist}. 
+%The learning cutoff point found by the search is at 347 epochs, which indicates that long training can benefit the score in this case even though the training and testing images are not of the same domain and not completely similar. 
+The run achieved a Pascal VOC 2010 \ac{mAP} score of 70.78\%.
 
 \section{Augmenting from Optimum}
 
@@ -1409,7 +1417,7 @@ A Pet dataset contains an image and point label pair for each label that was in 
      {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_in}}
   \subcaptionbox{SegPet mask image}
      {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_seg}}
-  \caption{Example of segpet training images and their masks}
+  \caption{Example of SegPet training images and their masks}
   \label{fig:segpet_example}
 \end{figure}
 
@@ -1417,7 +1425,7 @@ A SegPet dataset is similar but instead of having the vertex coordinates in a la
 
 \subsection{Results}
 
-As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches generally achieve better scores. While this table shows only the best training runs, the 2 linear layer head MobilenetV2 also ended up at a sinkhorn loss of about 500 in most training runs. This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. However, for now the models fit to a specific subset of all marker rotations and chose the closest to the marker rotation in the image instead of learning all possible rotations even if all marker rotations have the same chance of appearing in the training data through augmentations. 
+As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches generally achieve better scores. While this table shows only the best training runs, the 2 linear layer head MobileNetV2 also ended up at a sinkhorn loss of about 500 in most training runs. This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. However, for now the models fit to a specific subset of all marker rotations and chose the closest to the marker rotation in the image instead of learning all possible rotations even if all marker rotations have the same chance of appearing in the training data through augmentations. 
 
 For the U-Net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions. However, for the usecase of accurate camera pose prediction even more precision may be needed.
 
@@ -1425,8 +1433,8 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
   \begin{tabular}{ c c c }
    Approach & Mean Point Distance & Sinkhorn Loss \\ 
    \hline
-   MobilenetV2 with custom 2 linear layer head & 15.83 & 169.16 \\
-   MobilenetV2 with custom 3 linear layer head & 25.46 & 457.67 \\
+   MobileNetV2 with custom 2 linear layer head & 15.83 & 169.16 \\
+   MobileNetV2 with custom 3 linear layer head & 25.46 & 457.67 \\
    VGG16 with custom head & 27.34 & 506.89 \\
    Harris corner based interpretation of U-Net masks & 11.32 & 93.64 \\
    Hough transform based interpretation of U-Net masks & 6.36 & 36.83 \\
@@ -1444,8 +1452,8 @@ Nonetheless given that the test sets consist of images with tapes on skin and th
 
 During most of the implementation and writing work of this thesis, the machine which creates the tapes with \ac{ArUco} markers in photonic crystals was broken. Furthermore, the available tapes can loose some of the substance which contains the \ac{ArUco} marker structures each time they are sticked on a surface and removed. The scarcity and fragility of the available tapes therefore limited the creation of new training and test data. 
 
-More training and test data could introduce new variation in the form of more skin tones and types since the current test data only contains images from two people, more backgrounds and more lighting conditions since the current training and test data was created in 3 different rooms as well as outside at one time. More test data could also improve the generalizability of the hyperparameter optimizations since the composition of the data set would then be optimized for many more cases.
-% TOxDO more testdata = better hyp searches, needs more skin color, more lights, more skin types, more backgrounds
+More training and test data could introduce new variation in the form of more skin tones and types since the current test data only contains images from two people, more backgrounds and more lighting conditions since the current training and test data was created in 3 different rooms as well as outside at one time. More test data could also improve the generalizability of the hyperparameter optimizations since the composition of the data set would then be optimized for more cases.
+% TOxDO more test data = better hyp searches, needs more skin color, more lights, more skin types, more backgrounds
 
 %\subsection{Confusion Matrix in Object Detection}
 
@@ -1478,7 +1486,7 @@ Should the training data continue to be hard to get, good synthetic data could b
 
 %\subsection{Other Models}
 
-Based on the findings of Treven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising since they achieved a better score with them than with \ac{YOLO}v5. However, the COCO \ac{mAP} score difference was 1\%.
+Based on the findings of Terven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising since they achieved a better score with them than with \ac{YOLO}v5. However, the COCO \ac{mAP} score difference was 1\%.
 
 %\subsection{Deploying on Mobile}
 
@@ -1492,13 +1500,13 @@ Since this project is supposed to be used on phones, the next step which has cur
 
 \begin{acronym}
 % From bachelor thesis
-\acro{GUI}{Graphical User Interface}
-\acro{UI}{User Interface}
+\acro{GUI}{graphical user interface}
+\acro{UI}{user interface}
 \acro{JSON}{JavaScript Object Notation}
 \acro{SVG}{Scalable Vector Graphics}
 \acro{LMB}{left mouse button}
-\acro{AABB}{Axis Aligned Bounding Box}
-\acroplural{AABB}{Axis Aligned Bounding Boxes}
+\acro{AABB}{axis aligned bounding box}
+\acroplural{AABB}{axis aligned bounding boxes}
 \acro{HTML}{Hypertext Markup Language}
 \acro{GIMP}{GNU Image Manipulation Program}
 
@@ -1506,11 +1514,11 @@ Since this project is supposed to be used on phones, the next step which has cur
 \acro{POC}{Point-of-care}
 \acro{POCT}{Point-of-care Testing Device}
 \acro{IBE}{ion beam etching}
-\acro{PCS}{Photonic Crystal Slab}
+\acro{PCS}{photonic crystal slab}
 
 % From master thesis
 \acro{ArUco}{Augmented Reality University of Cordoba}
-\acro{GPU}{Graphics Processing Unit}
+\acro{GPU}{graphics processing unit}
 \acro{ANN}{artificial neural network}
 \acro{NN}{neural network}
 \acro{MLP}{multilayer feedforward network}
@@ -1526,7 +1534,7 @@ Since this project is supposed to be used on phones, the next step which has cur
 \acro{FN}{false negative}
 \acro{TN}{true negative}
 \acro{AUC}{area under the curve}
-\acro{COCO}{common objects in contex}
+\acro{COCO}{Common Objects in Contex}
 \acro{UAV}{Unmanned Aerial Vehicle}
 \acro{YOLO}{You Only Look Once}
 \acro{SAHI}{Slicing Aided Hyper Inference}
@@ -1535,18 +1543,18 @@ Since this project is supposed to be used on phones, the next step which has cur
 \acro{SPP}{Spatial Pyramid Pooling}  
 \acro{CIoU}{Complete IoU}
 \acro{DFL}{Distribution Focal Loss} 
-\acro{NAS}{Neural Architecture Search}
+\acro{NAS}{neural architecture search}
 \acro{ViT}{Vision Transformer}
 \acro{MIP}{Multimedia Information Processing}
 \acro{CUDA}{NVIDIA Compute Unified Device Architecture}
 \acro{cuDNN}{NVIDIA CUDA Deep Neural Network library}
 \acro{OOB}{out of bounds} 
-\acro{SIFT}{Scale-invariant feature transform} 
+\acro{SIFT}{Scale-Invariant Feature Transform} 
 \acro{MSE}{mean squared error} 
 \acro{MB}{Megabyte}
-\acro{MC}{Min Confidence}
-\acro{SQT}{Squareness Thershold}
-\acro{BIS}{Border Ignore Size}
+\acro{MC}{minimum confidence}
+\acro{SQT}{squareness thershold}
+\acro{BIS}{border ignore size}
 
 \end{acronym}
 
