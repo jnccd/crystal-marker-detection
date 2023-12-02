@@ -1299,7 +1299,7 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
 
 To find an optimal combination of parameters, I did hyperparameter optimizations as described in \autoref{sec:hyper_opt}. The optimal found augmentation parameters using \ac{YOLO}v5, \texttt{gpv2} and \ac{SAHI} can be seen in \autoref{fig:optimal_augment_params} and the change in score over the training runs can be seen in \autoref{fig:hyp_hist}. 
 %The learning cutoff point found by the search is at 347 epochs, which indicates that long training can benefit the score in this case even though the training and testing images are not of the same domain and not completely similar. 
-The run achieved a Pascal VOC 2010 \ac{mAP} score of 70.78\%.
+The run achieved a Pascal VOC 2010 \ac{mAP} score of 70.78\% on the ensemble test set.
 
 \section{Augmenting from Optimum}
 
