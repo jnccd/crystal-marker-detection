@@ -702,7 +702,7 @@ Once the user is done, the labels are transferred to each other image by finding
 
 \section{Augmentations}
 
-This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through the command line arguments. Furthermore, the images are copied for augmentations such that the original not augmented training images and labels are kept in the dataset at least once. The position of the augmentations in the pipeline is shown in \autoref{fig:arch_data_aug_focus}.
+This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through the command line arguments. Furthermore, the images are copied such that the original not augmented training images and labels are kept in the dataset at least once and such that only the copies are augmented. The position of the augmentations in the pipeline is shown in \autoref{fig:arch_data_aug_focus}.
 
 \begin{figure}
   \caption{Position of augmentations in the pipeline}
