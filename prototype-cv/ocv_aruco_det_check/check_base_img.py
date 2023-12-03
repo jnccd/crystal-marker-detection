@@ -6,7 +6,7 @@ root_dir = Path(__file__).resolve().parent
 marker_img_path = root_dir / '..' / 'classic_pipe' / 'DSC_3741.JPG'
 
 marker_img = cv2.imread(str(marker_img_path))
-marker_img = cv2.resize(marker_img, (3000, 2000), interpolation=cv2.INTER_CUBIC)
+marker_img = cv2.resize(marker_img, (1000, 667), interpolation=cv2.INTER_CUBIC)
 
 window_name = 'window_name'
 padding = 0

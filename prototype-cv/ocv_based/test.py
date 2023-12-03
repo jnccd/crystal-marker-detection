@@ -34,9 +34,19 @@ for img in pyr_imgs[2:]:
 
     # Apply edge detection
     edges = cv2.Canny(img, threshold1=10, threshold2=50)
+    
+    # Write edges
+    cv2.imwrite(str(root_dir / f'{img_i}_pyr_img_edges.png'), edges)
 
     # Find contours
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Draw contours
+    output = img.copy()
+    output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
+    for c in contours:
+        cv2.drawContours(output, [c], -1, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), 3)
+    cv2.imwrite(str(root_dir / f'{img_i}_pyr_img_contours.png'), output)
     
     # to demonstrate the impact of contour approximation, let's loop
     # over a number of epsilon sizes
@@ -50,8 +60,8 @@ for img in pyr_imgs[2:]:
             peri = cv2.arcLength(c, True)
             approx = cv2.approxPolyDP(c, eps * peri, True)
             print(approx.shape)
-            # if approx.shape[0] != 4:
-            #     continue
+            if approx.shape[0] != 4:
+                continue
             cv2.drawContours(output, [approx], -1, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), 3)
         
         text = "eps={:.4f}, num_pts={}".format(eps, len(approx))
