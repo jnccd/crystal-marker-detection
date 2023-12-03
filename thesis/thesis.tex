@@ -1209,7 +1209,7 @@ After the implementation of the \ac{YOLO}v8 models into the training and testing
 
 The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
 
-The preprint of the paper from Terven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a \ac{COCO} \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
+%The preprint of the paper from Terven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a \ac{COCO} \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
 
 Due to these results and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
 
@@ -1288,7 +1288,7 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
 
 \begin{figure}
   \caption{Hyper Parameter Optimization History, where after each improvement to the highest score the largest change to the parameters, which is shown in percent of the defined search space range, from the last highest score is visualized as annotations}
-  \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5s-sahi-rc-fix-history}
+  \includegraphics[width=\textwidth]{image/hyp-param-search-yolov5s-sahi-rc-fix-history}
   \label{fig:hyp_hist}
 \end{figure}
 
@@ -1372,7 +1372,7 @@ In the best case, I want to create a detection system which runs completely on t
 
 \begin{figure}
   \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}, where after each improvement to the highest score the largest change to the parameters, which is shown in percent of the defined search space range, from the last highest score is visualized as annotations}
-  \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5x_gpv3_hyp_test-history}
+  \includegraphics[width=\textwidth]{image/hyp-param-search-yolov5x_gpv3_hyp_test-history}
   \label{fig:yolov5x_hyp_hist}
 \end{figure}
 
@@ -1411,13 +1411,13 @@ A Pet dataset contains an image and point label pair for each label that was in 
 \begin{figure}
   \centering
   \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.22\textwidth]{image/segpet_example_in}}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_in}}
   \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.22\textwidth]{image/segpet_example_seg}}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_seg}}
   \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.22\textwidth]{image/segpet_example_2_in}}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_in}}
   \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.22\textwidth]{image/segpet_example_2_seg}}
+     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_seg}}
   \caption{Example of SegPet training images and their masks}
   \label{fig:segpet_example}
 \end{figure}
