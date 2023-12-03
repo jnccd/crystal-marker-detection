@@ -8,7 +8,7 @@ from utils import *
 root_dir = Path(__file__).resolve().parent
 border_marker_img_path = root_dir/'sift-base'/'border-marker.png'
 in_img_marker_img_path = root_dir/'sift-base'/'in-img-marker.png'
-test_img_path = Path("N:\Downloads\Archives\FabioBilder\\the_good_pics_for_sift\Screenshot_9223371263231576445_i_view32.png")
+test_img_path = Path("N:\Downloads\Archives\FabioBilder\\the_good_pics_for_sift\DSC_3741.JPG")
 
 marker_img = cv2.imread(str(in_img_marker_img_path))
 test_img = cv2.imread(str(test_img_path))
@@ -73,5 +73,5 @@ for x in range(window_size_div2, img_w-window_size_div2, 150):
 print(match_points)
 img_draw = np.copy(test_img)
 for p in match_points:
-    cv2.circle(img_draw, (int(p[0]),int(p[1])), 5, (0,0,255))
+    cv2.circle(img_draw, (int(p[0]),int(p[1])), 15, (0,0,255), 5)
 cv2.imwrite(str(root_dir / f'{test_img_path.stem}_sift_matches.png'), img_draw)
