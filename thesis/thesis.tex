@@ -451,7 +451,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \ac{YOLO}v3 mainly improves the network architecture by developing approaches from \ac{YOLO}v2 and Darknet-19 further to create the Darknet-53 backbone, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}.
 
-\section{YOLO Versions Timeline}
+\section{Later YOLO Versions}
 
 \begin{figure}
   \caption{A timeline showing different \ac{YOLO} versions over time, based on the timeline from Terven et al. \cite{terven2023comprehensive}}
@@ -459,7 +459,17 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \label{fig:yolo_timeline}
 \end{figure}
 
-While the first three \ac{YOLO} versions were developed by the same developers, starting with \ac{YOLO}v4, various developers started releasing \ac{YOLO} versions. A full timeline of the releases can be seen in \figureref{fig:yolo_timeline}. For this work, I will focus on \ac{YOLO}v5, due to its popularity and its plentiful resources, as well as \ac{YOLO}v8 and \ac{YOLO}-NAS due to their recency and \ac{YOLO}v8's similarity to \ac{YOLO}v5.
+While the first three \ac{YOLO} versions were developed by the same developers, starting with \ac{YOLO}v4, various developers started releasing \ac{YOLO} versions. A full timeline of the releases can be seen in \figureref{fig:yolo_timeline}. 
+
+Based on the comparison of \ac{mAP} scores from Terven et al. \cite{terven2023comprehensive}, the three best \ac{YOLO} models on the \ac{COCO} challenge are \ac{YOLO}v7, Scaled-\ac{YOLO}v4 and \ac{YOLO}v5. 
+Since the model should be used on a smartphone, only the smaller versions of the models are relevant. Wang et al. showed that \ac{YOLO}v7-tiny depending on the metric outperforms or is similar to \ac{YOLO}v4-tiny \cite{wang2023yolov7}. 
+Unlike the other two considered \ac{YOLO} versions, \ac{YOLO}v5 provides multiple versions like \ac{YOLO}v5s and \ac{YOLO}v5m in between tiny and large. 
+The larger \ac{YOLO}v5m is still recommended for modern smart phones\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/tips\_for\_best\_training\_results}, accessed on 04.12.2023}. 
+However since the smaller \ac{YOLO}v5s likely has support on more devices with smaller memory and since \ac{YOLO}v5s is the \ac{YOLO}v5 model closest to \ac{YOLO}v7-tiny in parameter count, I chose to focus on it. Similarly to the first comparison, the \ac{mAP} scores of \ac{YOLO}v5s are comparable to \ac{YOLO}v7-tiny, with \ac{YOLO}v7-tiny having a slightly higher \ac{COCO} 50-95 \ac{mAP} score and \ac{YOLO}v5s having a slightly higher \ac{COCO} 50 \ac{mAP} score. 
+Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and popularity of \ac{YOLO}v5, as seen in the number of github stars\footnote{\url{https://github.com/AlexeyAB/darknet}, accessed on 04.12.2023}\footnote{\url{https://github.com/ultralytics/yolov5}, accessed on 04.12.2023}\footnote{\url{https://github.com/WongKinYiu/yolov7}, accessed on 04.12.2023}. Furthermore, I implemented \ac{YOLO}v8 and \ac{YOLO}-NAS due to their recency and \ac{YOLO}v8's similarity to \ac{YOLO}v5.
+
+% However, \ac{YOLO}v7 only provides models in sizes \ac{YOLO}v7-tiny, \ac{YOLO}v7, \ac{YOLO}v7-X and larger variations \cite{wang2023yolov7}. While \ac{YOLO}v7-tiny may be promising for older devices with its 6.2 million parameters, \ac{YOLO}v5s only has about 1 million parameters more, still fits on modern smart phones, and outperforms \ac{YOLO}v7-tiny on the \ac{COCO} challenges 50 \ac{mAP} score\footnote{\url{https://pytorch.org/hub/ultralytics_yolov5/}, accessed on 04.12.2023}. However, the next larger model called \ac{YOLO}v7 is too large for usage on current smart phones with its 36.9 million parameters. The larger versions of \ac{YOLO}v7 are still likely a good choice for a cloud based detection due to their effectiveness. Scaled-\ac{YOLO}v4 similarly does not provide model sizes between  Furthermore, the \ac{mAP} difference 
+% For this work, I will focus on \ac{YOLO}v5, due to its popularity and therefore its good documentation.  \ac{YOLO}v8 and \ac{YOLO}-NAS due to their recency and \ac{YOLO}v8's similarity to \ac{YOLO}v5.
 
 \section{YOLOv5}
 
@@ -491,7 +501,7 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
 
 \section{YOLOv8}
 
-\ac{YOLO}v8 is the second \ac{YOLO} version from Ultralytics and provides multiple models in the same sizes as \ac{YOLO}v5\footnote{\url{https://docs.ultralytics.com/models/yolov8/}, accessed on 24.10.2023} \cite{terven2023comprehensive}. \ac{YOLO}v8 is anchor-free, which simplifies the training and decoding process. For the bounding box loss \ac{YOLO}v8 uses \ac{CIoU} \cite{zheng2020distance}, which besides the overlap area is also based on the central point distance and aspect ratio of the bounding boxes, as well as \ac{DFL} \cite{li2020generalized}. \ac{YOLO}v8 also provides a segmentation model.
+\ac{YOLO}v8 is the second \ac{YOLO} version from Ultralytics and provides multiple models in the same sizes as \ac{YOLO}v5\footnote{\url{https://docs.ultralytics.com/models/yolov8/}, accessed on 24.10.2023} \cite{terven2023comprehensive}. \ac{YOLO}v8 is anchor-free, which simplifies the training and decoding process. For the bounding box loss \ac{YOLO}v8 uses \ac{CIoU} \cite{zheng2020distance}, which besides the overlap area is also based on the central point distance and aspect ratio of the bounding boxes, as well as \ac{DFL} \cite{li2020generalized}. %\ac{YOLO}v8 also provides a segmentation model.
 
 \section{YOLO-NAS}
 
@@ -1487,7 +1497,7 @@ Should the training data continue to be hard to get, good synthetic data could b
 
 %\subsection{Other Models}
 
-Based on the findings of Terven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising since they achieved a better score with them than with \ac{YOLO}v5. However, the \ac{COCO} \ac{mAP} score difference was 1\%.
+Based on the comparison from Terven et al. \cite{terven2023comprehensive}, \ac{YOLO}v7 models may be promising since they achieve a moderately better \ac{COCO} \ac{mAP} score than \ac{YOLO}v5. However, since \ac{YOLO}v7 does not provide small model versions it is likely only useful for cloud service based detection.
 
 %\subsection{Deploying on Mobile}
 
