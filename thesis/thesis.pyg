@@ -1,0 +1,24 @@
+# Main method
+def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
+
+  # Segment in y first
+  segments_y = segment_img_between_poly_labels(img, polys, 1)
+
+  # Shuffle the resulting y-segments
+  random.shuffle(segments_y)
+
+  # Then segment all segments_y on the x axis
+  for segment_y in segments_y:
+    segments_x = segment_img_between_poly_labels(segment_y['img'], segment_y['polys'], 0)
+
+    # Shuffle segments to change their position
+    random.shuffle(segments_x)
+
+    # Rebuild y-segment from x-segments
+    segments_img, segments_polys = rebuild_img_from_segments(segments_x, segment_y.size(), 0)
+
+    segment_y['img'] = segments_img
+    segment_y['corners'] = segments_polys
+
+  # Return recombined y-segments
+  return rebuild_img_from_segments(segments_y, img_size, 1)
