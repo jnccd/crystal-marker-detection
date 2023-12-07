@@ -90,6 +90,7 @@ def handle_model_out(
     input_img = None,
     ):
     
+    # Draw _raw_detections image
     raw_draw_img = input_img.copy()
     if thesis_output_imgs:
         draw_img = input_img.copy()
@@ -99,8 +100,10 @@ def handle_model_out(
             cv2.rectangle(raw_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 0), thickness=2)
         cv2.imwrite(str(out_testdata_path / f'{i}_raw_detections.png'), draw_img)
     
+    # Filter for confidence
     boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
     
+    # Draw _confidence_filtered_detections image
     confidence_f_draw_img = input_img.copy()
     if thesis_output_imgs:
         for box in boxes:
@@ -110,15 +113,15 @@ def handle_model_out(
         for box in boxes:
             cv2.rectangle(confidence_f_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 0), thickness=2)
     
-    # Filter model out
-    #print('boxes', boxes)
+    # Filter for border
     if border_ignore_size > 0:
         boxes = list(filter(lambda box: #xmin, ymin, xmax, ymax, conf: 
             box[0] / img_w > border_ignore_size and 
             box[1] / img_h > border_ignore_size and
             1 - (box[2] / img_w) > border_ignore_size and 
             1 - (box[3] / img_h) > border_ignore_size, boxes))
-        
+    
+    # Draw BIS change image
     bis_f_draw_img = input_img.copy()
     if thesis_output_imgs:
         for box in boxes:
@@ -134,6 +137,7 @@ def handle_model_out(
         for box in boxes:
             cv2.rectangle(bis_f_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 0), thickness=2)
     
+    # Filter SQT and mask
     if squareness_threshold > 0:
         boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
     if mask is not None:
@@ -164,7 +168,8 @@ def handle_model_out(
             cv2.rectangle(sanity_check_image, int_box[:2], int_box[2:4], box_color)
             cv2.putText(sanity_check_image, str(round(box[4], 2)), int_box[:2], cv2.FONT_HERSHEY_SIMPLEX, 1, box_color)
         cv2.imwrite(str(out_testdata_path / f'{i}_mask_dropout_check.png'), sanity_check_image)
-        
+    
+    # Draw filtered detections
     if thesis_output_imgs:
         draw_img = input_img.copy()
         for box in boxes:
@@ -191,6 +196,7 @@ def handle_model_out(
     vd_bbox_lines_og = vd_bbox_lines
     vd_bbox_lines = list(filter(lambda s: s and not s.isspace(), vd_bbox_lines)) # Filter whitespace lines away
     target_output_path = out_testdata_path / f'{i}_target_output.txt'
+    ground_truth_boxes = []
     with open(target_output_path, "w") as text_file:
         for line in vd_bbox_lines:
             sc, sx, sy, sw, sh = line.split(' ')
@@ -207,8 +213,18 @@ def handle_model_out(
             max_y = bbox_h + min_y
             
             text_file.write(f"{min_x} {min_y} {max_x} {max_y}\n")
+            ground_truth_boxes.append((min_x, min_y, max_x, max_y))
             
             if build_debug_output:
                 verts = np.array([(int(min_x), int(min_y)), (int(min_x), int(max_y)), (int(max_x), int(max_y)), (int(max_x), int(min_y))])
                 cv2.fillPoly(sanity_check_image, pts=[verts], color=(255, 255, 255))
                 cv2.imwrite(str(out_testdata_path / f'{i}_target_output.png'), sanity_check_image)
+                
+    # Draw filtered detections and GT
+    if thesis_output_imgs:
+        draw_img = input_img.copy()
+        for box in ground_truth_boxes:
+            cv2.rectangle(draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(255, 255, 0), thickness=2)
+        for box in boxes:
+            cv2.rectangle(draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 255), thickness=2)
+        cv2.imwrite(str(out_testdata_path / f'{i}_preds_and_gts.png'), draw_img)
