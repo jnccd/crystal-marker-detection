@@ -24,6 +24,7 @@ def main():
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
     parser.add_argument('-utm','--use-test-masks', action='store_true', help='Use testset segment masks for inference.')
     parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
+    parser.add_argument('-toi','--thesis-output-imgs', action='store_true', help='.')
     args = parser.parse_args()
     
     # Set up Paths
@@ -47,6 +48,7 @@ def main():
         border_ignore_size= args.border_ignore_size,
         build_debug_output=args.debug_output_imgs,
         use_test_masks=args.use_test_masks,
+        thesis_output_imgs=args.thesis_output_imgs
     )
     
     # Start analyze script
@@ -62,6 +64,7 @@ def gen_evaldata(
     border_ignore_size = 0,
     build_debug_output: bool = False,
     use_test_masks = False,
+    thesis_output_imgs = False,
     ):
     valdata_imgs_path = Path(valset_path) / 'val/images'
     valdata_labels_path = Path(valset_path) / 'val/labels'
@@ -123,7 +126,9 @@ def gen_evaldata(
             border_ignore_size, 
             squareness_threshold,
             build_debug_output,
-            cv2.imread(str(valdata_masks_path_i), cv2.IMREAD_GRAYSCALE) if use_test_masks else None
+            cv2.imread(str(valdata_masks_path_i), cv2.IMREAD_GRAYSCALE) if use_test_masks else None,
+            thesis_output_imgs,
+            img,
             )
     
     # Add test def dict

@@ -52,6 +52,26 @@ def create_dir_if_not_exists(dir: Path, clear = False):
 def flatten(list):
     return [item for sublist in list for item in sublist]
 
+def overlay_transparent_fore_alpha(background_img, foreground_img, x = 0, y = 0):
+    if foreground_img.shape[0] != background_img.shape[0] or \
+        foreground_img.shape[1] != background_img.shape[1]:
+        #print('reshaping...')
+        new_foreground_img = np.zeros(background_img.shape[:2] + (foreground_img.shape[2],))
+        new_foreground_img[y:y+foreground_img.shape[0], x:x+foreground_img.shape[1]] = foreground_img
+        #print(new_foreground_img.shape, foreground_img.shape, background_img.shape)
+        
+        foreground_img = new_foreground_img
+    
+    # Create weights
+    bg_channels = background_img.shape[2]
+    weights = foreground_img[:,:,3].astype('float32') / 255
+    weights = np.repeat(weights[:,:,np.newaxis], bg_channels, axis=2)
+    
+    weighted_bg = background_img * (1 - weights)
+    weighted_fg = foreground_img[:,:,:bg_channels] * weights
+    mixed_img = weighted_bg + weighted_fg
+    return mixed_img.astype('uint8')
+
 # --- Other -------------------------------------------------------------------------------------------------------------------------
 
 def handle_model_out(
@@ -66,7 +86,29 @@ def handle_model_out(
     squareness_threshold,
     build_debug_output = False,
     mask = None,
+    thesis_output_imgs = False,
+    input_img = None,
     ):
+    
+    raw_draw_img = input_img.copy()
+    if thesis_output_imgs:
+        draw_img = input_img.copy()
+        for box in boxes:
+            cv2.rectangle(draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 255), thickness=2)
+        for box in boxes:
+            cv2.rectangle(raw_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 0), thickness=2)
+        cv2.imwrite(str(out_testdata_path / f'{i}_raw_detections.png'), draw_img)
+    
+    boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
+    
+    confidence_f_draw_img = input_img.copy()
+    if thesis_output_imgs:
+        for box in boxes:
+            cv2.rectangle(raw_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 255), thickness=2)
+        cv2.imwrite(str(out_testdata_path / f'{i}_confidence_filtered_detections.png'), raw_draw_img)
+        
+        for box in boxes:
+            cv2.rectangle(confidence_f_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 0), thickness=2)
     
     # Filter model out
     #print('boxes', boxes)
@@ -76,9 +118,24 @@ def handle_model_out(
             box[1] / img_h > border_ignore_size and
             1 - (box[2] / img_w) > border_ignore_size and 
             1 - (box[3] / img_h) > border_ignore_size, boxes))
+        
+    bis_f_draw_img = input_img.copy()
+    if thesis_output_imgs:
+        for box in boxes:
+            cv2.rectangle(confidence_f_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 255), thickness=2)
+        mask_image = np.zeros((img_h, img_w) + (4,), dtype = np.uint8)
+        cv2.rectangle(mask_image, pt1=(0, 0), pt2=(img_w, int(img_h * border_ignore_size)), color=(0, 0, 255, 50), thickness=-1)
+        cv2.rectangle(mask_image, pt1=(0, 0), pt2=(int(img_w * border_ignore_size), img_h), color=(0, 0, 255, 50), thickness=-1)
+        cv2.rectangle(mask_image, pt1=(int(img_w * (1 - border_ignore_size)), 0), pt2=(img_w, img_h), color=(0, 0, 255, 50), thickness=-1)
+        cv2.rectangle(mask_image, pt1=(0, int(img_h * (1 - border_ignore_size))), pt2=(img_w, img_h), color=(0, 0, 255, 50), thickness=-1)
+        confidence_f_draw_img = overlay_transparent_fore_alpha(confidence_f_draw_img, mask_image)
+        cv2.imwrite(str(out_testdata_path / f'{i}_bis_filtered_detections.png'), confidence_f_draw_img)
+        
+        for box in boxes:
+            cv2.rectangle(bis_f_draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 0), thickness=2)
+    
     if squareness_threshold > 0:
         boxes = list(filter(lambda box: ((box[2] - box[0]) / (box[3] - box[1]) if (box[2] - box[0]) / (box[3] - box[1]) < 1 else 1 / ((box[2] - box[0]) / (box[3] - box[1]))) > squareness_threshold, boxes))
-    boxes = list(filter(lambda box: box[4] > confidence_threshold, boxes))
     if mask is not None:
         # print(boxes)
         box_windows = [mask[int(box[1]):int(box[3]), int(box[0]):int(box[2])] for box in boxes]
@@ -107,6 +164,12 @@ def handle_model_out(
             cv2.rectangle(sanity_check_image, int_box[:2], int_box[2:4], box_color)
             cv2.putText(sanity_check_image, str(round(box[4], 2)), int_box[:2], cv2.FONT_HERSHEY_SIMPLEX, 1, box_color)
         cv2.imwrite(str(out_testdata_path / f'{i}_mask_dropout_check.png'), sanity_check_image)
+        
+    if thesis_output_imgs:
+        draw_img = input_img.copy()
+        for box in boxes:
+            cv2.rectangle(draw_img, pt1=(int(box[0]), int(box[1])), pt2=(int(box[2]), int(box[3])), color=(0, 0, 255), thickness=2)
+        cv2.imwrite(str(out_testdata_path / f'{i}_filtered_detections.png'), draw_img)
     
     # Rasterize Segmentation image
     if build_debug_output:
