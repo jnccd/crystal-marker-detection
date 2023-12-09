@@ -110,3 +110,20 @@ plot_augment_params('best_yolov5x_hyp_run_params', {
     "black_dot_chance": 0.24682219566533978,
     "label_curving_chance": 0.33631078642701195
 })
+
+plot_augment_params('sahiless_yolonas_run_params', {
+    "smart_grid_shuffle_chance": 0.16536455065004735,
+    "label_dropout_chance": 0.3406092762590903,
+    "perspective_chance": 0.9026868390392013,
+    "perspective_strength": 0.44744759491769104,
+    "rotation_chance": 0.8397534486075489,
+    "rotation_strength": 269.5297433583759,
+    "ninety_deg_rotation_chance": 0.4779575209987885,
+    "random_crop_chance": 0.07811140975400804,
+    "random_crop_v2_chance": 0.09484458554495206,
+    "label_move_chance": 0.3281069403856025,
+    "label_move_v2_chance": 0.04946212899649677,
+    "gauss_noise_chance": 0.2850102716939429,
+    "black_dot_chance": 0.5932304638260782,
+    "label_curving_chance": 0.09002886339102176
+})
