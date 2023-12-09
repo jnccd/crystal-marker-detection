@@ -9,7 +9,7 @@ from utils import *
 
 def main():
     root_dir = Path(__file__).resolve().parent
-    output_folder = create_dir_if_not_exists(root_dir / 'output/pt-seg')
+    output_folder = create_dir_if_not_exists(root_dir / 'output/pt-seg-6')
     eval_folder = create_dir_if_not_exists(output_folder / 'eval')
     to_rect_output_folder = create_dir_if_not_exists(root_dir / 'output/to-rect-lines-2')
     marker_img_path = root_dir / 'assets/in-img-marker.png'
@@ -200,9 +200,9 @@ def main():
         in_image_grgb = cv2.imread(str(in_img_path))#cv2.cvtColor(in_image_t, cv2.COLOR_GRAY2RGB) #
         pts = np.array([(int(point[0]), int(point[1])) for point in corners], dtype=np.int32)
         in_image_grgb = cv2.polylines(in_image_grgb, pts=[pts], isClosed=True, color=(0,0,255), thickness=3)
-        # for i, pt in enumerate(pts):
-        #     in_image_grgb = cv2.putText(in_image_grgb, str(i), pt, cv2.FONT_HERSHEY_SIMPLEX, 1, 
-        #           (0,0,0), 1, cv2.LINE_AA, False)
+        for i, pt in enumerate(pts):
+            in_image_grgb = cv2.putText(in_image_grgb, str(i), pt, cv2.FONT_HERSHEY_SIMPLEX, 1, 
+                  (0,0,0), 2, cv2.LINE_AA, False)
         write_textfile(str([(x[0], x[1]) for x in corners]), to_rect_output_folder / f'{pred_img_path.stem}_p.txt')
         cv2.imwrite(str(to_rect_output_folder / f'{pred_img_path.stem}_rect.png'), in_image_grgb)
         cv2.imshow('image', in_image_grgb)
