@@ -1216,7 +1216,8 @@ In this section, I describe some of the fixed parameters during the testing. Sin
 
 \subsection{Model}
 
-After the implementation of the \ac{YOLO}v8 models into the training and testing pipeline, using the \ac{YOLO}v8 models instead of \ac{YOLO}v5 models did not increase the test scores on initial tests. \ac{YOLO}-NAS-S only achieved a \ac{mAP} score of 4\% on initial tests and 6\% after two built in augmentations were disabled.
+% TODO: Improve this part and get some good results to show here, on GPV2 maybe and without SAHI
+After the implementation of the \ac{YOLO}v8 models into the training and testing pipeline, using the \ac{YOLO}v8 models instead of \ac{YOLO}v5 models did not increase the test scores on initial tests. \ac{YOLO}-NAS-S only achieved a VOC 2010 \ac{mAP} score of 10.45\% on initial tests and 15\% after two built in augmentations were disabled.
 
 The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
 
