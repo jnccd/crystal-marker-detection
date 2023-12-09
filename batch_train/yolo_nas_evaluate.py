@@ -108,11 +108,12 @@ def gen_evaldata(
         if not use_sahi:
             result = results[i]
             
-            for i, (label, conf, bbox) in enumerate(zip(result.prediction.labels, 
-                                                        result.prediction.confidence, 
-                                                        result.prediction.bboxes_xyxy)):
+            for ip, (label, conf, bbox) in enumerate(zip(result.prediction.labels, 
+                                                         result.prediction.confidence, 
+                                                         result.prediction.bboxes_xyxy)):
                 boxes.append(tuple(list(bbox)[:4] + [conf]))
                 
+            print(f'saving result {i}...')
             result.save(str(out_testdata_path) + f'/{i}_result.png')
             # TODO: result.save
         else:
