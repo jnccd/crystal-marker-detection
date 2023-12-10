@@ -7,13 +7,14 @@ from pathlib import Path
 import shutil
 import sys
 import cv2
-from matplotlib import pyplot as plt
+from matplotlib import colors, pyplot as plt, patches as mpatches
 import numpy as np
 from copy import deepcopy
 
 num_classes = 1
 bbox_inflation = 0
 check_scores = False
+plot_pr_curve_points = False
 
 if check_scores:
     from mean_average_precision import MetricBuilder
@@ -177,6 +178,8 @@ def analyze(
         plt.xlim(0.0, 1.0)
         plt.ylim(0.0, 1.1)
         plt.plot(rp, pp)
+        if plot_pr_curve_points:
+            plt.scatter(rp[:-2], pp[:-2], c=colors.to_hex((1, 0.5, 0.1)))
         
         iou_str = str(ious[i])
         if len(iou_str) <= 3:
