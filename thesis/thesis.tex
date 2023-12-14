@@ -1200,7 +1200,7 @@ While I had the glass plate with marker tapes on it at home, removing the tapes 
 
 \section{Human Baseline Study}
 
-To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk instance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process, as seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}. The labeling was done on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023}, since it does not require an installation and instead works in the browser, while also containing all necessary tools and, since the dataset is small enough to be distributed directly as files. In total, there were 7 participants who returned their marked labels. For the evaluation, I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
+To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk instance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process, as seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}. The labeling was done on \href{https://www.makesense.ai}{makesense.ai} since it does not require an installation and instead works in the browser while also containing all necessary tools and since the dataset is small enough to be distributed directly as files. In total, there were 7 participants who returned their marked labels. For the evaluation, I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -1530,10 +1530,26 @@ Fitting a yolov5s model for 100 epochs to this synthetic data yields a model tha
   \label{fig:synth_data_example}
 \end{figure}
 
-\section{Instructions Paper for Human Baseline Study}
+\section{Human Baseline Study}
 \label{sec:instructions_paper}
 
-The instructions paper for the human baseline study can be seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}.  
+The instructions paper for the human baseline study can be seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}. The \ac{mAP} results for each submission can be seen in \autoref{tab:raw_human_results}. The last submission was not used for the average \ac{mAP} calculation because of the low accuracy.
+
+\begin{table}
+  \begin{tabular}{ c c }
+   VOC 2010 \ac{mAP} in \% & COCO \ac{mAP} in \% \\ 
+   \hline
+   78.8 & 42.18 \\
+   76.11 & 44.15 \\
+   82.63 & 46.52 \\
+   83.89 & 38.41 \\
+   84.37 & 43.38 \\
+   46.69 & 10.86 \\
+   0.0 & 0.0 \\
+   \hline
+  \end{tabular}
+  \caption{\label{tab:raw_human_results}Raw \ac{mAP} results of the human baseline study sorted by the time I received them. All \ac{mAP} scores are rounded up to the second decimal point.}
+\end{table}
 
 \begin{figure}
   \caption{The instructions paper page 1 for the human baseline study.}
