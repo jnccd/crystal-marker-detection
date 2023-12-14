@@ -641,7 +641,7 @@ The overview seen in \figureref{fig:arch_data} shows the various dataset types t
   \label{fig:polygon-good}
 \end{figure}
 
-Image augmentation libraries have support for many data types to accommodate for many use cases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout most of the \texttt{create\_dataset} script. Afterwards, the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation dataset.
+Image augmentation libraries have support for many data types to accommodate for many use cases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure, both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout most of the \texttt{create\_dataset} script. Afterwards, the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation dataset.
 
 \subsection{Train Pipeline Overview}
 
