@@ -567,7 +567,7 @@ To validate that a neural network based approach is necessary in this case, I te
 
 The built-in \ac{OpenCV} \ac{ArUco} detector does not detect any markers in the chosen base image. To find out why, I roughly recreated the \ac{ArUco} detector using \acp{OpenCV} built-in algorithm implementations up until the polygon creation step. The recreated pipeline mainly consists of the canny edge detector and the \texttt{findContours} and \texttt{approxPolyDP} methods applied to each level of an image pyramid. 
 
-When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \figureref{fig:classic_base_img_opencv} \textbf{(a)}. The better detection accuracy here may be due to cherry picked parameters. Without the filter in \figureref{fig:classic_base_img_opencv} \textbf{(b)}, the problems of the polygon detection become apparent, as the contours of the markers in the image are not complete, which may in part explain the findings in \autoref{sec:aruco_det}.
+When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \figurereft{fig:classic_base_img_opencv}{(a)}. The better detection accuracy here may be due to cherry picked parameters. Without the filter in \figurereft{fig:classic_base_img_opencv}{(b)}, the problems of the polygon detection become apparent, as the contours of the markers in the image are not complete, which may in part explain the findings in \autoref{sec:aruco_det}.
 
 \subsection{Histogram}
 
