@@ -1503,25 +1503,21 @@ Due to the scarcity and fragility of the available tapes, limited training and t
 
 \section{Future Work}
 
-Since this is a large task for which many approaches could be used and since the development of new approaches can be time consuming, not all approaches for this task could be tested. However, promising ideas and unfinished development work for real world usage is summarized here.
+Due to the scale of this project and the limited training data, I could not test every possible approach or develop the software to production readiness on smartphones. However, promising ideas and unfinished development work for real world usage is summarized here.
 
 %\subsection{More Training Data}
 
-Once more stable and more tapes with \ac{ArUco} markers could become available, the acquisition and manual labeling of more training data which is closer to the final usecase could be beneficial for the performance of the models of both parts of the detection pipeline.
-
-%\subsection{3D Synthetic Data}
-
-Should the training data continue to be hard to get, good synthetic data could be created using 3D models of hands and a 3D engine such as Blender.
+Once more stable and more tapes with \ac{ArUco} markers could become available, the acquisition and manual labeling of more training data which is closer to the final usecase could be beneficial for the performance of the models of both parts of the detection pipeline. %\subsection{3D Synthetic Data}
+However, should the training data continue to be hard to get, good synthetic data could be created using 3D models of hands and a 3D engine such as Blender.
 
 %\subsection{Other Models}
 
-Based on the comparison from Terven et al. and Wang et al., \ac{YOLO}v7 models may be promising since they achieve a moderately better \ac{COCO} \ac{mAP} score than \ac{YOLO}v5 \cite{terven2023comprehensive, wang2023yolov7}.
+Once more training data is available, a different model could improve the score further. Based on the comparison from Terven et al. and Wang et al., \ac{YOLO}v7 models may be promising since they achieve a moderately better \ac{COCO} \ac{mAP} score than \ac{YOLO}v5 \cite{terven2023comprehensive, wang2023yolov7}.
 %However, since \ac{YOLO}v7 does not provide small model versions it is likely only useful for cloud service based detection.
 
 %\subsection{Deploying on Mobile}
 
-% TODO: Remake this!
-Since this project is supposed to be used on phones, the next step which has currently not been completed is the deployment on phones. In theory this should work without further problems for \ac{YOLO}v5s, since it is just 14 \ac{MB} big. For the point detection U-Net this could be more difficult as it is 167.98 \acp{MB} big. Depending on the phone model, the U-Net may still work but likely with increased battery usage. The implementation on phones itself should work well since PyTorch has Android support \footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
+Since this project is supposed to be used on mobile devices, the next step which has currently not been completed is the deployment on smartphones. In theory, this should work without further problems for \ac{YOLO}v5s since it was build for mobile deployment. Furthermore, its relatively low parameter count of 7.2 million may indicate a small size in memory and faster inference time \cite{wang2023yolov7}. This could indicate better mobile usability because of shared and usually slower memory on smartphones as well as slower processors compared to stationary computers. For the U-Net used in marker corner detection, the mobile deployment could be more difficult as it has a parameter count of around 44 million. Depending on the phone model, the U-Net may still work but likely with increased battery usage. The implementation on phones itself should work well since the models are both implemented in PyTorch and PyTorch has Android support\footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
 
 %\subsection{Tracking}
 
