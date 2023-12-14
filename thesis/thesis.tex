@@ -1408,7 +1408,7 @@ Since training with a larger model and a larger dataset takes more then four tim
 For the final evaluation, I tested the best models created during the hyperparameter optimization on the final testset. For the inference options, I used \ac{SAHI} and a \ac{BIS} of 20\% since those resulted in the best scores during inference for all fully implemented options, as discussed in \autoref{sec:inference_params}.
 The best fitted \ac{YOLO}v5s model created during the hyper parameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} and 26.4\% on the COCO \ac{mAP}. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} and 33.4\% on the COCO \ac{mAP}. The score difference of the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data.
 
-\begin{figure}
+\begin{figure} % TODO: Make theses better displayable in small
   \centering
   \subcaptionbox{\ac{YOLO}v5s confusion matrix on final test set}
      {\includegraphics[width=0.49\textwidth]{image/yolov5s_hyp_search_confusion_matrix}}
