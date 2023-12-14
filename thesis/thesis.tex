@@ -996,6 +996,7 @@ The insertion of black dots works similarly to label move, with the difference t
 An example of black dot aug can be seen in \figureref{fig:aug_bd_example}.
 
 \subsection{Label Curving}
+\label{sec:label_curving}
 
 \begin{figure}
   \centering
@@ -1197,9 +1198,9 @@ The third version of the test data was labeled using makesense.ai\footnote{\url{
 
 While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine which creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes that we had and therefore could not build more test data on my own.
 
-\section{Human Testing}
+\section{Human Baseline Study}
 
-To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk instance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process. The labeling was done on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023}, since it does not require an installation and instead works in the browser, while also containing all necessary tools and, since the dataset is small enough to be distributed directly as files. In total, there were 7 participants who returned their marked labels. For the evaluation, I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
+To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk instance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process, as seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}. The labeling was done on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023}, since it does not require an installation and instead works in the browser, while also containing all necessary tools and, since the dataset is small enough to be distributed directly as files. In total, there were 7 participants who returned their marked labels. For the evaluation, I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -1519,14 +1520,31 @@ Since this project is supposed to be used on phones, the next step which has cur
 \section{Synthetic Training Data}
 \label{sec:synth_data}
 
-I also tried generating synthetic training data using OpenCV. For the background and skin images, I used stock photos from Pexels\footnote{\url{https://www.pexels.com}, accessed on 14.12.23}. First, I add a gray rectangle which represents the tape with a \ac{ArUco} marker negative to a skin image. Then similarly to the curving augmentation, I introduce a curving effect to the skin image with the tape by remapping it. The remapping strength per pixel column is again given by a half circle function. This curved tape on skin image is then placed on a background image with a random rotation and perspective effect.
+I also tried generating synthetic training data using OpenCV. For the background and skin images, I used stock photos from Pexels\footnote{\url{https://www.pexels.com}, accessed on 14.12.23}. First, I add a gray rectangle which represents the tape with a \ac{ArUco} marker negative to a skin image. Then similarly to the curving augmentation, I introduce a curving effect to the skin image with the tape by remapping it. The remapping strength per pixel column is again given by a half circle function similarly to the label curving augmentation described in \autoref{sec:label_curving}. This curved tape on skin image is then placed on a background image with a random rotation and perspective effect, as seen in \figureref{fig:synth_data_example}.
 
-Fitting a yolov5s model for 100 epochs to this synthetic data yields a fitted model that gets a 0\% VOC 2010 \ac{mAP} score on the ensemble test set. To test if this fitted model is still useful for pre-training, I trained a yolov5s model on an augmented dataset for 300 epochs starting with either the default weights or the synthetically pre-training weights. The default yolov5s weights lead to a VOC 2010 \ac{mAP} of 51.94\% and the synthetically pre-trained weights lead to a VOC 2010 \ac{mAP} of 48.42\%. Due to these results, I did not use the synthetically created data further.
+Fitting a yolov5s model for 100 epochs to this synthetic data yields a model that attains a 0\% VOC 2010 \ac{mAP} score on the ensemble test set. To test if this fitted model is still useful for pre-training, I trained a yolov5s model on an augmented \texttt{gpv2} dataset for 300 epochs starting with either the default weights or the synthetically pre-training weights. The default yolov5s weights lead to a VOC 2010 \ac{mAP} of 51.94\% and the synthetically pre-trained weights lead to a VOC 2010 \ac{mAP} of 48.42\%. Due to these results, I did not further use the synthetically created data.
 
 \begin{figure}
   \caption{Example of synthetic training data.}
   \includegraphics[width=0.45\textwidth]{image/synth_data_example}
   \label{fig:synth_data_example}
+\end{figure}
+
+\section{Instructions Paper for Human Baseline Study}
+\label{sec:instructions_paper}
+
+The instructions paper for the human baseline study can be seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}.  
+
+\begin{figure}
+  \caption{The instructions paper page 1 for the human baseline study.}
+  \includegraphics[width=\textwidth]{image/instructions-paper}
+  \label{fig:instructions_paper}
+\end{figure}
+
+\begin{figure}
+  \caption{The instructions paper page 2 for the human baseline study.}
+  \includegraphics[page=2,width=\textwidth]{image/instructions-paper}
+  \label{fig:instructions_paper_2}
 \end{figure}
 
 \section{List of Abbreviations}
