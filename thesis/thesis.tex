@@ -73,7 +73,7 @@ As part of the development of a medical readout technique, this work addresses t
 
 The first part addresses the detection of areas of interest in the image using object detection networks. Due to a shortage of training data, a number of augmentations are defined. The augmentations are prebuilt into the dataset, such that the same augmentation can be tested with many model architectures without changing the dataloader for each one. The impact of the augmentations on the resulting \ac{mAP} scores are then measured using ensemble runs and hyperparameter optimizations. Furthermore, inference techniques such as \ac{SAHI} are evaluated and used to increase the detection performance. Despite dissimilarity of training and test data for this part, the augmentation, training and inference techniques can increase the VOC 2010 \ac{mAP} score on test data by more than 60\%. However, those results may not be generalizable.
 
-The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here a number of approaches using keypoint detection and segmentation networks are tested. Finally the best performing approach is found using a combination of an U-Net and Hough transform.
+The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here, a number of approaches using keypoint detection and segmentation networks are tested. Finally the best performing approach is found using a combination of an U-Net and Hough transform.
 
 \newpage
 \section*{Acknowledgements}
@@ -90,7 +90,7 @@ There is a global shortage of health workers, that is projected to endure into 2
 During treatment, measuring the biomarkers of a patient is essential. However, a common approach for this is the use of label-based quantification methods, which require trained personnel and a laboratory environment. To circumvent this, there are a number of label-free detection concepts \cite{rapp2010biosensors}, one of which is the usage of photonic crystal slabs \cite{Pitruzzello_2018}. Kraft et al. recently showed, that photonic crystal slabs are processable on flexible substrates, which enables an implantation into wound dressing, smart patches or tape \cite{Fab23}.
 
 \begin{figure}
-  \caption{Example image of \ac{ArUco} markers on flexible photonic crystals on tape}
+  \caption{Example image of \ac{ArUco} markers on flexible photonic crystals on tape.}
   \includegraphics[width=0.65\textwidth]{image/testset_example_crop}
   \label{fig:intro_testset_example}
 \end{figure}
@@ -132,7 +132,7 @@ This section gives a brief overview over \acp{ANN}. Since this thesis is written
 Neural network interest and research happened in waves over the last decades, starting with McCulloch and Pitts' work on logical operations on neurons in 1943 \cite{mcculloch1943logical,485891}. 
 
 \begin{figure}
-  \caption{Visualization of a perceptron}
+  \caption{Visualization of a perceptron.}
   \includegraphics[width=0.5\textwidth]{graph/rosenblatt}
   \label{fig:perceptron}
 \end{figure}
@@ -152,7 +152,7 @@ The third and ongoing wave started in the early 1980ies with Hopfield's energy a
 \subsection{CNN}
 
 \begin{figure}
-  \caption{Visualization of a \ac{MLP}}
+  \caption{Visualization of a \ac{MLP}.}
   \includegraphics[width=0.5\textwidth]{graph/mlp}
   \label{fig:mlp} 
 \end{figure}
@@ -185,7 +185,7 @@ This algorithm is, however, based on the assumption that the marker contours are
      {\includegraphics[width=0.3\textwidth]{image/skewed-rec}}
   \subcaptionbox{An \ac{ArUco} marker image with broken contour}
      {\includegraphics[width=0.3\textwidth]{image/no-rec}}
-  \caption{Open CV ArUco Detection on example \ac{ArUco} images which have been partly obscured by a white rectangle}
+  \caption{Open CV ArUco Detection on example \ac{ArUco} images which have been partly obscured by a white rectangle.}
   \label{fig:aruco-det}
 \end{figure}
 
@@ -233,7 +233,7 @@ A combination of grid search and manual search are widely used to optimize hyper
 \subsection{IoU}
 
 \begin{figure}
-  \caption{Visualization of \ac{IoU} calculation}
+  \caption{Visualization of \ac{IoU} calculation.}
   \includegraphics[width=0.5\textwidth]{image/iou}
   \label{fig:iou}
 \end{figure}
@@ -263,7 +263,7 @@ The difference becomes most apparent when thinking about the extreme cases. If a
 \subsection{Table}
 
 \begin{figure}
-  \caption{Visualization of example prediction and ground truth bounding boxes}
+  \caption{Visualization of example prediction and ground truth bounding boxes.}
   \includegraphics[width=0.8\textwidth]{image/preds}
   \label{fig:preds}
 \end{figure}
@@ -288,7 +288,7 @@ Firstly, a table of all predictions over all images in a given dataseries is cre
 As the table is stepped through from highest confidence predictions to lowest, the accumulated \ac{TP} and \ac{FP} are incremented based on whether the prediction was correct or incorrect and saved into each table row \cite{padilla2020survey}. By computing $\text{acc \ac{TP}} / (\text{acc \ac{TP}} + \text{acc \ac{FP}})$ a preliminary precision is computed for each row. Similarly, a preliminary recall value is calculated for each table row by dividing the accumulated \ac{TP} by the total number of ground truth labels of all images. Its important to note, that recall values due to their computation formula here are monotonically increasing as the table rows are visited. When plotting the precision and recall values of the table rows as y and x components of points, the \ac{PR curve} is obtained as seen in \figureref{fig:pr-curve}.
 
 \begin{figure}
-  \caption{Example of a \ac{PR curve} plot taken from training with real data}
+  \caption{Example of a \ac{PR curve} plot taken from training with real data.}
   \includegraphics[width=0.8\textwidth]{image/eval_PR_Curve_0.60}
   \label{fig:pr-curve}
 \end{figure}
@@ -339,7 +339,7 @@ In the following paragraphs, papers focusing on challenging \ac{ArUco} marker de
 
 \subsection{UAV pose estimation}
 
-Another use case in which robust detection of \ac{ArUco} markers is essential is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based networks can be more stable than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of it with occlusion ratios from 10\% to 40\%. 
+Another use case in which robust detection of \ac{ArUco} markers is essential is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here, camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based networks can be more stable than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of it with occlusion ratios from 10\% to 40\%. 
 
 Markers in test images which had occluded borders still had high detection rates even at high cover ratios while markers in which the middle was occluded had worse detection rates, showing that the marker pattern itself was most important for this \ac{CNN} detection \cite{li2020aruco}.
 
@@ -436,7 +436,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO}, however, is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers of the \ac{YOLO} network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, the purple box denotes two fully connected layers, inspired by the visualization from Redmon et al. \cite{redmon2016you}, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \caption{Visualization of the most important layers of the \ac{YOLO} network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, is scaled by $x \mapsto x^{0.5}$. The purple box denotes two fully connected layers. It is inspired by the visualization from Redmon et al. \cite{redmon2016you} and was created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=\textwidth]{image/yolo}
   \label{fig:yolo}
 \end{figure}
@@ -444,7 +444,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore, all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers as seen in \figureref{fig:yolov2}. The first 23 layers of the network, or 6 boxes in the figure, are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function.
 
 \begin{figure}
-  \caption{Visualization of the most important layers of the \ac{YOLO}v2 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$ created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \caption{Visualization of the most important layers of the \ac{YOLO}v2 network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, is scaled by $x \mapsto x^{0.5}$. It was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=\textwidth]{image/yolov2}
   \label{fig:yolov2}
 \end{figure}
@@ -454,7 +454,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \section{Later YOLO Versions}
 
 \begin{figure}
-  \caption{A timeline showing different \ac{YOLO} versions over time, based on the timeline from Terven et al. \cite{terven2023comprehensive}}
+  \caption{Timeline showing different \ac{YOLO} versions over time which is based on the timeline from Terven et al. \cite{terven2023comprehensive}.}
   \includegraphics[width=\textwidth]{image/timeline_fix}
   \label{fig:yolo_timeline}
 \end{figure}
@@ -482,7 +482,7 @@ Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and populari
 \ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the \ac{SPPF}, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers and blocks of the entire \ac{YOLO}v5 network, with the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$, created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \caption{Visualization of the most important layers and blocks of the entire \ac{YOLO}v5 network. Here, the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$. It was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=\textwidth]{image/yolov5}
   \label{fig:yolov5}
 \end{figure}
@@ -519,7 +519,7 @@ After the application of transformer blocks in natural language processing was s
 \section{U-Net}
 
 \begin{figure}
-  \caption{Visualization of a U-Net, taken from the examples of the \href{https://github.com/HarisIqbal88/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}}
+  \caption{Visualization of a U-Net which was taken from the examples of the \href{https://github.com/HarisIqbal88/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=0.8\textwidth]{image/Unet_ushape}
   \label{fig:unet}
 \end{figure}
@@ -548,7 +548,7 @@ Training on the server was done using a Docker Image and locally it was done in 
 To validate that a neural network based approach is necessary in this case, I tested some approaches using algorithms from \ac{OpenCV}, which do not require machine learning. For these tests, I chose a test image from the given data, on which the markers were facing the camera and had as much visible contours as possible, which can be seen in \autoref{fig:classic_base_img}. 
 
 \begin{figure}
-  \caption{Test Image for Classic Approaches}
+  \caption{Test Image for Classic Approaches.}
   \includegraphics[width=0.7\textwidth]{image/classic_base_img}
   \label{fig:classic_base_img}
 \end{figure}
@@ -561,7 +561,7 @@ To validate that a neural network based approach is necessary in this case, I te
      {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_small}}
   \subcaptionbox{Detection Output without Filter}
      {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_all}}
-  \caption{Detections of the \ac{OpenCV} pipeline, with each polygon colored in a random color to make them distinguishable}
+  \caption{Detections of the \ac{OpenCV} pipeline with randomly colored polygons to make them distinguishable.}
   \label{fig:classic_base_img_opencv}
 \end{figure}
 
@@ -579,7 +579,7 @@ The idea of the histogram approach is that the pixel gradient histogram distribu
      {\includegraphics[width=0.4\textwidth]{image/classic_hist_markerynesses}}
   \subcaptionbox{Output of Histogram Peak based Score}
      {\includegraphics[width=0.4\textwidth]{image/classic_markeryness}}
-  \caption{Output of the Histogram based Approach, where the pixels of middle points of all windows that passed the candidate check are repainted, the redness of the repainted pixel represents the score of its window}
+  \caption{Output of the Histogram based Approach in which the pixels of middle points of all windows that passed the candidate check are repainted. The redness of the repainted pixel represents the score of its window.}
   \label{fig:markeryness_scores}
 \end{figure}
 
@@ -590,19 +590,19 @@ There are many possible variations of this approach, such as also using the magn
 \subsection{Feature Matching}
 
 \begin{figure}
-  \caption{\ac{SIFT} matches between a \ac{ArUco} marker image and the thresholded test image}
+  \caption{\ac{SIFT} matches between a \ac{ArUco} marker image and the thresholded test image.}
   \includegraphics[width=0.9\textwidth]{image/classic_sift_matches}
   \label{fig:classic_sift_matches}
 \end{figure}
 
 \begin{figure}
-  \caption{Detections of the marker middle using the \ac{SIFT} approach, using a sliding window and postprocessing}
+  \caption{Detections of the marker middle using the \ac{SIFT} approach with a sliding window and postprocessing.}
   \includegraphics[width=0.7\textwidth]{image/classic_sift_final_matches}
   \label{fig:classic_sift_final_matches}
 \end{figure}
 
 \begin{figure}
-  \caption{Adaptive thresholding on a image from the real test set}
+  \caption{Adaptive thresholding on an image from the test set.}
   \includegraphics[width=0.4\textwidth]{image/classic_sift_thresh_on_finger}
   \label{fig:classic_sift_thresh_on_finger}
 \end{figure}
@@ -620,7 +620,7 @@ Python has support for the structuring of script files into modules in which dat
 \subsection{Data Pipeline Overview}
 
 \begin{figure}
-  \caption{Overview of the most important data structures and scripts of the data pipeline from raw data to a dataset, orange nodes stand for data and blue nodes stand for python scripts}
+  \caption{Overview of the most important data structures and scripts of the data pipeline from raw data to a dataset. The orange nodes stand for data and blue nodes stand for python scripts.}
   \includegraphics[width=\textwidth]{graph/arch_data}
   \label{fig:arch_data}
 \end{figure}
@@ -637,7 +637,7 @@ The overview seen in \figureref{fig:arch_data} shows the various dataset types t
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_1}}
   \subcaptionbox{Image and polygon (orange) / bounding box (blue) labels after 50° rotation, as well as the old bounding box data in gray}
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_2}}
-  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue, after a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information, which was already too large since it could not capture the rotation of the object, the polygon label However, can be augmented with the image without loosing label accuracy by transforming the polygon points.}
+  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue. After a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information. This old label was already too large since it could not capture the rotation of the object. The polygon label, however, can be augmented with the image without losing label accuracy by transforming the polygon points.}
   \label{fig:polygon-good}
 \end{figure}
 
@@ -646,7 +646,7 @@ Image augmentation libraries have support for many data types to accommodate for
 \subsection{Train Pipeline Overview}
 
 \begin{figure}
-  \caption{Overview of the most important data structures and scripts of the training pipeline from datasets to \ac{mAP} scores, orange nodes stand for data and blue nodes stand for python scripts}
+  \caption{Overview of the most important data structures and scripts of the training pipeline from datasets to \ac{mAP} scores. Here, orange nodes stand for data and blue nodes stand for python scripts.}
   \includegraphics[width=\textwidth]{graph/arch_train}
   \label{fig:arch_train}
 \end{figure}
@@ -670,7 +670,7 @@ A training run folder contains the train artifacts, which refers to all files, i
 To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface the position of the plane, the markers sit on in 3D space within the images can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
 
 \begin{figure}
-  \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline}
+  \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline.}
   \includegraphics[width=0.65\textwidth]{graph/arch_data_af_focus}
   \label{fig:arch_data_af_focus}
 \end{figure}
@@ -683,7 +683,7 @@ The second algorithm assumes that all printed \ac{ArUco} markers on the paper fr
 The inner rectangles corners are now sorted too. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the respective assumptions of the two algorithms hold, they both result in a stable U-shaped ordering of the corners.
 
 \begin{figure}
-  \caption{Matching corner indices of the \ac{ArUco} rectangles and the red inner rectangle corners written on the image}
+  \caption{Matching corner indices of the \ac{ArUco} rectangles and the red inner rectangle corners written on the image.}
   \includegraphics[width=0.6\textwidth]{image/af_markings_3}
   \label{fig:inner_rect_indices}
 \end{figure}
@@ -716,7 +716,7 @@ Once the user is done, the labels are transferred to each other image by finding
 This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through the command line arguments. Furthermore, the images are copied such that the original not augmented training images and labels are kept in the dataset at least once and such that only the copies are augmented. The position of the augmentations in the pipeline is shown in \autoref{fig:arch_data_aug_focus}.
 
 \begin{figure}
-  \caption{Position of augmentations in the pipeline}
+  \caption{Position of augmentations in the pipeline.}
   \includegraphics[width=\textwidth]{graph/arch_data_aug_focus}
   \label{fig:arch_data_aug_focus}
 \end{figure}
@@ -865,7 +865,7 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before2}}
   \subcaptionbox{Training image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after2}}
-  \caption{Two examples for smart grid shuffling with similar initial label arrangement}
+  \caption{Two examples for smart grid shuffling with similar initial label arrangement.}
   \label{fig:aug_sgs_example}
 \end{figure}
 
@@ -880,7 +880,7 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
      {\includegraphics[width=0.45\textwidth]{image/aug_pld_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_pld_after}}
-  \caption{An example for label dropout}
+  \caption{An example for label dropout.}
   \label{fig:aug_pld_example}
 \end{figure}
 
@@ -890,7 +890,7 @@ To further discourage the model from fitting to certain label arrangements in th
 
 The rotation and perspective transformations are both combined into a homogeneous matrix transform step to prevent code duplication and to improve performance, since this step requires postprocessing.
 
-For most augmentations there is a chance setting and possibly a strength setting depending on the augmentation. Here the available settings are the chance for a rotation of 90 degree multiples, the chance for rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly, all settings are build into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \autoref{fig:aug_mat_example}.
+For most augmentations there is a chance setting and possibly a strength setting depending on the augmentation. Here, the available settings are the chance for a rotation of 90 degree multiples, the chance for rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly, all settings are build into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \autoref{fig:aug_mat_example}.
 
 \begin{figure}
   \centering
@@ -898,7 +898,7 @@ For most augmentations there is a chance setting and possibly a strength setting
      {\includegraphics[width=0.45\textwidth]{image/aug_mat_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_mat_after}}
-  \caption{An example for matrix transform augmentation}
+  \caption{An example for matrix transform augmentation.}
   \label{fig:aug_mat_example}
 \end{figure}
 
@@ -915,7 +915,7 @@ After the transformation, cases of \ac{OOB} labels have to be handled, as labels
      {\includegraphics[width=0.45\textwidth]{image/aug_rc_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc_after}}
-  \caption{An example for random crop}
+  \caption{An example for random crop.}
   \label{fig:aug_rc_example}
 \end{figure}
 
@@ -929,7 +929,7 @@ The pipeline implements a random crop, which crops an area of the datasets targe
      {\includegraphics[width=0.45\textwidth]{image/aug_rc2_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc2_after}}
-  \caption{An example for random crop v2, also showing on the borders of image (b) how out of bounds labels, that do not pass the visibility check, are overdrawn such that the residue of the marker on the image, that is without label, does not introduce a false negative into the training data, as described in \autoref{sec:oob}.}
+  \caption{An example for random crop v2. Image (b) also shows how out of bounds labels that do not pass the visibility check are overdrawn. This is done such that the residue of the marker on the image that is without label does not introduce a false negative into the training data, as described in \autoref{sec:oob}.}
   \label{fig:aug_rc2_example}
 \end{figure}
 
@@ -943,7 +943,7 @@ The data pipeline also builds \ac{JSON} files into the dataset folder to make th
      {\includegraphics[width=0.45\textwidth]{image/aug_lm_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_lm_after}}
-  \caption{An example for label move}
+  \caption{An example for label move.}
   \label{fig:aug_lm_example}
 \end{figure}
 
@@ -961,7 +961,7 @@ Since inserting of images into other images in OpenCV works by copying slices on
      {\includegraphics[width=0.45\textwidth]{image/aug_lm2_after_old}}
   \subcaptionbox{Training Image after label move v2 augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_lm2_after}}
-  \caption{An example for label move v2, in which the label is moved from the middle to the bottom left and despite the background color differences is not as noticeable, label borders are not drawn here to make the border differences of the augmentations more visible}
+  \caption{An example for label move v2. Here, the label is moved from the middle of the image to the bottom left. Despite the different background, the color differences is not as noticeable in label move v2. Label borders are not drawn here to make the border differences of the augmentations more visible.}
   \label{fig:aug_lm2_example}
 \end{figure}
 
@@ -981,7 +981,7 @@ These changes help make the reinserted label look more natural in the new spot, 
      {\includegraphics[width=0.45\textwidth]{image/aug_bd_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_bd_after}}
-  \caption{An example for black dot augmentation}
+  \caption{An example for black dot augmentation.}
   \label{fig:aug_bd_example}
 \end{figure}
 
@@ -1001,7 +1001,7 @@ An example of black dot aug can be seen in \autoref{fig:aug_bd_example}.
      {\includegraphics[width=0.45\textwidth]{image/aug_lc_before}}
   \subcaptionbox{Training Image after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_lc_after}}
-  \caption{An example for label curving augmentation on the marker in the bottom left}
+  \caption{An example for label curving augmentation on the marker in the bottom left.}
   \label{fig:aug_lc_example}
 \end{figure}
 
@@ -1020,7 +1020,7 @@ Gaussian noise adds noise to each pixel in the image, with the strength of the n
 \section{Inference}
 
 \begin{figure}
-  \caption{Position of evaluation inference in the pipeline}
+  \caption{Position of evaluation inference in the pipeline.}
   \includegraphics[width=0.75\textwidth]{graph/arch_train_eval_focus}
   \label{fig:arch_train_eval_focus}
 \end{figure}
@@ -1108,7 +1108,7 @@ The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019int
      {\includegraphics[width=0.2\textwidth]{image/segpet_3_in}}
   \subcaptionbox{Predictions on validation data}
      {\includegraphics[width=0.2\textwidth]{image/segpet_3_pred}}
-  \caption{Examples of segmentation approach output}
+  \caption{Examples of segmentation approach output.}
   \label{fig:segpet_preds_example}
 \end{figure}
 
@@ -1133,7 +1133,7 @@ Examples for the U-Net output on validation data can be seen in \autoref{fig:seg
      {\includegraphics[width=0.2\textwidth]{image/segpet_mask_6_pred_corners}}
   \subcaptionbox{Rectangle prediction on the input image}
      {\includegraphics[width=0.2\textwidth]{image/segpet_mask_6_pred_rect}}
-  \caption{Examples of the segmentation mask interpretation output}
+  \caption{Examples of the segmentation mask interpretation output.}
   \label{fig:segpet_rect_interp}
 \end{figure}
 
@@ -1156,7 +1156,7 @@ It is worth noting, that using point triplets and predicting the last point come
      {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_pred_intersects}}
   \subcaptionbox{Rectangle prediction based on line intersections}
      {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_lines_pred_rect}}
-  \caption{Example of improved mask interpretation using Hough transform}
+  \caption{Example of improved mask interpretation using Hough transform.}
   \label{fig:segpet_lines_improvement}
 \end{figure}
 
@@ -1165,7 +1165,7 @@ The \acp{OpenCV} implementation of Hough transform results in predicted lines on
 \subsection{Point Sorting}
 
 \begin{figure}
-  \caption{Pixel comparisons between the \ac{ArUco} marker image in the first column, the thresholded image snippet in the second column and their difference in the third column}
+  \caption{Pixel comparisons between the \ac{ArUco} marker image in the first column, the thresholded image snippet in the second column and their difference in the third column.}
   \includegraphics[width=0.3\textwidth]{image/pet_point_sorting_compare}
   \label{fig:pet_point_sorting_compare}
 \end{figure}
@@ -1207,7 +1207,7 @@ To get a score that I can compare the evaluation results to, I gathered scores t
    Average Result & 75.41\% & 37.58\% \\
    \hline
   \end{tabular}
-  \caption{\label{tab:human_test_result}Results of human labeling accuracy tests}
+  \caption{\label{tab:human_test_result}Results of human labeling accuracy tests.}
 \end{table}
 
 \section{Testing Scope}
@@ -1232,7 +1232,7 @@ During initial testing of the datasets using \ac{YOLO}v5s as the model to train,
 % TODO: Show strong / weak aug compositions
 
 \begin{figure}
-  \caption{Results of initial comparison of datasets on \ac{YOLO}v5s, with built in \ac{YOLO}v5 augmentations enabled and using two manually defined sets of augmentations \texttt{weak} and \texttt{strong}, as well as runs without dataset augmentation, with 9 configurations and 6 runs per configurations for a total of 54 training runs of 300 epochs each}
+  \caption{Results of initial comparison of datasets on \ac{YOLO}v5s. Here, built in \ac{YOLO}v5 augmentations are enabled. The two manually defined sets of augmentations \texttt{weak} and \texttt{strong} as well as runs without augmentation are used for each dataset. In this ensemble run, there are 9 configurations and 6 runs per configurations for a total of 54 training runs with 300 epochs each.}
   \includegraphics[width=\textwidth]{image/gp-compare-v2-thesis}
   \label{fig:initial_dataset_compare}
 \end{figure}
@@ -1251,7 +1251,7 @@ As a test for the usefulness of the added augmentations, I ramped up the usage r
 Without the application of \ac{SAHI}, a slight uplift in scores is visible throughout the plot, as seen in \autoref{fig:zero_sgs_plot}. Furthermore, the correlation between the chance of augmentation usage and the \ac{mAP} score values of the training runs is 43\% for the VOC 2010 \ac{mAP} score and 52\% for \ac{COCO}, showing that there is a moderate positive correlation.
 
 \begin{figure}
-  \caption{Results of Smart Grid Shuffle ensemble run without \ac{SAHI}}
+  \caption{Results of Smart Grid Shuffle ensemble run without \ac{SAHI}.}
   \includegraphics[width=\textwidth]{image/zero-based-sgs-ensemble-2-thesis}
   \label{fig:zero_sgs_plot}
 \end{figure}
@@ -1259,7 +1259,7 @@ Without the application of \ac{SAHI}, a slight uplift in scores is visible throu
 With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}. Furthermore, improvements flatten out earlier and stagnate after 10\% of usage chance.
 
 \begin{figure}
-  \caption{Results of Smart Grid Shuffle ensemble run with \ac{SAHI}}
+  \caption{Results of Smart Grid Shuffle ensemble run with \ac{SAHI}.}
   \includegraphics[width=\textwidth]{image/zero-based-sgs-sahi-ensemble-2-thesis}
   \label{fig:zero_sgs_sahi_plot}
 \end{figure}
@@ -1269,7 +1269,7 @@ With \ac{SAHI} all scores increase, as seen in \autoref{fig:zero_sgs_sahi_plot}.
 The rotation augmentation is the one which improved the scores the most, as seen in \autoref{fig:zero_rot_plot}. The correlation for the VOC 2010 score is 54\% and for the \ac{COCO} score is 21\% here, indicating that rotation may improve the general marker detection more than the tightness of the predictions. %This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However, at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
 
 \begin{figure}
-  \caption{Results of Rotation ensemble run without \ac{SAHI}}
+  \caption{Results of Rotation ensemble run without \ac{SAHI}.}
   \includegraphics[width=\textwidth]{image/zero-based-rot-ensemble-2-thesis}
   \label{fig:zero_rot_plot}
 \end{figure}
@@ -1281,7 +1281,7 @@ The rotation augmentation is the one which improved the scores the most, as seen
 Random Crop v2 had the worst impact on scores, as seen in \autoref{fig:zero_rc2_plot}. The correlation for the VOC 2010 score here is -43\% and for \ac{COCO} is -30\%. This may occur since the second version zooms too far into the image and since such large markers do not appear in the test set. Default Random Crop did not show similar impact on the scores.
 
 \begin{figure}
-  \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}}
+  \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}.}
   \includegraphics[width=\textwidth]{image/zero-based-rc2-ensemble-2-thesis}
   \label{fig:zero_rc2_plot}
 \end{figure}
@@ -1293,13 +1293,13 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
 \section{Hyperparameter Optimization}
 
 \begin{figure}
-  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run, with blue bars referring to augmentation application chance parameters and orange bars referring to maximum augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
+  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run. Here, blue bars refer to augmentation application chance parameters and orange bars refer to maximum augmentation strength parameters. A 100\% rotation refers to a 360 degree rotation and 100\% perspective augmentation refers to scaling down a side of the image to zero.}
   \includegraphics[width=\textwidth]{plot/best_hyp_run_params}
   \label{fig:optimal_augment_params} 
 \end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x labels here for later plots
 
 \begin{figure}
-  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5s and \texttt{gpv2}, where after each improvement to the highest score, the largest change in percent of the defined search space range to the parameters from the last highest score to the new highest score is visualized as annotations}
+  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5s and \texttt{gpv2}. Here after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
   \includegraphics[width=\textwidth]{image/hyp-param-search-yolov5s-sahi-rc-fix-history}
   \label{fig:hyp_hist}
 \end{figure}
@@ -1321,19 +1321,19 @@ While the results of the hyperparameter optimization run show what works, they d
 The results here generally do not show differences that are as large as in the earlier ensemble runs. As multiple techniques which increase the score build up, the influence of a single technique can become overshadowed.
 
 \begin{figure}
-  \caption{Results of a Rotation ensemble run based on optimal hyperparameters with \ac{SAHI}}
+  \caption{Results of a Rotation ensemble run based on optimal hyperparameters with \ac{SAHI}.}
   \includegraphics[width=\textwidth]{image/hyp-based-rot-sahi-ensemble-2-thesis}
   \label{fig:hyp_based_rot_plot}
 \end{figure}
 
 \begin{figure}
-  \caption{Results of a Random Crop v2 ensemble run based on optimal hyperparameters with \ac{SAHI}}
+  \caption{Results of a Random Crop v2 ensemble run based on optimal hyperparameters with \ac{SAHI}.}
   \includegraphics[width=\textwidth]{image/hyp-based-rc2-sahi-ensemble-2-thesis}
   \label{fig:hyp_based_rc2_plot}
 \end{figure}
 
 \begin{figure}
-  \caption{Results of a Smart Grid Shuffle ensemble run based on optimal hyperparameters with \ac{SAHI}}
+  \caption{Results of a Smart Grid Shuffle ensemble run based on optimal hyperparameters with \ac{SAHI}.}
   \includegraphics[width=\textwidth]{image/hyp-based-sgs-sahi-ensemble-2-thesis}
   \label{fig:hyp_based_sgs_plot}
 \end{figure}
@@ -1355,7 +1355,7 @@ Based on the training run from the hyperparameter optimization, I tested differe
      {\includegraphics[width=0.24\textwidth]{image/foreground_mask_example_hand}}
   \subcaptionbox{Hand image mask}
      {\includegraphics[width=0.24\textwidth]{image/foreground_mask_example_hand_mask}}
-  \caption{Example of the used foreground masks}
+  \caption{Example of the used foreground masks.}
   \label{fig:foreground_mask_examples}
 \end{figure}
 
@@ -1375,7 +1375,7 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
    \ac{MC} 50\% + \ac{SAHI} + Foreground Mask & 74.12 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:inference_parameters}Evaluation of the \ac{MC}, \ac{SAHI}, \ac{BIS} and \ac{SQT} inference parameters}
+  \caption{\label{tab:inference_parameters}Evaluation of the \ac{MC}, \ac{SAHI}, \ac{BIS} and \ac{SQT} inference parameters.}
 \end{table} % TODO: Measure inference time?
 
 \section{Server based Approach}
@@ -1383,13 +1383,16 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
 In the best case, I want to create a detection system which runs completely on the patients smartphone itself. However despite higher complexity in the implementation, the detection could also work as a cloud based service. In this case, the constraint of a small network size is removed. Due to this and because I wanted to validate my testing scope, I did another hyperparameter search using \ac{YOLO}v5x and \texttt{gpv3} which also uses \ac{SAHI} as an extra inference option.
 
 \begin{figure}
-  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}, where after each improvement to the highest score, the largest change in percent of the defined search space range to the parameters from the last highest score to the new highest score is visualized as annotations}
+  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}. Here after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
   \includegraphics[width=\textwidth]{image/hyp-param-search-yolov5x_gpv3_hyp_test-history}
   \label{fig:yolov5x_hyp_hist}
 \end{figure}
 
 \begin{figure}
-  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run with \ac{YOLO}v5x and \texttt{gpv3}, with blue bars referring to augmentation application chance parameters and orange bars referring to maximum augmentation strength parameters, with 100\% rotation referring to a 360 degree rotation and 100\% perspective augmentation referring to scaling down a side of the image to zero}
+  \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run. Here, blue bars
+  refer to augmentation application chance parameters and orange bars refer to maximum augmentation strength
+  parameters. A 100\% rotation refers to a 360 degree rotation and 100\% perspective augmentation refers to scaling
+  down a side of the image to zero.}
   \includegraphics[width=\textwidth]{plot/best_yolov5x_hyp_run_params}
   \label{fig:optimal_yolov5x_augment_params} 
 \end{figure}
@@ -1411,7 +1414,7 @@ This section describes the data used and the results of the evaluation of the ap
 For the training of models of this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
 
 \begin{figure}
-  \caption{Addition of new dataset types for point detection training}
+  \caption{Addition of new dataset types for point detection training.}
   \includegraphics[width=0.6\textwidth]{graph/arch_data_pet_focus}
   \label{fig:arch_data_pet_focus}
 \end{figure}
@@ -1430,7 +1433,7 @@ A Pet dataset contains an image and point label pair for each label that was in 
      {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_in}}
   \subcaptionbox{SegPet mask image}
      {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_seg}}
-  \caption{Example of SegPet training images and their masks}
+  \caption{Example of SegPet training images and their masks.}
   \label{fig:segpet_example}
 \end{figure}
 
@@ -1453,7 +1456,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
    Hough transform based interpretation of U-Net masks & 6.36 & 36.83 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Comparison of lowest achieved Sinkhorn loss and mean point distance on validation data for different point detection approaches}  %TODO add image size
+  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different point detection approaches. The image size is 160 x 160 pixels.}
 \end{table}
 
 \section{Discussion}
