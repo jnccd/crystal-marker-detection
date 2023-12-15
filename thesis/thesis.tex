@@ -1236,7 +1236,7 @@ During initial testing of the datasets using \ac{YOLO}v5s as the model to train,
 
 \begin{figure}
   \caption{Results of initial comparison of datasets on \ac{YOLO}v5s. Here, built in \ac{YOLO}v5 augmentations are enabled. The two manually defined sets of augmentations \texttt{weak} and \texttt{strong} as well as runs without augmentation are used for each dataset. In this ensemble run, there are 9 configurations and 6 runs per configurations for a total of 54 training runs with 300 epochs each.}
-  \includegraphics[width=\textwidth]{image/gp-compare-v2-thesis}
+  \includegraphics[width=0.9\textwidth]{image/gp-compare-v2-thesis}
   \label{fig:initial_dataset_compare}
 \end{figure}
 
@@ -1255,7 +1255,7 @@ Without the application of \ac{SAHI}, a slight uplift in scores is visible throu
 
 \begin{figure}
   \caption{Results of Smart Grid Shuffle ensemble run without \ac{SAHI}.}
-  \includegraphics[width=\textwidth]{image/zero-based-sgs-ensemble-2-thesis}
+  \includegraphics[width=0.9\textwidth]{image/zero-based-sgs-ensemble-2-thesis}
   \label{fig:zero_sgs_plot}
 \end{figure}
 
@@ -1263,7 +1263,7 @@ With \ac{SAHI} all scores increase, as seen in \figureref{fig:zero_sgs_sahi_plot
 
 \begin{figure}
   \caption{Results of Smart Grid Shuffle ensemble run with \ac{SAHI}.}
-  \includegraphics[width=\textwidth]{image/zero-based-sgs-sahi-ensemble-2-thesis}
+  \includegraphics[width=0.9\textwidth]{image/zero-based-sgs-sahi-ensemble-2-thesis}
   \label{fig:zero_sgs_sahi_plot}
 \end{figure}
 
@@ -1273,7 +1273,7 @@ The rotation augmentation is the one which improved the scores the most, as seen
 
 \begin{figure}
   \caption{Results of Rotation ensemble run without \ac{SAHI}.}
-  \includegraphics[width=\textwidth]{image/zero-based-rot-ensemble-2-thesis}
+  \includegraphics[width=0.9\textwidth]{image/zero-based-rot-ensemble-2-thesis}
   \label{fig:zero_rot_plot}
 \end{figure}
 
@@ -1285,7 +1285,7 @@ Random Crop v2 had the worst impact on scores, as seen in \figureref{fig:zero_rc
 
 \begin{figure}
   \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}.}
-  \includegraphics[width=\textwidth]{image/zero-based-rc2-ensemble-2-thesis}
+  \includegraphics[width=0.9\textwidth]{image/zero-based-rc2-ensemble-2-thesis}
   \label{fig:zero_rc2_plot}
 \end{figure}
 
@@ -1331,13 +1331,13 @@ The results here generally do not show differences that are as large as in the e
 
 \begin{figure}
   \caption{Results of a Random Crop v2 ensemble run based on optimal hyperparameters with \ac{SAHI}.}
-  \includegraphics[width=\textwidth]{image/hyp-based-rc2-sahi-ensemble-2-thesis}
+  \includegraphics[width=0.9\textwidth]{image/hyp-based-rc2-sahi-ensemble-2-thesis}
   \label{fig:hyp_based_rc2_plot}
 \end{figure}
 
 \begin{figure}
   \caption{Results of a Smart Grid Shuffle ensemble run based on optimal hyperparameters with \ac{SAHI}.}
-  \includegraphics[width=\textwidth]{image/hyp-based-sgs-sahi-ensemble-2-thesis}
+  \includegraphics[width=0.9\textwidth]{image/hyp-based-sgs-sahi-ensemble-2-thesis}
   \label{fig:hyp_based_sgs_plot}
 \end{figure}
 
@@ -1406,15 +1406,15 @@ Since training with a larger model and a larger dataset takes more then four tim
 \label{sec:final_eval}
 
 For the final evaluation, I tested the best models created during the hyperparameter optimization on the final testset. For the inference options, I used \ac{SAHI} and a \ac{BIS} of 20\% since those resulted in the best scores during inference for all fully implemented options, as discussed in \autoref{sec:inference_params}.
-The best fitted \ac{YOLO}v5s model created during the hyper parameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} and 26.4\% on the COCO \ac{mAP}. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} and 33.4\% on the COCO \ac{mAP}. The score difference of the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data. Examples for the detection of markers on the final test set of the \ac{YOLO}v5s model can be seen in \figureref{fig:final_testset_detections}.
+The best fitted \ac{YOLO}v5s model created during the hyper parameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} score and 26.4\% on the COCO \ac{mAP} score. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} score and 33.4\% on the COCO \ac{mAP} score. The score difference of the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data. Examples for the detection of markers on the final test set of the \ac{YOLO}v5s model can be seen in \figureref{fig:final_testset_detections}.
 
 \begin{figure} % TODO: Make theses better displayable in small
   \centering
   \subcaptionbox{\ac{YOLO}v5s confusion matrix on final test set}
-     {\includegraphics[width=0.49\textwidth]{image/yolov5s_hyp_search_confusion_matrix}}
+     {\includegraphics[width=0.4\textwidth]{image/yolov5s_hyp_search_confusion_matrix}}
   \subcaptionbox{\ac{YOLO}v5x confusion matrix on final test set}
-     {\includegraphics[width=0.49\textwidth]{image/yolov5x_hyp_search_confusion_matrix}}
-  \caption{Confusion matrices of the best \ac{YOLO}v5s and \ac{YOLO}v5x model fitted during hyperparameter search.}
+     {\includegraphics[width=0.4\textwidth]{image/yolov5x_hyp_search_confusion_matrix}}
+  \caption{Confusion matrices of the best \ac{YOLO}v5s and \ac{YOLO}v5x models fitted during hyperparameter search.}
   \label{fig:confusion_matrix_compare}
 \end{figure}
 
