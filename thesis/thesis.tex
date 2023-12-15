@@ -1297,13 +1297,13 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
 
 \begin{figure}
   \caption{Optimal Augmentation Parameters found during a hyperparameter optimization run. Here, blue bars refer to augmentation application chance parameters and orange bars refer to maximum augmentation strength parameters. A 100\% rotation refers to a 360 degree rotation and 100\% perspective augmentation refers to scaling down a side of the image to zero.}
-  \includegraphics[width=\textwidth]{plot/best_hyp_run_params}
+  \includegraphics[width=0.9\textwidth]{plot/best_hyp_run_params}
   \label{fig:optimal_augment_params} 
 \end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x labels here for later plots
 
 \begin{figure}
   \caption{Hyper Parameter Optimization History for \ac{YOLO}v5s and \texttt{gpv2}. Here after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
-  \includegraphics[width=\textwidth]{image/hyp-param-search-yolov5s-sahi-rc-fix-history}
+  \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5s-sahi-rc-fix-history}
   \label{fig:hyp_hist}
 \end{figure}
 
@@ -1351,13 +1351,13 @@ Based on the training run from the hyperparameter optimization, I tested differe
 \begin{figure}
   \centering
   \subcaptionbox{Finger image from the testset}
-     {\includegraphics[width=0.24\textwidth]{image/foreground_mask_example_finger}}
+     {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_finger}}
   \subcaptionbox{Finger image mask}
-     {\includegraphics[width=0.24\textwidth]{image/foreground_mask_example_finger_mask}}
+     {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_finger_mask}}
   \subcaptionbox{Hand image from the testset}
-     {\includegraphics[width=0.24\textwidth]{image/foreground_mask_example_hand}}
+     {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_hand}}
   \subcaptionbox{Hand image mask}
-     {\includegraphics[width=0.24\textwidth]{image/foreground_mask_example_hand_mask}}
+     {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_hand_mask}}
   \caption{Example of the used foreground masks.}
   \label{fig:foreground_mask_examples}
 \end{figure}
@@ -1387,7 +1387,7 @@ In the best case, I want to create a detection system which runs completely on t
 
 \begin{figure}
   \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}. Here after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
-  \includegraphics[width=\textwidth]{image/hyp-param-search-yolov5x_gpv3_hyp_test-history}
+  \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5x_gpv3_hyp_test-history}
   \label{fig:yolov5x_hyp_hist}
 \end{figure}
 
@@ -1406,7 +1406,7 @@ Since training with a larger model and a larger dataset takes more then four tim
 \label{sec:final_eval}
 
 For the final evaluation, I tested the best models created during the hyperparameter optimization on the final testset. For the inference options, I used \ac{SAHI} and a \ac{BIS} of 20\% since those resulted in the best scores during inference for all fully implemented options, as discussed in \autoref{sec:inference_params}.
-The best fitted \ac{YOLO}v5s model created during the hyper parameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} and 26.4\% on the COCO \ac{mAP}. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} and 33.4\% on the COCO \ac{mAP}. The score difference of the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data.
+The best fitted \ac{YOLO}v5s model created during the hyper parameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} and 26.4\% on the COCO \ac{mAP}. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} and 33.4\% on the COCO \ac{mAP}. The score difference of the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data. Examples for the detection of markers on the final test set of the \ac{YOLO}v5s model can be seen in \figureref{fig:final_testset_detections}.
 
 \begin{figure} % TODO: Make theses better displayable in small
   \centering
@@ -1416,6 +1416,16 @@ The best fitted \ac{YOLO}v5s model created during the hyper parameter optimizati
      {\includegraphics[width=0.49\textwidth]{image/yolov5x_hyp_search_confusion_matrix}}
   \caption{Confusion matrices of the best \ac{YOLO}v5s and \ac{YOLO}v5x model fitted during hyperparameter search.}
   \label{fig:confusion_matrix_compare}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.18\textwidth]{image/final_test_example_8_preds_and_gts}
+  \includegraphics[width=0.18\textwidth]{image/final_test_example_24_preds_and_gts}
+  \includegraphics[width=0.18\textwidth]{image/final_test_example_27_preds_and_gts}
+  \includegraphics[width=0.18\textwidth]{image/final_test_example_28_preds_and_gts}
+  \caption{Example detections on the final test set of the \ac{YOLO}v5s model obtained during the hyperparameter optimization on the ensemble test set. The ground truth bounding boxes are marked in turquoise and the detections of the model in red.}
+  \label{fig:final_testset_detections}
 \end{figure}
 
 \section{Point Detection}
@@ -1428,7 +1438,7 @@ For the training of models of this part, I took new photos of the \ac{ArUco} mar
 
 \begin{figure}
   \caption{Addition of new dataset types for point detection training.}
-  \includegraphics[width=0.6\textwidth]{graph/arch_data_pet_focus}
+  \includegraphics[width=0.5\textwidth]{graph/arch_data_pet_focus}
   \label{fig:arch_data_pet_focus}
 \end{figure}
 
@@ -1439,13 +1449,13 @@ A Pet dataset contains an image and point label pair for each label that was in 
 \begin{figure}
   \centering
   \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_in}}
+     {\includegraphics[width=0.18\textwidth]{image/segpet_example_in}}
   \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_seg}}
+     {\includegraphics[width=0.18\textwidth]{image/segpet_example_seg}}
   \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_in}}
+     {\includegraphics[width=0.18\textwidth]{image/segpet_example_2_in}}
   \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_example_2_seg}}
+     {\includegraphics[width=0.18\textwidth]{image/segpet_example_2_seg}}
   \caption{Example of SegPet training images and their masks.}
   \label{fig:segpet_example}
 \end{figure}
