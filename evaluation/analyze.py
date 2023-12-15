@@ -211,19 +211,20 @@ def analyze(
     num_fn = num_gt - num_tp
     num_tn = 0 # Doesn't apply to object detection
     conf_matrix = np.array([[num_tp,num_fp],[num_fn,num_tn]]).T
-    fig, ax = plt.subplots(figsize=(7.5, 7.5))
+    fig, ax = plt.subplots(figsize=(4.5, 4.5))
+    #fig.tight_layout()
     cax = ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
     #fig.colorbar(cax, pad=0.2)
     for i in range(conf_matrix.shape[0]):
         for j in range(conf_matrix.shape[1]):
             if not (i == 1 and j == 1):
-                ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
+                ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size=14)
     ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
     ax.set_xticklabels(['background', 'marker', 'background'], )
     ax.set_yticklabels(['background', 'marker', 'background'], rotation=90)
-    plt.xlabel('Predictions', fontsize=18)
-    plt.ylabel('Ground Truth', fontsize=18)
-    plt.title('Confusion Matrix with IoU Threshold of 0.5', fontsize=18)
+    plt.xlabel('Predictions', fontsize=14)
+    plt.ylabel('Ground Truth', fontsize=14)
+    plt.title('Confusion Matrix\nfor IoU Threshold of 0.5', fontsize=14)
     plt.savefig(str(eval_path / 'confusion_matrix.pdf'))
     
     # Write out said metrics
