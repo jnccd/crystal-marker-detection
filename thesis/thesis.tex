@@ -1545,6 +1545,14 @@ Fitting a yolov5s model for 100 epochs to this synthetic data yields a model tha
   \label{fig:synth_data_example}
 \end{figure}
 
+\section{Fusion Inference}
+
+The \texttt{fusion\_inference} script combines the predictions of multiple finished training runs as an inference post processing step. In comparison to \ac{SAHI}, \texttt{fusion\_inference} combines the output of the whole image from different fitted models is into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}. 
+
+The idea behind this approach is that multiple models may have randomly fitted to different kinds of prediction errors. Combining their inference output would therefore cancel out random errors and only leave the common and correct predictions.
+
+However during testing of this approach on fitted models from the rotation augmentation ensemble run, this approach failed to improve scores beyond the score average of the models used.
+
 \section{Human Baseline Study}
 \label{sec:instructions_paper}
 
@@ -1577,14 +1585,6 @@ The instructions paper for the human baseline study can be seen in \figureref{fi
   \fbox{\includegraphics[page=2,width=0.95\textwidth]{image/instructions-paper}}
   \label{fig:instructions_paper_2}
 \end{figure}
-
-\section{Fusion Inference}
-
-The \texttt{fusion\_inference} script combines the predictions of multiple finished training runs as an inference post processing step. In comparison to \ac{SAHI}, \texttt{fusion\_inference} combines the output of the whole image from different fitted models is into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}. 
-
-The idea behind this approach is that multiple models may have randomly fitted to different kinds of prediction errors. Combining their inference output would therefore cancel out random errors and only leave the common and correct predictions.
-
-However during testing of this approach on fitted models from the rotation augmentation ensemble run, this approach failed to improve scores beyond the score average of the models used.
 
 \section{List of Abbreviations}
 
