@@ -1043,10 +1043,6 @@ s(w,h)=
 Since markers in the images are usually part of the foreground, a pretrained foreground segmentation network could help improve the detection scores.
 To test this, I added support for masking of bounding box predictions. Since this is just for testing, this is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. %Using the average instead of the maximum pixel value lead the lower scores.
 
-\subsection{Fusion Inference}
-
-The \texttt{fusion\_inference} script combines the predictions of multiple finished training runs as a post processing step. In comparison to \ac{SAHI}, \texttt{fusion\_inference} combines the output of the whole image from different fitted models is into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}.
-
 % TODO?: \section{Plotting}
 
 \section{Automated Ensembles}
@@ -1580,6 +1576,14 @@ The instructions paper for the human baseline study can be seen in \figureref{fi
   \fbox{\includegraphics[page=2,width=0.95\textwidth]{image/instructions-paper}}
   \label{fig:instructions_paper_2}
 \end{figure}
+
+\section{Fusion Inference}
+
+The \texttt{fusion\_inference} script combines the predictions of multiple finished training runs as an inference post processing step. In comparison to \ac{SAHI}, \texttt{fusion\_inference} combines the output of the whole image from different fitted models is into one prediction, while \ac{SAHI} combines predictions on parts of the image from the same fitted model. During fusion inference, the bounding boxes are combined using the weighted boxes fusion approach from Solovyev et al. \cite{solovyev2021weighted}. 
+
+The idea behind this approach is that multiple models may have randomly fitted to different kinds of prediction errors. Combining their inference output would therefore cancel out random errors and only leave the common and correct predictions.
+
+However during testing of this approach on fitted models from the rotation augmentation ensemble run, this approach failed to improve scores beyond the score average of the models used.
 
 \section{List of Abbreviations}
 
