@@ -25,13 +25,13 @@ DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
 IMG_SIZE = 224
 MODEL = 'mobilenet' # scnn, mobilenet, vgg16
-HEAD = 'fc' # fc, fcnn, cl-fc, long-fc
+HEAD = 'fcnn' # fc, fcnn, cl-fc, long-fc
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-lin-4')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-fcnn')
 eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
@@ -172,21 +172,27 @@ def get_model():
                 self.conv1 = nn.Conv2d(512, 256, kernel_size=3, padding=1)
                 self.conv2 = nn.Conv2d(256, 128, kernel_size=3, padding=1)
                 self.conv3 = nn.Conv2d(128, 64, kernel_size=3, padding=1)
-                self.conv4 = nn.Conv2d(64, 32, kernel_size=3, padding=1)
+                self.conv4 = nn.Conv2d(64, 32, kernel_size=3, padding=1, stride=2)
+                self.conv5 = nn.Conv2d(32, num_keypoints, kernel_size=3, stride=2)
                 self.relu = nn.ReLU()
                 self.fc1 = nn.Linear(32 * 7 * 7, num_keypoints)
+                self.flat = nn.Flatten()
 
             def forward(self, x):
                 x = self.conv1(x)
-                x = self.relu(x)
+                #x = self.relu(x)
                 x = self.conv2(x)
-                x = self.relu(x)
+                #x = self.relu(x)
                 x = self.conv3(x)
-                x = self.relu(x)
+                #x = self.relu(x)
                 x = self.conv4(x)
-                x = self.relu(x)
-                x = x.view(x.size(0), -1)  # Flatten
-                x = self.fc1(x)
+                #x = self.relu(x)
+                x = self.conv5(x)
+                #print(x.size())
+                #x = x.view(x.size(0), -1)  # Flatten
+                #x = self.fc1(x)
+                x = self.flat(x)
+                #print(x.size())
                 return x
         custom_head = CustomVGG16Head(NUM_KEYPOINTS * DIM_KEYPOINTS)
         model = nn.Sequential(vgg16, custom_head)
@@ -199,6 +205,15 @@ def get_model():
             
             def forward(self, x):
                 x = torch.mul(x, self.scalar)
+                return x
+            
+        class Printer(nn.Module):
+            def __init__(self, name = 'printer'):
+                super().__init__()
+                self.name = name
+            
+            def forward(self, x):
+                print(self.name + ': ' + str(x.detach().cpu()))
                 return x
         
         # Define the custom head
@@ -218,19 +233,21 @@ def get_model():
                 elif HEAD == 'fcnn':
                     self.fc = nn.Sequential(
                         nn.Conv2d(1280, 320, kernel_size=1),
-                        nn.BatchNorm2d(320),
-                        nn.ReLU(),
+                        #nn.BatchNorm2d(320),
+                        #nn.ReLU(),
                         nn.Conv2d(320, 160, kernel_size=3, stride=2),
-                        nn.BatchNorm2d(160),
-                        nn.ReLU(),
+                        #nn.BatchNorm2d(160),
+                        #nn.ReLU(),
                         nn.Conv2d(160, 40, kernel_size=3, stride=2),
-                        nn.BatchNorm2d(40),
-                        nn.ReLU(),
+                        #nn.BatchNorm2d(40),
+                        #nn.ReLU(),
                         nn.Conv2d(40, num_classes, kernel_size=1),
-                        nn.BatchNorm2d(num_classes),
-                        nn.ReLU(),
+                        #Printer('after conv'),
+                        #nn.BatchNorm2d(num_classes),
+                        #nn.ReLU(),
                         nn.Flatten(),
-                        Multiply(IMG_SIZE),
+                        #Printer('end'),
+                        #Multiply(IMG_SIZE),
                     )
                 elif HEAD == 'cl-fc':
                     self.fc = nn.Sequential(
@@ -463,6 +480,7 @@ with torch.no_grad():
         final_vlosses.append(val_loss.to('cpu').detach().numpy())
         
         pds.append(mAPD_2D(val_outputs.cpu().numpy(), val_labels.cpu().numpy()))
+        # print(val_outputs.cpu().numpy())
        
         for (vii, val_input), (voi, val_outputs), (vli, val_labels) in zip(enumerate(val_inputs), enumerate(val_outputs), enumerate(val_labels)):
             
