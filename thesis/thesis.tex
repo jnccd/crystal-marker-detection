@@ -551,7 +551,7 @@ To validate that a neural network based approach is necessary in this case, I te
 
 \begin{figure}
   \caption{Test Image for Classic Approaches.}
-  \includegraphics[width=0.7\textwidth]{image/classic_base_img}
+  \includegraphics[width=0.6\textwidth]{image/classic_base_img}
   \label{fig:classic_base_img}
 \end{figure}
 
@@ -593,13 +593,13 @@ There are many possible variations of this approach, such as also using the magn
 
 \begin{figure}
   \caption{\ac{SIFT} matches between a \ac{ArUco} marker image and the thresholded test image.}
-  \includegraphics[width=0.9\textwidth]{image/classic_sift_matches}
+  \includegraphics[width=0.65\textwidth]{image/classic_sift_matches}
   \label{fig:classic_sift_matches}
 \end{figure}
 
 \begin{figure}
   \caption{Detections of the marker middle using the \ac{SIFT} approach with a sliding window and postprocessing.}
-  \includegraphics[width=0.7\textwidth]{image/classic_sift_final_matches}
+  \includegraphics[width=0.5\textwidth]{image/classic_sift_final_matches}
   \label{fig:classic_sift_final_matches}
 \end{figure}
 
@@ -688,7 +688,7 @@ The inner rectangles corners are now sorted too. The relationship between the in
 
 \begin{figure}
   \caption{Matching corner indices of the \ac{ArUco} rectangles and the red inner rectangle corners written on the image.}
-  \includegraphics[width=0.6\textwidth]{image/af_markings_3}
+  \includegraphics[width=0.5\textwidth]{image/af_markings_3}
   \label{fig:inner_rect_indices}
 \end{figure}
 
@@ -762,35 +762,31 @@ The first part of smart grid shuffling traverses the polygon labels in order of 
 \captionof{listing}{Cutting Part of Smart Grid Shuffling}
 \label{lst:sgs_cut}
 \begin{minted}{python}
-# Generate image segments by cutting the image between polygon labels through x or y
+# Generate image segments by cutting the image on axis aligned lines between polygon labels
 def segment_img_between_poly_labels(
-  img: Mat, polys: List[Polygon], 
+  img: Mat, 
+  polys: List[Polygon], 
   axis: Literal[0,1], 
   min_cut_distance = 5):
-
   segments = []
   
-  # Sort the polygon labels on the axis they should be cut in, 0 for x and 1 for y
-  polys = sort_polys_in(axis, polys)
+  # Sort the polygon labels on the opposite axis the image should be cut in, 0 for x and 1 for y
+  polys = sort_polys_in_axis(1 - axis, polys)
   
-  # Traverse the labels in order and generate image segments
+  # Traverse the polygon labels in order and generate image segments
   for i in range(len(polys)-1):
   axis_distance = distance_between_this_and_next_poly_on_axis(polys, i, axis)
 
     if axis_distance > min_cut_distance:
 
-      # Get the segment cutting position on axis
-      last_end = segments[-1]['end'] if len(segments) > 0 else 0
-      end = mid_between_poly_ends(polys, i, axis)
+      # Get the last and current segment end values on traversed axis 
+      last_end = segments[-1].end if len(segments) > 0 else 0
+      end = mid_between_poly_bounds(polys, i, axis)
 
       # Generate segment
       segment_polys = get_polys_in_segment(polys, last_end, end)
       segment_img = img[:, last_end:end] if axis == 0 else img[last_end:end, :]
-      segments.append({
-        'end': end,
-        'polys': segment_polys,
-        'img': segment_img,
-      })
+      segments.append(Segment(end, segment_polys, segment_img))
 
   # Generate last image segment analogously with end being the image size
   segments.append(last_segment)
@@ -813,12 +809,12 @@ def rebuild_img_from_segments(segments, target_img_size, axis: Literal[0,1]):
   pos = 0
   for seg in segments:
     if axis == 0: # x
-      result_img[:,pos:seg['end']] = seg['img']
+      result_img[:,pos:seg.end] = seg.img
     else: # y
-      result_img[pos:seg['end'],:] = seg['img']
+      result_img[pos:seg.end,:] = seg.img
         
-    result_polys.append(seg['polys'])
-    pos = seg['end']
+    result_polys.append(seg.polys)
+    pos = seg.end
     
   return aug_image, aug_polys
 \end{minted}
@@ -832,25 +828,23 @@ The last part uses the defined segment cutting and recombination operations to f
 \begin{minted}{python}
 # Main method
 def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
-
-  # Segment in y first
+  # First segment in y 
   segments_y = segment_img_between_poly_labels(img, polys, 1)
 
   # Shuffle the resulting y-segments
   random.shuffle(segments_y)
 
-  # Then segment all segments_y on the x axis
+  # Segment all segments_y on the x axis
   for segment_y in segments_y:
-    segments_x = segment_img_between_poly_labels(segment_y['img'], segment_y['polys'], 0)
-
-    # Shuffle segments to change their position
+    segments_x = segment_img_between_poly_labels(segment_y.img, segment_y.polys, 0)
+    
+    # Shuffle inner segments
     random.shuffle(segments_x)
     
-    # Rebuild y-segment from x-segments
+    # Rebuild the current y-segment from the inner x-segments
     segments_img, segments_polys = rebuild_img_from_segments(segments_x, segment_y.size(), 0)
-    
-    segment_y['img'] = segments_img
-    segment_y['corners'] = segments_polys
+    segment_y.img = segments_img
+    segment_y.corners = segments_polys
 
   # Return recombined y-segments
   return rebuild_img_from_segments(segments_y, img_size, 1)
