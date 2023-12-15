@@ -1458,23 +1458,30 @@ A SegPet dataset is similar but instead of having the vertex coordinates in a la
 
 \subsection{Results}
 
-As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches generally achieve better scores. While this table shows only the best training runs, the 2 linear layer head MobileNetV2 also ended up at a sinkhorn loss of about 500 in most training runs. This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. However, for now the models fit to a specific subset of all marker rotations and chose the closest to the marker rotation in the image instead of learning all possible rotations even if all marker rotations have the same chance of appearing in the training data through augmentations. Using a fully convolutional head alleviated this problem in some cases and increased the score further.
+As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches tend to achieve better scores. While this table shows only the best training runs, the MobileNetV2 with the two linear layer head also ended up at a sinkhorn loss of about 500 in most training runs. %This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. 
+The linear layer head models fit to a specific subset of all marker rotations and chose the closest rotation to the marker rotation in the image instead of learning all possible rotations. This occurs even if all marker rotations have the same chance of appearing in the training data through augmentations. Using a fully convolutional head alleviated this problem in some cases and increased the score further.
 
-For the U-Net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions. However, for the usecase of accurate camera pose prediction even more precision may be needed.
+For the U-Net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions compared to the harris corner approach. However, for the usecase of accurate camera pose prediction even more precision may be needed.
 
 \begin{table}
   \begin{tabular}{ c c c }
    Approach & Mean Point Distance & Sinkhorn Loss \\ 
    \hline
-   MobileNetV2 with custom two linear layer head & 15.83 & 169.16 \\
-   MobileNetV2 with custom three linear layer head & 25.46 & 457.67 \\
-   MobileNetV2 with custom fully convolutional head & 12.65 & 99.3 \\
-   VGG16 with custom fully convolutional head & 26.67 & 486.06 \\
-   Harris corner based interpretation of U-Net masks & 11.32 & 93.64 \\
-   Hough transform based interpretation of U-Net masks & 6.36 & 36.83 \\
+  %  MobileNetV2 with custom two linear layer head        & 15.83 & 169.16 \\
+  %  MobileNetV2 with custom three linear layer head      & 25.46 & 457.67 \\
+  %  MobileNetV2 with custom fully convolutional head     & 12.65 & 99.3 \\
+  %  VGG16 with custom fully convolutional head           & 26.67 & 486.06 \\
+  %  Harris corner based interpretation of U-Net masks    & 11.32 & 93.64 \\
+  %  Hough transform based interpretation of U-Net masks  & 6.36 & 36.83 \\
+   MobileNetV2 with custom two linear layer head        & 7.07 & 169.16 \\
+   MobileNetV2 with custom three linear layer head      & 11.37 & 457.67 \\
+   MobileNetV2 with custom fully convolutional head     & 5.65 & 99.3 \\
+   VGG16 with custom fully convolutional head           & 11.91 & 486.06 \\
+   Harris corner based interpretation of U-Net masks    & 7.08 & 93.64 \\
+   Hough transform based interpretation of U-Net masks  & 3.98 & 36.83 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different point detection approaches. The image size is 160 x 160 pixels.}
+  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different point detection approaches. The mean point distance is given in percentage of the image size. The image size refers to the images width and height in pixels, which are the same in the images of the validation data. The sinkhorn loss is not normalized and works on 224x224 pixel images for the point detection networks and 160x160 pixel images for the U-Net case. }
 \end{table}
 
 \section{Discussion}
