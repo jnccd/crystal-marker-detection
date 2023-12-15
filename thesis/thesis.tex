@@ -1217,24 +1217,13 @@ To get a score that I can compare the evaluation results to, I gathered scores t
 
 \section{Testing Scope}
 
-In this section, I describe some of the fixed parameters during the testing. Since this work introduces many variables, such as model type, augmentation parameters and model specific hyperparameters, some of them need to be fixed to keep the scope simple enough. These constraints are based on earlier and smaller scale tests.
-
-\subsection{Model}
-
-% TODO: Improve this part and get some good results to show here, on GPV2 maybe and without SAHI or other inference filters
-After the implementation of the \ac{YOLO}v8 models into the training and testing pipeline, using the \ac{YOLO}v8 models instead of \ac{YOLO}v5 models did not increase the test scores on initial tests. \ac{YOLO}-NAS-S only achieved a VOC 2010 \ac{mAP} score of 10.45\% on initial tests and 15\% after two built in augmentations were disabled.
-
-The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
-
-%The preprint of the paper from Terven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a \ac{COCO} \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
-
-Due to these results and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
+In this section, I describe some of the fixed parameters during later testing. Since this work introduces many variables, such as model type, dataset and augmentation parameters, some of them need to be fixed to keep the scope simple enough. These constraints are based on earlier and smaller scale tests which are described in this section.
 
 \subsection{Dataset}
 
-During initial testing of the datasets using \ac{YOLO}v5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, where more samples where sorted out based on image quality. However, while the scores without augmentation further increased with the dataset version, for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3}, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. The results of the dataset focused ensemble can be seen in \figureref{fig:initial_dataset_compare}.
+During initial testing of the datasets using \ac{YOLO}v5s as the model to train, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset in which more samples where sorted out based on image quality, as seen in \figureref{fig:initial_dataset_compare}. However for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3} or a model that is too small, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. 
 
-% TODO: Show strong / weak aug compositions
+% TODO?: Show strong / weak aug compositions
 
 \begin{figure}
   \caption{Results of initial comparison of datasets on \ac{YOLO}v5s. Here, built in \ac{YOLO}v5 augmentations are enabled. The two manually defined sets of augmentations \texttt{weak} and \texttt{strong} as well as runs without augmentation are used for each dataset. In this ensemble run, there are 9 configurations and 6 runs per configurations for a total of 54 training runs with 300 epochs each.}
@@ -1242,9 +1231,22 @@ During initial testing of the datasets using \ac{YOLO}v5s as the model to train,
   \label{fig:initial_dataset_compare}
 \end{figure}
 
+\subsection{Model}
+
+% TOxDO: Improve this part and get some good results to show here, on GPV2 maybe and without SAHI or other inference filters
+%After the implementation of the \ac{YOLO}v8 models into the training and testing pipeline, using the \ac{YOLO}v8 models instead of \ac{YOLO}v5 models did not increase the test scores on initial tests. \ac{YOLO}-NAS-S only achieved a VOC 2010 \ac{mAP} score of 10.45\% on initial tests and 15\% after two built in augmentations were disabled.
+
+To compare the models I trained them on a \texttt{gpv2} dataset with a manually defined set of augmentation parameters. Here, \ac{YOLO}v5s achieved a VOC 2010 \ac{mAP} score of 31.32\%. \ac{YOLO}v8s achieved a VOC 2010 \ac{mAP} score of 27.05\% and \ac{YOLO}v5su, which is a \ac{YOLO}v5s version from the \ac{YOLO}v8 release that was pretrained differently, achieved a VOC 2010 \ac{mAP} score of 27.67\%. \ac{YOLO}-NAS-S achieved a VOC 2010 \ac{mAP} score of 10.45\% on initial tests and 15\% after two built in augmentations were disabled.
+
+The models were compared using their default parameters. For \ac{YOLO}v5, these were the parameters defined in the built in \texttt{hyp.scratch-low.yaml}. For \ac{YOLO}v8, these were the default parameters of the \texttt{ultralytics} packages \texttt{model.train()} function. For \ac{YOLO}-NAS-S, these were the hyperparameters stored in the \texttt{roboflow\_yolo\_nas\_s.yaml}.
+
+%The preprint of the paper from Terven et al. \cite{terven2023comprehensive} was released after most of the implementation for this work was already done. It also contains a comparison of \ac{YOLO} models, but one on the \ac{COCO} dataset. In this comparison the top three models were \ac{YOLO}v7, which achieved a \ac{COCO} \ac{mAP} score of 56.8\%, Scaled-\ac{YOLO}v4, which achieved a score of 56.0\% and \ac{YOLO}v5, which achieved a score of 55.8\%. However, \ac{YOLO}v8 and \ac{YOLO}-NAS only got a score of 53.9\% and 52.2\% respectively. This does not fully explain the especially low scores of \ac{YOLO}-NAS-S, but it does validate the lower \ac{YOLO}v8 results.
+
+Due to these results and since smaller models can be used on more devices, most testing was done on \ac{YOLO}v5s.
+
 \subsection{Inference}
 
-Of the available inference parameters, I mainly used \ac{SAHI} in the tests since the markers in the testset were small and \ac{SAHI} increased the \ac{mAP} score in initial tests or none.
+Of the available inference parameters, I mainly used none or \ac{SAHI} in the tests since the markers in the testset were small and \ac{SAHI} increased the \ac{mAP} score in initial tests.
 
 \section{Augmenting from Zero} % TODO: Did I talk about randomness in training runs for ensembles anywhere?
 \label{sec:aug_ens_zero}
