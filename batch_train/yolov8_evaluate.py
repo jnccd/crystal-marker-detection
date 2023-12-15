@@ -89,7 +89,7 @@ def gen_evaldata(
             result = results[i]
             for box in result.boxes:
                 #print('box.xyxy', box.xyxy)
-                boxes.append(tuple(list(box.xyxy[0])[:4] + [box.conf]))
+                boxes.append(tuple([x.item() for x in box.xyxy[0][:4]] + [box.conf.item()]))
             cv2.imwrite(str(out_testdata_path / f'{i}_result_plot.png'), np.squeeze(result.plot()))
         else:
             # Sahi inference
@@ -102,9 +102,11 @@ def gen_evaldata(
                 overlap_width_ratio = 0.2
             )
             for pred in result.object_prediction_list:
+                # print(f'pred {[x.cpu().item() for x in pred.bbox.to_xyxy()]}')
                 boxes.append((pred.bbox.minx, pred.bbox.miny, pred.bbox.maxx, pred.bbox.maxy, pred.score.value))
             result.export_visuals(export_dir=str(out_testdata_path), file_name=f'{i}_result_render')
             
+        print(f'boxes {boxes}')
         handle_model_out(
             i, 
             boxes,
