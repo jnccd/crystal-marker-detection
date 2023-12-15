@@ -1066,7 +1066,7 @@ The epochs that should be trained for are also part of the search space. Since t
 
 Finally, the random seed for the dataset creation is also part of the search space, such that the best training run during the optimization is fully reproducible.
 
-\section{Point Detection}
+\section{Marker Corner Detection}
 
 This section describes the development of the second part of the inference. After the areas of interest were found by a fitted model which works on the whole image, this part finds the corner points of the marker within that area of interest.
 
@@ -1088,7 +1088,7 @@ The learn rate used here starts at $0.001$ and decays every $100$ epochs by a fa
 %   \label{fig:pet_rot_example}
 % \end{figure}
 
-The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019interpolating}, which unlike the standard loss for keypoint detection, \ac{MSE}, works with any permutation of points, removing the requirement of getting the right point order from the network. 
+The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019interpolating}. Unlike the standard loss for keypoint detection, \ac{MSE}, the Sinkhorn loss works with any permutation of points, removing the requirement of getting the right point order from the network. 
 % The outputs predicted the position of markers in the validation data well. However, the markers in the validation data were all almost axis aligned and had little rotation. When adding a rotation augmentation to the validation data, the weaknesses of the network become visible, as it fails to predict different rotations of the \ac{ArUco} marker, as seen in \figureref{fig:pet_rot_example}. Using a larger model, such as VGG16, as the base did not meaningfully improve the results.
 
 \subsection{Segmentation Approach}
@@ -1422,16 +1422,16 @@ The best fitted \ac{YOLO}v5s model created during the hyper parameter optimizati
   \label{fig:final_testset_detections}
 \end{figure}
 
-\section{Point Detection}
+\section{Marker Corner Detection}
 
-This section describes the data used and the results of the evaluation of the approaches for the point detection part of the pipeline.
+This section describes the data used and the results of the evaluation of the approaches for the marker corner detection part of the pipeline.
 
 \subsection{Data}
 
 For the training of models of this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
 
 \begin{figure}
-  \caption{Addition of new dataset types for point detection training.}
+  \caption{Addition of new dataset types for marker corner detection training.}
   \includegraphics[width=0.5\textwidth]{graph/arch_data_pet_focus}
   \label{fig:arch_data_pet_focus}
 \end{figure}
@@ -1481,7 +1481,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
    Hough transform based interpretation of U-Net masks  & 3.98 & 36.83 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different point detection approaches. The mean point distance is given in percentage of the image size. The image size refers to the images width and height in pixels, which are the same in the images of the validation data. The sinkhorn loss is not normalized and works on 224x224 pixel images for the point detection networks and 160x160 pixel images for the U-Net case. }
+  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different marker corner detection approaches. The mean point distance is given in percentage of the image size. The image size refers to the images width and height in pixels, which are the same for the images in the validation data. The sinkhorn loss is not normalized and works on 224x224 pixel images for the keypoint detection networks and 160x160 pixel images for the U-Net case. }
 \end{table}
 
 \section{Discussion}
