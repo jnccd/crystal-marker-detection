@@ -42,8 +42,10 @@
 \newenvironment{code}{\captionsetup{type=listing}}{}
 \SetupFloatingEnvironment{listing}{name=Pseudocode}
 
-\newcommand{\figureref}[1]{\textbf{\autoref{#1}}}
-\newcommand{\figurereft}[2]{\textbf{\autoref{#1} #2}}
+% \newcommand{\figureref}[1]{\textbf{\autoref{#1}}}
+% \newcommand{\figurereft}[2]{\textbf{\autoref{#1} #2}}
+\newcommand{\figureref}[1]{\autoref{#1}}
+\newcommand{\figurereft}[2]{\autoref{#1} #2}
 \newcommand{\toxdo}[1]{}
 
 \newcommand*\NewPage{\newpage\null\thispagestyle{empty}\newpage}
