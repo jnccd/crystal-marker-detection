@@ -763,11 +763,7 @@ The first part of smart grid shuffling traverses the polygon labels in order of 
 \label{lst:sgs_cut}
 \begin{minted}{python}
 # Generate image segments by cutting the image on axis aligned lines between polygon labels
-def segment_img_between_poly_labels(
-  img: Mat, 
-  polys: List[Polygon], 
-  axis: Literal[0,1], 
-  min_cut_distance = 5):
+def segment_img(img: Mat, polys: List[Polygon], axis: Literal[0,1], min_cut_distance = 5):
   segments = []
   
   # Sort the polygon labels on the opposite axis the image should be cut in, 0 for x and 1 for y
@@ -801,7 +797,7 @@ The second part of smart grid shuffling defines the recombination of the image s
 \captionof{listing}{Segment Combination Part of Smart Grid Shuffling}
 \label{lst:sgs_comb}
 \begin{minted}{python}
-def rebuild_img_from_segments(segments, target_img_size, axis: Literal[0,1]):
+def recombine_segments(segments, target_img_size, axis: Literal[0,1]):
   result_img = get_empty_image_of_size(target_img_size)
   result_polys = []
 
@@ -829,25 +825,25 @@ The last part uses the defined segment cutting and recombination operations to f
 # Main method
 def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
   # First segment in y 
-  segments_y = segment_img_between_poly_labels(img, polys, 1)
+  segments_y = segment_img(img, polys, 1)
 
   # Shuffle the resulting y-segments
   random.shuffle(segments_y)
 
   # Segment all segments_y on the x axis
   for segment_y in segments_y:
-    segments_x = segment_img_between_poly_labels(segment_y.img, segment_y.polys, 0)
+    segments_x = segment_img(segment_y.img, segment_y.polys, 0)
     
     # Shuffle inner segments
     random.shuffle(segments_x)
     
     # Rebuild the current y-segment from the inner x-segments
-    segments_img, segments_polys = rebuild_img_from_segments(segments_x, segment_y.size(), 0)
+    segments_img, segments_polys = recombine_segments(segments_x, segment_y.size(), 0)
     segment_y.img = segments_img
     segment_y.corners = segments_polys
 
   # Return recombined y-segments
-  return rebuild_img_from_segments(segments_y, img_size, 1)
+  return recombine_segments(segments_y, img_size, 1)
 \end{minted}
 \end{code}
 
