@@ -18,19 +18,20 @@ from torchsummary import summary
 
 from utils import *
 
-EPOCHS = 100
+EPOCHS = 400
 BATCH_SIZE = 32
 DEVICE = "cuda"
 DIM_KEYPOINTS = 2
 NUM_KEYPOINTS = 4
 IMG_SIZE = 224
-MODEL = 'mobilenet'
+MODEL = 'mobilenet' # scnn, mobilenet, vgg16
+HEAD = 'fc' # fc, fcnn, cl-fc, long-fc
 
 root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-lin-3')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-lin-4')
 eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
@@ -190,56 +191,73 @@ def get_model():
         custom_head = CustomVGG16Head(NUM_KEYPOINTS * DIM_KEYPOINTS)
         model = nn.Sequential(vgg16, custom_head)
     elif MODEL == 'mobilenet':
+        
+        class Multiply(nn.Module):
+            def __init__(self, scalar):
+                super().__init__()
+                self.scalar = scalar
+            
+            def forward(self, x):
+                x = torch.mul(x, self.scalar)
+                return x
+        
         # Define the custom head
         class CustomHead(nn.Module):
             def __init__(self, in_features, num_classes):
                 super(CustomHead, self).__init__()
-                self.fc = nn.Sequential(
-                    nn.AdaptiveAvgPool2d((1, 1)),
-                    nn.Flatten(),
-                    nn.Linear(in_features, 512),
-                    nn.ReLU(),
-                    #nn.Dropout(0.5),
-                    nn.Linear(512, num_classes),
-                )
-                # self.fc = nn.Sequential(
-                #     nn.Conv2d(1280, 320, kernel_size=1),
-                #     nn.BatchNorm2d(320),
-                #     nn.ReLU(),
-                #     nn.Conv2d(320, 160, kernel_size=3, stride=2),
-                #     nn.BatchNorm2d(160),
-                #     nn.ReLU(),
-                #     nn.Conv2d(160, 40, kernel_size=3, stride=2),
-                #     nn.BatchNorm2d(40),
-                #     nn.ReLU(),
-                #     nn.Conv2d(40, num_classes, kernel_size=1),
-                #     nn.BatchNorm2d(num_classes),
-                #     nn.ReLU(),
-                #     nn.Flatten(),
-                # )
-                # self.fc = nn.Sequential(
-                #     nn.Conv2d(1280, 320, kernel_size=1, stride=2),
-                #     nn.BatchNorm2d(320),
-                #     nn.ReLU(),
-                #     nn.AdaptiveAvgPool2d((1, 1)),
-                #     nn.Flatten(),
-                #     nn.Linear(320, 128),
-                #     nn.ReLU(),
-                #     #nn.Dropout(0.5),
-                #     nn.Linear(128, num_classes),
-                # )
-                # self.fc = nn.Sequential(
-                #     nn.AdaptiveAvgPool2d((1, 1)),
-                #     nn.Flatten(),
-                #     nn.Linear(in_features, 1024),
-                #     nn.ReLU(),
-                #     nn.Linear(1024, 256),
-                #     nn.ReLU(),
-                #     nn.Linear(256, num_classes),
-                # )
+                
+                if HEAD == 'fc':
+                    self.fc = nn.Sequential(
+                        nn.AdaptiveAvgPool2d((1, 1)),
+                        nn.Flatten(),
+                        nn.Linear(in_features, 512),
+                        nn.ReLU(),
+                        #nn.Dropout(0.5),
+                        nn.Linear(512, num_classes),
+                    )
+                elif HEAD == 'fcnn':
+                    self.fc = nn.Sequential(
+                        nn.Conv2d(1280, 320, kernel_size=1),
+                        nn.BatchNorm2d(320),
+                        nn.ReLU(),
+                        nn.Conv2d(320, 160, kernel_size=3, stride=2),
+                        nn.BatchNorm2d(160),
+                        nn.ReLU(),
+                        nn.Conv2d(160, 40, kernel_size=3, stride=2),
+                        nn.BatchNorm2d(40),
+                        nn.ReLU(),
+                        nn.Conv2d(40, num_classes, kernel_size=1),
+                        nn.BatchNorm2d(num_classes),
+                        nn.ReLU(),
+                        nn.Flatten(),
+                        Multiply(IMG_SIZE),
+                    )
+                elif HEAD == 'cl-fc':
+                    self.fc = nn.Sequential(
+                        nn.Conv2d(1280, 320, kernel_size=1, stride=2),
+                        nn.BatchNorm2d(320),
+                        nn.ReLU(),
+                        nn.AdaptiveAvgPool2d((1, 1)),
+                        nn.Flatten(),
+                        nn.Linear(320, 128),
+                        nn.ReLU(),
+                        #nn.Dropout(0.5),
+                        nn.Linear(128, num_classes),
+                    )
+                elif HEAD == 'long-fc':
+                    self.fc = nn.Sequential(
+                        nn.AdaptiveAvgPool2d((1, 1)),
+                        nn.Flatten(),
+                        nn.Linear(in_features, 1024),
+                        nn.ReLU(),
+                        nn.Linear(1024, 256),
+                        nn.ReLU(),
+                        nn.Linear(256, num_classes),
+                    )
 
             def forward(self, x):
                 x = self.fc(x)
+                #print(x.size())
                 return x
 
         # Load the MobileNetV2 base model
