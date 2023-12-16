@@ -18,21 +18,21 @@ def main():
     global Trainer, models, dataloaders, DetectionMetrics_050, DetectionMetrics_050_095, PPYoloELoss, PPYoloEPostPredictionCallback
     
     # Parse
-    parser = argparse.ArgumentParser(prog='', description='.')
-    parser.add_argument('-d','--datasets-path', type=str, default='', help='.')
-    parser.add_argument('-t','--testset-path', type=str, default='', help='.')
-    parser.add_argument('-o','--output-path', type=str, default='training/yolo_nas', help='.')
-    parser.add_argument('-rsf','--recursive-folder-searching', action='store_true', help='.')
+    parser = argparse.ArgumentParser(prog='yolo-nas-batch-train', description='Train and test yolo nas models on multiple datasets at once.')
+    parser.add_argument('-d','--datasets-path', type=str, default='', help='The path to the folder containing coco dataset folders to train from.')
+    parser.add_argument('-t','--testset-path', type=str, default='', help='The path to the coco testset to use the validation data of for testing.')
+    parser.add_argument('-o','--output-path', type=str, default='training/yolo_nas', help='The folder in which the training run folder will be placed.')
+    parser.add_argument('-rsf','--recursive-folder-searching', action='store_true', help='Doesnt check for folder depth of found dataset folders from the datasets-path.')
     
     parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
     parser.add_argument('-b','--batch-size', type=int, default=8, help='Sets the batch size to train with.')
     parser.add_argument('-e','--epochs', type=int, default=100, help='Sets the epochs to train for.')
     parser.add_argument('-m','--model', type=str, default='yolo_nas_s', help='Sets the model to train with.')
     
-    parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
-    parser.add_argument('-wc','--worker-count', type=int, default=-1, help='.')
+    parser.add_argument('-wi','--worker-index', type=int, default=-1, help='For multi gpu server runs, this sets which datasets of all found ones should be worked on by this instance of batch train.')
+    parser.add_argument('-wc','--worker-count', type=int, default=-1, help='For multi gpu server runs, this sets which datasets of all found ones should be worked on by this instance of batch train.')
     
-    parser.add_argument('-db','--debug', action='store_true', help='.')
+    parser.add_argument('-db','--debug', action='store_true', help='Generate more output.')
     
     args = parser.parse_args()
 

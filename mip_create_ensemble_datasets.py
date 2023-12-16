@@ -2,12 +2,12 @@ import argparse
 import os
 import sys
 
-parser = argparse.ArgumentParser(prog='', description='.')
-parser.add_argument('-n','--name', type=str, default='test', help='.')
-parser.add_argument('-mc','--max-config', type=float, default='1', help='.')
-parser.add_argument('-sc','--step-config', type=float, default='0.1', help='.')
-parser.add_argument('-np','--num-parts', type=int, default='5', help='.')
-parser.add_argument('-op','--other-params', type=str, default='', help='.')
+parser = argparse.ArgumentParser(prog='mip-create-ensemble-datasets', description='Creates ensemble datasets for the mip server.')
+parser.add_argument('-n','--name', type=str, default='test', help='Name of the datasets.')
+parser.add_argument('-mc','--max-config', type=float, default='1', help='The maximum value of the config range.')
+parser.add_argument('-sc','--step-config', type=float, default='0.1', help='The step size of the config range.')
+parser.add_argument('-np','--num-parts', type=int, default='5', help='The number of datasets per config.')
+parser.add_argument('-op','--other-params', type=str, default='', help='These will be passed through to createDataset.')
 args = parser.parse_args()
 
 def float_range(start, stop, step):

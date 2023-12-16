@@ -9,9 +9,9 @@ from shapely import Polygon
 from utility import *
 
 # Parse
-parser = argparse.ArgumentParser(prog='', description='.')
-parser.add_argument('-t','--testseries-path', type=str, default='', help='.')
-parser.add_argument('-i','--images-folder', type=str, default='', help='.')
+parser = argparse.ArgumentParser(prog='evaluate-human-results', description='Evaluates all human results in the human-testing folder.')
+parser.add_argument('-t','--testseries-path', type=str, default='', help='The path to the dataseries containing the labels to test against.')
+parser.add_argument('-i','--images-folder', type=str, default='', help='The path to the image folder that was labeled from in the study.')
 args = parser.parse_args()
 
 # --- Load paths

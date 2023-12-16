@@ -32,7 +32,7 @@ def main():
     parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
     parser.add_argument('-sqt','--squareness-threshold', type=float, default=0, help='The minimum squareness of considered prediction boxes.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
-    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
+    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='Generate more output.')
     args = parser.parse_args()
     
     # Set up Paths

@@ -10,13 +10,13 @@ from pathlib import Path
 from utility import *
 
 # Parse
-parser = argparse.ArgumentParser(prog='', description='Regenerate evaldata and reanalyze outputs, in case there was a bug in the prod server script.')
-parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
-parser.add_argument('-t','--testset-path', type=str, help='.')
-parser.add_argument('-rt','--run-type', type=str, help='.')
+parser = argparse.ArgumentParser(prog='reeval', description='Regenerate evaldata and reanalyze outputs, in case there was a bug in the prod server script.')
+parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='Folders which contain the dataset folders in their subfolder tree that should be reevaluated.')
+parser.add_argument('-t','--testset-path', type=str, help='The dataset to use the valdata of as a testset for this evaluation.')
+parser.add_argument('-rt','--run-type', type=str, help='The model type of the runs, like yolov5 or yolov8. This can also be inferred automatically using the training metadata')
 
-parser.add_argument('-rne','--run-name-exclude', type=str, default='---------', help='.')
-parser.add_argument('-sge','--skip-gen-evaldata', action='store_true', help='.')
+parser.add_argument('-rne','--run-name-exclude', type=str, default='---------', help='Regex for run names to exclude from reeval.')
+parser.add_argument('-sge','--skip-gen-evaldata', action='store_true', help='Only calls analyze.')
 parser.add_argument('-stn','--set-test-folder-name', action='store_true', help='Sets the test folder name in the run folder based on the settings.')
 
 parser.add_argument('-ct','--confidence-threshold', type=float, default=0.5, help='The minimum confidence of considered predictions.')
