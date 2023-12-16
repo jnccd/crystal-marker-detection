@@ -12,9 +12,9 @@ import numpy as np
 
 from utility import *
 
-parser = argparse.ArgumentParser(prog='', description='.')
-parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
-parser.add_argument('-s','--sort-by', type=str, default='voc2010_mAP', help='.')
+parser = argparse.ArgumentParser(prog='find-best-score', description='Finds the best scores achieved in multiple training run folders.')
+parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='Folders which contain the dataset folders in their subfolder tree that should be searched for a good score.')
+parser.add_argument('-s','--sort-by', type=str, default='voc2010_mAP', help='The metric to sort by.')
 args = parser.parse_args()
 
 root_dir = Path(__file__).resolve().parent

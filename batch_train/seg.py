@@ -13,9 +13,9 @@ from utility import *
 def main():
     start_time = time.time()
 
-    parser = argparse.ArgumentParser(prog='', description='.')
-    parser.add_argument('-d','--dataset-path', type=str, default='', help='.')
-    parser.add_argument('-v','--testset-path', type=str, default='', help='.')
+    parser = argparse.ArgumentParser(prog='seg-batch-train', description='.')
+    parser.add_argument('-d','--dataset-path', type=str, default='', help='The path to a segmentation dataset folder.')
+    parser.add_argument('-v','--testset-path', type=str, default='', help='The path to a testset folder.')
     args = parser.parse_args()
 
     root_dir = Path(__file__).resolve().parent

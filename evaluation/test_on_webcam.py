@@ -13,9 +13,9 @@ import numpy as np
 from utility import *
 
 # Parse
-parser = argparse.ArgumentParser(prog='', description='Regenerate evaldata and reanalyze outputs, in case there was a bug in the prod server script.')
-parser.add_argument('-r','--run-path', type=str, help='.')
-parser.add_argument('-rt','--run-type', type=str, help='.')
+parser = argparse.ArgumentParser(prog='test-on-webcam', description='Regenerate evaldata and reanalyze outputs, in case there was a bug in the prod server script.')
+parser.add_argument('-r','--run-path', type=str, help='Path of the training run to use the model weights of.')
+parser.add_argument('-rt','--run-type', type=str, help='The model type of the runs, like yolov5 or yolov8.')
 args = parser.parse_args()
 
 print(Path(args.run_path))

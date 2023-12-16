@@ -15,8 +15,8 @@ from utility import *
 
 def main():
     # Parse
-    parser = argparse.ArgumentParser(prog='yolov8-evaluate', description='Evaluate yolov8 output on a datasets valdata.')
-    parser.add_argument('-r','--run-folder', type=str, help='Path to a Yolov8 run folder.')
+    parser = argparse.ArgumentParser(prog='yolov8-evaluate', description='Generate testable evaluation data for yolov8 output on some datasets valdata.')
+    parser.add_argument('-r','--run-folder', type=str, help='Path to a Yolov8 run folder to evaluate the output from.')
     parser.add_argument('-t','--testset-folder', type=str, help='The dataset to use the valdata of as a testset for this evaluation.')
     parser.add_argument('-tn','--test-folder-name', type=str, default='test', help='The folder name for this test in the run-folder, per default its "test".')
     
@@ -24,7 +24,7 @@ def main():
     parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
     parser.add_argument('-sqt','--squareness-threshold', type=float, default=0, help='The minimum squareness of considered prediction boxes.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
-    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
+    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='Generate more output.')
     args = parser.parse_args()
     
     # Set up Paths

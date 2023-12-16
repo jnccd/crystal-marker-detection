@@ -16,12 +16,12 @@ import numpy as np
 
 from utility import *
 
-parser = argparse.ArgumentParser(prog='', description='.')
-parser.add_argument('-n','--name', type=str, help='.')
-parser.add_argument('-t','--title', type=str, help='.')
+parser = argparse.ArgumentParser(prog='plot-ensemble', description='Plots the results of ensemble runs.')
+parser.add_argument('-n','--name', type=str, help='Name of the plot.')
+parser.add_argument('-t','--title', type=str, help='Title of the plot.')
 parser.add_argument('-xl','--x-label', type=str, default='', help='X Axis label')
 
-parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='.')
+parser.add_argument('-r','--runs-folders', action='append', nargs='+', type=str, help='Folders which contain the dataset folders in their subfolders which should be plotted.')
 parser.add_argument('-tn','--test-name', type=str, default='test', help='Name of the test folder to plot from.')
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run name.')
 

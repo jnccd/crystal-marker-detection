@@ -376,7 +376,7 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(prog='analyze', description='Analyzes object detection and segmentation models by unifying the results as bboxes through pixel clustering.')
     parser.add_argument('-av','--analyze-valdata-from', type=str, default='', help='Set to a run name to analyze the validation data of or to a path to a folder containing validation data')
-    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='.')
+    parser.add_argument('-dbo','--debug-output-imgs', action='store_true', help='Generate more output.')
     args = parser.parse_args()
     
     analyze(run_or_testdata=args.analyze_valdata_from,

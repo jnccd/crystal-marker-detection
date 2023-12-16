@@ -6,7 +6,7 @@ from pathlib import Path
 from utils import read_textfile, write_textfile
 
 parser = argparse.ArgumentParser(prog='fix-yolov5', description='Fixes yolov5 yaml paths after dataset folder has moved.')
-parser.add_argument('-df','--dataset-path', type=str,  help='')
+parser.add_argument('-df','--dataset-path', type=str,  help='The path of the dataset to fix')
 args = parser.parse_args()
 
 dataset_path = Path(args.dataset_path)

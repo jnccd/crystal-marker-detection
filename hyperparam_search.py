@@ -9,12 +9,12 @@ from hyperopt import fmin, tpe, hp, STATUS_OK
 
 from evaluation.utility import *
 
-parser = argparse.ArgumentParser(prog='', description='.')
-parser.add_argument('-n','--name', type=str, help='.')
-parser.add_argument('-t','--testset-path', type=str, help='.')
-parser.add_argument('-df','--dataset-folder', type=str, default='traindata-creator/dataset/_hyp-param-search', help='.') # /data/pcmd/dataset/hyp-param-search
-parser.add_argument('-tf','--training-folder', type=str, default='training/hyp-param-search', help='.') # /data/pcmd/training/hyp-param-search
-parser.add_argument('-ds','--dataseries-sources', type=str, default='-tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2', help='.')
+parser = argparse.ArgumentParser(prog='hyperparam-search', description='Performs hyperparameter search on the augmentation parameter space.')
+parser.add_argument('-n','--name', type=str, help='The name for the hyp search folders.')
+parser.add_argument('-t','--testset-path', type=str, help='The path to the dataset to use the valdata of for testing and to optimize for.')
+parser.add_argument('-df','--dataset-folder', type=str, default='traindata-creator/dataset/_hyp-param-search', help='The folder to build the dataset in.') # /data/pcmd/dataset/hyp-param-search
+parser.add_argument('-tf','--training-folder', type=str, default='training/hyp-param-search', help='The folder to write the training artifacts in.') # /data/pcmd/training/hyp-param-search
+parser.add_argument('-ds','--dataseries-sources', type=str, default='-tf traindata-creator/dataseries/af-the_good_pics_for_nn2_s1/ traindata-creator/dataseries/af-the_good_pics_for_nn2_s2/ -r 0.2', help='The sources of dataseries for the dataset creation.')
 parser.add_argument('-m','--model', type=str, default='yolov5s', help='Sets the model to train with.')
 parser.add_argument('-mine','--min-epochs', type=int, default=5, help='Sets the min epochs to train for in each eval.')
 parser.add_argument('-maxe','--max-epochs', type=int, default=15, help='Sets the max epochs to train for in each eval.')

@@ -16,8 +16,8 @@ from ensemble_boxes import *
 
 from utility import *
 
-parser = argparse.ArgumentParser(prog='', description='.')
-parser.add_argument('-r','--runs-folder', type=str, help='.')
+parser = argparse.ArgumentParser(prog='fusion-inference', description='Performs fusion inference on multiple training run folders.')
+parser.add_argument('-r','--runs-folder', type=str, help='Folders which contain the dataset folders in their subfolders which should be used for the inference group.')
 parser.add_argument('-rnp','--run-name-pattern', type=str, help='Regex filter for run names that are part of the inference group.')
 args = parser.parse_args()
 

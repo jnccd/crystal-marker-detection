@@ -17,11 +17,11 @@ from utility import *
 
 def main():
     # Parse
-    parser = argparse.ArgumentParser(prog='', description='.')
-    parser.add_argument('-d','--datasets-path', type=str, default='', help='.')
-    parser.add_argument('-t','--testset-path', type=str, default='', help='.')
-    parser.add_argument('-o','--output-path', type=str, default='training/yolov5', help='.')
-    parser.add_argument('-rsf','--recursive-folder-searching', action='store_true', help='.')
+    parser = argparse.ArgumentParser(prog='yolov8-batch-train', description='Train and test yolov8 models on multiple datasets at once.')
+    parser.add_argument('-d','--datasets-path', type=str, default='', help='The path to the folder containing yolov5 dataset folders to train from.')
+    parser.add_argument('-t','--testset-path', type=str, default='', help='The path to the yolov5 testset to use the validation data of for testing.')
+    parser.add_argument('-o','--output-path', type=str, default='training/yolov5', help='The folder in which the training run folder will be placed.')
+    parser.add_argument('-rsf','--recursive-folder-searching', action='store_true', help='Doesnt check for folder depth of found dataset folders from the datasets-path.')
     
     parser.add_argument('-s','--img-size', type=int, default=640, help='Sets the img size of the model.')
     parser.add_argument('-b','--batch-size', type=int, default=-1, help='Sets the batch size to train with, -1 is yolov8 AutoBatch.')
@@ -34,10 +34,10 @@ def main():
     parser.add_argument('-bis','--border-ignore-size', type=float, default=0, help='Ignore markers at the border of the image, given in widths from 0 to 0.5.')
     parser.add_argument('-us','--use-sahi', action='store_true', help='Use Sahi for inference.')
     
-    parser.add_argument('-wi','--worker-index', type=int, default=-1, help='.')
-    parser.add_argument('-wc','--worker-count', type=int, default=-1, help='.')
+    parser.add_argument('-wi','--worker-index', type=int, default=-1, help='For multi gpu server runs, this sets which datasets of all found ones should be worked on by this instance of batch train.')
+    parser.add_argument('-wc','--worker-count', type=int, default=-1, help='For multi gpu server runs, this sets which datasets of all found ones should be worked on by this instance of batch train.')
     
-    parser.add_argument('-db','--debug', action='store_true', help='.')
+    parser.add_argument('-db','--debug', action='store_true', help='Generate more output.')
     
     args = parser.parse_args()
 

@@ -17,7 +17,7 @@ import numpy as np
 
 from utility import *
 
-parser = argparse.ArgumentParser(prog='', description='.')
+parser = argparse.ArgumentParser(prog='plot-hyp-search', description='Plots the json history file of a hyp search run.')
 parser.add_argument('-t','--title', type=str, help='Title for the matplotlib plot.')
 parser.add_argument('-j','--json-path', type=str, help='Path to the hyperparameter search history json.')
 parser.add_argument('-lxp','--label-x-padding', default=18, type=int, help='Label x padding at the start of the plot.')
