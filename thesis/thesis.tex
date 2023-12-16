@@ -329,10 +329,10 @@ Since the VOC 2010 score takes all given recall values into account it is genera
 
 \subsection{Microsoft COCO}
 
-The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales in which the ground truth masks are split by their pixel area \cite{padilla2020survey}. However, for this work I focused on the most used AP score definition of \ac{COCO}, which is the AP@50:5:95 score. It refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points similarly to the VOC 2007 score. However, with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
-The \ac{COCO} mAP score or average mean average precision score as proposed by Redmon et al. then refers to the average of the computed mAP scores for each \ac{IoU} threshold \cite{redmon2018yolov3}. 
+The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales, in which the ground truth masks are split by their pixel area \cite{padilla2020survey}. However, for this work I focused on the AP@50:5:95 score of \ac{COCO}, which I refer to as the \ac{COCO} \ac{mAP} score in the following unless further specified. The \ac{COCO} \ac{mAP} refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points similarly to the VOC 2007 score. However, with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
+The \ac{COCO} \ac{mAP} score or average mean average precision score as proposed by Redmon et al. then refers to the average of the computed \ac{mAP} scores for each \ac{IoU} threshold \cite{redmon2018yolov3}. 
 
-The \ac{COCO} scores usefulness lies in its measurement of how tight a prediction bounding box is around a ground truth bounding box by using higher \ac{IoU} thresholds. Both VOC scores described earlier see a prediction as correct as soon as its \ac{IoU} is above 0.5 and make no difference between predictions with an \ac{IoU} of 0.55 or 0.9. The \ac{COCO} score therefore gives the opportunity to measure further improvements to trained models, assuming the ground truth labels of the dataset are accurate enough.
+The \ac{COCO} \ac{mAP} scores usefulness lies in its measurement of how tight a prediction bounding box is around a ground truth bounding box by using higher \ac{IoU} thresholds. Both VOC scores described earlier see a prediction as correct as soon as its \ac{IoU} is above 0.5 and make no difference between predictions with an \ac{IoU} of 0.55 or 0.9. The \ac{COCO} score therefore gives the opportunity to measure further improvements to trained models, assuming the ground truth labels of the dataset are accurate enough.
 
 \chapter{Related Work}
 \label{chap:relatedw}
@@ -441,7 +441,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 
 \section{First YOLO Versions}
 
-\ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO}, however, is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
+\ac{YOLO} is a popular object detection model, which was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO}, however, is a single-shot detector which processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
 
 \begin{figure}
   \caption{Visualization of the most important layers of the \ac{YOLO} network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, is scaled by $x \mapsto x^{0.5}$. The purple box denotes two fully connected layers. It is inspired by the visualization from Redmon et al. \cite{redmon2016you} and was created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
@@ -449,7 +449,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \label{fig:yolo}
 \end{figure}
 
-\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore, all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers as seen in \figureref{fig:yolov2}. The first 23 layers of the network, or 6 boxes in the figure, are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced multi-scale training, meaning it can adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$, as well as batch normalization and a better loss function.
+\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore, all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers as seen in \figureref{fig:yolov2}. The first 23 layers of the network, or 6 boxes in the figure, are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced batch normalization, a better loss function and multi-scale training, which refers to its ability to adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$ pixels.
 
 \begin{figure}
   \caption{Visualization of the most important layers of the \ac{YOLO}v2 network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, is scaled by $x \mapsto x^{0.5}$. It was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
@@ -457,7 +457,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
   \label{fig:yolov2}
 \end{figure}
 
-\ac{YOLO}v3 mainly improves the network architecture by developing approaches from \ac{YOLO}v2 and Darknet-19 further to create the Darknet-53 backbone, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}.
+\ac{YOLO}v3 mainly improves the network architecture by developing approaches from \ac{YOLO}v2 and Darknet-19 further to create the Darknet-53 backbone, which got its name from the 53 convolutional layers it contains \cite{redmon2018yolov3}. \ac{YOLO}v3 also introduced a more efficient loss function and \ac{SPP}, which allowed it to detect bounding boxes at different scales more effectively \cite{jani2023model}. % TODO: Describe head?
 
 \section{Later YOLO Versions}
 
@@ -471,7 +471,7 @@ While the first three \ac{YOLO} versions were developed by the same developers, 
 
 Based on the comparison of \ac{mAP} scores from Terven et al. \cite{terven2023comprehensive}, the three best \ac{YOLO} models on the \ac{COCO} challenge are \ac{YOLO}v7, Scaled-\ac{YOLO}v4 and \ac{YOLO}v5. 
 Since the model should be used on a smartphone, only the smaller versions of the models are relevant. Wang et al. showed that \ac{YOLO}v7-tiny depending on the metric outperforms or is similar to \ac{YOLO}v4-tiny \cite{wang2023yolov7}. 
-Unlike the other two considered \ac{YOLO} versions, \ac{YOLO}v5 provides multiple versions like \ac{YOLO}v5s and \ac{YOLO}v5m in between tiny and large. 
+Unlike the other two considered \ac{YOLO} versions, \ac{YOLO}v5 provides multiple versions like \ac{YOLO}v5s and \ac{YOLO}v5m in between teh sizes tiny and large. 
 The larger \ac{YOLO}v5m is still recommended for modern smart phones\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/tips\_for\_best\_training\_results}, accessed on 04.12.2023}. 
 However, since the smaller \ac{YOLO}v5s likely has support on more devices with smaller memory and since \ac{YOLO}v5s is the \ac{YOLO}v5 model closest to \ac{YOLO}v7-tiny in parameter count, I chose to focus on it. %Similarly to the first comparison, 
 The \ac{mAP} scores of \ac{YOLO}v5s are comparable to \ac{YOLO}v7-tiny, with \ac{YOLO}v7-tiny having a moderately higher \ac{COCO} 50-95 \ac{mAP} score and \ac{YOLO}v5s having a slightly higher \ac{COCO} 50 \ac{mAP} score\footnote{\url{https://pytorch.org/hub/ultralytics_yolov5/}, accessed on 04.12.2023} \cite{wang2023yolov7}. 
@@ -483,11 +483,11 @@ Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and populari
 \section{YOLOv5}
 
 %instead of the developers of the first three \ac{YOLO} versions
-\ac{YOLO}v5 was developed by Ultralytics and further increased the mAP detection score on the \ac{COCO} dataset through small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
+\ac{YOLO}v5 was developed by Ultralytics and introduces small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
 
 \subsection{Architecture}
 
-\ac{YOLO}v5's network architecture consists of a backbone, a neck and a head which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the \ac{SPPF}, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
+\ac{YOLO}v5's network architecture consists of a backbone, a neck and a head, which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the \ac{SPPF}, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
 
 \begin{figure}
   \caption{Visualization of the most important layers and blocks of the entire \ac{YOLO}v5 network. Here, the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$. The head structure of the \ac{YOLO}v5 network was simplified to a single tensor for this figure. The visualization was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
@@ -514,15 +514,15 @@ Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and populari
 
 \section{YOLO-NAS}
 
-\ac{YOLO}-NAS was developed by Deci, which develops production grade models \cite{terven2023comprehensive}. The architecture of \ac{YOLO}-NAS was found by Deci's proprietary \ac{NAS} technology AutoNAC and comes in three sizes: \ac{YOLO}-NAS-S, \ac{YOLO}-NAS-M and \ac{YOLO}-NAS-L. The \ac{YOLO}-NAS models were pre-trained on the Objects365 dataset, which is newer and larger than the \ac{COCO} dataset and gets its name from its 365 object categories \cite{shao2019objects365}. Afterwards, they were trained on the \ac{COCO} dataset.
+\ac{YOLO}-NAS was developed by Deci which develops production grade models \cite{terven2023comprehensive}. The architecture of \ac{YOLO}-NAS was found by Deci's proprietary \ac{NAS} technology AutoNAC and comes in three sizes: \ac{YOLO}-NAS-S, \ac{YOLO}-NAS-M and \ac{YOLO}-NAS-L. The \ac{YOLO}-NAS models were pre-trained on the Objects365 dataset, which is newer and larger than the \ac{COCO} dataset and gets its name from its 365 object categories \cite{shao2019objects365}. Afterwards, they were trained on the \ac{COCO} dataset.
 
 % TODO?: \section{MobileNetV2}
 
 \section{ViTs}
 
-After the application of transformer blocks in natural language processing was successful, they were also introduced into other domains, such as visual processing, resulting In \acp{ViT}. The application of transformers on vision tasks works by slicing the input image into many patches \cite{dosovitskiy2020image}. The pixel data of these patches is further divided and interpreted as word vectors. These "visual words" can then be fed into a transformer based network.
+After the application of transformer blocks in natural language processing was successful, they were also introduced into other domains, such as visual processing, resulting in \acp{ViT}. The application of transformers on vision tasks works by slicing the input image into many patches \cite{dosovitskiy2020image}. The pixel data of these patches is further divided and interpreted as word vectors. These "visual words" can then be fed into a transformer based network.
 
-\acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However, in this work I aim to develop a detection system that would preferably run directly on patients smart phones, making large models impractical. Furthermore, development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers. Therefore, the improvements may not stem from network architecture itself \cite{liu2022convnet}.
+\acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However, in this work I aim to develop a detection system that would preferably run directly on patients smart phones, which makes large models impractical. Furthermore, development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers. Therefore, the improvements may not stem from network architecture itself \cite{liu2022convnet}.
 
 \section{U-Net}
 
@@ -1398,7 +1398,7 @@ In the best case, I want to create a detection system which runs completely on t
   \label{fig:optimal_yolov5x_augment_params} 
 \end{figure}
 
-Since training with a larger model and a larger dataset takes more then four times longer than a smaller training run, this hyperparameter search ran for 132 runs instead of the 300 runs from before, as seen in \figureref{fig:yolov5x_hyp_hist}. However, the scores on the ensemble testset did improve moderately with a Pascal VOC 2010 mAP score of 78,74\% in the best run. The new best composition for the augmentation usage rates and maximum strengths can be seen in \figureref{fig:optimal_yolov5x_augment_params}.
+Since training with a larger model and a larger dataset takes more then four times longer than a smaller training run, this hyperparameter search ran for 132 runs instead of the 300 runs from before, as seen in \figureref{fig:yolov5x_hyp_hist}. However, the scores on the ensemble testset did improve moderately with a Pascal VOC 2010 \ac{mAP} score of 78,74\% in the best run. The new best composition for the augmentation usage rates and maximum strengths can be seen in \figureref{fig:optimal_yolov5x_augment_params}.
 
 \section{Evaluation on Final Testset}
 \label{sec:final_eval}
