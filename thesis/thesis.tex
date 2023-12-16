@@ -71,11 +71,13 @@
 \setcounter{page}{3}
 \chapter*{Abstract}
 
-As part of the development of a medical readout technique, this work addresses the construction of a detection system for partially invisible \ac{ArUco} marker structures on flexible photonic crystals on tape. For an accurate readout, the camera position relative to the markers is necessary. The usecase for this detection is therefore the reconstruction of the camera pose relative to the markers. The detection task is split into two parts. 
+As part of the development of a medical readout technique, this work addresses the construction of a detection system for \ac{ArUco} marker structures on flexible photonic crystals on tape. For an accurate readout, the camera position relative to the markers is necessary. The task for this work is therefore the development of a robust detection system for the \ac{ArUco} marker corners. With the detected corners, the camera pose can then be computed using already existing technology. The detection task is split into two parts. 
 
-The first part addresses the detection of areas of interest in the image using object detection networks. Due to a shortage of training data, a number of augmentations are defined. The augmentations are prebuilt into the dataset, such that the same augmentation can be tested with many model architectures without changing the dataloader for each one. The impact of the augmentations on the resulting \ac{mAP} scores are then measured using ensemble runs and hyperparameter optimizations. Furthermore, inference techniques such as \ac{SAHI} are evaluated and used to increase the detection performance. Despite dissimilarity of training and test data for this part, the augmentation, training and inference techniques can increase the VOC 2010 \ac{mAP} score on test data by more than 60\%. However, those results may not be generalizable.
+The first part addresses the detection of areas of interest in the image using object detection networks. Due to a shortage of training data, a number of augmentations are defined. 
+%The augmentations are prebuilt into the dataset, such that the same augmentation can be tested with many model architectures without changing the dataloader for each one. 
+The impact of the augmentations on the resulting \ac{mAP} scores are then measured using ensemble runs and hyperparameter optimizations. Furthermore, inference techniques such as \ac{SAHI} are evaluated and used to increase the detection performance. Despite dissimilarity of training and test data for this part, the augmentation, training and inference techniques can increase the VOC 2010 \ac{mAP} score on test data by more than 60\%. However, those results may not be generalizable.
 
-The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here, a number of approaches using keypoint detection and segmentation networks are tested. Finally the best performing approach is found using a combination of an U-Net and Hough transform.
+The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here, a number of approaches using keypoint detection, segmentation networks and classic algorithms are tested. Finally, the best performing approach is found using a combination of an U-Net and Hough transform.
 
 \newpage
 \section*{Acknowledgements}
@@ -1474,7 +1476,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
    MobileNetV2 with two linear layer head        & 7.07 & 169.16 \\
    MobileNetV2 with three linear layer head      & 11.37 & 457.67 \\
    MobileNetV2 with fully convolutional head     & 5.65 & 99.3 \\
-   MobileNetV2 with fully convolutional head and \ac{MSE} loss & 8.96 & ? \\
+   MobileNetV2 with fully convolutional head and \ac{MSE} loss & 18.01 & 744.32 \\
    VGG16 with fully convolutional head           & 11.91 & 486.06 \\
    Harris corner based interpretation of U-Net masks    & 7.08 & 93.64 \\
    Hough transform based interpretation of U-Net masks  & 3.98 & 36.83 \\
