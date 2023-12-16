@@ -124,7 +124,7 @@ The term dataset\footnote{\url{https://en.wikipedia.org/wiki/Data_set}, accessed
 
 \begin{description}
   \item[Label] A \textit{label} or \textit{annotation} refers to extra data that belongs to an image and describes a subset of the images contents. \textit{Labels} are usually created using human input and describe the desired output of a machine learning model on that image.
-  \item[Dataseries] A \textit{dataseries} refers to a series of images and labels
+  \item[Dataseries] A \textit{dataseries} refers to a series of images and labels.
   \item[Dataset] A \textit{dataset} refers to a combination of usually up to three \textit{dataseries}.
   % \item[Datagroup] A \textit{datagroup} refers to a \textit{dataseries} in the context of a \textit{dataset}. Typical \textit{datagroups} are 'training', 'validation' and 'testing' or 'train', 'val' and 'test' for short.
 \end{description}
@@ -151,7 +151,7 @@ The second wave started in the early 1960ies with Rosenblatt's perceptron conver
     0, & \text{otherwise}
 \end{cases}
 \]
-Setting $w1$ and $w2$ to 1 yields a perceptron that implements the logical or operation. As McCulloch and Pitts' work showed, the perceptron is able to model all simple logical operations such as: and, or, not. However, the second wave slowed as Minsky and Papert showed that the perceptron is unable to model the XOR operation \cite{minsky1969perceptron} even though the \ac{MLP} that Rosenblatt already proposed at the time could model XOR through the combination of multiple perceptrons \cite{schmidhuber2022annotated}.
+Setting $w1$ and $w2$ to 1 yields a perceptron that implements the logical or operation. As McCulloch and Pitts' work showed, the perceptron is able to model all simple logical operations such as: and, or, not. However, the second wave slowed as Minsky and Papert showed that the perceptron is unable to model the XOR operation \cite{minsky1969perceptron} even though the \ac{MLP} seen in \figureref{fig:mlp} that Rosenblatt already proposed at the time could model XOR through the combination of multiple perceptrons \cite{schmidhuber2022annotated}.
 
 The third and ongoing wave started in the early 1980ies with Hopfield's energy approach \cite{hopfield1982neural} as well as the introduction and refinement of back-propagation for \acp{MLP} \cite{werbos1974beyond,rumelhart1986parallel}.
 
@@ -165,21 +165,21 @@ The third and ongoing wave started in the early 1980ies with Hopfield's energy a
 
 Each node in b in the \ac{MLP} as seen in \figureref{fig:mlp} is calculated like the node y in \figureref{fig:perceptron}. That also means that every node combination between the layers has a weight. Such a combination of layers is called a fully connected layer. If there is a high degree of correlation between all the nodes, then such a fully connected layer is useful as it is also fully utilized. However, particularly when the nodes of the input layer represent the pixels of an image and the task is some form of recognition of objects in the image, most connections are not well utilized, since pixels that are further away from each other tend to have no meaningful connection \cite{aghdam2017guide}.
 
-Convolutional layers work like a kernel based image filter but make the kernel trainable instead of static. This has the advantage that each convolutional neuron only processes data from its receptive field instead of the whole image. The receptive field of a neuron refers to the area of pixels in the source image that the data the neuron gets is dependent on. Using just one convolutional layer means that the neurons in the resulting tensor are just dependent on an area in the source image as big as the kernel of that convolution. Therefore, \acp{CNN} tend to have many layers to be able to recognize larger shapes in the image. The resulting data of a convolutional layer is also called a feature map. 
+Convolutional layers work like a kernel based image filter but make the kernel trainable instead of static. This has the advantage that each convolutional neuron only processes data from its receptive field instead of the whole image. The receptive field of a neuron refers to the area of pixels in the source image that the input data of the neuron is dependent on. Using just one convolutional layer means that the neurons in the resulting tensor are just dependent on an area in the source image as big as the kernel of that convolution. Therefore, \acp{CNN} tend to have many layers to be able to recognize larger shapes in the image. The resulting data of a convolutional layer is also called a feature map. 
 
 \section{Shapely} % TODO: Add cites or footnotes in these sections
 
-Shapely is a popular Python package for computational geometry. It provides a wide range of geometric objects and operations for working with planar geometric shapes, such as points, lines and polygons. Shapely is widely used in various domains, including geographic information systems, spatial data analysis, and computer graphics.
+Shapely is a popular Python package for computational geometry\footnote{\url{https://shapely.readthedocs.io/en/stable/manual.html}, accessed on 16.12.2023}. It provides a wide range of geometric objects and operations for working with planar geometric shapes, such as points, lines and polygons. Shapely is widely used in various domains, including geographic information systems, spatial data analysis, and computer graphics.
 
 \section{Open CV}
 
-\ac{OpenCV} is an open-source computer vision and machine learning software library designed for various computer vision tasks such as image processing and object detection. It was originally developed by Intel and later maintained by Willow Garage and Itseez. \ac{OpenCV} is written in C++ and has interfaces for C++, Python, and other programming languages.
+\ac{OpenCV} is an open-source computer vision and machine learning software library designed for various computer vision tasks such as image processing and object detection\footnote{\url{https://opencv.org}, accessed on 16.12.2023}. It was originally developed by Intel and later maintained by Willow Garage and Itseez. \ac{OpenCV} is written in C++ and has interfaces for C++, Python, and other programming languages.
 
 \subsection{ArUco Detection}
 \label{sec:aruco_det}
 
 The \ac{ArUco} detector implemented into \ac{OpenCV} is based on a paper from Garrido-Jurado et al. \cite{garrido2014automatic}. The \ac{ArUco} detection starts by using local adaptive thresholding on the image. Afterwards the Suzuki
-and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons using the Douglas-Peucker algorithm \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker is removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
+and Abe algorithm \cite{SUZUKI198532} is applied to the thresholded image to extract the contours. The contours are then transformed into polygons using the Douglas-Peucker algorithm \cite{douglas1973algorithms} and all polygons with more or less than 4 vertices are discarded. Then homographies for all remaining polygons are calculated such that the perspective on the potential marker can be removed. The flattened image is then binarized using Otsu's method \cite{4310076}, which results in the lowest possible intra-class variance of black and white parts of the potential marker. Finally, the marker is divided into a grid and further processed as a binary number based on the brightness of the grid cells.
 
 This algorithm is, however, based on the assumption that the marker contours are always visible. If they are not, detections can become skewed or nothing is detected, as seen in \figureref{fig:aruco-det}.
 
@@ -197,27 +197,27 @@ This algorithm is, however, based on the assumption that the marker contours are
 
 \section{Albumentations}
 
-Albumentations is a Python library for image augmentation \cite{info11020125}. Image augmentation is a technique used to artificially expand a dataset by applying various transformations to the existing images. This helps improve the performance and generalization of machine learning models, especially in scenarios where the training data is limited. 
+Albumentations is a Python library for image augmentation\footnote{\url{https://albumentations.ai}, accessed on 16.12.2023} \cite{info11020125}. Image augmentation is a technique used to artificially expand a dataset by applying various transformations to the existing images. This helps improve the performance and generalization of machine learning models, especially in scenarios where the training data is limited. 
 
-Albumentations was primarily build for high performance, such that its usage in dataloaders does not slow down the training process \cite{info11020125}. It transforms the image, as well as keypoint, bounding box and mask labels of the training sample, if the selected augmentation transformations support the label format. 
+Albumentations was primarily built for high performance, such that its usage in dataloaders does not slow down the training process \cite{info11020125}. It transforms the image, as well as the keypoint, bounding box and mask labels of the training sample, if the selected augmentation transformations support the label format. 
 
 \section{Pytorch}
 
-PyTorch is an open-source machine learning library for Python that has gained significant popularity in the deep learning and artificial intelligence research communities. It was originally developed by Facebook's AI Research lab (FAIR) and is now maintained by the Linux Foundation. %PyTorch offers a flexible and dynamic computational graph, making it particularly well-suited for developing and training neural networks.
+PyTorch is an open-source machine learning library for Python that has gained significant popularity in the deep learning and artificial intelligence research communities\footnote{\url{https://albumentations.ai}, accessed on 16.12.2023}. It was originally developed by Facebook's AI Research lab (FAIR) and is now maintained by the Linux Foundation. %PyTorch offers a flexible and dynamic computational graph, making it particularly well-suited for developing and training neural networks.
 
 \section{SAHI}
 
 The Python package \ac{SAHI} is a lightweight vision library designed to perform large scale object detection and instance segmentation \cite{akyon2022sahi,obss2021sahi}. It was developed to address the challenges of detecting small objects and performing inference on large images, which are common issues in the practical usage of object detection models. 
 
-Fundamentally, \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap, there is support for bounding box prediction combination. Since models only see input images at a fixed resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images. 
+Fundamentally, \ac{SAHI} uses a sliding window over the input image to split it into slices and lets the model predict objects in each of the slices of the image individually. Then, it combines the predictions done on image slices into a prediction over the whole image. Since the slices may overlap, there is support for bounding box prediction combination. Since models only support input images at a fixed resolution and smaller objects may disappear if the image is rescaled, this sliding window approach helps with detection on large images or of smaller objects.
 
-\ac{SAHI} is framework agnostic and so can be modified to work with any model. However, it has \ac{YOLO}X, \ac{YOLO}v5, \ac{YOLO}v8, MMDetection and Detectron2 support by default.
+\ac{SAHI} is framework agnostic and therefore can be modified to work with any model. However, it has \ac{YOLO}X, \ac{YOLO}v5, \ac{YOLO}v8, MMDetection and Detectron2 support by default.
 
 \section{HyperOpt}
 
-Hyperopt is a Python package designed for hyperparameter optimization, a fundamental aspect of machine learning model development \cite{bergstra2013making}. It systematically explores the hyperparameter space using a variety of optimization algorithms, such as \ac{TPE}, aiming to discover the parameter combination that optimizes a predefined objective function. 
+Hyperopt is a Python package designed for hyperparameter optimization, a fundamental aspect of machine learning model development \cite{bergstra2013making}. It systematically explores the hyperparameter space using a variety of optimization algorithms, such as \ac{TPE}, aiming to discover the parameter combination that optimizes a predefined objective function. %In this context, hyperparameters refer to extra parameters of the machine learning training process, which determine the performance of the trained model.
 
-Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since the entire machine learning process is not a derivable function, this is the best choice for optimizing hyperparameters.
+Hyperopt sees the objective function as a black box and makes few assumptions, which comes with flexibility but slower optimization than with loss functions in neural network training. Since an entire machine learning training run is not a derivable function, this is the best choice for optimizing hyperparameters.
 
 A combination of grid search and manual search are widely used to optimize hyperparameters. However, it was shown that such processes tend to not be as efficient as sampling randomly from the hyperparameter space \cite{bergstra2012random}. \ac{TPE} is based on this realization as it behaves like random sampling in the first runs. However afterwards, it uses the sampling history to find promising new parameter combinations \cite{bergstra2011algorithms}. 
 % \ac{TPE} roughly works in these steps:
@@ -234,7 +234,7 @@ A combination of grid search and manual search are widely used to optimize hyper
 
 \section{mAP Scores}
 
-\ac{mAP} scores are a class of commonly used metrics in the field of object detection to evaluate the performance of an object detection model \cite{padilla2020survey}. They aim to provide a measure of how well the model can identify and locate objects within an image. However, there is a lack of consensus about the \ac{mAP} calculation. I will therefore focus on three popular \ac{mAP} scores. 
+\ac{mAP} scores are a class of commonly used metrics in the field of object detection. They help evaluate the performance of an object detection model \cite{padilla2020survey} and aim to provide a measure of how well the model can identify and locate objects within an image. However, there is a lack of consensus about the \ac{mAP} calculation. I will therefore focus on three popular \ac{mAP} scores. 
 
 \subsection{IoU}
 
@@ -244,11 +244,11 @@ A combination of grid search and manual search are widely used to optimize hyper
   \label{fig:iou}
 \end{figure}
 
-The metric commonly chosen to measure the prediction quality between a prediction and ground truth label is the \ac{IoU} \cite{padilla2020survey}. The \ac{IoU} is a measurement based on the Jaccard Index, a coefficient representing the similarity of two sets of data \cite{jaccard1901etude}. In the object detection context, the \ac{IoU} measures the area of overlap divided by the area of union between two bounding boxes, as shown in \figureref{fig:iou}.
+The metric commonly chosen to measure the prediction quality between a prediction and ground truth label is the \ac{IoU} \cite{padilla2020survey}. The \ac{IoU} is a measurement based on the Jaccard Index, a coefficient representing the similarity of two sets of data \cite{jaccard1901etude}. In the object detection context, the \ac{IoU} measures the area of overlap divided by the area of union between two bounding boxes, as shown in \figureref{fig:iou}. It therefore describes how tight a prediction bounding box is fitted around a ground truth bounding box.
 
 \subsection{Precision and Recall}
 
-In the context of object detection there exist three prediction cases, with the \ac{TN} case being omitted, since it applies to all possible bounding boxes that were not predicted, which depends more on the image resolution than the predictions, assuming the bounding box coordinates are integer values.
+In the context of object detection, there exist three prediction cases. \ac{TN} is omitted here since it applies to all possible bounding boxes that were not predicted. It therefore depends more on the image resolution than the predictions assuming the bounding box coordinates are integer values.
 
 \begin{itemize}
   \item[$\bullet$] \ac{TP}: The highest confidence prediction of a ground truth label with an \ac{IoU} higher than the threshold
@@ -264,7 +264,7 @@ $$R = \frac{TP}{TP + FN} = \frac{TP}{\text{all ground truths}}$$
 
 Precision measures the percentage of correct predictions among all predictions and recall measures the percentage of correct predictions among all ground truth boxes. 
 
-The difference becomes most apparent when thinking about the extreme cases. If a model would output every possible bounding box on an image, the recall would be 100\% since for each ground truth bounding box there is an exact same prediction bounding box. If a model would instead output a perfect prediction for one ground truth bounding box and nothing for any other ground truth bounding boxes, the precision would be 100\% since each made prediction is correct. Since both cases are undesirable but still result in an high score in one of the metrics, a combination of both is needed.
+The difference between the scores becomes most apparent when thinking about the extreme cases. If a model would output every possible bounding box on an image, the recall would be 100\% since for each ground truth bounding box there is an exact same prediction bounding box. If a model would instead output a perfect prediction for one ground truth bounding box and nothing for any of the other ground truth bounding boxes, the precision would be 100\% since each made prediction is correct. Since both cases are undesirable but still result in an high score in one of the metrics, a combination of both is needed.
 
 \subsection{Table}
 
@@ -274,7 +274,7 @@ The difference becomes most apparent when thinking about the extreme cases. If a
   \label{fig:preds}
 \end{figure}
 
-The first part of the \ac{mAP} calculation are the same across all scores considered. That unified part of the computation is described here using the example\footnote{\url{https://kharshit.github.io/blog/2019/09/20/evaluation-metrics-for-object-detection-and-segmentation}, accessed on 08.10.2023} shown in \figureref{fig:preds}. 
+The first part of the \ac{mAP} calculation is the same across all scores considered. That unified part of the computation is described here using the example\footnote{\url{https://kharshit.github.io/blog/2019/09/20/evaluation-metrics-for-object-detection-and-segmentation}, accessed on 08.10.2023} shown in \figureref{fig:preds}. 
 
 Firstly, a table of all predictions over all images in a given dataseries is created as seen in Table \ref{tab:mAP}. The table is sorted by prediction confidence. If there are multiple predictions for a single ground truth label, the prediction with the highest confidence is considered TP, if its \ac{IoU} is over the threshold, and all others FP, as seen with prediction P3. 
 
@@ -291,7 +291,7 @@ Firstly, a table of all predictions over all images in a given dataseries is cre
   \caption{\label{tab:mAP}\ac{mAP} table of the example given in \figureref{fig:preds}.}
 \end{table}
 
-As the table is stepped through from highest confidence predictions to lowest, the accumulated \ac{TP} and \ac{FP} are incremented based on whether the prediction was correct or incorrect and saved into each table row \cite{padilla2020survey}. By computing $\text{acc \ac{TP}} / (\text{acc \ac{TP}} + \text{acc \ac{FP}})$ a preliminary precision is computed for each row. Similarly, a preliminary recall value is calculated for each table row by dividing the accumulated \ac{TP} by the total number of ground truth labels of all images. Its important to note, that recall values due to their computation formula here are monotonically increasing as the table rows are visited. When plotting the precision and recall values of the table rows as y and x components of points, the \ac{PR curve} is obtained as seen in \figureref{fig:pr-curve}.
+As the table is stepped through from highest confidence predictions to lowest, the accumulated \ac{TP} and \ac{FP} are incremented based on whether the prediction was correct or incorrect and saved into each table row \cite{padilla2020survey}. By dividing accumulated \ac{TP} by the number of visited table rows so far, a preliminary precision is computed for each row. Similarly, a preliminary recall value is calculated for each table row by dividing the accumulated \ac{TP} by the total number of ground truth labels of all images. Due to their computation formula here, recall values are monotonically increasing as the table rows are visited. However, precision values can both decrease and increase since both the numerator and denominator of the division change. When plotting the precision and recall values of the table rows as y and x components of points, the \ac{PR curve} is obtained as seen in \figureref{fig:pr-curve}.
 
 \begin{figure}
   \caption{Example of a \ac{PR curve} plot taken from training with real data.}
@@ -329,7 +329,7 @@ Since the VOC 2010 score takes all given recall values into account it is genera
 
 \subsection{Microsoft COCO}
 
-The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales where the ground truth masks are split by their pixel area \cite{padilla2020survey}. However, for this work I focused on the most used AP score definition of \ac{COCO}, which is the AP@50:5:95 score. It refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points similarly to the VOC 2007 score. However, with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
+The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales in which the ground truth masks are split by their pixel area \cite{padilla2020survey}. However, for this work I focused on the most used AP score definition of \ac{COCO}, which is the AP@50:5:95 score. It refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points similarly to the VOC 2007 score. However, with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
 The \ac{COCO} mAP score or average mean average precision score as proposed by Redmon et al. then refers to the average of the computed mAP scores for each \ac{IoU} threshold \cite{redmon2018yolov3}. 
 
 The \ac{COCO} scores usefulness lies in its measurement of how tight a prediction bounding box is around a ground truth bounding box by using higher \ac{IoU} thresholds. Both VOC scores described earlier see a prediction as correct as soon as its \ac{IoU} is above 0.5 and make no difference between predictions with an \ac{IoU} of 0.55 or 0.9. The \ac{COCO} score therefore gives the opportunity to measure further improvements to trained models, assuming the ground truth labels of the dataset are accurate enough.
