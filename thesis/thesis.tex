@@ -1237,7 +1237,9 @@ Of the available inference parameters, I mainly used none or \ac{SAHI} in the te
 \section{Augmenting from Zero} % TODO: Did I talk about randomness in training runs for ensembles anywhere?
 \label{sec:aug_ens_zero}
 
-As a test for the usefulness of the added augmentations, I ramped up the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation. Using more training runs per configuration would make the values here more accurate, but would also take longer and use more electricity. The results shown here can therefore not be perfectly accurate, but give an idea of how the usage of an augmentation generally changes the scores.
+As a test for the usefulness of the added augmentations, I increased the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation. Using more training runs per configuration would make the values here more accurate, but would also take longer and use more electricity. The results shown here can therefore not be perfectly accurate, but give an idea of how the usage of an augmentation generally changes the scores. 
+
+These ensemble runs are visualized as bar charts in this chapter. Furthermore, the plots show an exponential function which is fitted to the data points. This fitted exponential function is $f(x)=a\mathit{e}^{-cx}+d$, with $a$, $b$, $c$ and $d$ being arbitrary.
 
 \subsection{Smart Grid Shuffle}
 
