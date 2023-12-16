@@ -537,19 +537,21 @@ An U-Net is a \ac{CNN} that was developed for biomedical image segmentation \cit
 \chapter{Methodology and Implementation}
 \label{chap:implement}
 
-In this chapter I describe how I structured my code and why as well as the core ideas of some algorithms. Furthermore, I describe the hardware that was used for training.
+In this chapter I describe how I structured my code and why, as well as the core ideas of some algorithms. Furthermore, I describe the hardware that was used for training.
 
-\section{Goals}
+% \section{Goals}
 
-% TODO: Talk about the whole image and pet parts of the inference pipeline here
+% % TOxDO: Talk about the whole image and pet parts of the inference pipeline here
 
-My goal for the implementation is to write a software framework that allows me to train the custom data given to me on a wide variety of \acp{NN} using a wide variety of training techniques and to evaluate the effectiveness of all these approaches.
+% My goal for the implementation is to write a software framework that allows me to train the custom data given to me on a wide variety of object detection \acp{NN} using a wide variety of training techniques and to evaluate the effectiveness of all those approaches.
+
+% Furthermore, I want to develop a second part of the pipeline which uses the areas of interest detected by the object detection models for the detection of the marker corners.
 
 \section{Development Environment}
 
 Most training for this work was done on the 'lena' server of the \ac{MIP} working group of the Kiel University. This server contains 128GB RAM and eight Nvidia GeForce RTX 2080Ti \acp{GPU} with 12GB VRAM each. Local training was done on a computer with 32GB RAM and a Nvidia GeForce RTX 3060Ti \ac{GPU} with 8GB VRAM.
 
-Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same \ac{CUDA} Toolkit version 11.8 as well as on the \ac{cuDNN} version 8.4.1.50.
+Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same CUDA Toolkit version 11.8 as well as on the cuDNN version 8.4.1.50. % TODO: Dont use ac here? I only use CUDA, cuDNN once 
 
 \section{Classic Approaches}
 
@@ -565,21 +567,23 @@ To validate that a neural network based approach is necessary in this case, I te
 
 \begin{figure}
   \centering
-  \subcaptionbox{Detection Output with 4 Vertex Filter}
-     {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_small}}
-  \subcaptionbox{Detection Output without Filter}
-     {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_all}}
-  \caption{Detections of the \ac{OpenCV} pipeline with randomly colored polygons to make them distinguishable.}
+  \subcaptionbox{Canny edge output}
+     {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_edges}}
+  \subcaptionbox{Suzuki and Abe algorithm output}
+     {\includegraphics[width=0.4\textwidth]{image/classic_base_img_opencv_det_contours}}
+  \caption{First steps of the \ac{OpenCV} \ac{ArUco} detection pipeline. Polygons are randomly colored to make them distinguishable.}
   \label{fig:classic_base_img_opencv}
 \end{figure}
 
-The built-in \ac{OpenCV} \ac{ArUco} detector does not detect any markers in the chosen base image. To find out why, I roughly recreated the \ac{ArUco} detector using \acp{OpenCV} built-in algorithm implementations up until the polygon creation step. The recreated pipeline mainly consists of the canny edge detector and the \texttt{findContours} and \texttt{approxPolyDP} methods applied to each level of an image pyramid. 
+The built-in \ac{OpenCV} \ac{ArUco} detector does not detect any markers in the chosen base image. To find out why, I roughly recreated the first steps of the \ac{ArUco} detector using \acp{OpenCV} built-in algorithm implementations. The recreated pipeline mainly consists of the canny edge detector and the \texttt{findContours} and \texttt{approxPolyDP} methods applied to each level of an image pyramid. 
 
-When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \figurereft{fig:classic_base_img_opencv}{(a)}. The better detection accuracy here may be due to cherry picked parameters. Without the filter in \figurereft{fig:classic_base_img_opencv}{(b)}, the problems of the polygon detection become apparent, as the contours of the markers in the image are not complete, which may in part explain the findings in \autoref{sec:aruco_det}.
+The broken contours of the \ac{ArUco} marker edges seen in \figurereft{fig:classic_base_img_opencv}{(a)} skewed the results of the polygon contour detection of the Suzuki and Abe algorithm seen in \figurereft{fig:classic_base_img_opencv}{(b)}. That the \ac{ArUco} detector from \ac{OpenCV} has no further handling for this case explains why the \ac{ArUco} markers on photonic crystals could not be detected, as well as the findings in \autoref{sec:aruco_det}.
+
+% When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \figurereft{fig:classic_base_img_opencv}{(a)}. The better detection accuracy here may be due to cherry picked algorithm parameters. Without the filter in \figurereft{fig:classic_base_img_opencv}{(b)}, the problems of the polygon detection become apparent since the algorithm does not work well with broken contours, which may in part explain the findings in \autoref{sec:aruco_det}.
 
 \subsection{Histogram}
 
-The idea of the histogram approach is that the pixel gradient histogram distributions in a window around the marker in the image should have a similar distribution on each of the markers.
+The idea of the histogram approach is that the pixel gradient histogram distributions in a window around the marker in the image should have a similar distribution on each of the markers due to the structure of the \ac{ArUco} marker in the image.
 
 \begin{figure}
   \centering
@@ -591,13 +595,13 @@ The idea of the histogram approach is that the pixel gradient histogram distribu
   \label{fig:markeryness_scores}
 \end{figure}
 
-For this approach firstly, the image is again scaled in different steps in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards, the image is traversed with a 64x64 pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \figureref{fig:markeryness_scores} (a). 
+For this approach, the image is firstly scaled in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards, the image is traversed with a 64x64 pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \figurereft{fig:markeryness_scores}{(a)}. 
 
-There are many possible variations of this approach, such as also using the magnitude of the gradient as weights in the histogram computation or thresholding the gradients, to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean that there are two directions in which gradients mainly occur in the window. In this case, two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^\infty_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number large window around them. However, this also results in inconclusive scores as seen in \figureref{fig:markeryness_scores} (b).
+There are many possible variations of this approach, such as also using the magnitude of the gradients as weights in the histogram computation or thresholding the gradients to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean that there are two directions in which gradients mainly occur in the window. In this case, two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^n_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of length $n$ of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number large window around them. However, this also results in inconclusive scores as seen in \figurereft{fig:markeryness_scores}{(b)}.
 
 \subsection{Feature Matching}
 
-\begin{figure}
+\begin{figure} % TODO: Make lines thicker?
   \caption{\ac{SIFT} matches between a \ac{ArUco} marker image and the thresholded test image.}
   \includegraphics[width=0.65\textwidth]{image/classic_sift_matches}
   \label{fig:classic_sift_matches}
@@ -615,7 +619,8 @@ There are many possible variations of this approach, such as also using the magn
   \label{fig:classic_sift_thresh_on_finger}
 \end{figure}
 
-Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \figureref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and a image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate its matches across the repeating marker structures, as seen in \figureref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally, the positions of the matches in the image are moved by the difference of their position in the marker image and the middle of the marker image to cluster them. The results of that process can be seen in \figureref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However, when using this matching process on an image of the real test set, nothing is detected, since the thresholded image there does not preserve the structure of the \ac{ArUco} marker enough for the \ac{SIFT} matching, as seen in \figureref{fig:classic_sift_thresh_on_finger}.
+Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \figureref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and a image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate the matches across the repeating marker structures, as seen in \figureref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally, the positions of the matches in the image are moved by the difference of their position in the marker image and the middle of the marker image to cluster them. % TODO: Make this more understandable
+The results of that process can be seen in \figureref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However, when using this matching process on an image of the real test set, nothing is detected, since the thresholded image there does not preserve the structure of the \ac{ArUco} marker enough for the \ac{SIFT} matching, as seen in \figureref{fig:classic_sift_thresh_on_finger}.
 
 \subsection{Conclusion}
 
@@ -633,13 +638,22 @@ Python has support for the structuring of script files into modules in which dat
   \label{fig:arch_data}
 \end{figure}
 
-The first part of the script pipeline serves four major goals. Firstly, it should define a standardized label data type that all dataset types can be build from. Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. Fourth, it should build augmentations into the data, such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data standards, making changes there difficult.
+The first part of the script pipeline serves four major goals. 
 
-The overview seen in \figureref{fig:arch_data} shows the various dataset types that are build by the \texttt{create\_dataset} script, addressing the third goal. The \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore, augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
+Firstly, it should define a standardized label data type that all dataset types can be build from. This is addressed by the usage of polygons further described in \autoref{sec:label_data_type}.
+
+Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. This is addressed by the \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in \autoref{sec:auto_annots}.
+
+Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. This is addressed by the \texttt{create\_dataset} script seen in \figureref{fig:arch_data} which builds the data in a variety of dataset structures.
+
+Fourth, it should build augmentations into the data, such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data format standards, which makes changes there time consuming. This is also addressed by the \texttt{create\_dataset} script and described in more detail in \autoref{sec:augs}.
+
+% The overview seen in \figureref{fig:arch_data} shows the various dataset types that are built , addressing the third goal. The  addresses the second goal. Furthermore, augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
 
 The \texttt{create\_synthetic\_dataseries} script seen in \figureref{fig:arch_data} is further described in \autoref{sec:synth_data}.
 
 \subsection{Label Data Type}
+\label{sec:label_data_type}
 
 \begin{figure}
   \centering
@@ -651,7 +665,7 @@ The \texttt{create\_synthetic\_dataseries} script seen in \figureref{fig:arch_da
   \label{fig:polygon-good}
 \end{figure}
 
-Image augmentation libraries have support for many data types to accommodate for many use cases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure, both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout most of the \texttt{create\_dataset} script. Afterwards, the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation dataset.
+Image augmentation libraries have support for many data types to accommodate for many use cases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure, both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout the augmentations in the \texttt{create\_dataset} script. Afterwards, the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation mask.
 
 \subsection{Train Pipeline Overview}
 
@@ -666,6 +680,7 @@ As seen in \figureref{fig:arch_train}, the training pipeline mainly consists of 
 A training run folder contains the train artifacts, which refers to all files, including the model weights, which are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and \ac{COCO} \ac{mAP} scores, as well as intermediate results of the calculation for validation.
 
 \section{Automated Annotations}
+\label{sec:auto_annots}
 
 \begin{figure}
   \centering
@@ -722,6 +737,7 @@ Afterwards, a homography from the inner rectangle corners to the points $(0,h), 
 Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However, this time the homography is computed the other way around from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rectangle corners.
 
 \section{Augmentations}
+\label{sec:augs}
 
 This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through the command line arguments. Furthermore, the images are copied such that the original not augmented training images and labels are kept in the dataset at least once and such that only the copies are augmented. The position of the augmentations in the pipeline is shown in \figureref{fig:arch_data_aug_focus}.
 
