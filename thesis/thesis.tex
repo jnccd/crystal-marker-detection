@@ -341,13 +341,13 @@ In the following paragraphs, papers focusing on challenging \ac{ArUco} marker de
 
 \section{ArUco Marker Detection}
 
-\ac{ArUco} markers can usually be detected well enough for most use cases by \acp{OpenCV} own detection algorithm. However, there are a number of more challenging use cases. In the following they are shortly introduced.
+In most use cases, \ac{ArUco} markers can be detected by the \acp{OpenCV} detection algorithm. However, there are a number of more challenging use cases. In the following some of them shortly introduced.
 
 \subsection{UAV pose estimation}
 
-Another use case in which robust detection of \ac{ArUco} markers is essential is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here, camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based networks can be more stable than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of it with occlusion ratios from 10\% to 40\%. 
+Another use case in which robust detection of \ac{ArUco} markers is essential, is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here, camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based detection systems can be more robust than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of it with occlusion ratios from 10\% to 40\%. 
 
-Markers in test images which had occluded borders still had high detection rates even at high cover ratios while markers in which the middle was occluded had worse detection rates, showing that the marker pattern itself was most important for this \ac{CNN} detection \cite{li2020aruco}.
+Markers in test images which had occluded borders still had high detection rates even at high cover ratios, while markers with an occluded middle had worse detection rates. This shows that the marker pattern itself was most important for the detection in this case \cite{li2020aruco}.
 
 \subsection{Deep ChArUco}
 
@@ -356,17 +356,17 @@ Hu et al's paper on ChArUcoNet and RefineNet covers keypoint detection of the ma
 
 \subsection{Helping people with visual impairment}
 
-A paper from Elgendy et al. proposes a navigation system for people with visual impairment using \ac{ArUco} markers that are placed indoors \cite{elgendy2021novel}. A series of modified networks all based on \ac{YOLO}v3-tiny were trained on 600 photos, which were expanded and augmented on disk to 7200 images. The augmentations used here include 90 degree rotation, blur and lighting effects. The evaluations showed high detection accuracies with higher accuracies on the custom \ac{YOLO}v3 networks. The networks were also successfully deployed on a HTC desire 826.
+Elgendy et al. propose a navigation system for people with visual impairment using \ac{ArUco} markers which are placed indoors \cite{elgendy2021novel}. A series of modified networks which are all based on \ac{YOLO}v3-tiny were trained on 600 photos, which were expanded and augmented on disk to 7200 images. The augmentations used here include 90 degree rotation, blur and lighting effects. The evaluations showed high detection accuracies with higher accuracies on the custom \ac{YOLO}v3 networks. The networks were also successfully deployed on a HTC Desire 826.
 
 \section{Training Image Augmentation}
 
-Image Augmentation is of large importance for generalization. Since a model is build in training by optimizing the similarity of its output on training images to target output, it will also only perform well on examples it was trained on or that are similar. Through variation in training, models can attain a level of generalization that allows them to perform well despite differences in lighting, occlusion, background, scale, etc. \cite{shorten2019survey}. A lack of such an ability of generalization leads to previously working models being unable to classify images if a single pixel changes color \cite{8601309}. Often this variation can come from a large dataset, but if real data is in short supply or if the labeling is too time consuming, image augmentation can replace it.
+Image Augmentation is of large importance for generalization. Since a model is build in training by optimizing the similarity of its output on training images to target output, it will also only perform well on examples it was trained on or that are similar. Through variation in training, models can attain a level of generalization that allows them to perform well despite differences in lighting, occlusion, background, scale and so on \cite{shorten2019survey}. A lack of such an ability of generalization leads to previously working models being unable to classify images if a single pixel changes color \cite{8601309}. Often, this variation can come from a large dataset, but if real data is in short supply or if the labeling is too time consuming, image augmentation can replace it to some degree.
 
-Image augmentations can be any kind of image transformation. However, depending on the task and the dataset the effectiveness of different types of augmentations can vary dramatically. Nonetheless, in the following I will introduce available papers with empirical comparisons or meta analyses of image augmentations.
+Image augmentations can be any kind of image transformation. However depending on the task and the dataset, the effectiveness of different types of augmentations can vary. Nonetheless, in the following I will introduce available papers with empirical comparisons or meta analyses of image augmentations.
 
 \subsection{Comparison of augmentations on the Caltech101 dataset}
 
-On the Caltech101 dataset using a custom classification \ac{CNN} Taylor et al. found that cropping improves the accuracy scores significantly while most other types of augmentation including custom augmentation types improve the score slightly as seen in Table \ref{tab:taylor-acc} \cite{8628742}.
+On the Caltech101 dataset using a custom classification \ac{CNN}, Taylor et al. found that cropping improves the accuracy scores significantly while most other types of augmentation including custom augmentation types improve the score slightly as seen in Table \ref{tab:taylor-acc} \cite{8628742}. % TODO: Explain the accuracy scores here
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -386,7 +386,9 @@ On the Caltech101 dataset using a custom classification \ac{CNN} Taylor et al. f
 
 \subsection{Comparison of augmentations for detection of COVID-19 Pneumonia}
 
-For automated detection of COVID-19 pneumonia in Chest X-rays, Elgendi et al. empirically tested different combinations of augmentations from other related papers on three datasets with 10-fold cross validation of Chest X-ray images \cite{elgendi2021effectiveness}. They used 17 different pertained neural networks for transfer learning on this binary classification task and used the average score of the resulting 17 models given a combination of augmentations as the score of that combination. The following augmentations were considered:
+For automated detection of COVID-19 pneumonia in Chest X-rays, Elgendi et al. empirically tested different combinations of augmentations from other related papers on three datasets 
+%with 10-fold cross validation 
+of Chest X-ray images \cite{elgendi2021effectiveness}. They used 17 different pretrained neural network models for transfer learning on this binary classification task. For each set of augmentations, they trained the 17 models using that set of augmentations and scored the augmentation set based on the average score of those 17 models. The following augmentations were considered:
 
 \begin{itemize}
   \item[$\bullet$] Reflection
@@ -396,11 +398,11 @@ For automated detection of COVID-19 pneumonia in Chest X-rays, Elgendi et al. em
   \item[$\bullet$] Rotation
 \end{itemize}
 
-While not using any augmentations led to the best score for this task and on these datasets, an augmentation pipeline consisting of reflection, translation and rotation got the second best score. The worst score was attained by an augmentation pipeline consisting of shearing, translation and rotation. 
+While not using any augmentations led to the best score for this task, an augmentation pipeline consisting of reflection, translation and rotation got the second best score. The worst score was attained by an augmentation pipeline consisting of shearing, translation and rotation. 
 
-Elgendi et al. also asked radiologists whether the augmentations used here made sense in the context of pneumonia detection and the opinions of the augmentations matched the empirical results. Elgendi et al. were even able to improve the performance of models from on of their earlier papers also covering detection on chest X-rays by removing any image augmentation \cite{elgendi2020performance, elgendi2021effectiveness}.
-
-They conclude that \cite[optimization over each geometric augmentation is needed. For example, defining an “acceptable” range of rotation.]{elgendi2021effectiveness}
+Elgendi et al. also asked radiologists whether the augmentations used here made sense in the context of pneumonia detection and the given opinions of the augmentations matched the empirical results. Elgendi et al. were also able to improve the performance of models from one of their earlier papers
+%which also covered detection on chest X-rays 
+by removing any image augmentation \cite{elgendi2020performance, elgendi2021effectiveness}. They conclude that \cite[optimization over each geometric augmentation is needed. For example, defining an “acceptable” range of rotation.]{elgendi2021effectiveness}
 
 \subsection{Comparison of augmentations on aerial image labeling}
 
@@ -426,11 +428,11 @@ As part of the paper that introduced Albumentations, Buslaev et al. showed the u
   \caption{\label{tab:alb-iou}Results of augmentation comparison from Buslaev et al. \cite{info11020125}.}
 \end{table}
 
-With more augmentations on this dataset the validation \ac{IoU} score improved and the training epoch with the best validation \ac{IoU} was later, indicating that overfitting was prevented, as seen in Table \ref{tab:alb-iou}.
+With more augmentations on this dataset, the validation \ac{IoU} score improved and the training epoch with the best validation \ac{IoU} occurred later in the training process. This indicates that overfitting was prevented, as seen in Table \ref{tab:alb-iou}.
 
 \subsection{Survey of common image augmentations}
 
-Khalifa et al. compiled image augmentation techniques used in other papers \cite{khalifa2022comprehensive}. In the medical domain, which this work is the most similar to, \ac{GAN} and rotation techniques appear the most with each of them being used in three papers of the nine considered. Reflection and shifting operations were both used in two papers each.
+Khalifa et al. compiled image augmentation techniques used in other papers \cite{khalifa2022comprehensive}. In the medical domain, which the \ac{ArUco} detection on tapes on skin task is the most similar to, \ac{GAN} and rotation techniques appear the most with each of them being used in three papers of the nine considered. Reflection and shifting operations were both used in two papers each.
 
 \chapter{Networks}
 \label{chap:netw}
