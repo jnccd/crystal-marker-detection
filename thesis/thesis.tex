@@ -631,7 +631,7 @@ The first part of the script pipeline serves four major goals. Firstly, it shoul
 
 The overview seen in \figureref{fig:arch_data} shows the various dataset types that are build by the \texttt{create\_dataset} script, addressing the third goal. The \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in a later section, addresses the second goal. Furthermore, augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
 
-The \texttt{create\_synthetic\_dataseries} script seen in \figureref{fig:arch_data} is further descibed in \autoref{sec:synth_data}.
+The \texttt{create\_synthetic\_dataseries} script seen in \figureref{fig:arch_data} is further described in \autoref{sec:synth_data}.
 
 \subsection{Label Data Type}
 
@@ -1539,7 +1539,7 @@ Since this project is supposed to be used on mobile devices, the next step which
 
 I also tried generating synthetic training data using OpenCV. For the background and skin images, I used stock photos from Pexels\footnote{\url{https://www.pexels.com}, accessed on 14.12.23}. First, I add a gray rectangle which represents the tape with a \ac{ArUco} marker negative to a skin image. Then similarly to the curving augmentation, I introduce a curving effect to the skin image with the tape by remapping it. The remapping strength per pixel column is again given by a half circle function similarly to the label curving augmentation described in \autoref{sec:label_curving}. This curved tape on skin image is then placed on a background image with a random rotation and perspective effect, as seen in \figureref{fig:synth_data_example}.
 
-Fitting a yolov5s model for 100 epochs to this synthetic data yields a model that attains a 0\% VOC 2010 \ac{mAP} score on the ensemble test set. To test if this fitted model is still useful for pre-training, I trained a yolov5s model on an augmented \texttt{gpv2} dataset for 300 epochs starting with either the default weights or the synthetically pre-training weights. The default yolov5s weights lead to a VOC 2010 \ac{mAP} of 51.94\% and the synthetically pre-trained weights lead to a VOC 2010 \ac{mAP} of 48.42\%. Due to these results, I did not further use the synthetically created data.
+Fitting a \ac{YOLO}v5s model for 100 epochs to this synthetic data yields a model that attains a 0\% VOC 2010 \ac{mAP} score on the ensemble test set. To test if this fitted model is still useful for pre-training, I trained a \ac{YOLO}v5s model on an augmented \texttt{gpv2} dataset for 300 epochs starting with either the default weights or the synthetically pre-training weights. The default \ac{YOLO}v5s weights lead to a VOC 2010 \ac{mAP} of 51.94\% and the synthetically pre-trained weights lead to a VOC 2010 \ac{mAP} of 48.42\%. Due to these results, I did not further use the synthetically created data.
 
 \begin{figure}
   \caption{Example of synthetic training data.}
