@@ -851,15 +851,15 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
 
 \begin{figure}
   \centering
-  \subcaptionbox{Training image before augmentation}
+  \subcaptionbox{before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before}}
-  \subcaptionbox{Training image after augmentation}
+  \subcaptionbox{after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after}}
-  \subcaptionbox{Training image before augmentation}
+  \subcaptionbox{before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before2}}
-  \subcaptionbox{Training image after augmentation}
+  \subcaptionbox{after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after2}}
-  \caption{Two examples for smart grid shuffling with similar initial label arrangement.}
+  \caption{Two examples on two training images for smart grid shuffling with similar initial label arrangement.}
   \label{fig:aug_sgs_example}
 \end{figure}
 
@@ -870,15 +870,15 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
 
 \begin{figure}
   \centering
-  \subcaptionbox{Training Image before augmentation}
-     {\includegraphics[width=0.45\textwidth]{image/aug_pld_before}}
-  \subcaptionbox{Training Image after augmentation}
-     {\includegraphics[width=0.45\textwidth]{image/aug_pld_after}}
-  \caption{An example for label dropout.}
+  \subcaptionbox{before augmentation}
+     {\includegraphics[width=0.3\textwidth]{image/aug_pld_before}}
+  \subcaptionbox{after augmentation}
+     {\includegraphics[width=0.3\textwidth]{image/aug_pld_after}}
+  \caption{An example for label dropout on a cropped part of a training image.}
   \label{fig:aug_pld_example}
 \end{figure}
 
-To further discourage the model from fitting to certain label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the label from the image and removes the label entry. The label is removed from the image by taking its polygon, scaling it around its centroid by 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \figureref{fig:aug_pld_example}.
+To further prevent the model from fitting to certain label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the associated marker from the image and removes the label entry. The marker is removed from the image by taking its polygon, scaling it around its centroid by 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \figureref{fig:aug_pld_example}.
 
 \subsection{Homogeneous Matrix Transform}
 
@@ -888,11 +888,11 @@ For most augmentations there is a chance setting and possibly a strength setting
 
 \begin{figure}
   \centering
-  \subcaptionbox{Training Image before augmentation}
+  \subcaptionbox{before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_mat_before}}
-  \subcaptionbox{Training Image after augmentation}
+  \subcaptionbox{after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_mat_after}}
-  \caption{An example for matrix transform augmentation.}
+  \caption{An example for matrix transform augmentation on a training image.}
   \label{fig:aug_mat_example}
 \end{figure}
 
@@ -905,11 +905,11 @@ After the transformation, cases of \ac{OOB} labels have to be handled, as labels
 
 \begin{figure}
   \centering
-  \subcaptionbox{Training Image before augmentation}
+  \subcaptionbox{before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc_before}}
-  \subcaptionbox{Training Image after augmentation}
+  \subcaptionbox{after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc_after}}
-  \caption{An example for random crop.}
+  \caption{An example for random crop on a training image.}
   \label{fig:aug_rc_example}
 \end{figure}
 
@@ -919,11 +919,11 @@ The pipeline implements a random crop, which crops an area of the datasets targe
 
 \begin{figure}
   \centering
-  \subcaptionbox{Training Image before augmentation}
+  \subcaptionbox{before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc2_before}}
-  \subcaptionbox{Training Image after augmentation}
+  \subcaptionbox{after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc2_after}}
-  \caption{An example for random crop v2. Image (b) also shows how out of bounds labels that do not pass the visibility check are overdrawn. This is done such that the residue of the marker on the image that is without label does not introduce a false negative into the training data, as described in \autoref{sec:oob}.}
+  \caption{An example for random crop v2 on a training image. Image (b) also shows how out of bounds labels that do not pass the visibility check are overdrawn. This is done such that the residue of the marker on the image that is without label does not introduce a false negative into the training data, as described in \autoref{sec:oob}.}
   \label{fig:aug_rc2_example}
 \end{figure}
 
@@ -971,11 +971,11 @@ These changes help make the reinserted label look more natural in the new spot, 
 
 \begin{figure}
   \centering
-  \subcaptionbox{Training Image before augmentation}
+  \subcaptionbox{before augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_bd_before}}
-  \subcaptionbox{Training Image after augmentation}
+  \subcaptionbox{after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_bd_after}}
-  \caption{An example for black dot augmentation.}
+  \caption{An example for black dot augmentation on a training image.}
   \label{fig:aug_bd_example}
 \end{figure}
 
