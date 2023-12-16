@@ -31,7 +31,7 @@ root_dir = Path(__file__).resolve().parent
 dataset_dir = root_dir/'..'/'traindata-creator/dataset/pet-0-man-pet-v2'
 dataset_train_dir = dataset_dir / 'train'
 dataset_val_dir = dataset_dir / 'val'
-output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-fcnn')
+output_folder = create_dir_if_not_exists(root_dir / 'output/pt-mbn-fcnn-mse-2')
 eval_folder = create_dir_if_not_exists(output_folder / 'eval')
 
 # --- Dataloader ----------------------------------------------------------------------------------------
@@ -360,8 +360,8 @@ summary(model, input_size=(3, IMG_SIZE, IMG_SIZE))
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 #optimizer = torch.optim.SGD(model.parameters(), lr=1e-3, momentum=0.95, weight_decay=0.001)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.5)
-loss_fn = SamplesLoss(loss="sinkhorn", p=2, blur=.05)
-metrics = [loss_mse, loss_repulsion]
+loss_fn = loss_mse
+metrics = [loss_mse, SamplesLoss(loss="sinkhorn", p=2, blur=.05)]#, loss_repulsion]
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 model_path = output_folder / f'best_{MODEL}.pt'
 
@@ -401,7 +401,7 @@ for i_epoch in range(EPOCHS):
             optimizer.step()
             
             pbar.set_description(f"Ep {i_epoch}, L {np.average(batch_losses):.4f} 上VaL {avg_val_loss}, LR {optimizer.param_groups[0]['lr']}, " + 
-                ', '.join([metric.__name__ + ' ' + str(torch.mean(metric(label_pred, label_batch)).item()) for metric in metrics]))
+                ', '.join([metric.__name__ if hasattr(metric, '__name__') else f'm{i}' + ' ' + str(torch.mean(metric(label_pred, label_batch)).item()) for i, metric in enumerate(metrics)]))
             pbar.update(1)
     avg_loss = np.average(batch_losses)
     loss_history.append(avg_loss)
