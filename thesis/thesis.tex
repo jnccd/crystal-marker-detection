@@ -662,7 +662,7 @@ The \texttt{create\_synthetic\_dataseries} script seen in \figureref{fig:arch_da
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_1}}
   \subcaptionbox{Image and polygon (orange) / bounding box (blue) labels after 50° rotation, as well as the old bounding box data in gray}
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_2}}
-  \caption{Two images from the testset showing a polygon label in orange and a bounding box label in blue. After a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information. This old label was already too large since it could not capture the rotation of the object. The polygon label, however, can be augmented with the image without losing label accuracy by transforming the polygon points.}
+  \caption{Two images from the test set showing a polygon label in orange and a bounding box label in blue. After a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information. This old label was already too large since it could not capture the rotation of the object. The polygon label, however, can be augmented with the image without losing label accuracy by transforming the polygon points.}
   \label{fig:polygon-good}
 \end{figure}
 
@@ -1267,7 +1267,7 @@ Due to these results and since smaller models can be used on more devices, most 
 
 \subsection{Inference}
 
-Of the available inference parameters, I mainly used none or \ac{SAHI} in the tests since the markers in the testset were small and \ac{SAHI} increased the \ac{mAP} score in initial tests.
+Of the available inference parameters, I mainly used none or \ac{SAHI} in the tests since the markers in the test set were small and \ac{SAHI} increased the \ac{mAP} score in initial tests.
 
 \section{Augmenting from Zero} % TODO: Did I talk about randomness in training runs for ensembles anywhere?
 \label{sec:aug_ens_zero}
@@ -1377,11 +1377,11 @@ Based on the training run from the hyperparameter optimization, I tested differe
 
 \begin{figure}
   \centering
-  \subcaptionbox{Finger image from the testset}
+  \subcaptionbox{Finger image from the test set}
      {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_finger}}
   \subcaptionbox{Finger image mask}
      {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_finger_mask}}
-  \subcaptionbox{Hand image from the testset}
+  \subcaptionbox{Hand image from the test set}
      {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_hand}}
   \subcaptionbox{Hand image mask}
      {\includegraphics[width=0.2\textwidth]{image/foreground_mask_example_hand_mask}}
@@ -1389,7 +1389,7 @@ Based on the training run from the hyperparameter optimization, I tested differe
   \label{fig:foreground_mask_examples}
 \end{figure}
 
-The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the testset images, as seen in \figureref{fig:foreground_mask_examples}. The usage of these masks lead to the highest score on the ensemble testset. However, the implementation of an extra segmentation model into the inference is still debatable, because the uplift in score may not be worth it for the likely increased memory usage and inference time.
+The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the test set images, as seen in \figureref{fig:foreground_mask_examples}. The usage of these masks lead to the highest score on the ensemble test set. However, the implementation of an extra segmentation model into the inference is still debatable, because the uplift in score may not be worth it for the likely increased memory usage and inference time.
 
 \begin{table}
   \begin{tabular}{ c c }
@@ -1427,12 +1427,12 @@ In the best case, I want to create a detection system which runs completely on t
   \label{fig:optimal_yolov5x_augment_params} 
 \end{figure}
 
-Since training with a larger model and a larger dataset takes more than four times longer than a smaller training run, this hyperparameter search ran for 132 runs instead of the 300 runs from before, as seen in \figureref{fig:yolov5x_hyp_hist}. However, the scores on the ensemble testset did improve moderately with a Pascal VOC 2010 \ac{mAP} score of 78,74\% in the best run. The new best composition for the augmentation usage rates and maximum strengths can be seen in \figureref{fig:optimal_yolov5x_augment_params}.
+Since training with a larger model and a larger dataset takes more than four times longer than a smaller training run, this hyperparameter search ran for 132 runs instead of the 300 runs from before, as seen in \figureref{fig:yolov5x_hyp_hist}. However, the scores on the ensemble test set did improve moderately with a Pascal VOC 2010 \ac{mAP} score of 78,74\% in the best run. The new best composition for the augmentation usage rates and maximum strengths can be seen in \figureref{fig:optimal_yolov5x_augment_params}.
 
 \section{Evaluation on Final Testset}
 \label{sec:final_eval}
 
-For the final evaluation, I tested the best models created during the hyperparameter optimization on the final testset. For the inference options, I used \ac{SAHI} and a \ac{BIS} of 20\% since those resulted in the best scores during inference for all fully implemented options, as discussed in \autoref{sec:inference_params}.
+For the final evaluation, I tested the best models created during the hyperparameter optimization on the final test set. For the inference options, I used \ac{SAHI} and a \ac{BIS} of 20\% since those resulted in the best scores during inference for all fully implemented options, as discussed in \autoref{sec:inference_params}.
 The best fitted \ac{YOLO}v5s model created during the hyperparameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} score and 26.4\% on the \ac{COCO} \ac{mAP} score. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} score and 33.4\% on the \ac{COCO} \ac{mAP} score. The score difference of the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data. Examples for the detection of markers on the final test set of the \ac{YOLO}v5s model can be seen in \figureref{fig:final_testset_detections}.
 
 \begin{figure} % TODO: Make theses better displayable in small
@@ -1524,12 +1524,12 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
 
 While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble test set, using the same fitted model with \ac{SAHI} and a 20\% \ac{BIS} on the final test set still results in a Pascal VOC 2010 \ac{mAP} score of around 50\% and therefore does not reach the target score from the human detection tests. Using the larger model \ac{YOLO}v5x and the larger dataset which resulted in similar scores during initial tests with \ac{YOLO}v5s only results in a moderate \ac{mAP} improvement of about 4\%.
 
-This may indicate that the hyperparameter search already over fitted the chosen augmentations in the dataset to the ensemble test set. For example, datasets with markers that are often in a similar rotation as markers in the ensemble testset may automatically attain higher scores since the pixel structures in the bounding box areas are more similar. However, I could not manually verify this since the datasets contain many marker rotations. Another explanation for the score discrepancy may be that more images of fingers appear in the final test set which are the most dissimilar cases to the flat tapes of the training data. % TODO: Add detection example images here
+This may indicate that the hyperparameter search already over fitted the chosen augmentations in the dataset to the ensemble test set. For example, datasets with markers that are often in a similar rotation as markers in the ensemble test set may automatically attain higher scores since the pixel structures in the bounding box areas are more similar. However, I could not manually verify this since the datasets contain many marker rotations. Another explanation for the score discrepancy may be that more images of fingers appear in the final test set which are the most dissimilar cases to the flat tapes of the training data. % TODO: Add detection example images here
 Nonetheless given that the test sets consist of images with tapes on skin and that the training sets consist of images with markers on glass plates with mostly skinless backgrounds, indicates that the fitted model has attained some amount of generalization over the two image domains.
 
 During most of the implementation and writing work of this thesis, the machine which creates the tapes with \ac{ArUco} markers in photonic crystals was broken. Furthermore, the available tapes can loose some of the substance which contains the \ac{ArUco} marker structures each time they are sticked on a surface and removed. The scarcity and fragility of the available tapes therefore limited the creation of new training and test data. 
 
-More training and test data could introduce new variation in the form of more skin tones and types since the current test data only contains images from two people, more backgrounds and more lighting conditions since the current training and test data was created in 3 different rooms as well as outside at one time. More test data could also improve the generalizability of the hyperparameter optimizations since the composition of the augmented training data set would then be optimized for more cases.
+More training and test data could introduce new variation in the form of more skin tones and types since the current test data only contains images from two people, more backgrounds and more lighting conditions since the current training and test data was created in 3 different rooms as well as outside at one time. More test data could also improve the generalizability of the hyperparameter optimizations since the composition of the augmented training dataset would then be optimized for more cases.
 % TOxDO more test data = better hyp searches, needs more skin color, more lights, more skin types, more backgrounds
 
 %\subsection{Confusion Matrix in Object Detection}
