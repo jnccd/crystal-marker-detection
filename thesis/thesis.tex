@@ -77,7 +77,7 @@ The first part addresses the detection of areas of interest in the image using o
 %The augmentations are prebuilt into the dataset, such that the same augmentation can be tested with many model architectures without changing the dataloader for each one. 
 The impact of the augmentations on the resulting \ac{mAP} scores are then measured using ensemble runs and hyperparameter optimizations. Furthermore, inference techniques such as \ac{SAHI} are evaluated and used to increase the detection performance. Despite dissimilarity of training and test data for this part, the augmentation, training and inference techniques can increase the VOC 2010 \ac{mAP} score on test data by more than 60\%. However, those results may not be generalizable.
 
-The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here, a number of approaches using keypoint detection, segmentation networks and classic algorithms are tested. Finally, the best performing approach is found using a combination of an U-Net and Hough transform.
+The second part addresses the detection of the \ac{ArUco} marker corners within the detected area of interest. Here, a number of approaches using keypoint detection, segmentation networks and classic algorithms are tested. Finally, the best performing approach is found using a combination of an u-net and Hough transform.
 
 \newpage
 \section*{Acknowledgements}
@@ -528,12 +528,12 @@ After the application of transformer blocks in natural language processing was s
 \section{U-Net}
 
 \begin{figure}
-  \caption{Visualization of a U-Net which was taken from the examples of the \href{https://github.com/HarisIqbal88/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
+  \caption{Visualization of a u-net which was taken from the examples of the \href{https://github.com/HarisIqbal88/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=0.8\textwidth]{image/Unet_ushape}
   \label{fig:unet}
 \end{figure}
 
-An U-Net is a \ac{CNN} that was developed for biomedical image segmentation \cite{DBLP:journals/corr/RonnebergerFB15}. Its architecture is based on the fully convolutional network proposed by Long et al. \cite{DBLP:journals/corr/LongSD14} and extends the contracting network by following upsampling layers. Visualizing the layers such that their y position is based on the amount of feature maps they output yields the characteristic u-shape for the network, as seen in \figureref{fig:unet}. Furthermore, it uses feature channels to propagate context information from earlier layers to provide the upsampling path with missing information which may be lost during the contracting layers. This missing information can then help in generating high resolution segmentation masks.
+An u-net is a \ac{CNN} that was developed for biomedical image segmentation \cite{DBLP:journals/corr/RonnebergerFB15}. Its architecture is based on the fully convolutional network proposed by Long et al. \cite{DBLP:journals/corr/LongSD14} and extends the contracting network by following upsampling layers. Visualizing the layers such that their y position is based on the amount of feature maps they output yields the characteristic u-shape for the network, as seen in \figureref{fig:unet}. Furthermore, it uses feature channels to propagate context information from earlier layers to provide the upsampling path with missing information which may be lost during the contracting layers. This missing information can then help in generating high resolution segmentation masks.
 
 \chapter{Methodology and Implementation}
 \label{chap:implement}
@@ -1135,9 +1135,9 @@ The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019int
 \end{figure}
 
 % TODO: Mention VGG16 based unet?
-As an alternative, I also implemented a U-Net approach. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total number of around 3 million parameter. The implemented U-Net instead uses a total number of around 44 million parameters. It is therefore around 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
+As an alternative, I also implemented an u-net approach. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total number of around 3 million parameter. The implemented u-net instead uses a total number of around 44 million parameters. It is therefore around 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
 %Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \figureref{fig:segpet_preds_example}. 
-Examples for the U-Net output on validation data can be seen in \figureref{fig:segpet_preds_example}. 
+Examples for the u-net output on validation data can be seen in \figureref{fig:segpet_preds_example}. 
 
 \subsubsection{Harris Corner Based Mask Interpretation}
 
@@ -1493,10 +1493,10 @@ A SegPet dataset is similar but instead of having the vertex coordinates in a la
 
 \subsection{Results}
 
-As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches tend to achieve better scores. While this table shows only the best training runs, the MobileNetV2 with a two linear layer head also got a sinkhorn loss of up to around 500 in most training runs. %This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. 
+As seen in \autoref{tab:pet_valdata_results}, the u-net based approaches tend to achieve better scores. While this table shows only the best training runs, the MobileNetV2 with a two linear layer head also got a sinkhorn loss of up to around 500 in most training runs. %This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. 
 The linear layer head models tend to fit to a specific subset of all marker rotations and chose the closest rotation to the marker rotation in the image instead of learning all possible rotations. This occurs even if all marker rotations have the same chance of appearing in the training data through augmentations. Using a fully convolutional head alleviated this problem in some cases and increased the score further.
 
-For the U-Net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions compared to the harris corner approach. However, for the usecase of accurate camera pose prediction even more precision may be needed.
+For the u-net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions compared to the harris corner approach. However, for the usecase of accurate camera pose prediction even more precision may be needed.
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -1506,18 +1506,18 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
   %  MobileNetV2 with custom three linear layer head      & 25.46 & 457.67 \\
   %  MobileNetV2 with custom fully convolutional head     & 12.65 & 99.3 \\
   %  VGG16 with custom fully convolutional head           & 26.67 & 486.06 \\
-  %  Harris corner based interpretation of U-Net masks    & 11.32 & 93.64 \\
-  %  Hough transform based interpretation of U-Net masks  & 6.36 & 36.83 \\
+  %  Harris corner based interpretation of u-net masks    & 11.32 & 93.64 \\
+  %  Hough transform based interpretation of u-net masks  & 6.36 & 36.83 \\
    MobileNetV2 with two linear layer head        & 7.07 & 169.16 \\
    MobileNetV2 with three linear layer head      & 11.37 & 457.67 \\
    MobileNetV2 with fully convolutional head     & 5.65 & 99.3 \\
    MobileNetV2 with fully convolutional head and \ac{MSE} loss & 18.01 & 744.32 \\
    VGG16 with fully convolutional head           & 11.91 & 486.06 \\
-   Harris corner based interpretation of U-Net masks    & 7.08 & 93.64 \\
-   Hough transform based interpretation of U-Net masks  & 3.98 & 36.83 \\
+   Harris corner based interpretation of u-net masks    & 7.08 & 93.64 \\
+   Hough transform based interpretation of u-net masks  & 3.98 & 36.83 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different marker corner detection approaches. The mean point distance is given in percentage of the image size. The image size refers to the images width and height in pixels, which are the same for the images in the validation data. The sinkhorn loss is not normalized and works on $224 \times 224$ pixel images for the keypoint detection networks and $160 \times 160$ pixel images for the U-Net case. }
+  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different marker corner detection approaches. The mean point distance is given in percentage of the image size. The image size refers to the images width and height in pixels, which are the same for the images in the validation data. The sinkhorn loss is not normalized and works on $224 \times 224$ pixel images for the keypoint detection networks and $160 \times 160$ pixel images for the u-net case. }
 \end{table}
 
 \section{Discussion}
@@ -1543,7 +1543,7 @@ This work introduces a new data preparation and model training pipeline, as well
 
 For the development of a wound healing tracking technique, I worked on a robust \ac{ArUco} marker detector for markers on photonic crystals within tape that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model for this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the base data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from \ac{COCO} and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimizations to find close to optimal compositions for the augmentations. 
 
-Furthermore, I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this, I tested multiple approaches and concluded on a U-Net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
+Furthermore, I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this, I tested multiple approaches and concluded on an u-net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
 
 Due to the scarcity and fragility of the available tapes, limited training and test data was available. However, once more tapes with \ac{ArUco} markers in photonic crystals become available or the tapes become more stable, more training data which is closer to the real world usecase could be created. Since the data transformations, the training and evaluation are automated in the scripts developed during this work, new models could quickly be developed once new data becomes available.
 
@@ -1563,7 +1563,7 @@ Once more training data is available, a different model could improve the score 
 
 %\subsection{Deploying on Mobile}
 
-Since this project is supposed to be used on mobile devices, the next step which has currently not been completed is the deployment on smartphones. In theory, this should work without further problems for \ac{YOLO}v5s since it was build for mobile deployment. Furthermore, its relatively low parameter count of 7.2 million may indicate a small size in memory and faster inference time \cite{wang2023yolov7}. This could indicate better mobile usability because of shared and usually slower memory on smartphones as well as slower processors compared to stationary computers. For the U-Net used in marker corner detection, the mobile deployment could be more difficult as it has a parameter count of around 44 million. Depending on the phone model, the U-Net may still work but likely with increased battery usage. It may therefore be necessary to find a smaller segmentation network for this task or improve the accuracy of the MobileNetV2 approach further. The implementation on phones itself should work well since the models are both implemented in PyTorch and PyTorch has Android support\footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
+Since this project is supposed to be used on mobile devices, the next step which has currently not been completed is the deployment on smartphones. In theory, this should work without further problems for \ac{YOLO}v5s since it was build for mobile deployment. Furthermore, its relatively low parameter count of 7.2 million may indicate a small size in memory and faster inference time \cite{wang2023yolov7}. This could indicate better mobile usability because of shared and usually slower memory on smartphones as well as slower processors compared to stationary computers. For the u-net used in marker corner detection, the mobile deployment could be more difficult as it has a parameter count of around 44 million. Depending on the phone model, the u-net may still work but likely with increased battery usage. It may therefore be necessary to find a smaller segmentation network for this task or improve the accuracy of the MobileNetV2 approach further. The implementation on phones itself should work well since the models are both implemented in PyTorch and PyTorch has Android support\footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
 
 %\subsection{Tracking}
 
