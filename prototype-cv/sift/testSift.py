@@ -66,7 +66,7 @@ for readable_good_match in readable_good_matches:
              (int(readable_good_match[0][0]), int(readable_good_match[0][1])), 
              (int(readable_good_match[1][0] + img1.shape[1]), int(readable_good_match[1][1])), 
              (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), 
-             4)
+             6)
 # img3 = cv2.drawMatches(img1, kpl, final_img, kp2, matches[:int(n/2)], final_img, flags=2)
 
 print_img = img3
