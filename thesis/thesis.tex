@@ -1159,7 +1159,7 @@ Examples for the u-net output on validation data can be seen in \figureref{fig:s
   \label{fig:segpet_rect_interp}
 \end{figure}
 
-Using the output of \acp{OpenCV} implementation of the Harris corner detector, each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$, the length of $\overline{BA}$ and $\overline{BC}$ and the distance between the midpoint of $A$ and $C$ and the midpoint of the image. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \figureref{fig:segpet_rect_interp}. 
+Using the output of \acp{OpenCV} implementation of the Harris corner detector, each triplet of corner points is considered a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$, the length of $\overline{BA}$ and $\overline{BC}$ and the distance between the midpoint of $A$ and $C$ and the midpoint of the image. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \figureref{fig:segpet_rect_interp}. 
 
 The computation of $D$ uses the assumption that the opposite sides of the marker are parallel, which may not hold true due to perspective distortion. However, this distortion should be small in the small image cutouts considered here. Furthermore, the detection is more stable if only three of the marker corners have to be correctly identified by the u-net and the Harris corner algorithm. 
 
@@ -1194,7 +1194,7 @@ The \ac{OpenCV} implementation of Hough transform results in predicted lines on 
   \label{fig:pet_point_sorting_compare}
 \end{figure}
 
-For now, the different approaches only output points. However to detect how the marker lies in 3D space, it is also necessary to sort the points based on the rotation of the marker. For this, the input image is thresholded using \acp{OpenCV} adaptive threshold implementation. Afterwards, a homography is computed and used on the pixel structure between the found marker corners to correct possible perspective distortions. Finally using pixel comparisons, each 90 degree rotation of the projected and thresholded image is tested against the \ac{ArUco} marker, as seen in \figureref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
+For now, the different approaches only output points. However to detect how the marker lies in 3D space, it is also necessary to sort the points based on the rotation of the marker. For this, the input image is thresholded using \acp{OpenCV} adaptive threshold implementation. Afterwards, a homography is computed and used on the pixel structure between the found marker corners to correct possible perspective distortions. Finally using pixel comparisons, each 90 degree rotation of the projected and thresholded image is tested against the \ac{ArUco} marker, as seen in \figureref{fig:pet_point_sorting_compare}. The rotation that is the closest fit for the marker is then chosen and the points are ordered accordingly.
 
 \chapter{Evaluation}
 \label{chap:eval}
@@ -1207,7 +1207,7 @@ I got batches of images for the training and test data over the course of the ti
 
 \subsection{Training Data}
 
-Of the images that were meant for training data and work with the \texttt{create\_aruco\_frame\_dataseries} script, I manually filtered the images for ones, on which I could recognize at least the majority of the markers, such that the training data is not too diluted. During development, I build more and more dataseries from these batches of images and refined old dataseries. I then named datasets that use specific sets of dataseries \texttt{gpv1}, \texttt{gpv2} and \texttt{gpv3}, for their version and the folder called \texttt{good pics} I filtered usable images into. \texttt{gpv1} datasets are build from 67 images, \texttt{gpv2} datasets from 35 images and \texttt{gpv3} datasets from 140 images. 
+Of the images that were meant for training data and work with the \texttt{create\_aruco\_frame\_dataseries} script, I manually filtered the images for ones, on which I could recognize at least the majority of the markers, such that the training data is not too diluted. During development, I built more and more dataseries from these batches of images and refined old dataseries. I then named datasets that use specific sets of dataseries \texttt{gpv1}, \texttt{gpv2} and \texttt{gpv3}, for their version and the folder called \texttt{good pics} I filtered usable images into. \texttt{gpv1} datasets are build from 67 images, \texttt{gpv2} datasets from 35 images and \texttt{gpv3} datasets from 140 images. 
 
 For the creation of the \texttt{gpv3} set, I visited the material science department of the Kiel University and took a glass plate with marker tapes home. I then combined dataseries from \texttt{gpv2} with a new dataseries from images we took at the material science department and a dataseries from 67 images I took with my phone at home of the glass plate to create \texttt{gpv3}.
 
@@ -1215,15 +1215,15 @@ During dataset creation, a set percentage of images and their labels are randoml
 
 \subsection{Test Data}
 
-From the 118 images of tapes on skin, I used 55 good ones to build the third and only relevant version of the test data. There were concerns, that choosing fitted models based on their \ac{mAP} score on the test set would lead to overfitting. At the same time, I wanted to test against images that were close to the real world use case. Therefore, the test set was split into two sets. One for evaluation in ensemble runs, as well as in hyperparameter search, and one for a final test at the end. The test sets were split manually, but such that the scores of a model tested on a previous version of the test set was similar in both sets, and, such that both sets contain a variety of hand poses which are at the same time not so similar that overfitting on one set would lead to a good score on the other. Since some pairs of the 55 original test images were too similar, a random split would have been prone to putting images that are too similar in the ensemble and in the final test set, such that overfitting could not have been detected. This split then resulted in a 25 image ensemble test set and a 30 image final test set.
+From the 118 images of tapes on skin, I used 55 good ones to build the third and only relevant version of the test data. There were concerns that choosing fitted models based on their \ac{mAP} score on the test set would lead to overfitting. At the same time, I wanted to test against images that were close to the real world use case. Therefore, the test set was split into two sets. One for evaluation in ensemble runs, as well as in hyperparameter search, and one for a final test at the end. The test sets were split manually, but such that the scores of a model tested on a previous version of the test set were similar in both sets and such that both sets contain a variety of hand poses that are at the same time not so similar that overfitting on one set would lead to a good score on the other. Since some pairs of the 55 original test images were too similar, a random split would have been prone to putting images that are too similar in the ensemble and in the final test set, such that overfitting could not have been detected. This split then resulted in a 25 image ensemble test set and a 30 image final test set.
 
-The third version of the test data was labeled using makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better accuracy than the \texttt{create\_manual\_dataseries} script, which currently lacks a zoom feature. The labels were exported as polygons in the \ac{COCO} \ac{JSON} format, were then converted to a dataseries using the \texttt{create\_coco\_json\_dataseries} script and finally build into a dataset.
+The third version of the test data was labeled using makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better accuracy than the \texttt{create\_manual\_dataseries} script, which currently lacks a zoom feature. The labels were exported as polygons in the \ac{COCO} \ac{JSON} format, converted to a dataseries using the \texttt{create\_coco\_json\_dataseries} script and finally built into a dataset.
 
-While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine which creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes that we had and therefore could not build more test data on my own.
+While I had the glass plate with marker tapes on it at home, removing the tapes from any surface carries a risk of damaging the marker structure on the tapes. Since the machine that creates the marker tapes was broken for most of the time I worked on this thesis, I did not want to risk breaking the few good tapes that we had and therefore could not build more test data on my own.
 
 \section{Human Baseline Study}
 
-To get a score which I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and a instructions paper on the Kiel University WeTalk instance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process, as seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}. The labeling was done on \href{https://www.makesense.ai}{makesense.ai} since it does not require an installation and instead works in the browser while also containing all necessary tools and since the dataset is small enough to be distributed directly as files. In total, there were 7 participants who returned their marked labels. For the evaluation, I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
+To get a score that I can compare the evaluation results to, I gathered scores that humans would achieve on this detection task. To do this, I distributed the images of the final test set and an instructions paper on the Kiel University WeTalk instance and Discord. The instructions paper contains a general introduction to the task, a perfect example marker, example training images with labels and step by step instructions for the labeling process, as seen in \figureref{fig:instructions_paper} and \figureref{fig:instructions_paper_2}. The labeling was done on \href{https://www.makesense.ai}{makesense.ai} since it does not require an installation and instead works in the browser while also containing all necessary tools and since the dataset is small enough to be distributed directly as files. In total, there were 7 participants who returned their marked labels. For the evaluation, I treated the resulting label data the same as the network output and generated \ac{mAP} scores using the same scripts. The resulting \ac{mAP} scores can be seen in \autoref{tab:human_test_result}.
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -1238,16 +1238,16 @@ To get a score which I can compare the evaluation results to, I gathered scores 
 
 \section{Testing Scope}
 
-In this section, I describe some of the fixed parameters during later testing. Since this work introduces many variables, such as model type, dataset and augmentation parameters, some of them need to be fixed to keep the scope simple enough. These constraints are based on earlier and smaller scale tests which are described in this section.
+In this section, I describe some of the fixed parameters during later testing. Since this work introduces many variables, such as model type, dataset and augmentation parameters, some of them need to be fixed to keep the scope simple enough. These constraints are based on earlier and smaller scale tests, which are described in this section.
 
 \subsection{Dataset}
 
-During initial testing of the datasets using \ac{YOLO}v5s, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset in which more data instances where sorted out based on image quality, as seen in \figureref{fig:initial_dataset_compare}. However for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3} or a model that is too small, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. 
+During initial testing of the datasets using \ac{YOLO}v5s, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset, in which more data instances were sorted out based on image quality, as seen in \figureref{fig:initial_dataset_compare}. However for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3} or a model that is too small, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. 
 
 % TODO?: Show strong / weak aug compositions
 
 \begin{figure}
-  \caption{Results of initial comparison of datasets on \ac{YOLO}v5s. Here, built in \ac{YOLO}v5 augmentations are enabled. The two manually defined sets of augmentations \texttt{weak} and \texttt{strong} as well as runs without augmentation are used for each dataset. In this ensemble run, there are 9 configurations and 6 runs per configurations for a total of 54 training runs with 300 epochs each.}
+  \caption{Results of initial comparison of datasets on \ac{YOLO}v5s. Here, built-in \ac{YOLO}v5 augmentations are enabled. The two manually defined sets of augmentations \texttt{weak} and \texttt{strong} as well as runs without augmentation are used for each dataset. In this ensemble run, there are 9 configurations and 6 runs per configuration, for a total of 54 training runs with 300 epochs each.}
   \includegraphics[width=0.9\textwidth]{image/gp-compare-v2-thesis}
   \label{fig:initial_dataset_compare}
 \end{figure}
@@ -1274,7 +1274,7 @@ Of the available inference parameters, I mainly used none or \ac{SAHI} in the te
 
 As a test for the usefulness of the added augmentations, I increased the usage rates of an augmentation from 0\% to 100\% in 10 steps and did five training runs per step for a total of 50 training runs per augmentation. Using more training runs per configuration would make the values here more accurate, but would also take longer and use more electricity. The results shown here can therefore not be perfectly accurate, but give an idea of how the usage of an augmentation generally changes the scores. 
 
-These ensemble runs are visualized as bar charts in this chapter. Furthermore, the plots show an exponential function which is fitted to the data points. This fitted exponential function is $f(x)=a\mathit{e}^{-bx}+c$, with $a$, $b$ and $c$ being arbitrary.
+These ensemble runs are visualized as bar charts in this chapter. Furthermore, the plots show an exponential function that is fitted to the data points. This fitted exponential function is $f(x)=a\mathit{e}^{-bx}+c$, with $a$, $b$ and $c$ being arbitrary.
 
 \subsection{Smart Grid Shuffle}
 
@@ -1286,17 +1286,17 @@ Without the application of \ac{SAHI}, a slight uplift in scores is visible throu
   \label{fig:zero_sgs_plot}
 \end{figure}
 
-With \ac{SAHI} all scores increase, as seen in \figureref{fig:zero_sgs_sahi_plot}. Furthermore, improvements flatten out earlier and stagnate after 10\% of usage chance.
+With \ac{SAHI} all scores increase, as seen in \figureref{fig:zero_sgs_sahi_plot}. Furthermore, improvements flatten out earlier and stagnate after 10\% of usage rate.
 
 \begin{figure}
-  \caption{Results of Smart Grid Shuffle ensemble run with \ac{SAHI}.}
+  \caption{Results of smart grid shuffle ensemble run with \ac{SAHI}.}
   \includegraphics[width=0.95\textwidth]{image/zero-based-sgs-sahi-ensemble-2-thesis-2}
   \label{fig:zero_sgs_sahi_plot}
 \end{figure}
 
 \subsection{Rotation}
 
-The rotation augmentation is the one which improved the scores the most, as seen in \figureref{fig:zero_rot_plot}. The correlation for the VOC 2010 score is 54\% and for the \ac{COCO} score is 21\% here, indicating that rotation may improve the general marker detection more than the tightness of the predictions. %This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However, at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
+The rotation augmentation is the one that improved the scores the most, as seen in \figureref{fig:zero_rot_plot}. The correlation for the VOC 2010 score is 54\% and for the \ac{COCO} score is 21\% here, indicating that rotation may improve the general marker detection more than the tightness of the predictions. %This may indicate that the precise placement of the bounding boxes suffers in the cases, where the marker could be easily detected before when using more rotation augmentation. However, at this stage in development my biggest focus is to detect more markers, so the VOC 2010 score has more weight.
 
 \begin{figure}
   \caption{Results of Rotation ensemble run without \ac{SAHI}.}
@@ -1308,17 +1308,17 @@ The rotation augmentation is the one which improved the scores the most, as seen
 
 \subsection{Random Crop v2}
 
-Random Crop v2 had the worst impact on scores, as seen in \figureref{fig:zero_rc2_plot}. The correlation for the VOC 2010 score here is -43\% and for \ac{COCO} is -30\%. This may occur since the second version zooms too far into the image and since such large markers do not appear in the test set. The first version of Random Crop did not show a similar impact on the scores.
+Random crop v2 had the worst impact on scores, as seen in \figureref{fig:zero_rc2_plot}. The correlation for the VOC 2010 score here is -43\% and for \ac{COCO} is -30\%. This may occur since the second version zooms too far into the image and since such large markers do not appear in the test set. The first version of random crop did not show a similar impact on the scores.
 
 \begin{figure}
-  \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}.}
+  \caption{Results of random crop v2 ensemble run without \ac{SAHI}.}
   \includegraphics[width=0.95\textwidth]{image/zero-based-rc2-ensemble-2-thesis-2}
   \label{fig:zero_rc2_plot}
 \end{figure}
 
 \subsection{Other} % TODO: Plot all augments by their correlation with mAP?
 
-Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase at low usage rates and leveled out quickly, while having a similar but smaller impact when using in conjunction with \ac{SAHI} like Smart Grid Shuffle. Other augmentations showed little impact on the \ac{mAP} score.
+Label move, label move v2 and 90 degree rotation showed a slight score increase at low usage rates and leveled out quickly, while having a similar but smaller impact when using in conjunction with \ac{SAHI} like smart grid shuffle. Other augmentations showed little impact on the \ac{mAP} score.
 
 \section{Hyperparameter Optimization}
 
@@ -1329,7 +1329,7 @@ Label Move, Label Move v2 and 90 Degree Rotation showed a slight score increase 
 \end{figure} % TODO: Sneakily add shorthands for the augmentations in the plot x labels here for later plots
 
 \begin{figure}
-  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5s and \texttt{gpv2}. Here after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
+  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5s and \texttt{gpv2}. Here, after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
   \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5s-sahi-rc-fix-history}
   \label{fig:hyp_hist}
 \end{figure}
@@ -1346,9 +1346,9 @@ The run achieved a Pascal VOC 2010 \ac{mAP} score of 70.78\% on the ensemble tes
 
 \section{Augmenting from Optimum}
 
-While the results of the hyperparameter optimization run show what works, they do not necessarily indicate which augmentations have the biggest impact on the score. For this purpose, I chose to do follow up ensemble runs, in which one parameter also changes from 0 to its maximum value and all other parameters are fixed at their optimal value.
+While the results of the hyperparameter optimization run show what works, they do not necessarily indicate which augmentations have the biggest impact on the score. For this purpose, I chose to do follow up ensemble runs in which one parameter also changes from 0 to its maximum value and all other parameters are fixed at their optimal value.
 
-The results here generally do not show differences that are as large as in the earlier ensemble runs. As multiple techniques which increase the score build up, the influence of a single technique can become overshadowed.
+The results here generally do not show differences that are as large as in the earlier ensemble runs. As multiple techniques that increase the score build up, the influence of a single technique can become overshadowed.
 
 \begin{figure}
   \caption{Results of a Rotation ensemble run based on optimal hyperparameters with \ac{SAHI}.}
@@ -1357,23 +1357,23 @@ The results here generally do not show differences that are as large as in the e
 \end{figure}
 
 \begin{figure}
-  \caption{Results of a Random Crop v2 ensemble run based on optimal hyperparameters with \ac{SAHI}.}
+  \caption{Results of a random crop v2 ensemble run based on optimal hyperparameters with \ac{SAHI}.}
   \includegraphics[width=0.95\textwidth]{image/hyp-based-rc2-sahi-ensemble-2-thesis-2}
   \label{fig:hyp_based_rc2_plot}
 \end{figure}
 
 \begin{figure}
-  \caption{Results of a Smart Grid Shuffle ensemble run based on optimal hyperparameters with \ac{SAHI}.}
+  \caption{Results of a smart grid shuffle ensemble run based on optimal hyperparameters with \ac{SAHI}.}
   \includegraphics[width=0.95\textwidth]{image/hyp-based-sgs-sahi-ensemble-2-thesis-2}
   \label{fig:hyp_based_sgs_plot}
 \end{figure}
 
-However, the rotation augmentation still has an impact on the score as seen in \figureref{fig:hyp_based_rot_plot} and still has a VOC 2010 score correlation of 50\% and a \ac{COCO} correlation of 11\%. The negative impact of the Random Crop v2 augmentation is less pronounced here than in \autoref{sec:aug_ens_zero}, as seen in \figureref{fig:hyp_based_rc2_plot}. The impact of Smart Grid Shuffle has flattened out more given the optimal other parameters, as seen in \figureref{fig:hyp_based_sgs_plot}.
+However, the rotation augmentation still has an impact on the score, as seen in \figureref{fig:hyp_based_rot_plot} and still has a VOC 2010 score correlation of 50\% and a \ac{COCO} correlation of 11\%. The negative impact of the random crop v2 augmentation is less pronounced here than in \autoref{sec:aug_ens_zero}, as seen in \figureref{fig:hyp_based_rc2_plot}. The impact of smart grid shuffle has flattened out more given the optimal other parameters, as seen in \figureref{fig:hyp_based_sgs_plot}.
 
 \section{Inference Parameters}
 \label{sec:inference_params}
 
-Based on the training run from the hyperparameter optimization, I tested different combinations of the inference parameters \ac{MC}, \ac{SAHI}, \ac{BIS} and \ac{SQT}, as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However here, this effect is especially pronounced since the augmentations the model was build with were optimized for \ac{SAHI}. Otherwise, using a \ac{BIS} improves the score further. However, this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage this may not always be the case. The squareness threshold improves the score, but not if it is used in conjunction with the \ac{BIS}. 
+Based on the training run from the hyperparameter optimization, I tested different combinations of the inference parameters \ac{MC}, \ac{SAHI}, \ac{BIS} and \ac{SQT}, as seen in \autoref{tab:inference_parameters}. \ac{SAHI} tends to generally improve the scores. However here, this effect is especially pronounced since the augmentations the model was built with were optimized for \ac{SAHI}. Otherwise, using a \ac{BIS} improves the score further. However, this improvement in score mostly stems from the fact that the testing data almost exclusively contains the marker in the middle of the image. Depending on real world usage, this may not always be the case. The squareness threshold improves the score, but not if it is used in conjunction with the \ac{BIS}. 
 
 \begin{figure}
   \centering
@@ -1389,7 +1389,7 @@ Based on the training run from the hyperparameter optimization, I tested differe
   \label{fig:foreground_mask_examples}
 \end{figure}
 
-The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the test set images, as seen in \figureref{fig:foreground_mask_examples}. The usage of these masks lead to the highest score on the ensemble test set. However, the implementation of an extra segmentation model into the inference is still debatable, because the uplift in score may not be worth it for the likely increased memory usage and inference time.
+The foreground mask for these tests was obtained by manually applying the IS-Net from Qin et al. \cite{qin2022} on the test set images, as seen in \figureref{fig:foreground_mask_examples}. The usage of these masks led to the highest score on the ensemble test set. However, the implementation of an extra segmentation model into the inference is still debatable, because the uplift in score may not be worth it for the likely increased memory usage and inference time.
 
 \begin{table}
   \begin{tabular}{ c c }
@@ -1410,10 +1410,10 @@ The foreground mask for these tests was obtained by manually applying the IS-Net
 
 \section{Server based Approach}
 
-In the best case, I want to create a detection system which runs completely on the patients smartphone itself. However despite higher complexity in the implementation, the detection could also work as a cloud based service. In this case, the constraint of a small network size is removed. Due to this and because I wanted to validate my testing scope, I did another hyperparameter search using \ac{YOLO}v5x and \texttt{gpv3} which also uses \ac{SAHI} as an extra inference option.
+In the best case, I want to create a detection system that runs completely on the patient's smartphone itself. However despite higher complexity in the implementation, the detection could also work as a cloud-based service. In this case, the constraint of a small network size is removed. Due to this and because I wanted to validate my testing scope, I did another hyperparameter search using \ac{YOLO}v5x and \texttt{gpv3} which also uses \ac{SAHI} as an extra inference option.
 
 \begin{figure}
-  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}. Here after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
+  \caption{Hyper Parameter Optimization History for \ac{YOLO}v5x and \texttt{gpv3}. Here, after each improvement to the highest score, the largest change to a parameter in percent of its defined value range is visualized as annotations.}
   \includegraphics[width=0.9\textwidth]{image/hyp-param-search-yolov5x_gpv3_hyp_test-history}
   \label{fig:yolov5x_hyp_hist}
 \end{figure}
@@ -1427,13 +1427,13 @@ In the best case, I want to create a detection system which runs completely on t
   \label{fig:optimal_yolov5x_augment_params} 
 \end{figure}
 
-Since training with a larger model and a larger dataset takes more than four times longer than a smaller training run, this hyperparameter search ran for 132 runs instead of the 300 runs from before, as seen in \figureref{fig:yolov5x_hyp_hist}. However, the scores on the ensemble test set did improve moderately with a Pascal VOC 2010 \ac{mAP} score of 78,74\% in the best run. The new best composition for the augmentation usage rates and maximum strengths can be seen in \figureref{fig:optimal_yolov5x_augment_params}.
+Since training with a larger model and a larger dataset takes more than four times longer than a smaller training run, this hyperparameter search ran for 132 runs instead of the 300 runs from before, as seen in \figureref{fig:yolov5x_hyp_hist}. However, the scores on the ensemble test set did improve moderately, with a Pascal VOC 2010 \ac{mAP} score of 78,74\% in the best run. The new best composition for the augmentation usage rates and maximum strengths can be seen in \figureref{fig:optimal_yolov5x_augment_params}.
 
 \section{Evaluation on Final Testset}
 \label{sec:final_eval}
 
 For the final evaluation, I tested the best models created during the hyperparameter optimization on the final test set. For the inference options, I used \ac{SAHI} and a \ac{BIS} of 20\% since those resulted in the best scores during inference for all fully implemented options, as discussed in \autoref{sec:inference_params}.
-The best fitted \ac{YOLO}v5s model created during the hyperparameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} score and 26.4\% on the \ac{COCO} \ac{mAP} score. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} score and 33.4\% on the \ac{COCO} \ac{mAP} score. The score difference of the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data. Examples for the detection of markers on the final test set of the \ac{YOLO}v5s model can be seen in \figureref{fig:final_testset_detections}.
+The best fitted \ac{YOLO}v5s model created during the hyperparameter optimization on \texttt{gpv2} scores 49.13\% on the VOC 2010 \ac{mAP} score and 26.4\% on the \ac{COCO} \ac{mAP} score. The best fitted \ac{YOLO}v5x model from the hyperparameter optimization on \texttt{gpv3} scores 53.04\% on the VOC 2010 \ac{mAP} score and 33.4\% on the \ac{COCO} \ac{mAP} score. The score difference between the two models can be mainly explained by fewer wrong detections, as seen in \figureref{fig:confusion_matrix_compare}. This may indicate that certain markers in the final test data do not appear in the training data and therefore will not be detected with any model fitted on that training data. Examples for the detection of markers on the final test set of the \ac{YOLO}v5s model can be seen in \figureref{fig:final_testset_detections}.
 
 \begin{figure} % TODO: Make theses better displayable in small
   \centering
@@ -1461,7 +1461,7 @@ This section describes the data used and the results of the evaluation of the ap
 
 \subsection{Data}
 
-For the training of models of this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
+For the training of models for this part, I took new photos of the \ac{ArUco} marker tapes and manually annotated them on makesense.ai\footnote{\url{https://www.makesense.ai}, accessed on 11.11.2023} for better label accuracy before inserting them into the data pipeline using exported \ac{COCO} \ac{JSON} annotations from the makesense.ai website.
 
 \begin{figure}
   \caption{Addition of new dataset types for marker corner detection training.}
@@ -1489,14 +1489,14 @@ A Pet dataset does not use the full photo for a data instance. Instead, the imag
   \label{fig:segpet_example}
 \end{figure}
 
-A SegPet dataset is similar but instead of having the vertex coordinates in a label file, here a mask is build by rasterizing a filled version of the polygon label, as seen in \figureref{fig:segpet_example}.
+A SegPet dataset is similar, but instead of having the vertex coordinates in a label file, here a mask is built by rasterizing a filled version of the polygon label, as seen in \figureref{fig:segpet_example}.
 
 \subsection{Results}
 
 As seen in \autoref{tab:pet_valdata_results}, the u-net based approaches tend to achieve better scores. While this table shows only the best training runs, the MobileNetV2 with a two linear layer head also got a sinkhorn loss of up to around 500 in most training runs. %This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. 
-The linear layer head models tend to fit to a specific subset of all marker rotations and chose the closest rotation to the marker rotation in the image instead of learning all possible rotations. This occurs even if all marker rotations have the same chance of appearing in the training data through augmentations. Using a fully convolutional head alleviated this problem in some cases and increased the score further.
+The linear layer head models tend to fit to a specific subset of all marker rotations and choose the closest rotation to the marker rotation in the image instead of learning all possible rotations. This occurs even if all marker rotations have the same chance of appearing in the training data through augmentations. Using a fully convolutional head alleviated this problem in some cases and increased the score further.
 
-For the u-net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions compared to the harris corner approach. However, for the usecase of accurate camera pose prediction even more precision may be needed.
+For the u-net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions compared to the harris corner approach. However, for the usecase of accurate camera pose prediction, even more precision may be needed.
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -1522,14 +1522,14 @@ For the u-net mask interpretations, the Hough transform based interpretation alm
 
 \section{Discussion}
 
-While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble test set, using the same fitted model with \ac{SAHI} and a 20\% \ac{BIS} on the final test set still results in a Pascal VOC 2010 \ac{mAP} score of around 50\% and therefore does not reach the target score from the human detection tests. Using the larger model \ac{YOLO}v5x and the larger dataset which resulted in similar scores during initial tests with \ac{YOLO}v5s only results in a moderate \ac{mAP} improvement of about 4\%.
+While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble test set, using the same fitted model with \ac{SAHI} and a 20\% \ac{BIS} on the final test set still results in a Pascal VOC 2010 \ac{mAP} score of around 50\% and therefore does not reach the target score from the human detection tests. Using the larger model \ac{YOLO}v5x and the larger dataset, which resulted in similar scores during initial tests with \ac{YOLO}v5s only results in a moderate \ac{mAP} improvement of about 4\%.
 
-This may indicate that the hyperparameter search already over fitted the chosen augmentations in the dataset to the ensemble test set. For example, datasets with markers that are often in a similar rotation as markers in the ensemble test set may automatically attain higher scores since the pixel structures in the bounding box areas are more similar. However, I could not manually verify this since the datasets contain many marker rotations. Another explanation for the score discrepancy may be that more images of fingers appear in the final test set which are the most dissimilar cases to the flat tapes of the training data. % TODO: Add detection example images here
-Nonetheless given that the test sets consist of images with tapes on skin and that the training sets consist of images with markers on glass plates with mostly skinless backgrounds, indicates that the fitted model has attained some amount of generalization over the two image domains.
+This may indicate that the hyperparameter search already overfitted the chosen augmentations in the dataset to the ensemble test set. For example, datasets with markers that are often in a similar rotation as markers in the ensemble test set may automatically attain higher scores since the pixel structures in the bounding box areas are more similar. However, I could not manually verify this since the datasets contain many marker rotations. Another explanation for the score discrepancy may be that more images of fingers appear in the final test set, which are the most dissimilar cases to the flat tapes of the training data. % TODO: Add detection example images here
+Nonetheless, given that the test sets consist of images with tapes on skin and that the training sets consist of images with markers on glass plates with mostly skinless backgrounds, indicates that the fitted model has attained some amount of generalization over the two image domains.
 
-During most of the implementation and writing work of this thesis, the machine which creates the tapes with \ac{ArUco} markers in photonic crystals was broken. Furthermore, the available tapes can loose some of the substance which contains the \ac{ArUco} marker structures each time they are sticked on a surface and removed. The scarcity and fragility of the available tapes therefore limited the creation of new training and test data. 
+During most of the implementation and writing work of this thesis, the machine that creates the tapes with \ac{ArUco} markers in photonic crystals was broken. Furthermore, the available tapes can lose some of the substance that contains the \ac{ArUco} marker structures each time they are stuck on a surface and removed. The scarcity and fragility of the available tapes therefore limited the creation of new training and test data. 
 
-More training and test data could introduce new variation in the form of more skin tones and types since the current test data only contains images from two people, more backgrounds and more lighting conditions since the current training and test data was created in 3 different rooms as well as outside at one time. More test data could also improve the generalizability of the hyperparameter optimizations since the composition of the augmented training dataset would then be optimized for more cases.
+More training and test data could introduce new variation in the form of more skin tones and types since the current test data only contains images from two people, more backgrounds and more lighting conditions since the current training and test data were created in 3 different rooms as well as outside at one time. More test data could also improve the generalizability of the hyperparameter optimizations since the composition of the augmented training dataset would then be optimized for more cases.
 % TOxDO more test data = better hyp searches, needs more skin color, more lights, more skin types, more backgrounds
 
 %\subsection{Confusion Matrix in Object Detection}
@@ -1537,23 +1537,23 @@ More training and test data could introduce new variation in the form of more sk
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-This work introduces a new data preparation and model training pipeline, as well as new augmentations and implements techniques, to find an optimal combinations of augmentations. This system is then used to train object detection models for the detection of \ac{ArUco} markers as part of the development of a wound healing tracking technique. Furthermore, techniques are developed and compared for locating the corners of the \ac{ArUco} markers in the image.
+This work introduces a new data preparation and model training pipeline, as well as new augmentations, and implements techniques to find optimal combinations of image augmentations. This system is then used to train object detection models for the detection of \ac{ArUco} markers as part of the development of a wound healing tracking technique. Furthermore, techniques are developed and compared for locating the corners of the \ac{ArUco} markers in the image.
 
 \section{Summary}
 
-For the development of a wound healing tracking technique, I worked on a robust \ac{ArUco} marker detector for markers on photonic crystals within tape that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model for this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the base data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from \ac{COCO} and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimizations to find close to optimal compositions for the augmentations. 
+For the development of a wound healing tracking technique, I worked on a robust \ac{ArUco} marker detector for markers on photonic crystals within tape that is supposed to be used for camera pose estimation. For the intermediate goal of creating an object detection model for this task, I decided on a common label format standard and developed scripts that transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the base data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from \ac{COCO} and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting from training, I used ensemble runs and hyperparameter optimizations to find close to optimal compositions for the augmentations. 
 
-Furthermore, I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this, I tested multiple approaches and concluded on an u-net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
+Furthermore, I worked on a technique that works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this, I tested multiple approaches and concluded on an u-net based approach, which uses the Hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
 
-Due to the scarcity and fragility of the available tapes, limited training and test data was available. However, once more tapes with \ac{ArUco} markers in photonic crystals become available or the tapes become more stable, more training data which is closer to the real world usecase could be created. Since the data transformations, the training and evaluation are automated in the scripts developed during this work, new models could quickly be developed once new data becomes available.
+Due to the scarcity and fragility of the available tapes, limited training and test data were available. However, once more tapes with \ac{ArUco} markers in photonic crystals become available or the tapes become more stable, more training data that is closer to the real world usecase could be created. Since the data transformations, the training and evaluation are automated in the scripts developed during this work, new models could be quickly developed once new data becomes available.
 
 \section{Future Work}
 
-Due to the scale of this project and the limited training data, I could not test every possible approach or develop the software to production readiness on smartphones. However, promising ideas and unfinished development work for real world usage is summarized here.
+Due to the scale of this project and the limited training data, I could not test every possible approach or develop the software to production readiness on smartphones. However, promising ideas and unfinished development work for real world usage are summarized here.
 
 %\subsection{More Training Data}
 
-Once more stable and more tapes with \ac{ArUco} markers could become available, the acquisition and manual labeling of more training data which is closer to the final usecase could be beneficial for the performance of the models of both parts of the detection pipeline. %\subsection{3D Synthetic Data}
+Once more stable and more tapes with \ac{ArUco} markers become available, the acquisition and manual labeling of more training data that is closer to the final usecase could be beneficial for the performance of the models in both parts of the detection pipeline. %\subsection{3D Synthetic Data}
 However, should the training data continue to be hard to obtain, good synthetic data could be created using 3D models of hands and a 3D engine such as Blender.
 
 %\subsection{Other Models}
@@ -1563,7 +1563,7 @@ Once more training data is available, a different model could improve the score 
 
 %\subsection{Deploying on Mobile}
 
-Since this project is supposed to be used on mobile devices, the next step which has currently not been completed is the deployment on smartphones. In theory, this should work without further problems for \ac{YOLO}v5s since it was build for mobile deployment. Furthermore, its relatively low parameter count of 7.2 million may indicate a small size in memory and faster inference time \cite{wang2023yolov7}. This could indicate better mobile usability because of shared and usually slower memory on smartphones as well as slower processors compared to stationary computers. For the u-net used in marker corner detection, the mobile deployment could be more difficult as it has a parameter count of around 44 million. Depending on the phone model, the u-net may still work but likely with increased battery usage. It may therefore be necessary to find a smaller segmentation network for this task or improve the accuracy of the MobileNetV2 approach further. The implementation on phones itself should work well since the models are both implemented in PyTorch and PyTorch has Android support\footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
+Since this project is supposed to be used on mobile devices, the next step that has currently not been completed is the deployment on smartphones. In theory, this should work without further problems for \ac{YOLO}v5s since it was built for mobile deployment. Furthermore, its relatively low parameter count of 7.2 million may indicate a small size in memory and a faster inference time \cite{wang2023yolov7}. This could indicate better mobile usability because of shared and usually slower memory on smartphones as well as slower processors compared to stationary computers. For the u-net used in marker corner detection, the mobile deployment could be more difficult as it has a parameter count of around 44 million. Depending on the phone model, the u-net may still work, but likely with increased battery usage. It may therefore be necessary to find a smaller segmentation network for this task or improve the accuracy of the MobileNetV2 approach further. The implementation on phones itself should work well since the models are both implemented in PyTorch and PyTorch has Android support\footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
 
 %\subsection{Tracking}
 
