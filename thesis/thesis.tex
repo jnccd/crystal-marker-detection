@@ -747,7 +747,7 @@ This section describes the augmentations that were implemented into the \texttt{
   \label{fig:arch_data_aug_focus}
 \end{figure}
 
-\subsection{Smart Grid Shuffling}
+\subsection{Smart Grid Shuffle}
 
 The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However, these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
 
@@ -755,7 +755,7 @@ One image augmentation that breaks up the overall image structure is grid shuffl
 
 \subsubsection{Implementation}
 
-The first part of smart grid shuffling traverses the polygon labels in order of their centroid position on a given axis. Should the distance between the bounding boxes of two polygons on the given axis be larger than a threshold, the image is cut along the other axis and a segment is created, as seen in \autoref{lst:sgs_cut}.
+The first part of smart grid shuffle traverses the polygon labels in order of their centroid position on a given axis. Should the distance between the bounding boxes of two polygons on the given axis be larger than a threshold, the image is cut along the other axis and a segment is created, as seen in \autoref{lst:sgs_cut}.
 
 % \begin{algorithm}
 %   \SetAlgoLined
@@ -781,7 +781,7 @@ The first part of smart grid shuffling traverses the polygon labels in order of 
 % [caption={Smart Grid Shuffling Algorithm in Pseudocode},captionpos=b,label=lst:sgs_cut]
 
 \begin{code}
-\captionof{listing}{Cutting Part of Smart Grid Shuffling}
+\captionof{listing}{Cutting part of smart grid shuffle.}
 \label{lst:sgs_cut}
 \begin{minted}{python}
 # Generate image segments by cutting the image on axis aligned lines between polygon labels
@@ -813,10 +813,10 @@ def segment_img(img: Mat, polys: List[Polygon], axis: Literal[0,1], min_cut_dist
 \end{minted}
 \end{code}
 
-The second part of smart grid shuffling defines the recombination of the image segments along an axis into a combined image and a combined label list as seen in \autoref{lst:sgs_comb}.
+The second part of smart grid shuffle defines the recombination of the image segments along an axis into a combined image and a combined label list as seen in \autoref{lst:sgs_comb}.
 
 \begin{code}
-\captionof{listing}{Segment Combination Part of Smart Grid Shuffling}
+\captionof{listing}{Segment combination part of smart grid shuffle.}
 \label{lst:sgs_comb}
 \begin{minted}{python}
 def recombine_segments(segments, target_img_size, axis: Literal[0,1]):
@@ -841,7 +841,7 @@ def recombine_segments(segments, target_img_size, axis: Literal[0,1]):
 The last part uses the defined segment cutting and recombination operations to first segment the image along the y-axis and shuffle the resulting segments. Each segment is then further segmented on the x-axis, shuffled and recombined. Finally all y-axis segments are recombined and returned.
 
 \begin{code}
-\captionof{listing}{Segment Combination Part of Smart Grid Shuffling}
+\captionof{listing}{Segment combination Part of smart grid shuffle.}
 \label{lst:sgs_main}
 \begin{minted}{python}
 # Main method
@@ -881,11 +881,11 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
   %    {\includegraphics[width=0.45\textwidth]{image/aug_sgs_before2}}
   % \subcaptionbox{after augmentation}
   %    {\includegraphics[width=0.45\textwidth]{image/aug_sgs_after2}}
-  \caption{An example for smart grid shuffling on a training image.}
+  \caption{An example for smart grid shuffle on a training image.}
   \label{fig:aug_sgs_example}
 \end{figure}
 
-The smart grid shuffling augmentation cuts and reassembles the image such that as much of the possibly important surrounding pixels of the polygon labels are preserved, but that still removes any reoccurring patterns in the image, in which the labels may be arranged by, as seen in \figureref{fig:aug_sgs_example}.
+The smart grid shuffle augmentation cuts and reassembles the image such that as much of the possibly important surrounding pixels of the polygon labels are preserved, but that still removes any reoccurring patterns in the image, in which the labels may be arranged by, as seen in \figureref{fig:aug_sgs_example}.
 
 \subsection{Label Dropout}
 \label{sec:aug_ld}
@@ -1280,8 +1280,8 @@ These ensemble runs are visualized as bar charts in this chapter. Furthermore, t
 Without the application of \ac{SAHI}, a slight uplift in scores is visible throughout the plot, as seen in \figureref{fig:zero_sgs_plot}. Furthermore, the correlation between the chance of augmentation usage and the \ac{mAP} score values of the training runs is 43\% for the VOC 2010 \ac{mAP} score and 52\% for \ac{COCO}, showing that there is a moderate positive correlation.
 
 \begin{figure}
-  \caption{Results of Smart Grid Shuffle ensemble run without \ac{SAHI}.}
-  \includegraphics[width=0.95\textwidth]{image/zero-based-sgs-ensemble-2-thesis}
+  \caption{Results of smart grid shuffle ensemble run without \ac{SAHI}.}
+  \includegraphics[width=0.95\textwidth]{image/zero-based-sgs-ensemble-2-thesis-2}
   \label{fig:zero_sgs_plot}
 \end{figure}
 
@@ -1289,7 +1289,7 @@ With \ac{SAHI} all scores increase, as seen in \figureref{fig:zero_sgs_sahi_plot
 
 \begin{figure}
   \caption{Results of Smart Grid Shuffle ensemble run with \ac{SAHI}.}
-  \includegraphics[width=0.95\textwidth]{image/zero-based-sgs-sahi-ensemble-2-thesis}
+  \includegraphics[width=0.95\textwidth]{image/zero-based-sgs-sahi-ensemble-2-thesis-2}
   \label{fig:zero_sgs_sahi_plot}
 \end{figure}
 
@@ -1299,7 +1299,7 @@ The rotation augmentation is the one which improved the scores the most, as seen
 
 \begin{figure}
   \caption{Results of Rotation ensemble run without \ac{SAHI}.}
-  \includegraphics[width=0.95\textwidth]{image/zero-based-rot-ensemble-2-thesis}
+  \includegraphics[width=0.95\textwidth]{image/zero-based-rot-ensemble-2-thesis-2}
   \label{fig:zero_rot_plot}
 \end{figure}
 
@@ -1311,7 +1311,7 @@ Random Crop v2 had the worst impact on scores, as seen in \figureref{fig:zero_rc
 
 \begin{figure}
   \caption{Results of Random Crop v2 ensemble run without \ac{SAHI}.}
-  \includegraphics[width=0.95\textwidth]{image/zero-based-rc2-ensemble-2-thesis}
+  \includegraphics[width=0.95\textwidth]{image/zero-based-rc2-ensemble-2-thesis-2}
   \label{fig:zero_rc2_plot}
 \end{figure}
 
@@ -1351,19 +1351,19 @@ The results here generally do not show differences that are as large as in the e
 
 \begin{figure}
   \caption{Results of a Rotation ensemble run based on optimal hyperparameters with \ac{SAHI}.}
-  \includegraphics[width=0.95\textwidth]{image/hyp-based-rot-sahi-ensemble-2-thesis}
+  \includegraphics[width=0.95\textwidth]{image/hyp-based-rot-sahi-ensemble-2-thesis-2}
   \label{fig:hyp_based_rot_plot}
 \end{figure}
 
 \begin{figure}
   \caption{Results of a Random Crop v2 ensemble run based on optimal hyperparameters with \ac{SAHI}.}
-  \includegraphics[width=0.95\textwidth]{image/hyp-based-rc2-sahi-ensemble-2-thesis}
+  \includegraphics[width=0.95\textwidth]{image/hyp-based-rc2-sahi-ensemble-2-thesis-2}
   \label{fig:hyp_based_rc2_plot}
 \end{figure}
 
 \begin{figure}
   \caption{Results of a Smart Grid Shuffle ensemble run based on optimal hyperparameters with \ac{SAHI}.}
-  \includegraphics[width=0.95\textwidth]{image/hyp-based-sgs-sahi-ensemble-2-thesis}
+  \includegraphics[width=0.95\textwidth]{image/hyp-based-sgs-sahi-ensemble-2-thesis-2}
   \label{fig:hyp_based_sgs_plot}
 \end{figure}
 
