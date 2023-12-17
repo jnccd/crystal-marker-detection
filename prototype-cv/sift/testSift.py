@@ -1,3 +1,4 @@
+import random
 import cv2
 import numpy as np
 from pathlib import Path
@@ -28,7 +29,7 @@ imgg = 255-imgg
 final_img = imgg
 
 cv2.imshow('Thresholded img',final_img)
-cv2.waitKey(0)
+#cv2.waitKey(0)
 
 orb = cv2.ORB_create()
 sift = cv2.SIFT_create()
@@ -44,8 +45,31 @@ matches = sorted(matches, key = lambda x:x.distance)
 n = len(matches)
 print(n)
 
-img3 = cv2.drawMatches(img1, kpl, final_img, kp2, matches[:int(n/2)], final_img, flags=2)
+good_matches = matches[:int(n/2)]
+readable_good_matches = [(kpl[dmatch.queryIdx].pt, kp2[dmatch.trainIdx].pt) for dmatch in good_matches]
 
-cv2.imwrite('full_sift_matches.png',img3)
-cv2.imshow('SIFT',img3)
+print(readable_good_matches)
+long_img1 = cv2.copyMakeBorder(
+        img1,
+        top=0,
+        bottom=final_img.shape[0] - img1.shape[0],
+        left=0,
+        right=0,
+        borderType=cv2.BORDER_CONSTANT,
+        value=[0, 0, 0]
+    )
+final_img = cv2.cvtColor(final_img, cv2.COLOR_GRAY2BGR)
+print(long_img1.shape, final_img.shape)
+img3 = cv2.hconcat([long_img1, final_img])
+for readable_good_match in readable_good_matches:
+    cv2.line(img3, 
+             (int(readable_good_match[0][0]), int(readable_good_match[0][1])), 
+             (int(readable_good_match[1][0] + img1.shape[1]), int(readable_good_match[1][1])), 
+             (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), 
+             4)
+# img3 = cv2.drawMatches(img1, kpl, final_img, kp2, matches[:int(n/2)], final_img, flags=2)
+
+print_img = img3
+cv2.imwrite(str(root_dir / 'full_sift_matches.png'),print_img)
+cv2.imshow('SIFT',print_img)
 cv2.waitKey(0)
