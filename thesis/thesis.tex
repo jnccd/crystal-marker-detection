@@ -199,7 +199,7 @@ This algorithm is, however, based on the assumption that the marker contours are
 
 Albumentations is a Python library for image augmentation\footnote{\url{https://albumentations.ai}, accessed on 16.12.2023} \cite{info11020125}. Image augmentation is a technique used to artificially expand a dataset by applying various transformations to the existing images. This helps improve the performance and generalization of machine learning models, especially in scenarios where the training data is limited. 
 
-Albumentations was primarily built for high performance, such that its usage in dataloaders does not slow down the training process \cite{info11020125}. It transforms the image, as well as the keypoint, bounding box and mask labels of the training sample, if the selected augmentation transformations support the label format. 
+Albumentations was primarily built for high performance, such that its usage in dataloaders does not slow down the training process \cite{info11020125}. It transforms the image, as well as the keypoint, bounding box and mask labels of the training data, if the selected augmentation transformations support the label format. 
 
 \section{Pytorch}
 
@@ -1241,7 +1241,7 @@ In this section, I describe some of the fixed parameters during later testing. S
 
 \subsection{Dataset}
 
-During initial testing of the datasets using \ac{YOLO}v5s, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset in which more samples where sorted out based on image quality, as seen in \figureref{fig:initial_dataset_compare}. However for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3} or a model that is too small, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. 
+During initial testing of the datasets using \ac{YOLO}v5s, there was an increase in \ac{mAP} score from the bigger \texttt{gpv1} dataset to the smaller \texttt{gpv2} dataset in which more data instances where sorted out based on image quality, as seen in \figureref{fig:initial_dataset_compare}. However for \texttt{gpv3}, the maximum scores did not increase and stayed within the standard deviation range. While the stagnation of scores can also stem from a combination of augmentations that were not suitable for \texttt{gpv3} or a model that is too small, I mainly kept testing with \texttt{gpv2} instead, such that newer tests would be better comparable with older tests. 
 
 % TODO?: Show strong / weak aug compositions
 
@@ -1470,7 +1470,9 @@ For the training of models of this part, I took new photos of the \ac{ArUco} mar
 
 Furthermore, since I annotated multiple markers in each image and I only need one image per label, I added new dataset types to the data pipeline, as seen in \figureref{fig:arch_data_pet_focus}. 
 
-A Pet dataset contains an image and point label pair for each label that was in the source images. During export to a Pet dataset, the area around the labels polygon is cut out of the image and resized to a set size for each label. Afterwards, the polygons vertices are also transformed onto the new images coordinate system and written into a file. 
+A Pet dataset does not use the full photo for a data instance. Instead, the image area around each polygon label of the source image is cut out and resized to a common image size. The vertices of the polygon label are then used as the marker corner points label for the image cutout. Each of these image cutouts are now individual data instances.
+
+%the area around the source labels polygon is cut out of the image and resized. Afterwards, the polygons vertices are transformed onto the new images coordinate system and represent the . 
 
 \begin{figure}
   \centering
@@ -1490,8 +1492,8 @@ A SegPet dataset is similar but instead of having the vertex coordinates in a la
 
 \subsection{Results}
 
-As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches tend to achieve better scores. While this table shows only the best training runs, the MobileNetV2 with the two linear layer head also ended up at a sinkhorn loss of about 500 in most training runs. %This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. 
-The linear layer head models fit to a specific subset of all marker rotations and chose the closest rotation to the marker rotation in the image instead of learning all possible rotations. This occurs even if all marker rotations have the same chance of appearing in the training data through augmentations. Using a fully convolutional head alleviated this problem in some cases and increased the score further.
+As seen in \autoref{tab:pet_valdata_results}, the U-Net based approaches tend to achieve better scores. While this table shows only the best training runs, the MobileNetV2 with a two linear layer head also got a sinkhorn loss of up to around 500 in most training runs. %This specific task may need another training technique for keypoint detection, which I did not find yet, to achieve better scores consistently. 
+The linear layer head models tend to fit to a specific subset of all marker rotations and chose the closest rotation to the marker rotation in the image instead of learning all possible rotations. This occurs even if all marker rotations have the same chance of appearing in the training data through augmentations. Using a fully convolutional head alleviated this problem in some cases and increased the score further.
 
 For the U-Net mask interpretations, the Hough transform based interpretation almost halves the mean point distance for the predictions compared to the harris corner approach. However, for the usecase of accurate camera pose prediction even more precision may be needed.
 
@@ -1521,7 +1523,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
 
 While the fitted \ac{YOLO}v5 model obtained from the hyperparameter optimization previously reached \ac{mAP} scores above 70\% on the ensemble test set, using the same fitted model with \ac{SAHI} and a 20\% \ac{BIS} on the final test set still results in a Pascal VOC 2010 \ac{mAP} score of around 50\% and therefore does not reach the target score from the human detection tests. Using the larger model \ac{YOLO}v5x and the larger dataset which resulted in similar scores during initial tests with \ac{YOLO}v5s only results in a moderate \ac{mAP} improvement of about 4\%.
 
-This may indicate that the hyperparameter search already over fitted the chosen augmentations in the dataset to the ensemble test set. For example, datasets with markers that are often in a similar rotation as markers in the ensemble testset may automatically attain higher scores since the pixel structures in the bounding box area are more similar. However, I could not manually verify this since the datasets contain many marker rotations. Another explanation for the score discrepancy may be that more images of fingers appear which are the most dissimilar cases to the flat tapes of the training data. % TODO: Add detection example images here
+This may indicate that the hyperparameter search already over fitted the chosen augmentations in the dataset to the ensemble test set. For example, datasets with markers that are often in a similar rotation as markers in the ensemble testset may automatically attain higher scores since the pixel structures in the bounding box areas are more similar. However, I could not manually verify this since the datasets contain many marker rotations. Another explanation for the score discrepancy may be that more images of fingers appear in the final test set which are the most dissimilar cases to the flat tapes of the training data. % TODO: Add detection example images here
 Nonetheless given that the test sets consist of images with tapes on skin and that the training sets consist of images with markers on glass plates with mostly skinless backgrounds, indicates that the fitted model has attained some amount of generalization over the two image domains.
 
 During most of the implementation and writing work of this thesis, the machine which creates the tapes with \ac{ArUco} markers in photonic crystals was broken. Furthermore, the available tapes can loose some of the substance which contains the \ac{ArUco} marker structures each time they are sticked on a surface and removed. The scarcity and fragility of the available tapes therefore limited the creation of new training and test data. 
@@ -1534,15 +1536,13 @@ More training and test data could introduce new variation in the form of more sk
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-This work introduces a new data preparation and model training pipeline, as well as new augmentations and implements techniques to find an optimal combinations of augmentations. This system is then used to train object detection models for the detection of \ac{ArUco} markers as part of the development of a wound healing tracking technique. 
-
-Furthermore, techniques are developed and compared for locating the corners of the \ac{ArUco} markers in the image.
+This work introduces a new data preparation and model training pipeline, as well as new augmentations and implements techniques, to find an optimal combinations of augmentations. This system is then used to train object detection models for the detection of \ac{ArUco} markers as part of the development of a wound healing tracking technique. Furthermore, techniques are developed and compared for locating the corners of the \ac{ArUco} markers in the image.
 
 \section{Summary}
 
-For the development of a wound healing tracking technique, I worked on a robust \ac{ArUco} marker detector for markers on photonic crystals within tape that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model for this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the base data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from \ac{COCO} and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimizations to find close to optimal compositions for datasets. 
+For the development of a wound healing tracking technique, I worked on a robust \ac{ArUco} marker detector for markers on photonic crystals within tape that is supposed to be used for camera pose estimation. For the intermediate goal of creating a object detection model for this task, I decided on a common label format standard and developed scripts which transform other data into a dataseries with annotations that are either created manually or using \ac{ArUco} frame automation. These dataseries are then used to create datasets. Furthermore, the base data is multiplied and augmented in different ways to create datasets with more variation. I implemented known augmentation techniques and defined new ones for the \ac{ArUco} detection task. For the training, I implemented models from three sources into the training pipeline and defined scripts for evaluation on test data. To quantify the results of the fitted models, I implemented the \ac{mAP} scores from \ac{COCO} and Pascal VOC 2007/2010. Given the dataset creation parameters for the augmentations and based on the \ac{mAP} scores resulting form training, I used ensemble runs and hyperparameter optimizations to find close to optimal compositions for the augmentations. 
 
-Furthermore, I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this I tested multiple approaches and concluded on a U-Net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
+Furthermore, I worked on a technique which works on top of the object detection models and detects the corner positions of a \ac{ArUco} marker given an area of interest. For this, I tested multiple approaches and concluded on a U-Net based approach which uses the hough transform algorithm to interpret the resulting masks and transform them into the four corner coordinates.
 
 Due to the scarcity and fragility of the available tapes, limited training and test data was available. However, once more tapes with \ac{ArUco} markers in photonic crystals become available or the tapes become more stable, more training data which is closer to the real world usecase could be created. Since the data transformations, the training and evaluation are automated in the scripts developed during this work, new models could quickly be developed once new data becomes available.
 
@@ -1553,7 +1553,7 @@ Due to the scale of this project and the limited training data, I could not test
 %\subsection{More Training Data}
 
 Once more stable and more tapes with \ac{ArUco} markers could become available, the acquisition and manual labeling of more training data which is closer to the final usecase could be beneficial for the performance of the models of both parts of the detection pipeline. %\subsection{3D Synthetic Data}
-However, should the training data continue to be hard to get, good synthetic data could be created using 3D models of hands and a 3D engine such as Blender.
+However, should the training data continue to be hard to obtain, good synthetic data could be created using 3D models of hands and a 3D engine such as Blender.
 
 %\subsection{Other Models}
 
@@ -1562,7 +1562,7 @@ Once more training data is available, a different model could improve the score 
 
 %\subsection{Deploying on Mobile}
 
-Since this project is supposed to be used on mobile devices, the next step which has currently not been completed is the deployment on smartphones. In theory, this should work without further problems for \ac{YOLO}v5s since it was build for mobile deployment. Furthermore, its relatively low parameter count of 7.2 million may indicate a small size in memory and faster inference time \cite{wang2023yolov7}. This could indicate better mobile usability because of shared and usually slower memory on smartphones as well as slower processors compared to stationary computers. For the U-Net used in marker corner detection, the mobile deployment could be more difficult as it has a parameter count of around 44 million. Depending on the phone model, the U-Net may still work but likely with increased battery usage. The implementation on phones itself should work well since the models are both implemented in PyTorch and PyTorch has Android support\footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
+Since this project is supposed to be used on mobile devices, the next step which has currently not been completed is the deployment on smartphones. In theory, this should work without further problems for \ac{YOLO}v5s since it was build for mobile deployment. Furthermore, its relatively low parameter count of 7.2 million may indicate a small size in memory and faster inference time \cite{wang2023yolov7}. This could indicate better mobile usability because of shared and usually slower memory on smartphones as well as slower processors compared to stationary computers. For the U-Net used in marker corner detection, the mobile deployment could be more difficult as it has a parameter count of around 44 million. Depending on the phone model, the U-Net may still work but likely with increased battery usage. It may therefore be necessary to find a smaller segmentation network for this task or improve the accuracy of the MobileNetV2 approach further. The implementation on phones itself should work well since the models are both implemented in PyTorch and PyTorch has Android support\footnote{\url{https://pytorch.org/mobile/android/}, accessed on 24.11.2023}.
 
 %\subsection{Tracking}
 
