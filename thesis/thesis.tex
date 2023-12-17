@@ -638,13 +638,13 @@ Python has support for the structuring of script files into modules in which dat
   \label{fig:arch_data}
 \end{figure}
 
-The first part of the script pipeline serves four major goals. 
+The first part of the script pipeline is visualized in \figureref{fig:arch_data}. It serves four major goals. 
 
 Firstly, it should define a standardized label data type that all dataset types can be build from. This is addressed by the usage of polygons further described in \autoref{sec:label_data_type}.
 
 Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. This is addressed by the \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in \autoref{sec:auto_annots}.
 
-Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. This is addressed by the \texttt{create\_dataset} script seen in \figureref{fig:arch_data} which builds the data in a variety of dataset structures.
+Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. This is addressed by the \texttt{create\_dataset} script which builds the data in a variety of dataset structures.
 
 Fourth, it should build augmentations into the data, such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data format standards, which makes changes there time consuming. This is also addressed by the \texttt{create\_dataset} script and described in more detail in \autoref{sec:augs}.
 
@@ -675,7 +675,7 @@ Image augmentation libraries have support for many data types to accommodate for
   \label{fig:arch_train}
 \end{figure}
 
-As seen in \figureref{fig:arch_train}, the training pipeline mainly consists of batch train, evaluate and analyze scripts. Batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. Batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. Batch train scripts can take multiple datasets at once for an ensemble training run.
+As seen in \figureref{fig:arch_train}, the training pipeline mainly consists of batch train, evaluate and analyze scripts. The batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. The batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. The batch train scripts can handle multiple datasets at once for an ensemble training run.
 
 A training run folder contains the train artifacts, which refers to all files, including the model weights, which are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and \ac{COCO} \ac{mAP} scores, as well as intermediate results of the calculation for validation.
 
@@ -692,7 +692,7 @@ A training run folder contains the train artifacts, which refers to all files, i
   \label{fig:af_markings}
 \end{figure}
 
-To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface the position of the plane, the markers sit on in 3D space within the images can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
+To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a quadratic paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface, the position of the plane in 3D space can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
 
 \begin{figure}
   \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline.}
@@ -700,12 +700,12 @@ To make the annotation of training data faster, we printed 4 \ac{ArUco} markers 
   \label{fig:arch_data_af_focus}
 \end{figure}
 
-The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. After the script starts the first image of the image series given in the command line arguments is analyzed by the built-in \ac{OpenCV} \ac{ArUco} detector. Should there be 4 detected markers, the script will attempt to find the inner rectangle, which is the largest marked in red in \figureref{fig:af_markings}. For the Homography calculation in the next step it is important that the corners of the inner rectangle have a stable ordering. 
+The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. After the script starts, the first image of the image series given in the command line arguments is analyzed by the built-in \ac{OpenCV} \ac{ArUco} detector. Should there be 4 detected markers, the script will attempt to find the inner rectangle which is the largest marked in red in \figureref{fig:af_markings}. For the Homography calculation in the next step, it is important that the corners of the inner rectangle have a stable ordering.
 
 There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, sorts each markers corners that are the closest to the middle into a list based on the quadrant the marker is in the image. Therefore, \texttt{legacy\_rect\_finding} works independent of the orientations of the markers on the paper frame. However, it is dependant on the placement of the markers in the image. 
 
-The second algorithm assumes that all printed \ac{ArUco} markers on the paper frame have the same orientation and that the corner list of the marker is sorted in an U-shape. Their respective corner closest to the image middle is then sorted into the inner rectangle corner list based on the corners index within the marker. %as seen in \autoref{lst:irf}. 
-The inner rectangles corners are now sorted too. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the respective assumptions of the two algorithms hold, they both result in a stable U-shaped ordering of the corners.
+The second algorithm assumes that all printed \ac{ArUco} markers on the paper frame have the same orientation and that the corner list of the marker is sorted in an u-shape. The latter constraint is already satisfied by the output of the \ac{OpenCV} \ac{ArUco} detector. Every markers corner closest to the image middle is then sorted into the inner rectangle corner list based on the corners index within the markers corner list. %as seen in \autoref{lst:irf}. 
+The inner rectangles corners are now sorted in an u-shape as well. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the respective assumptions of the two algorithms hold, they both result in a stable u-shaped ordering of the corners.
 
 \begin{figure}
   \caption{Matching corner indices of the \ac{ArUco} rectangles and the red inner rectangle corners written on the image.}
@@ -734,12 +734,12 @@ The inner rectangles corners are now sorted too. The relationship between the in
 
 Afterwards, a homography from the inner rectangle corners to the points $(0,h), (0,0), (w,0), (w,h)$ is computed, the initial image is transformed using it and the user can label all visible markers on the transformed image in an \ac{OpenCV} \ac{GUI} window.
 
-Once the user is done, the labels are transferred to each other image by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However, this time the homography is computed the other way around from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rectangle corners.
+Once the user is done, the labels are transferred to each other image in the dataseries by finding the \ac{ArUco} frame like before, finding its inner rectangle, computing the homography for it and transforming the user defined labels as polygons onto the image using the user defined points and the two homographies. However, this time the homography is computed the other way around from the points $(0,h), (0,0), (w,0), (w,h)$ to the inner rectangle corners.
 
 \section{Augmentations}
 \label{sec:augs}
 
-This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through the command line arguments. Furthermore, the images are copied such that the original not augmented training images and labels are kept in the dataset at least once and such that only the copies are augmented. The position of the augmentations in the pipeline is shown in \figureref{fig:arch_data_aug_focus}.
+This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through command line arguments. Furthermore, the images are copied such that the original not augmented training images and labels are kept in the dataset at least once and such that only copies are augmented. The number of which can also be changed through command line arguments but is 3 by default. The position of the augmentations in the pipeline is shown in \figureref{fig:arch_data_aug_focus}.
 
 \begin{figure}
   \caption{Position of augmentations in the pipeline.}
@@ -751,11 +751,11 @@ This section describes the augmentations that were implemented into the \texttt{
 
 The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However, these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
 
-One image augmentation that breaks up the overall image structure is grid shuffling. Albumentations already has an implementation for grid shuffling. However, that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However, in this case the speed of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
+One image augmentation that breaks up the overall image structure is grid shuffling and Albumentations already has an implementation for grid shuffling. However, that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However, in this case the performance of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
 
 \subsubsection{Implementation}
 
-The first part of smart grid shuffling traverses the polygon labels in order of their centroid position on a given axis. Should the distance between the bounding boxes of two polygons on the given axis be larger than a threshold, then the image is cut along the other axis and a segment is created, as seen in \autoref{lst:sgs_cut}.
+The first part of smart grid shuffling traverses the polygon labels in order of their centroid position on a given axis. Should the distance between the bounding boxes of two polygons on the given axis be larger than a threshold, the image is cut along the other axis and a segment is created, as seen in \autoref{lst:sgs_cut}.
 
 % \begin{algorithm}
 %   \SetAlgoLined
@@ -813,7 +813,7 @@ def segment_img(img: Mat, polys: List[Polygon], axis: Literal[0,1], min_cut_dist
 \end{minted}
 \end{code}
 
-The second part of smart grid shuffling defines the recombination of the image segments along an axis into a common image and a common label list as seen in \autoref{lst:sgs_comb}.
+The second part of smart grid shuffling defines the recombination of the image segments along an axis into a combined image and a combined label list as seen in \autoref{lst:sgs_comb}.
 
 \begin{code}
 \captionof{listing}{Segment Combination Part of Smart Grid Shuffling}
@@ -900,11 +900,11 @@ The smart grid shuffling augmentation cuts and reassembles the image such that a
   \label{fig:aug_pld_example}
 \end{figure}
 
-To further prevent the model from fitting to certain label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the associated marker from the image and removes the label entry. The marker is removed from the image by taking its polygon, scaling it around its centroid by 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \figureref{fig:aug_pld_example}.
+To further prevent the model from fitting to certain label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the associated marker from the image and removes the label entry. The marker is removed from the image by taking its polygon, scaling it around its centroid by a factor of 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \figureref{fig:aug_pld_example}.
 
 \subsection{Homogeneous Matrix Transform}
 
-The rotation and perspective transformations are both combined into a homogeneous matrix transform step to prevent code duplication and to improve performance, since this step requires postprocessing.
+Rotation and perspective transformations are both combined into a homogeneous matrix transform step to prevent code duplication and to improve performance since this step requires postprocessing.
 
 For most augmentations there is a chance setting and possibly a strength setting depending on the augmentation. Here, the available settings are the chance for a rotation of 90 degree multiples, the chance for rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly, all settings are build into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \figureref{fig:aug_mat_example}.
 
@@ -921,7 +921,7 @@ For most augmentations there is a chance setting and possibly a strength setting
 \subsubsection{Out of Bounds Cases}
 \label{sec:oob}
 
-After the transformation, cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, such that all markers which should be detected are still clearly visible. To compute visibility, first the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries and the remaining area, where the label was, is painted over, as in the label dropout described in \autoref{sec:aug_ld}. Should it pass the visibility check but still intersect with the image border, the label polygon is set to be the intersection from earlier, effectively clipping it within the image space.
+After the transformation, cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, such that all markers which should be detected are still clearly visible. To compute visibility, the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries and the remaining area in the image, in which the marker was, is painted over. The overpainting works exactly like label dropout described in \autoref{sec:aug_ld}. Should it pass the visibility check but still intersect with the image border, the label polygon is set to be the intersection from earlier, effectively clipping it within the image space.
 
 \subsection{Random Crop}
 
@@ -935,7 +935,7 @@ After the transformation, cases of \ac{OOB} labels have to be handled, as labels
   \label{fig:aug_rc_example}
 \end{figure}
 
-The pipeline implements a random crop, which crops an area of the datasets target image size out of the input image and moves the labels accordingly as seen in \figureref{fig:aug_rc_example}. Since this augmentation can also leave labels out of bounds, the same procedure is applied on the resulting labels as described in \autoref{sec:oob}.
+The pipeline implements also a random crop, which crops an area of the datasets target image size out of the input image and moves the labels accordingly as seen in \figureref{fig:aug_rc_example}. Since this augmentation can also leave labels out of bounds, the same postprocessing is applied on the resulting labels as described in \autoref{sec:oob}.
 
 \subsubsection{Augmentation Versions}
 
@@ -949,7 +949,11 @@ The pipeline implements a random crop, which crops an area of the datasets targe
   \label{fig:aug_rc2_example}
 \end{figure}
 
-The data pipeline also builds \ac{JSON} files into the dataset folder to make the whole dataset build process retraceable. Because of that, I did not change augmentations meaningfully, besides bug fixes once they were implemented, such that the \ac{JSON} files stay as backwards compatible as possible. In this case I also built a random crop, which crops an area of variable size out of the source image and then rescales that cropped part to the target image size, which is therefore implemented as its own augmentation: random crop v2. Examples for random crop v2 can be seen in \figureref{fig:aug_rc2_example}. Splitting the augmentations in versions this way also has the advantage that the following evaluation can detect how much better a new version of an augmentation performs or if there is regression.
+The data pipeline also builds \ac{JSON} files into the dataset folder to make the whole dataset build process retraceable. Because of that, I did not change augmentations besides bug fixes once they were implemented, such that the training artifacts including the \ac{JSON} files stay as backwards compatible as possible. 
+
+In this case, I also built a random crop which crops an area of variable size out of the source image and then rescales that cropped part to the target size, which is therefore implemented as its own augmentation: random crop v2. Examples for random crop v2 can be seen in \figureref{fig:aug_rc2_example}. 
+
+Splitting the augmentations in versions this way also has the advantage that the following evaluation can detect how much better a new version of an augmentation performs or if there is regression.
 
 \subsection{Label Move}
 
@@ -963,9 +967,9 @@ The data pipeline also builds \ac{JSON} files into the dataset folder to make th
   \label{fig:aug_lm_example}
 \end{figure}
 
-Label move works similar to label dropout, as described in \autoref{sec:aug_ld}. However, after removing the label from the image it is reinserted at a different place including the image structure which the label describes, as seen in \figureref{fig:aug_lm_example}. 
+Label move works similar to label dropout, as described in \autoref{sec:aug_ld}. However after removing the label from the image, it and its marker image structure is reinserted at a different place in the image, as seen in \figureref{fig:aug_lm_example}. 
 
-Since inserting of images into other images in OpenCV works by copying slices only \ac{AABB} areas can be inserted at once. However, when reinserting the labels image structure at another position, only the \ac{ArUco} marker structure should be inserted and not the surrounding image content. Therefore, before inserting the labels image structure back, a mask is applied to it. That mask is just the labels polygon rasterized in white onto a black image. Using the mask as transparency weights, the labels image structure is then reinserted at the new position.
+Since inserting of images into other images in OpenCV works by copying slices, only \ac{AABB} areas can be inserted at once. However when reinserting the labels image structure at another position, only the \ac{ArUco} marker structure should be inserted and not the surrounding image content. Therefore before inserting the labels image structure back, a mask is applied to it. That mask is the labels polygon rasterized in white onto a black binary image. Using the mask as transparency weights, the labels image structure is then reinserted at the new position.
 
 \subsubsection{Label Move v2}
 
@@ -983,11 +987,11 @@ Since inserting of images into other images in OpenCV works by copying slices on
 
 The second version of label move has two additions to the operations of label move. 
 
-Firstly the color of the labels image structure is roughly adapted to the target positions color. For this both the average RGB values of the image target area slice and the average RGB values of the labels image structure are computed. Then each pixel of the labels image structure is recolored based on the difference of the average RGB values before it is reinserted into the image.
+Firstly, the color of the labels image structure is roughly adapted to the target positions color. For this, both the average RGB values of the image target area slice and the average RGB values of the labels image structure are computed. Then, each pixel of the labels image structure is recolored based on the difference of the average RGB values before it is reinserted into the image.
 
-Secondly gaussian blur is applied to the mask, which is a rasterized version of the labels polygon. Due to this change, the inserted labels image structure does not have strong contours anymore and gets a small color transition at its borders.
+Secondly, gaussian blur is applied to the mask which is a rasterized version of the labels polygon. Due to this change, the inserted labels image structure does not have strong contours anymore and gets a small color transition at its borders.
 
-These changes help make the reinserted label look more natural in the new spot, as seen in \figureref{fig:aug_lm2_example}.
+These changes help the reinserted label blend in in its new position, as seen in \figureref{fig:aug_lm2_example}.
 
 \subsection{Black Dot}
 
@@ -1001,7 +1005,7 @@ These changes help make the reinserted label look more natural in the new spot, 
   \label{fig:aug_bd_example}
 \end{figure}
 
-A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is, that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation which adds black dots on parts of the image without a marker. 
+A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation which adds black dots on parts of the image without a marker. 
 
 After the augmentation function is invoked, at least one black dot is added. Afterwards there is a 40\% chance that another black dot is added. If another black dot is added, there is another 40\% chance for one more black dot and so on. While this could continue forever, it gets progressively more unlikely to go on after each iteration. 
 
@@ -1022,15 +1026,15 @@ An example of black dot aug can be seen in \figureref{fig:aug_bd_example}.
   \label{fig:aug_lc_example}
 \end{figure}
 
-Another reoccurrence in the test data was that the tape with the markers was rolled around a finger. Due to the nature of the training data, this case is currently not included in the fitting process. The label curving augmentation should therefore mimic the curved labels.
+Another reoccurrence in the test data is that the tape with the markers was rolled around a finger. Due to the nature of the training data, this case is currently not included in the fitting process. The label curving augmentation should therefore mimic the curved labels.
 
-This augmentation again works similar to label move. However, in this case the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case the x coordinates stay the same but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout the label vertices are also transformed, such that the label is still located over the image structure. However, the polygon cannot fully capture the curving without new vertices, but since the polygons are transformed into bounding boxes in most cases this is not a problem. An example of label curving can be seen in \figureref{fig:aug_lc_example}.
+This augmentation again works similar to label move. However, in this case the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case, the x coordinates stay the same but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout, the label vertices are also transformed using the vector field as \texttt{remap}, such that the label is still located over the image structure. The polygon cannot fully capture the curving without new vertices. However, since the polygons are transformed into bounding boxes in most cases this is not a problem. An example of label curving can be seen in \figureref{fig:aug_lc_example}.
 
 \subsection{Gaussian Noise}
 
-While augmentations that work with labels needed to be implemented specifically for this pipeline due to the label datatype. Pixel level augmentations are already defined and work just as well here. The gaussian noise augmentation here therefore works using the Albumentations gaussian noise transformation\footnote{\url{https://albumentations.ai/docs/api\_reference/augmentations/transforms/\#albumentations.augmentations.transforms.GaussNoise}, accessed on 06.11.2023}. 
+While augmentations that work with labels needed to be implemented specifically for this pipeline due to the label datatype, pixel level augmentations already defined in other libraries also work here. The gaussian noise augmentation from Albumentations is therefore used here\footnote{\url{https://albumentations.ai/docs/api\_reference/augmentations/transforms/\#albumentations.augmentations.transforms.GaussNoise}, accessed on 06.11.2023}. 
 
-Gaussian noise adds noise to each pixel in the image, with the strength of the noise being given by the normal distribution. Here, gaussian noise is used to make sure to get a different result from similar training runs, such that the quality of a training run can be assessed.
+Gaussian noise adds noise to each pixel in the image, with the strength of the noise being given by the normal distribution. Here, gaussian noise is used to get a different result from the same training configuration even if the training run otherwise works fully deterministic, such that the quality of a training configuration can be more accurately assessed.
 
 % TODO?: \section{Synthetic Data}
 
@@ -1053,7 +1057,8 @@ I set the \ac{SAHI} window size to 640x640 pixels since this is the native input
 \subsection{Bounding Box Filters}
 
 %Furthermore, the bounding boxes from the inference results can be filtered independently of the model they come from. 
-The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this the size of a border along the the image bounds can be set and all bounding box predictions that fall within this border are filtered out. Additionally to filter predictions which are not square enough, which the \ac{ArUco} marker usually are, a minimum squareness can be set. Squareness is here defined as $$ 
+The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this, the size of a border along the the image bounds can be set. All bounding box predictions that fall within this border are filtered out. Additionally to filter predictions which are not square enough, %, which the \ac{ArUco} marker usually are, 
+a minimum squareness can be set. Squareness is here defined as $$ 
 s(w,h)=
 \begin{dcases}
     \frac{w}{h}, & \text{if } w\leq h\\
@@ -1063,13 +1068,13 @@ s(w,h)=
 \subsection{Foreground Mask}
 
 Since markers in the images are usually part of the foreground, a pretrained foreground segmentation network could help improve the detection scores.
-To test this, I added support for masking of bounding box predictions. Since this is just for testing, this is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. %Using the average instead of the maximum pixel value lead the lower scores.
+To test this, I added support for masking of bounding box predictions with predefined masks. Since this is just for testing, this approach is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. %Using the average instead of the maximum pixel value lead the lower scores.
 
-% TODO?: \section{Plotting}
+% TOxDO?: \section{Plotting}
 
 \section{Automated Ensembles}
 
-Given a set of dataseries as base and parameters for dataset creation, training and inference, the entire process for ensemble learning can now be automated. Furthermore, by starting multiple batch train instances and giving each information about its worker index and the total worker count, the training load on multiple datasets can be split among multiple \acp{GPU}. Finally, given a consistent naming scheme, the score results of the training runs can also be automatically plotted.
+Given a set of dataseries as base and parameters for dataset creation, training and inference, the entire process for ensemble learning can now be automated. Furthermore, by starting multiple batch train instances and giving each information about its worker index and the total worker count, the training load for multiple runs on different datasets can be split among multiple processes and \acp{GPU}. Finally, given a consistent naming scheme for the training runs, the score results can also be automatically plotted.
 
 The top level scripts necessary for this are currently only implemented to work with the \ac{MIP} server structure, but could be ported to any \ac{GPU} server with Docker support.
 
@@ -1078,23 +1083,26 @@ The top level scripts necessary for this are currently only implemented to work 
 
 To find an optimal combination of augmentations from the implemented ones, a hyperparameter optimization is implemented using Hyperopt. 
 
-More precisely, the search space for this application of Hyperopt contains the chances for each augment to be applied on an image during dataset generation. Furthermore, the strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. 
+More precisely, the search space for this application of Hyperopt contains the chances for each augment to be applied on an image during dataset generation. Furthermore, the maximum strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. 
 
-The epochs that should be trained for are also part of the search space. Since the validation data in the datasets used here can be similar to the training data the hyperparameter optimization, which unlike the training runs on the test data, can then choose an earlier stopping point for the training, if further training does not increase the score further or in other words would overfit on the validation data. 
+The epochs that should be trained for are also part of the search space. The validation data in the datasets used here can be similar to the training data since both are formed from \ac{ArUco} frame dataseries. The hyperparameter optimization can therefore choose an earlier stopping point for the training, should further training not increase the score on the given test data. 
 
-Finally, the random seed for the dataset creation is also part of the search space, such that the best training run during the optimization is fully reproducible.
+% Finally, the random seed for the dataset creation is also part of the search space, such that 
+
+The randomness for each configuration of augmentation parameters could be handled by %not including the random seed in the search space and instead 
+doing an ensemble run with random random seeds for a given configuration inside the objective function. Doing multiple training runs on an configuration and taking the average score should converge towards the actual average score for that configuration and therefore lead to more stable optimization. However, the hyperparameter optimization is already time consuming and pairing the optimization with ensemble runs would increase the needed runtime further. I therefore chose to model the random seed as part of the search space similarly to how Bethard proposes it for model performance comparisons \cite{bethard2022need}. Due to this, the best training run from the optimization is also fully reproducible given the optimal found search space values. 
 
 \section{Marker Corner Detection}
 
-This section describes the development of the second part of the inference. After the areas of interest were found by a fitted model which works on the whole image, this part finds the corner points of the marker within that area of interest.
+This section describes the development of the second part of the detection pipeline. After the areas of interest were found by a fitted model which works on the whole image, this part finds the corner points of the marker within that area of interest.
 
 \subsection{Point Head Approach}
 
-For this approach, I mainly used a MobileNetV2 as base since this part should also be lightweight and added custom head layers to the network architecture. For testing of larger models, I also tested a VGG16 \ac{CNN} as the base network architecture. The custom heads output eight numbers which are interpreted as the x- and y-coordinates of the 4 corners points of the marker. I implemented different head architectures, such as a fully convolutional head, a two linear layer head and a three linear layer head.
+For this approach, I mainly used MobileNetV2 as a base since this part should also be lightweight and added custom head layers to the network architecture. For testing of larger models, I also tested a VGG16 \ac{CNN} as the base network architecture. The custom heads output eight numbers, which are interpreted as the x- and y-coordinates of the 4 corner points of the marker. I implemented different head architectures, such as a fully convolutional head, a two linear layer head and a three linear layer head.
 
-The training dataloader for this approach uses an Albumentations augmentation pipeline for the images and keypoints label. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation, to simulate different situations in real world data.
+The training dataloader for this approach uses an Albumentations augmentation pipeline for the images and keypoint labels. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation, to simulate different situations in real world data. 
 
-The learn rate used here starts at $0.001$ and decays every $100$ epochs by a factor $0.2$. 
+The learn rate used here starts at $0.001$ and decays every $100$ epochs by a factor of $0.2$. 
 
 % \begin{figure}
 %   \centering
@@ -1126,7 +1134,7 @@ The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019int
 \end{figure}
 
 % TODO: Mention VGG16 based unet?
-As an alternative, I also implemented a U-Net. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total number of of $3,153,776$ parameters and therefore a parameter size of 12.03 \acp{MB}. The implemented U-Net instead uses a total number of $44,034,081$ parameters and a parameter size of 167.98 \acp{MB}. It is therefore almost 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
+As an alternative, I also implemented a U-Net approach. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total number of around 3 million parameter. The implemented U-Net instead uses a total number of around 44 million parameters. It is therefore around 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
 %Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \figureref{fig:segpet_preds_example}. 
 Examples for the U-Net output on validation data can be seen in \figureref{fig:segpet_preds_example}. 
 
@@ -1150,9 +1158,11 @@ Examples for the U-Net output on validation data can be seen in \figureref{fig:s
   \label{fig:segpet_rect_interp}
 \end{figure}
 
-Using the output of \acp{OpenCV} implementation of Harris corner detector, each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$ and finally the length of $\overline{BA}$ and $\overline{BC}$. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \figureref{fig:segpet_rect_interp}. 
+Using the output of \acp{OpenCV} implementation of the Harris corner detector, each triplet of corner points is considered as a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$, the length of $\overline{BA}$ and $\overline{BC}$ and the distance between the midpoint of $A$ and $C$ and the midpoint of the image. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \figureref{fig:segpet_rect_interp}. 
 
-It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However, using three points improves the stability since a whole corner may be misidentified in the segmentation mask.
+The computation of $D$ uses the assumption that the opposite sides of the marker are parallel, which may not hold true due to perspective distortion. However, this distortion should be small in the small image cutouts considered here. Furthermore, the detection is more stable if only three of the marker corners have to be correctly identified by the u-net and the Harris corner algorithm. 
+
+% It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However, using three points improves the stability since a whole corner may be misidentified in the segmentation mask.
 
 % TODO: Point mapping accuracy in good/bad cases and show one good and one bad case 
 % For eval: 75% of point order assessments correct
@@ -1173,7 +1183,7 @@ It is worth noting, that using point triplets and predicting the last point come
   \label{fig:segpet_lines_improvement}
 \end{figure}
 
-The \acp{OpenCV} implementation of Hough transform results in predicted lines on the mask edges. These lines are then lengthened, such that they span the image, and intersection points of these lines are computed. These intersection points are then scored as in the harris corner approach. The advantage of using line intersections is that, if multiple corners of the mask are not clearly defined, all 4 corners of the marker can still be predicted as seen in \figureref{fig:segpet_lines_improvement}. % TODO: Found hough parameters manually trough heuristic
+The \ac{OpenCV} implementation of Hough transform results in predicted lines on the mask edges. These lines are then lengthened, such that they span the image, and intersection points of these lines are computed. These intersection points are then scored as in the harris corner approach. The advantage of using line intersections is that multiple corners of the mask do not have to be clearly defined for the accurate prediction of all 4 corners of the marker, as seen in \figureref{fig:segpet_lines_improvement}. % TODO?: Found hough parameters manually trough heuristic
 
 \subsection{Point Sorting}
 
@@ -1183,7 +1193,7 @@ The \acp{OpenCV} implementation of Hough transform results in predicted lines on
   \label{fig:pet_point_sorting_compare}
 \end{figure}
 
-For now the different approaches only output points. However, to detect how the marker lies in 3D space, it is also necessary to sort the points based on the rotation of the marker. For this, the input image is thresholded using \acp{OpenCV} adaptive threshold implementation. Afterwards, a homography is computed to map the given rectangle in the image onto another image. Finally using pixel comparisons, each 90 degree rotation of the projected and thresholded image is tested against the \ac{ArUco} marker, as seen in \figureref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
+For now, the different approaches only output points. However to detect how the marker lies in 3D space, it is also necessary to sort the points based on the rotation of the marker. For this, the input image is thresholded using \acp{OpenCV} adaptive threshold implementation. Afterwards, a homography is computed and used on the pixel structure between the found marker corners to correct possible perspective distortions. Finally using pixel comparisons, each 90 degree rotation of the projected and thresholded image is tested against the \ac{ArUco} marker, as seen in \figureref{fig:pet_point_sorting_compare}. The rotation which is the closest fit for the marker is then chosen and the points are ordered accordingly.
 
 \chapter{Evaluation}
 \label{chap:eval}
