@@ -314,7 +314,7 @@ $$p_{interp}(r) = max_{\bar{r} : \bar{r} \geq r}p(r)$$
 
 %$$p(r) = \text{the precision value on the \ac{PR curve} given a recall value}$$
 
-Since I focus on the one class case for object detection, e.g., only on ArUco markers, that AP score is also the \ac{mAP} score here. Otherwise, the \ac{mAP} score would be the mean of the AP scores of all classes.
+Since I focus on the one class case for object detection, e.g. only on ArUco markers, that AP score is also the \ac{mAP} score here. Otherwise, the \ac{mAP} score would be the mean of the AP scores of all classes.
 
 \subsection{Pascal VOC 2010}
 
@@ -330,44 +330,44 @@ Since the VOC 2010 score takes all given recall values into account, it is gener
 
 \subsection{Microsoft COCO}
 
-The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales, in which the ground truth masks are split by their pixel area \cite{padilla2020survey}. However, for this work I focused on the AP@50:5:95 score of \ac{COCO}, which I refer to as the \ac{COCO} \ac{mAP} score in the following unless further specified. The \ac{COCO} \ac{mAP} refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points similarly to the VOC 2007 score. However, with 101 values instead of 11 between 0 and 1 with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
-The \ac{COCO} \ac{mAP} score or average mean average precision score as proposed by Redmon et al. then refers to the average of the computed \ac{mAP} scores for each \ac{IoU} threshold \cite{redmon2018yolov3}. 
+The object detection part of the \ac{COCO} detection challenge defines multiple AP score types, such as AP across scales, in which the ground truth masks are split by their pixel area \cite{padilla2020survey}. However, for this work, I focused on the AP@50:5:95 score of \ac{COCO}, which I refer to as the \ac{COCO} \ac{mAP} score in the following unless further specified. The \ac{COCO} \ac{mAP} refers to the computation of multiple \acp{PR curve} using different \ac{IoU} thresholds. In this case, there are 10 \ac{IoU} thresholds from 0.50 to 0.95 with a step width of 0.05 \cite{terven2023comprehensive}. \ac{COCO} also uses recall points similarly to the VOC 2007 score. However, \ac{COCO} uses 101 values instead of 11, between 0 and 1, with a step width of 0.01. %given by the following number series: ${0, 0.01, ..., 1}$. 
+The \ac{COCO} \ac{mAP} score, or average mean average precision score as proposed by Redmon et al., then refers to the average of the computed \ac{mAP} scores for each \ac{IoU} threshold \cite{redmon2018yolov3}. 
 
 The \ac{COCO} \ac{mAP} scores usefulness lies in its measurement of how tight a prediction bounding box is around a ground truth bounding box by using higher \ac{IoU} thresholds. Both VOC scores described earlier see a prediction as correct as soon as its \ac{IoU} is above 0.5 and make no difference between predictions with an \ac{IoU} of 0.55 or 0.9. The \ac{COCO} score therefore gives the opportunity to measure further improvements to trained models, assuming the ground truth labels of the dataset are accurate enough.
 
 \chapter{Related Work}
 \label{chap:relatedw}
 
-In the following paragraphs, papers focusing on challenging \ac{ArUco} marker detection using neural networks, as well as papers focusing on image augmentation techniques, are shortly introduced.
+In the following paragraphs, papers focusing on challenging \ac{ArUco} marker detection using neural networks, as well as papers focusing on image augmentation techniques, are briefly introduced.
 
 \section{ArUco Marker Detection}
 
-In most use cases, \ac{ArUco} markers can be detected by the \acp{OpenCV} detection algorithm. However, there are a number of more challenging use cases. In the following some of them shortly introduced.
+In most use cases, \ac{ArUco} markers can be detected by the \acp{OpenCV} detection algorithm. However, there are a number of more challenging use cases. In the following, some of them are briefly introduced.
 
 \subsection{UAV pose estimation}
 
-Another use case in which robust detection of \ac{ArUco} markers is essential, is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here, camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based detection systems can be more robust than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original $4000 \times 2250$ pixel images were resized to $1000 \times 562$ pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of it with occlusion ratios from 10\% to 40\%. 
+Another use case in which robust detection of \ac{ArUco} markers is essential, is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here, camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are laid out on the landing field. However, during real-world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine-tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors since these \ac{CNN} based detection systems can be more robust than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original $4000 \times 2250$ pixel images were resized to $1000 \times 562$ pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of them, with occlusion ratios from 10\% to 40\%. 
 
-Markers in test images which had occluded borders still had high detection rates even at high cover ratios, while markers with an occluded middle had worse detection rates. This shows that the marker pattern itself was most important for the detection in this case \cite{li2020aruco}.
+Markers in test images that had occluded borders still had high detection rates even at high cover ratios, while markers with an occluded middle had worse detection rates. This shows that the marker pattern itself was most important for the detection in this case \cite{li2020aruco}.
 
 \subsection{Deep ChArUco}
 
 %Other papers, which focus on neural network aided detection of \ac{ArUco} markers, do not address occlusion. However, 
-Hu et al's paper on ChArUcoNet and RefineNet covers keypoint detection of the marker corners in an postprocessing step after the bounding box detection under low light conditions \cite{hu2019deep}. Therefore, the augmentations also focus on noise, blur and brightness as well as shadow effects and a homographic transform. Deep ChArUco is able to detect the markers reliably even at higher darkness degrees while the \ac{ArUco} detection algorithm fails earlier. 
+Hu et al.'s paper on ChArUcoNet and RefineNet covers keypoint detection of the marker corners in a postprocessing step after the bounding box detection under low-light conditions \cite{hu2019deep}. Therefore, the augmentations also focus on noise, blur and brightness, as well as shadow effects and a homographic transform. Deep ChArUco is able to detect the markers reliably even at higher darkness degrees, while the \ac{ArUco} detection algorithm fails earlier. 
 
 \subsection{Helping people with visual impairment}
 
-Elgendy et al. propose a navigation system for people with visual impairment using \ac{ArUco} markers which are placed indoors \cite{elgendy2021novel}. A series of modified networks which are all based on \ac{YOLO}v3-tiny were trained on 600 photos, which were expanded and augmented on disk to 7200 images. The augmentations used here include 90 degree rotation, blur and lighting effects. The evaluations showed high detection accuracies with higher accuracies on the custom \ac{YOLO}v3 networks. The networks were also successfully deployed on a HTC Desire 826.
+Elgendy et al. propose a navigation system for people with visual impairment using \ac{ArUco} markers which are placed indoors \cite{elgendy2021novel}. A series of modified networks, which are all based on \ac{YOLO}v3-tiny were trained on 600 photos, which were expanded and augmented on disk to 7200 images. The augmentations used here include 90-degree rotation, blur and lighting effects. The evaluations showed high detection accuracies, with higher accuracies on the custom \ac{YOLO}v3 networks. The networks were also successfully deployed on an HTC Desire 826.
 
 \section{Training Image Augmentation}
 
-Image Augmentation is of large importance for generalization. Since a model is build in training by optimizing the similarity of its output on training images to target output, it will also only perform well on examples it was trained on or that are similar. Through variation in training, models can attain a level of generalization that allows them to perform well despite differences in lighting, occlusion, background, scale and so on \cite{shorten2019survey}. A lack of such an ability of generalization leads to previously working models being unable to classify images if a single pixel changes color \cite{8601309}. Often, this variation can come from a large dataset, but if real data is in short supply or if the labeling is too time consuming, image augmentation can replace it to some degree.
+Image Augmentation is of great importance for generalization. Since a model is built in training by optimizing the similarity of its output on training images to the target output, it will also only perform well on examples it was trained on or that are similar. Through variation in training, models can attain a level of generalization that allows them to perform well despite differences in lighting, occlusion, background, scale and so on \cite{shorten2019survey}. A lack of such an ability to generalize leads to previously working models being unable to classify images if a single pixel changes color \cite{8601309}. Often, this variation can come from a large dataset, but if real data is in short supply or if the labeling is too time-consuming, image augmentation can replace it to some degree.
 
-Image augmentations can be any kind of image transformation. However depending on the task and the dataset, the effectiveness of different types of augmentations can vary. Nonetheless, in the following I will introduce available papers with empirical comparisons or meta analyses of image augmentations.
+Image augmentations can be any kind of image transformation. However, depending on the task and the dataset, the effectiveness of different types of augmentations can vary. Nonetheless, in the following, I will introduce available papers with empirical comparisons or meta-analyses of image augmentations.
 
 \subsection{Comparison of augmentations on the Caltech101 dataset}
 
-On the Caltech101 dataset using a custom classification \ac{CNN}, Taylor et al. found that cropping improves the accuracy scores significantly while most other types of augmentation including custom augmentation types improve the score slightly as seen in Table \ref{tab:taylor-acc} \cite{8628742}. % TODO: Explain the accuracy scores here
+On the Caltech101 dataset using a custom classification \ac{CNN}, Taylor et al. found that cropping improves the accuracy scores significantly while most other types of augmentation, including custom augmentation types, improve the score slightly, as seen in Table \ref{tab:taylor-acc} \cite{8628742}. % TODO: Explain the accuracy scores here
 
 \begin{table}
   \begin{tabular}{ c c c }
@@ -399,7 +399,7 @@ of Chest X-ray images \cite{elgendi2021effectiveness}. They used 17 different pr
   \item[$\bullet$] Rotation
 \end{itemize}
 
-While not using any augmentations led to the best score for this task, an augmentation pipeline consisting of reflection, translation and rotation got the second best score. The worst score was attained by an augmentation pipeline consisting of shearing, translation and rotation. 
+While not using any augmentations led to the best score for this task, an augmentation pipeline consisting of reflection, translation and rotation got the second-best score. The worst score was attained by an augmentation pipeline consisting of shearing, translation and rotation. 
 
 Elgendi et al. also asked radiologists whether the augmentations used here made sense in the context of pneumonia detection and the given opinions of the augmentations matched the empirical results. Elgendi et al. were also able to improve the performance of models from one of their earlier papers
 %which also covered detection on chest X-rays 
@@ -433,27 +433,27 @@ With more augmentations on this dataset, the validation \ac{IoU} score improved 
 
 \subsection{Survey of common image augmentations}
 
-Khalifa et al. compiled image augmentation techniques used in other papers \cite{khalifa2022comprehensive}. In the medical domain, which the \ac{ArUco} detection on tapes on skin task is the most similar to, \ac{GAN} and rotation techniques appear the most with each of them being used in three papers of the nine considered. Reflection and shifting operations were both used in two papers each.
+Khalifa et al. compiled image augmentation techniques used in other papers \cite{khalifa2022comprehensive}. In the medical domain, which the \ac{ArUco} detection on tapes on skin task is the most similar to, \ac{GAN} and rotation techniques appear the most, with each of them being used in three papers of the nine considered. Reflection and shifting operations were both used in two papers each.
 
 \chapter{Networks}
 \label{chap:netw}
 
-This chapter introduces network architectures that I used for the \ac{ArUco} marker detection and their history. Since the models are supposed to run on smart phones they should be as small as possible. Furthermore, inference in real time would make the usage easier. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures, a majority of this chapter will focus on them.
+This chapter introduces network architectures that I used for the \ac{ArUco} marker detection and their history. Since the models are supposed to run on smart phones, they should be as small as possible. Furthermore, inference in real time would simplify the usage. Since both of these constraints mirror the strengths of the \ac{YOLO} network architectures, a majority of this chapter will focus on them.
 
 \section{First YOLO Versions}
 
-\ac{YOLO} is a popular object detection model, which was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO}, however, is a single-shot detector which processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
+\ac{YOLO} is a popular object detection model that was first introduced by Joseph Redmon et al. in 2016 \cite{redmon2016you}. Two-stage detection models, such as R-CNN, were the standard at the time. They first propose regions of interest and then classify these regions. \ac{YOLO}, however, is a single-shot detector that processes the entire image in a single pass, making it faster and more efficient. The network structure of \ac{YOLO} can be seen in \figureref{fig:yolo}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers of the \ac{YOLO} network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, is scaled by $x \mapsto x^{0.5}$. The purple box denotes two fully connected layers. It is inspired by the visualization from Redmon et al. \cite{redmon2016you} and was created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
+  \caption{Visualization of the most important layers of the \ac{YOLO} network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, e.g. the feature map length, is scaled by $x \mapsto x^{0.5}$. The purple box denotes two fully connected layers. It is inspired by the visualization from Redmon et al. \cite{redmon2016you} and was created using a modified version of the \href{https://github.com/jnccd/PlotNeuralNet}{PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=\textwidth]{image/yolo}
   \label{fig:yolo}
 \end{figure}
 
-\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore, all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers as seen in \figureref{fig:yolov2}. The first 23 layers of the network, or 6 boxes in the figure, are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced batch normalization, a better loss function and multi-scale training, which refers to its ability to adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$ pixels.
+\ac{YOLO}v2 or \ac{YOLO}9000 improves on \ac{YOLO} with the introduction of anchor boxes, allowing the network to detect objects in regions of the image instead of the whole image at once \cite{redmon2017yolo9000}. Furthermore, all fully connected layers are removed from the \ac{YOLO}v2 network architecture and the output of one of the earlier layers is passed through and concatenated into one of the last layers, as seen in \figureref{fig:yolov2}. The first 23 layers of the network, or 6 boxes in the figure, are also referred to as the Darknet19 backbone, while the last 4 layers are the detection head. \ac{YOLO}v2 also introduced batch normalization, a better loss function and multi-scale training, which refers to its ability to adapt its network size to different input image sizes from $320 \times 320$ to $608 \times 608$ pixels.
 
 \begin{figure}
-  \caption{Visualization of the most important layers of the \ac{YOLO}v2 network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, is scaled by $x \mapsto x^{0.5}$. It was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
+  \caption{Visualization of the most important layers of the \ac{YOLO}v2 network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and tensor length, e.g. the feature map length, is scaled by $x \mapsto x^{0.5}$. It was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=\textwidth]{image/yolov2}
   \label{fig:yolov2}
 \end{figure}
@@ -463,7 +463,7 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 \section{Later YOLO Versions}
 
 \begin{figure}
-  \caption{Timeline showing different \ac{YOLO} versions over time which is based on the timeline from Terven et al. \cite{terven2023comprehensive}.}
+  \caption{Timeline showing different \ac{YOLO} versions over time, which is based on the timeline from Terven et al. \cite{terven2023comprehensive}.}
   \includegraphics[width=\textwidth]{image/timeline_fix}
   \label{fig:yolo_timeline}
 \end{figure}
@@ -471,12 +471,12 @@ This chapter introduces network architectures that I used for the \ac{ArUco} mar
 While the first three \ac{YOLO} versions were developed by the same developers, starting with \ac{YOLO}v4, various developers started releasing \ac{YOLO} versions. A full timeline of the releases can be seen in \figureref{fig:yolo_timeline}. 
 
 Based on the comparison of \ac{mAP} scores from Terven et al. \cite{terven2023comprehensive}, the three best \ac{YOLO} models on the \ac{COCO} challenge are \ac{YOLO}v7, Scaled-\ac{YOLO}v4 and \ac{YOLO}v5. 
-Since the model should be used on a smartphone, only the smaller versions of the models are relevant. Wang et al. showed that \ac{YOLO}v7-tiny depending on the metric outperforms or is similar to \ac{YOLO}v4-tiny \cite{wang2023yolov7}. 
-Unlike the other two considered \ac{YOLO} versions, \ac{YOLO}v5 provides multiple versions like \ac{YOLO}v5s and \ac{YOLO}v5m in between teh sizes tiny and large. 
+Since the model should be used on a smartphone, only the smaller versions of the models are relevant. Wang et al. showed that \ac{YOLO}v7-tiny, depending on the metric, outperforms or is similar to \ac{YOLO}v4-tiny \cite{wang2023yolov7}. 
+Unlike the other two considered \ac{YOLO} versions, \ac{YOLO}v5 provides multiple versions like \ac{YOLO}v5s and \ac{YOLO}v5m in between the sizes tiny and large. 
 The larger \ac{YOLO}v5m is still recommended for modern smart phones\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/tips\_for\_best\_training\_results}, accessed on 04.12.2023}. 
 However, since the smaller \ac{YOLO}v5s likely has support on more devices with smaller memory and since \ac{YOLO}v5s is the \ac{YOLO}v5 model closest to \ac{YOLO}v7-tiny in parameter count, I chose to focus on it. %Similarly to the first comparison, 
 The \ac{mAP} scores of \ac{YOLO}v5s are comparable to \ac{YOLO}v7-tiny, with \ac{YOLO}v7-tiny having a moderately higher \ac{COCO} 50-95 \ac{mAP} score and \ac{YOLO}v5s having a slightly higher \ac{COCO} 50 \ac{mAP} score\footnote{\url{https://pytorch.org/hub/ultralytics_yolov5/}, accessed on 04.12.2023} \cite{wang2023yolov7}. 
-Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and popularity of \ac{YOLO}v5, as seen in the number of github stars\footnote{\url{https://github.com/AlexeyAB/darknet}, accessed on 04.12.2023}\footnote{\url{https://github.com/ultralytics/yolov5}, accessed on 04.12.2023}\footnote{\url{https://github.com/WongKinYiu/yolov7}, accessed on 04.12.2023}. Furthermore, I implemented \ac{YOLO}v8 and \ac{YOLO}-NAS due to their recency and \ac{YOLO}v8's similarity to \ac{YOLO}v5.
+Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and popularity of \ac{YOLO}v5, as seen in the number of GitHub stars\footnote{\url{https://github.com/AlexeyAB/darknet}, accessed on 04.12.2023}\footnote{\url{https://github.com/ultralytics/yolov5}, accessed on 04.12.2023}\footnote{\url{https://github.com/WongKinYiu/yolov7}, accessed on 04.12.2023}. Furthermore, I implemented \ac{YOLO}v8 and \ac{YOLO}-NAS due to their recency and \ac{YOLO}v8's similarity to \ac{YOLO}v5.
 
 % However, \ac{YOLO}v7 only provides models in sizes \ac{YOLO}v7-tiny, \ac{YOLO}v7, \ac{YOLO}v7-X and larger variations \cite{wang2023yolov7}. While \ac{YOLO}v7-tiny may be promising for older devices with its 6.2 million parameters, \ac{YOLO}v5s only has about 1 million parameters more, still fits on modern smart phones, and outperforms \ac{YOLO}v7-tiny on the \ac{COCO} challenges 50 \ac{mAP} score\footnote{\url{https://pytorch.org/hub/ultralytics_yolov5/}, accessed on 04.12.2023}. However, the next larger model called \ac{YOLO}v7 is too large for usage on current smart phones with its 36.9 million parameters. The larger versions of \ac{YOLO}v7 are still likely a good choice for a cloud based detection due to their effectiveness. Scaled-\ac{YOLO}v4 similarly does not provide model sizes between  Furthermore, the \ac{mAP} difference 
 % For this work, I will focus on \ac{YOLO}v5, due to its popularity and therefore its good documentation.  \ac{YOLO}v8 and \ac{YOLO}-NAS due to their recency and \ac{YOLO}v8's similarity to \ac{YOLO}v5.
@@ -484,14 +484,14 @@ Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and populari
 \section{YOLOv5}
 
 %instead of the developers of the first three \ac{YOLO} versions
-\ac{YOLO}v5 was developed by Ultralytics and introduces small changes to the architecture, new box coordinates, a build target process as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality of life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
+\ac{YOLO}v5 was developed by Ultralytics and introduces small changes to the architecture, new box coordinates, a build target process, as well as new augmentation techniques\footnote{\url{https://docs.ultralytics.com/yolov5/tutorials/architecture_description}, accessed on 20.10.2023} \cite{gjocher2022yolov5,terven2023comprehensive}. \ac{YOLO}v5 also made hyperparameter optimization easier and added quality-of-life features. \ac{YOLO}v5 provides models in five different sizes: \ac{YOLO}v5n (nano), \ac{YOLO}v5s (small), \ac{YOLO}v5m (medium), \ac{YOLO}v5l (large), and \ac{YOLO}v5x (extra large).
 
 \subsection{Architecture}
 
 \ac{YOLO}v5's network architecture consists of a backbone, a neck and a head, which are connected to each other in that order \cite{jani2023model}. \ac{YOLO}v5's backbone is the CSP-Darknet53 structure, which was the structure that \ac{YOLO}v4 used \cite{bochkovskiy2020yolov4}. \ac{YOLO}v5's Neck consists of the \ac{SPPF}, which is a more efficient version of \ac{YOLO}v3's \ac{SPP}, and new \ac{CSP-PAN} structures, which improve the information flow through the network \cite{liu2018path}. \ac{YOLO}v5 uses the same head structure as \ac{YOLO}v3 at the end of the network. The entirety of the network is visualized in \figureref{fig:yolov5}.
 
 \begin{figure}
-  \caption{Visualization of the most important layers and blocks of the entire \ac{YOLO}v5 network. Here, the tensor width and height being mapped by $x \mapsto x^{0.7}$ and tensor length, eg. the feature map length, being scaled by $x \mapsto x^{0.5}$. The head structure of the \ac{YOLO}v5 network was simplified to a single tensor for this figure. The visualization was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
+  \caption{Visualization of the most important layers and blocks of the entire \ac{YOLO}v5 network. Here, the tensor width and height are mapped by $x \mapsto x^{0.7}$ and the tensor length, e.g. the feature map length, is scaled by $x \mapsto x^{0.5}$. The head structure of the \ac{YOLO}v5 network was simplified to a single tensor for this figure. The visualization was created using \href{https://github.com/jnccd/PlotNeuralNet}{a modified version of the PlotNeuralNet tool} \cite{haris_iqbal_2018_2526396}.}
   \includegraphics[width=\textwidth]{image/yolov5}
   \label{fig:yolov5}
 \end{figure}
@@ -507,23 +507,23 @@ Finally, I chose to use \ac{YOLO}v5s due to the clear documentation and populari
   \item Random Horizontal Flip: This technique randomly flips the image around the y axis.
 \end{itemize}
 
-\ac{YOLO}v5 further defines augmentations such as Copy-Paste Augmentation and MixUp Augmentation. However, these augmentations were disabled by default and not used over the course of this thesis.
+\ac{YOLO}v5 further defines augmentations, such as copy-paste augmentation and MixUp augmentation. However, these augmentations were disabled by default and not used over the course of this thesis.
 
 \section{YOLOv8}
 
-\ac{YOLO}v8 is the second \ac{YOLO} version from Ultralytics and provides multiple models in the same sizes as \ac{YOLO}v5\footnote{\url{https://docs.ultralytics.com/models/yolov8/}, accessed on 24.10.2023} \cite{terven2023comprehensive}. \ac{YOLO}v8 is anchor-free, which simplifies the training and decoding process. For the bounding box loss \ac{YOLO}v8 uses \ac{CIoU} \cite{zheng2020distance}, which besides the overlap area is also based on the central point distance and aspect ratio of the bounding boxes, as well as \ac{DFL} \cite{li2020generalized}. %\ac{YOLO}v8 also provides a segmentation model.
+\ac{YOLO}v8 is the second \ac{YOLO} version from Ultralytics and provides multiple models in the same sizes as \ac{YOLO}v5\footnote{\url{https://docs.ultralytics.com/models/yolov8/}, accessed on 24.10.2023} \cite{terven2023comprehensive}. \ac{YOLO}v8 is anchor-free, which simplifies the training and decoding process. For the bounding box loss, \ac{YOLO}v8 uses \ac{CIoU} \cite{zheng2020distance}, which, besides the overlap area, is also based on the central point distance and aspect ratio of the bounding boxes, as well as \ac{DFL} \cite{li2020generalized}. %\ac{YOLO}v8 also provides a segmentation model.
 
 \section{YOLO-NAS}
 
-\ac{YOLO}-NAS was developed by Deci which develops production grade models \cite{terven2023comprehensive}. The architecture of \ac{YOLO}-NAS was found by Deci's proprietary \ac{NAS} technology AutoNAC and comes in three sizes: \ac{YOLO}-NAS-S, \ac{YOLO}-NAS-M and \ac{YOLO}-NAS-L. The \ac{YOLO}-NAS models were pre-trained on the Objects365 dataset, which is newer and larger than the \ac{COCO} dataset and gets its name from its 365 object categories \cite{shao2019objects365}. Afterwards, they were trained on the \ac{COCO} dataset.
+\ac{YOLO}-NAS was developed by Deci which develops production-grade models \cite{terven2023comprehensive}. The architecture of \ac{YOLO}-NAS was found by Deci's proprietary \ac{NAS} technology AutoNAC and comes in three sizes: \ac{YOLO}-NAS-S, \ac{YOLO}-NAS-M and \ac{YOLO}-NAS-L. The \ac{YOLO}-NAS models were pre-trained on the Objects365 dataset, which is newer and larger than the \ac{COCO} dataset and gets its name from its 365 object categories \cite{shao2019objects365}. Afterwards, they were trained on the \ac{COCO} dataset.
 
 % TODO?: \section{MobileNetV2}
 
 \section{ViTs}
 
-After the application of transformer blocks in natural language processing was successful, they were also introduced into other domains, such as visual processing, resulting in \acp{ViT}. The application of transformers on vision tasks works by slicing the input image into many patches \cite{dosovitskiy2020image}. The pixel data of these patches is further divided and interpreted as word vectors. These "visual words" can then be fed into a transformer based network.
+After the application of transformer blocks in natural language processing was successful, they were also introduced into other domains, such as visual processing, resulting in \acp{ViT}. The application of transformers to vision tasks works by slicing the input image into many patches \cite{dosovitskiy2020image}. The pixel data of these patches is further divided and interpreted as word vectors. These "visual words" can then be fed into a transformer-based network.
 
-\acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However, in this work I aim to develop a detection system that would preferably run directly on patients smart phones, which makes large models impractical. Furthermore, development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers. Therefore, the improvements may not stem from network architecture itself \cite{liu2022convnet}.
+\acp{ViT} mark the newest major change in network architecture for the object detection task. The advantage of \acp{ViT} is their scalability, making \cite[models of unprecedented size]{dosovitskiy2020image} trainable. However, in this work I, aim to develop a detection system that would preferably run directly on patients smart phones, which makes large models impractical. Furthermore, development on ConvNeXt showed that, when trained using similar modern training techniques, large convolutional networks can perform similarly well or better than vision transformers. Therefore, the improvements may not stem from the network architecture itself \cite{liu2022convnet}.
 
 \section{U-Net}
 
@@ -533,12 +533,12 @@ After the application of transformer blocks in natural language processing was s
   \label{fig:unet}
 \end{figure}
 
-An u-net is a \ac{CNN} that was developed for biomedical image segmentation \cite{DBLP:journals/corr/RonnebergerFB15}. Its architecture is based on the fully convolutional network proposed by Long et al. \cite{DBLP:journals/corr/LongSD14} and extends the contracting network by following upsampling layers. Visualizing the layers such that their y position is based on the amount of feature maps they output yields the characteristic u-shape for the network, as seen in \figureref{fig:unet}. Furthermore, it uses feature channels to propagate context information from earlier layers to provide the upsampling path with missing information which may be lost during the contracting layers. This missing information can then help in generating high resolution segmentation masks.
+An u-net is a \ac{CNN} that was developed for biomedical image segmentation \cite{DBLP:journals/corr/RonnebergerFB15}. Its architecture is based on the fully convolutional network proposed by Long et al. \cite{DBLP:journals/corr/LongSD14} and extends the contracting network by following upsampling layers. Visualizing the layers such that their y position is based on the amount of feature maps they output yields the characteristic u-shape for the network, as seen in \figureref{fig:unet}. Furthermore, it uses feature channels to propagate context information from earlier layers to provide the upsampling path with missing information that may be lost during the contracting layers. This missing information can then help in generating high-resolution segmentation masks.
 
 \chapter{Methodology and Implementation}
 \label{chap:implement}
 
-In this chapter I describe how I structured my code and why, as well as the core ideas of some algorithms. Furthermore, I describe the hardware that was used for training.
+In this chapter, I describe how I structured my code and why, as well as the core ideas of some algorithms. Furthermore, I describe the hardware that was used for training.
 
 % \section{Goals}
 
@@ -550,9 +550,9 @@ In this chapter I describe how I structured my code and why, as well as the core
 
 \section{Development Environment}
 
-Most training for this work was done on the 'lena' server of the \ac{MIP} working group of the Kiel University. This server contains 128GB RAM and eight Nvidia GeForce RTX 2080Ti \acp{GPU} with 12GB VRAM each. Local training was done on a computer with 32GB RAM and a Nvidia GeForce RTX 3060Ti \ac{GPU} with 8GB VRAM.
+Most training for this work was done on the 'lena' server of the \ac{MIP} working group at Kiel University. This server contains 128GB of RAM and eight Nvidia GeForce RTX 2080Ti \acp{GPU} with 12GB of VRAM each. Local training was done on a computer with 32GB of RAM and an Nvidia GeForce RTX 3060Ti \ac{GPU} with 8GB of VRAM.
 
-Training on the server was done using a Docker Image and locally it was done in a conda environment. During development I used both TensorFlow and PyTorch, so for simplicity I chose to install them both in the same environments. This is possible because both the PyTorch version 2.0.1 and the TensorFlow version 2.12 depend on the same CUDA Toolkit version 11.8 as well as on the cuDNN version 8.4.1.50. % TODO: Dont use ac here? I only use CUDA, cuDNN once 
+Training on the server was done using a Docker Image and locally it was done in a conda environment. During development, I used both TensorFlow and PyTorch, so for simplicity, I chose to install them both in the same environments. This is possible because both PyTorch version 2.0.1 and TensorFlow version 2.12 depend on the same CUDA Toolkit version 11.8 as well as on the cuDNN version 8.4.1.50. % TODO: Dont use ac here? I only use CUDA, cuDNN once 
 
 \section{Classic Approaches}
 
@@ -578,7 +578,7 @@ To validate that a neural network based approach is necessary in this case, I te
 
 The built-in \ac{OpenCV} \ac{ArUco} detector does not detect any markers in the chosen base image. To find out why, I roughly recreated the first steps of the \ac{ArUco} detector using \acp{OpenCV} built-in algorithm implementations. The recreated pipeline mainly consists of the canny edge detector and the \texttt{findContours} and \texttt{approxPolyDP} methods applied to each level of an image pyramid. 
 
-The broken contours of the \ac{ArUco} marker edges seen in \figurereft{fig:classic_base_img_opencv}{(a)} skewed the results of the polygon contour detection of the Suzuki and Abe algorithm seen in \figurereft{fig:classic_base_img_opencv}{(b)}. That the \ac{ArUco} detector from \ac{OpenCV} has no further handling for this case explains why the \ac{ArUco} markers on photonic crystals could not be detected, as well as the findings in \autoref{sec:aruco_det}.
+The broken contours of the \ac{ArUco} marker edges seen in \figurereft{fig:classic_base_img_opencv}{(a)} skewed the results of the polygon contour detection of the Suzuki and Abe algorithm seen in \figurereft{fig:classic_base_img_opencv}{(b)}. The fact that the \ac{ArUco} detector from \ac{OpenCV} has no further handling for this case explains why the \ac{ArUco} markers on photonic crystals could not be detected, as well as the findings in \autoref{sec:aruco_det}.
 
 % When filtering for only polygons with four vertices, the small polygon is detected on one scale, as seen on \figurereft{fig:classic_base_img_opencv}{(a)}. The better detection accuracy here may be due to cherry picked algorithm parameters. Without the filter in \figurereft{fig:classic_base_img_opencv}{(b)}, the problems of the polygon detection become apparent since the algorithm does not work well with broken contours, which may in part explain the findings in \autoref{sec:aruco_det}.
 
@@ -592,13 +592,13 @@ The idea of the histogram approach is that the pixel gradient histogram distribu
      {\includegraphics[width=0.4\textwidth]{image/classic_hist_markerynesses}}
   \subcaptionbox{Output of Histogram Peak based Score}
      {\includegraphics[width=0.4\textwidth]{image/classic_markeryness}}
-  \caption{Output of the Histogram based Approach in which the pixels of middle points of all windows that passed the candidate check are repainted. The redness of the repainted pixel represents the score of its window.}
+  \caption{Output of the histogram-based approach in which the pixels of the middle points of all windows that passed the candidate check are repainted. The redness of the repainted pixel represents the score of its window.}
   \label{fig:markeryness_scores}
 \end{figure}
 
-For this approach, the image is firstly scaled in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards, the image is traversed with a $64 \times 64$ pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \figurereft{fig:markeryness_scores}{(a)}. 
+For this approach, the image is first scaled in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards, the image is traversed with a $64 \times 64$ pixel window on a 2 pixel step width on the x and y axes. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \figurereft{fig:markeryness_scores}{(a)}. 
 
-There are many possible variations of this approach, such as also using the magnitude of the gradients as weights in the histogram computation or thresholding the gradients to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean that there are two directions in which gradients mainly occur in the window. In this case, two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^n_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of length $n$ of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number large window around them. However, this also results in inconclusive scores as seen in \figurereft{fig:markeryness_scores}{(b)}.
+There are many possible variations of this approach, such as also using the magnitude of the gradients as weights in the histogram computation or thresholding the gradients to reduce noise. One further variation is using a different scoring for the histogram that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean that there are two directions in which gradients mainly occur in the window. In this case, two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^n_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of length $n$ of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number large window around them. However, this also results in inconclusive scores, as seen in \figurereft{fig:markeryness_scores}{(b)}.
 
 \subsection{Feature Matching}
 
@@ -620,8 +620,8 @@ There are many possible variations of this approach, such as also using the magn
   \label{fig:classic_sift_thresh_on_finger}
 \end{figure}
 
-Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \figureref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and a image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate the matches across the repeating marker structures, as seen in \figureref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally, the positions of the matches in the image are moved by the difference of their position in the marker image and the middle of the marker image to cluster them. % TODO: Make this more understandable
-The results of that process can be seen in \figureref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However, when using this matching process on an image of the real test set, nothing is detected, since the thresholded image there does not preserve the structure of the \ac{ArUco} marker enough for the \ac{SIFT} matching, as seen in \figureref{fig:classic_sift_thresh_on_finger}.
+Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \figureref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and an image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate the matches across the repeating marker structures, as seen in \figureref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally, the positions of the matches in the image are moved based on their position in the marker image to cluster them. % TODO: Make this more understandable
+The results of that process can be seen in \figureref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However, when using this matching process on an image of the real test set, nothing is detected since the thresholded image there does not preserve the structure of the \ac{ArUco} marker enough for the \ac{SIFT} matching, as seen in \figureref{fig:classic_sift_thresh_on_finger}.
 
 \subsection{Conclusion}
 
@@ -629,25 +629,25 @@ While I cannot try out all combinations of data transformations and image algori
 
 \section{Software Architecture}
 
-Python has support for the structuring of script files into modules in which data can be primarily exchanged between components through function call arguments. However, for this work I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage in that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore, should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, such as retraining a model.
+Python has support for the structuring of script files into modules, in which data can be primarily exchanged between components through function call arguments. However, for this work, I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage of that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore, should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, such as retraining a model.
 
 \subsection{Data Pipeline Overview}
 
 \begin{figure}
-  \caption{Overview of the most important data structures and scripts of the data pipeline from raw data to a dataset. The orange nodes stand for data and blue nodes stand for python scripts.}
+  \caption{Overview of the most important data structures and scripts of the data pipeline from raw data to a dataset. The orange nodes stand for data and blue nodes stand for Python scripts.}
   \includegraphics[width=\textwidth]{graph/arch_data}
   \label{fig:arch_data}
 \end{figure}
 
 The first part of the script pipeline is visualized in \figureref{fig:arch_data}. It serves four major goals. 
 
-Firstly, it should define a standardized label data type that all dataset types can be build from. This is addressed by the usage of polygons further described in \autoref{sec:label_data_type}.
+Firstly, it should define a standardized label data type that all dataset types can be built from. This is addressed by the usage of polygons, further described in \autoref{sec:label_data_type}.
 
 Secondly, it should allow for a simple way to annotate large amounts of data to keep the labeling workload low. This is addressed by the \texttt{create\_aruco\_frame\_dataseries} script, which is described in more detail in \autoref{sec:auto_annots}.
 
-Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. This is addressed by the \texttt{create\_dataset} script which builds the data in a variety of dataset structures.
+Thirdly, it should output a range of dataset types such that the data can be easily trained on many predefined \ac{NN} packages and projects to get the best results. This is addressed by the \texttt{create\_dataset} script, which builds the data into a variety of dataset structures.
 
-Fourth, it should build augmentations into the data, such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones/heads share few data format standards, which makes changes there time consuming. This is also addressed by the \texttt{create\_dataset} script and described in more detail in \autoref{sec:augs}.
+Fourth, it should build augmentations into the data, such that custom augmentations can be tested on different models without having to adapt the dataloader that comes with the model. Most predefined dataloaders and model backbones and heads share few data format standards, which makes changes there time consuming. This is also addressed by the \texttt{create\_dataset} script and described in more detail in \autoref{sec:augs}.
 
 % The overview seen in \figureref{fig:arch_data} shows the various dataset types that are built , addressing the third goal. The  addresses the second goal. Furthermore, augmentations are added in the \texttt{create\_dataset} script, addressing the fourth goal.
 
@@ -662,23 +662,23 @@ The \texttt{create\_synthetic\_dataseries} script seen in \figureref{fig:arch_da
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_1}}
   \subcaptionbox{Image and polygon (orange) / bounding box (blue) labels after 50° rotation, as well as the old bounding box data in gray}
      {\includegraphics[width=0.3\textwidth]{image/polygon_pog_2}}
-  \caption{Two images from the test set showing a polygon label in orange and a bounding box label in blue. After a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old labels information. This old label was already too large since it could not capture the rotation of the object. The polygon label, however, can be augmented with the image without losing label accuracy by transforming the polygon points.}
+  \caption{Two images from the test set showing a polygon label in orange and a bounding box label in blue. After a rotation augmentation operation was applied in image two, the new bounding box label could only be created based on the old label's information. This old label was already too large since it could not capture the rotation of the object. The polygon label, however, can be augmented with the image without losing label accuracy by transforming the polygon points.}
   \label{fig:polygon-good}
 \end{figure}
 
-Image augmentation libraries have support for many data types to accommodate for many use cases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure, both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an objects structure during augmentations as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout the augmentations in the \texttt{create\_dataset} script. Afterwards, the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types or the polygon can be rasterized to create a segmentation mask.
+Image augmentation libraries have support for many data types to accommodate for many use cases. However, Albumentations only supports segmentation masks, bounding boxes and keypoints. While segmentation masks are a versatile data structure, both bounding boxes and keypoints can be reduced to polygons. Furthermore, polygons are able to more accurately fit to an object's structure during augmentations, as seen in \figureref{fig:polygon-good}. Therefore, I use polygons as labels in dataseries and throughout the augmentations in the \texttt{create\_dataset} script. Afterwards, the bounds of the polygon's vertices can be used to transform it into a bounding box for object detection dataset types, or the polygon can be rasterized to create a segmentation mask.
 
 \subsection{Train Pipeline Overview}
 
 \begin{figure}
-  \caption{Overview of the most important data structures and scripts of the training pipeline from datasets to \ac{mAP} scores. Here, orange nodes stand for data and blue nodes stand for python scripts.}
+  \caption{Overview of the most important data structures and scripts of the training pipeline, from datasets to \ac{mAP} scores. Here, orange nodes stand for data and blue nodes stand for Python scripts.}
   \includegraphics[width=\textwidth]{graph/arch_train}
   \label{fig:arch_train}
 \end{figure}
 
 As seen in \figureref{fig:arch_train}, the training pipeline mainly consists of batch train, evaluate and analyze scripts. The batch train and evaluate scripts are implemented for each network source independently due to varying script usage and data formats. The batch train and evaluate scripts are split such that a model can be evaluated using a different set of inference parameters without retraining it. The analyze script implements the \ac{mAP} calculation and is split from the evaluate scripts since it can be implemented independently of each model source. The batch train scripts can handle multiple datasets at once for an ensemble training run.
 
-A training run folder contains the train artifacts, which refers to all files, including the model weights, which are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files which refers to a list of tuples of the networks predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and \ac{COCO} \ac{mAP} scores, as well as intermediate results of the calculation for validation.
+A training run folder contains the train artifacts, which refer to all files, including the model weights, that are created during training. The relation between training runs and inference tests was omitted in the figure. However, training runs can contain multiple inference tests. Each inference test contains evaluation files, which refer to a list of tuples of the network's predicted output and the target output in the xyxy bounding box format in addition to the confidence values, which can be used for the \ac{mAP} calculation, as well as extra files for validation. The scores consist of the calculated VOC 2007, VOC 2010 and \ac{COCO} \ac{mAP} scores, as well as intermediate results of the calculation for validation.
 
 \section{Automated Annotations}
 \label{sec:auto_annots}
@@ -693,7 +693,7 @@ A training run folder contains the train artifacts, which refers to all files, i
   \label{fig:af_markings}
 \end{figure}
 
-To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a quadratic paper, cut out the middle and used it as a frame for the actual training data as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface, the position of the plane in 3D space can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
+To make the annotation of training data faster, we printed 4 \ac{ArUco} markers on the corners of a quadratic paper, cut out the middle and used it as a frame for the actual training data, as seen in \figureref{fig:af_markings}. Since the tape containing the markers is on a planar surface, the position of the plane in 3D space can be computed based on the \ac{OpenCV} detectable \ac{ArUco} markers on the paper corners. By manually labeling the first image in such a series of images, where the placement of the markers does not change, the positions of all the markers in the rest of the series can be inferred.
 
 \begin{figure}
   \caption{Position of the \texttt{create\_aruco\_frame\_dataseries} script in the pipeline.}
@@ -703,10 +703,10 @@ To make the annotation of training data faster, we printed 4 \ac{ArUco} markers 
 
 The position of this script within the pipeline can be seen in \figureref{fig:arch_data_af_focus}. After the script starts, the first image of the image series given in the command line arguments is analyzed by the built-in \ac{OpenCV} \ac{ArUco} detector. Should there be 4 detected markers, the script will attempt to find the inner rectangle which is the largest marked in red in \figureref{fig:af_markings}. For the Homography calculation in the next step, it is important that the corners of the inner rectangle have a stable ordering.
 
-There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, sorts each markers corners that are the closest to the middle into a list based on the quadrant the marker is in the image. Therefore, \texttt{legacy\_rect\_finding} works independent of the orientations of the markers on the paper frame. However, it is dependant on the placement of the markers in the image. 
+There are two algorithms for finding the inner rectangle. The first one, also called \texttt{legacy\_rect\_finding} in the script, sorts each marker's corners that are the closest to the middle into a list based on the quadrant the marker is in the image. Therefore, \texttt{legacy\_rect\_finding} works independent of the orientations of the markers on the paper frame. However, it is dependent on the placement of the markers in the image. 
 
-The second algorithm assumes that all printed \ac{ArUco} markers on the paper frame have the same orientation and that the corner list of the marker is sorted in an u-shape. The latter constraint is already satisfied by the output of the \ac{OpenCV} \ac{ArUco} detector. Every markers corner closest to the image middle is then sorted into the inner rectangle corner list based on the corners index within the markers corner list. %as seen in \autoref{lst:irf}. 
-The inner rectangles corners are now sorted in an u-shape as well. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the respective assumptions of the two algorithms hold, they both result in a stable u-shaped ordering of the corners.
+The second algorithm assumes that all printed \ac{ArUco} markers on the paper frame have the same orientation and that the corner list of the marker is sorted in an u-shape. The latter constraint is already satisfied by the output of the \ac{OpenCV} \ac{ArUco} detector. Every marker's corner closest to the image middle is then sorted into the inner rectangle corner list based on the corner's index within the marker's corner list. %as seen in \autoref{lst:irf}. 
+The inner rectangle's corners are now sorted in an u-shape as well. The relationship between the indices is visualized in \figureref{fig:inner_rect_indices}. As long as the respective assumptions of the two algorithms hold, they both result in a stable U-shaped ordering of the corners.
 
 \begin{figure}
   \caption{Matching corner indices of the \ac{ArUco} rectangles and the red inner rectangle corners written on the image.}
@@ -740,7 +740,7 @@ Once the user is done, the labels are transferred to each other image in the dat
 \section{Augmentations}
 \label{sec:augs}
 
-This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through command line arguments. Furthermore, the images are copied such that the original not augmented training images and labels are kept in the dataset at least once and such that only copies are augmented. The number of which can also be changed through command line arguments but is 3 by default. The position of the augmentations in the pipeline is shown in \figureref{fig:arch_data_aug_focus}.
+This section describes the augmentations that were implemented into the \texttt{create\_dataset} script. They were implemented such that the chance of application and their maximum strength can be set through command line arguments. Furthermore, the images are copied such that the original not augmented training images and labels are kept in the dataset at least once and such that only copies are augmented. The number of which can also be changed through command line arguments, but is 3 by default. The position of the augmentations in the pipeline is shown in \figureref{fig:arch_data_aug_focus}.
 
 \begin{figure}
   \caption{Position of augmentations in the pipeline.}
@@ -750,9 +750,9 @@ This section describes the augmentations that were implemented into the \texttt{
 
 \subsection{Smart Grid Shuffle}
 
-The training data contains series of images with multiple tapes in the same relative positions on the glass plate. However, these relative positions should not be learned, since the trained model should recognize single markers independently of their surroundings. 
+The training data contains a series of images with multiple tapes in the same relative positions on the glass plate. However, these relative positions should not be learned since the trained model should recognize single markers independently of their surroundings. 
 
-One image augmentation that breaks up the overall image structure is grid shuffling and Albumentations already has an implementation for grid shuffling. However, that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is build to work within dataloaders as a fast augmentation pipeline. However, in this case the performance of the augmentation does not matter as much, since it is build into the dataset before the training. To make grid shuffling work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis aligned.
+One image augmentation that breaks up the overall image structure is grid shuffle and Albumentations already has an implementation for grid shuffle. However, that implementation does not work on bounding boxes, since the grid lines, on which the image is split apart, may also split apart bounding boxes and the objects they describe. This makes sense for Albumentations, which is built to work within dataloaders as a fast augmentation pipeline. However, in this case, the performance of the augmentation does not matter as much since it is built into the dataset before the training. To make grid shuffle work for this case, I adapted it to not split the image on a fixed grid but on gaps between polygon labels. To keep the algorithm simple, all cuts are axis-aligned.
 
 \subsubsection{Implementation}
 
@@ -886,7 +886,7 @@ def smart_grid_shuffle(img, polys: List[Polygon], img_size_wh):
   \label{fig:aug_sgs_example}
 \end{figure}
 
-The smart grid shuffle augmentation cuts and reassembles the image such that as much of the possibly important surrounding pixels of the polygon labels are preserved, but that still removes any reoccurring patterns in the image, in which the labels may be arranged by, as seen in \figureref{fig:aug_sgs_example}.
+The smart grid shuffle augmentation cuts and reassembles the image such that as much of the possibly important surrounding pixels of the polygon labels are preserved, but that still removes any reoccurring patterns in the image in which the labels may be arranged by, as seen in \figureref{fig:aug_sgs_example}.
 
 \subsection{Label Dropout}
 \label{sec:aug_ld}
@@ -901,13 +901,13 @@ The smart grid shuffle augmentation cuts and reassembles the image such that as 
   \label{fig:aug_pld_example}
 \end{figure}
 
-To further prevent the model from fitting to certain label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the associated marker from the image and removes the label entry. The marker is removed from the image by taking its polygon, scaling it around its centroid by a factor of 1.2 and rasterizing the result on the image using the color on the image at the polygons centroid position. The result of that operation can be seen in \figureref{fig:aug_pld_example}.
+To further prevent the model from fitting to certain label arrangements in the image, the label dropout augmentation randomly chooses a label, removes the associated marker from the image and removes the label entry. The marker is removed from the image by taking its polygon, scaling it around its centroid by a factor of 1.2 and rasterizing the result on the image using the color on the image at the polygon's centroid position. The result of that operation can be seen in \figureref{fig:aug_pld_example}.
 
 \subsection{Homogeneous Matrix Transform}
 
 Rotation and perspective transformations are both combined into a homogeneous matrix transform step to prevent code duplication and to improve performance since this step requires postprocessing.
 
-For most augmentations there is a chance setting and possibly a strength setting depending on the augmentation. Here, the available settings are the chance for a rotation of 90 degree multiples, the chance for rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly, all settings are build into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \figureref{fig:aug_mat_example}.
+For most augmentations, there is a chance setting and possibly a strength setting, depending on the augmentation. Here, the available settings are the chance for a rotation of 90 degree multiples, the chance for rotation of any angle, the maximum rotation angle, the chance for perspective transform and the maximum perspective transformation strength. Firstly, all settings are built into two transformation matrices and both are combined. Then the resulting matrix is used to transform the image as well as the polygon label vertices, as seen in \figureref{fig:aug_mat_example}.
 
 \begin{figure}
   \centering
@@ -922,7 +922,7 @@ For most augmentations there is a chance setting and possibly a strength setting
 \subsubsection{Out of Bounds Cases}
 \label{sec:oob}
 
-After the transformation, cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, such that all markers which should be detected are still clearly visible. To compute visibility, the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries and the remaining area in the image, in which the marker was, is painted over. The overpainting works exactly like label dropout described in \autoref{sec:aug_ld}. Should it pass the visibility check but still intersect with the image border, the label polygon is set to be the intersection from earlier, effectively clipping it within the image space.
+After the transformation, cases of \ac{OOB} labels have to be handled, as labels may be rotated out of the visible image area. I defined a minimum visibility threshold at 60\%, such that all markers that should be detected are still clearly visible. To compute visibility, the intersection of the label polygon and the image bounds polygon is computed using Shapely. Visibility is then defined as the area of the intersection polygon divided by the area of the original label polygon. This computation is similar to the \ac{IoU} definition or to albumentations visibility calculation on bounding boxes\footnote{\url{https://albumentations.ai/docs/getting_started/bounding_boxes_augmentation/}, accessed on 05.11.2023}. Should the resulting visibility be lower than the threshold, the label entry is discarded from the list of label entries and the remaining area in the image, in which the marker was, is painted over. The overpainting works exactly like label dropout described in \autoref{sec:aug_ld}. Should it pass the visibility check but still intersect with the image border, the label polygon is set to be the intersection from earlier, effectively clipping it within the image space.
 
 \subsection{Random Crop}
 
@@ -936,7 +936,7 @@ After the transformation, cases of \ac{OOB} labels have to be handled, as labels
   \label{fig:aug_rc_example}
 \end{figure}
 
-The pipeline implements also a random crop, which crops an area of the datasets target image size out of the input image and moves the labels accordingly as seen in \figureref{fig:aug_rc_example}. Since this augmentation can also leave labels out of bounds, the same postprocessing is applied on the resulting labels as described in \autoref{sec:oob}.
+The pipeline also implements a random crop, which crops an area of the dataset's target image size out of the input image and moves the labels accordingly, as seen in \figureref{fig:aug_rc_example}. Since this augmentation can also leave labels \ac{OOB}, the same postprocessing is applied to the resulting labels as described in \autoref{sec:oob}.
 
 \subsubsection{Augmentation Versions}
 
@@ -946,15 +946,15 @@ The pipeline implements also a random crop, which crops an area of the datasets 
      {\includegraphics[width=0.45\textwidth]{image/aug_rc2_before}}
   \subcaptionbox{after augmentation}
      {\includegraphics[width=0.45\textwidth]{image/aug_rc2_after}}
-  \caption{An example for random crop v2 on a training image. Image (b) also shows how out of bounds labels that do not pass the visibility check are overdrawn. This is done such that the residue of the marker on the image that is without label does not introduce a false negative into the training data, as described in \autoref{sec:oob}.}
+  \caption{An example for random crop v2 on a training image. Image (b) also shows how \ac{OOB} labels that do not pass the visibility check are overdrawn. This is done such that the residue of the marker on the image that is without label does not introduce a false negative into the training data, as described in \autoref{sec:oob}.}
   \label{fig:aug_rc2_example}
 \end{figure}
 
-The data pipeline also builds \ac{JSON} files into the dataset folder to make the whole dataset build process retraceable. Because of that, I did not change augmentations besides bug fixes once they were implemented, such that the training artifacts including the \ac{JSON} files stay as backwards compatible as possible. 
+The data pipeline also builds \ac{JSON} files into the dataset folder to make the whole dataset build process retraceable. Because of that, I did not change augmentations besides bug fixes once they were implemented, such that the training artifacts, including the \ac{JSON} files, stay as backwards compatible as possible. 
 
-In this case, I also built a random crop which crops an area of variable size out of the source image and then rescales that cropped part to the target size, which is therefore implemented as its own augmentation: random crop v2. Examples for random crop v2 can be seen in \figureref{fig:aug_rc2_example}. 
+In this case, I also built a random crop that crops an area of variable size out of the source image and then rescales that cropped part to the target size, which is therefore implemented as its own augmentation: random crop v2. Examples for random crop v2 can be seen in \figureref{fig:aug_rc2_example}. 
 
-Splitting the augmentations in versions this way also has the advantage that the following evaluation can detect how much better a new version of an augmentation performs or if there is regression.
+Splitting the augmentations into versions this way also has the advantage that the following evaluation can detect how much better a new version of an augmentation performs or if there is regression.
 
 \subsection{Label Move}
 
@@ -968,9 +968,9 @@ Splitting the augmentations in versions this way also has the advantage that the
   \label{fig:aug_lm_example}
 \end{figure}
 
-Label move works similar to label dropout, as described in \autoref{sec:aug_ld}. However after removing the label from the image, it and its marker image structure is reinserted at a different place in the image, as seen in \figureref{fig:aug_lm_example}. 
+Label move works similar to label dropout, as described in \autoref{sec:aug_ld}. However, after removing the label from the image, it and its marker image structure are reinserted at a different place in the image, as seen in \figureref{fig:aug_lm_example}. 
 
-Since inserting of images into other images in OpenCV works by copying slices, only \ac{AABB} areas can be inserted at once. However when reinserting the labels image structure at another position, only the \ac{ArUco} marker structure should be inserted and not the surrounding image content. Therefore before inserting the labels image structure back, a mask is applied to it. That mask is the labels polygon rasterized in white onto a black binary image. Using the mask as transparency weights, the labels image structure is then reinserted at the new position.
+Since inserting of images into other images in OpenCV works by copying slices, only \ac{AABB} areas can be inserted at once. However, when reinserting the label's image structure at another position, only the \ac{ArUco} marker structure should be inserted and not the surrounding image content. Therefore, before inserting the label's image structure back, a mask is applied to it. That mask is the label polygon rasterized in white onto a black binary image. Using the mask as transparency weights, the label's image structure is then reinserted at the new position.
 
 \subsubsection{Label Move v2}
 
@@ -982,15 +982,15 @@ Since inserting of images into other images in OpenCV works by copying slices, o
      {\includegraphics[width=0.3\textwidth]{image/aug_lm2_after_old}}
   \subcaptionbox{after label move v2 augmentation}
      {\includegraphics[width=0.3\textwidth]{image/aug_lm2_after}}
-  \caption{An example for label move v2 on a cropped part of a training image. Here, the label is moved from the middle of the image to the bottom left. Despite the different background, the color differences is not as noticeable in label move v2. Label borders are not drawn here to make the border differences of the augmentations more visible.}
+  \caption{An example for label move v2 on a cropped part of a training image. Here, the label is moved from the middle of the image to the bottom left. Despite the different background, the color difference is not as noticeable in label move v2. Label borders are not drawn here to make the border differences of the augmentations more visible.}
   \label{fig:aug_lm2_example}
 \end{figure}
 
 The second version of label move has two additions to the operations of label move. 
 
-Firstly, the color of the labels image structure is roughly adapted to the target positions color. For this, both the average RGB values of the image target area slice and the average RGB values of the labels image structure are computed. Then, each pixel of the labels image structure is recolored based on the difference of the average RGB values before it is reinserted into the image.
+Firstly, the color of the label's image structure is roughly adapted to the target position's color. For this, both the average RGB values of the image target area slice and the average RGB values of the labels image structure are computed. Then, each pixel of the label's image structure is recolored based on the difference of the average RGB values before it is reinserted into the image.
 
-Secondly, gaussian blur is applied to the mask which is a rasterized version of the labels polygon. Due to this change, the inserted labels image structure does not have strong contours anymore and gets a small color transition at its borders.
+Secondly, gaussian blur is applied to the mask, which is a rasterized version of the label's polygon. Due to this change, the inserted label's image structure does not have strong contours anymore and gets a small color transition at its borders.
 
 These changes help the reinserted label blend in in its new position, as seen in \figureref{fig:aug_lm2_example}.
 
@@ -1006,9 +1006,9 @@ These changes help the reinserted label blend in in its new position, as seen in
   \label{fig:aug_bd_example}
 \end{figure}
 
-A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation which adds black dots on parts of the image without a marker. 
+A reoccurring issue with the application of \ac{SAHI}, which is discussed in more detail later, is that dark objects in the test data were repeatedly and with large confidence misidentified as markers. To make sure that the network learns that dark areas in the image are not markers, I added an augmentation that adds black dots to parts of the image without a marker. 
 
-After the augmentation function is invoked, at least one black dot is added. Afterwards there is a 40\% chance that another black dot is added. If another black dot is added, there is another 40\% chance for one more black dot and so on. While this could continue forever, it gets progressively more unlikely to go on after each iteration. 
+After the augmentation function is invoked, at least one black dot is added. Afterwards there is a 40\% chance that another black dot is added. If another black dot is added, there is another 40\% chance for one more black dot and so on. While this could continue forever, it gets progressively less likely to go on after each iteration. 
 
 The insertion of black dots works similarly to label move, with the difference that a completely black image is inserted and that the mask is a circle. Furthermore, like in label move v2, the mask is blurred using gaussian blur to create a color transition.
 
@@ -1029,13 +1029,13 @@ An example of black dot aug can be seen in \figureref{fig:aug_bd_example}.
 
 Another reoccurrence in the test data is that the tape with the markers was rolled around a finger. Due to the nature of the training data, this case is currently not included in the fitting process. The label curving augmentation should therefore mimic the curved labels.
 
-This augmentation again works similar to label move. However, in this case the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case, the x coordinates stay the same but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout, the label vertices are also transformed using the vector field as \texttt{remap}, such that the label is still located over the image structure. The polygon cannot fully capture the curving without new vertices. However, since the polygons are transformed into bounding boxes in most cases this is not a problem. An example of label curving can be seen in \figureref{fig:aug_lc_example}.
+This augmentation again works similar to label move. However, in this case, the label is not moved anywhere. It is cut out and modified using \acp{OpenCV} \texttt{remap} function. \texttt{remap} takes, besides other parameters, two arrays, which represent the x and y coordinates each pixel should be mapped to. In this case, the x coordinates stay the same, but the y coordinates are mapped based on a half circle function to mimic the pixel displacement on a curved surface. The middle and the width of the half circle are randomly chosen. Alongside the image cutout, the label vertices are also transformed using the vector field as \texttt{remap}, such that the label is still located over the image structure. The polygon cannot fully capture the curving without new vertices. However, since the polygons are transformed into bounding boxes in most cases, this is not a problem. An example of label curving can be seen in \figureref{fig:aug_lc_example}.
 
 \subsection{Gaussian Noise}
 
-While augmentations that work with labels needed to be implemented specifically for this pipeline due to the label datatype, pixel level augmentations already defined in other libraries also work here. The gaussian noise augmentation from Albumentations is therefore used here\footnote{\url{https://albumentations.ai/docs/api\_reference/augmentations/transforms/\#albumentations.augmentations.transforms.GaussNoise}, accessed on 06.11.2023}. 
+While augmentations that work with labels needed to be implemented specifically for this pipeline due to the label datatype, pixel-level augmentations already defined in other libraries also work here. The gaussian noise augmentation from Albumentations is therefore used here\footnote{\url{https://albumentations.ai/docs/api\_reference/augmentations/transforms/\#albumentations.augmentations.transforms.GaussNoise}, accessed on 06.11.2023}. 
 
-Gaussian noise adds noise to each pixel in the image, with the strength of the noise being given by the normal distribution. Here, gaussian noise is used to get a different result from the same training configuration even if the training run otherwise works fully deterministic, such that the quality of a training configuration can be more accurately assessed.
+Gaussian noise adds noise to each pixel in the image, with the strength of the noise given by the normal distribution. Here, gaussian noise is used to get a different result from the same training configuration even if the training run otherwise works fully deterministic, such that the quality of a training configuration can be more accurately assessed.
 
 % TODO?: \section{Synthetic Data}
 
@@ -1053,29 +1053,29 @@ The inference on test data using previously trained models happens in the evalua
 
 One such technique is \ac{SAHI}. 
 %However, since each type of model has its own evaluate script, because each type of model works slightly differently, certain techniques have to be implemented separately. Therefore, \ac{SAHI} is currently not supported for \ac{YOLO}-NAS within this project. 
-I set the \ac{SAHI} window size to $640 \times 640$ pixels since this is the native input size for the used \ac{YOLO} models. Furthermore, I used a window overlap of 20\% on the x and y axis.
+I set the \ac{SAHI} window size to $640 \times 640$ pixels since this is the native input size for the used \ac{YOLO} models. Furthermore, I used a window overlap of 20\% on the x and y axes.
 
 \subsection{Bounding Box Filters}
 
 %Furthermore, the bounding boxes from the inference results can be filtered independently of the model they come from. 
-The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this, the size of a border along the the image bounds can be set. All bounding box predictions that fall within this border are filtered out. Additionally to filter predictions which are not square enough, %, which the \ac{ArUco} marker usually are, 
+The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this, the size of a border along the image bounds can be set. All bounding box predictions that fall within this border are filtered out. Additionally, to filter predictions that are not square enough, %, which the \ac{ArUco} marker usually are, 
 a minimum squareness can be set. Squareness is here defined as $$ 
 s(w,h)=
 \begin{dcases}
     \frac{w}{h}, & \text{if } w\leq h\\
     \frac{h}{w}, & \text{otherwise}
-\end{dcases} $$ where $w$ refers to the bounding boxes width and $h$ to its height. Due to the definition, the squareness score always lies between 0 and 1.
+\end{dcases} $$ where $w$ refers to the bounding box's width and $h$ to its height. Due to the definition, the squareness score always lies between 0 and 1.
 
 \subsection{Foreground Mask}
 
 Since markers in the images are usually part of the foreground, a pretrained foreground segmentation network could help improve the detection scores.
-To test this, I added support for masking of bounding box predictions with predefined masks. Since this is just for testing, this approach is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. %Using the average instead of the maximum pixel value lead the lower scores.
+To test this, I added support for masking bounding box predictions with predefined masks. Since this is just for testing, this approach is not implemented fully into the pipeline. For the bounding box filtering, the area of the bounding box is cut out of the mask image and the maximum pixel value of the area is checked against a minimum threshold. %Using the average instead of the maximum pixel value lead the lower scores.
 
 % TOxDO?: \section{Plotting}
 
 \section{Automated Ensembles}
 
-Given a set of dataseries as base and parameters for dataset creation, training and inference, the entire process for ensemble learning can now be automated. Furthermore, by starting multiple batch train instances and giving each information about its worker index and the total worker count, the training load for multiple runs on different datasets can be split among multiple processes and \acp{GPU}. Finally, given a consistent naming scheme for the training runs, the score results can also be automatically plotted.
+Given a set of dataseries as a base and parameters for dataset creation, training and inference, the entire process of ensemble training can now be automated. Furthermore, by starting multiple batch train instances and giving each information about its worker index and the total worker count, the training load for multiple runs on different datasets can be split among multiple processes and \acp{GPU}. Finally, given a consistent naming scheme for the training runs, the score results can also be automatically plotted.
 
 The top level scripts necessary for this are currently only implemented to work with the \ac{MIP} server structure, but could be ported to any \ac{GPU} server with Docker support.
 
@@ -1084,22 +1084,22 @@ The top level scripts necessary for this are currently only implemented to work 
 
 To find an optimal combination of augmentations from the implemented ones, a hyperparameter optimization is implemented using Hyperopt. 
 
-More precisely, the search space for this application of Hyperopt contains the chances for each augment to be applied on an image during dataset generation. Furthermore, the maximum strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. 
+More precisely, the search space for this application of Hyperopt contains the chances for each augment to be applied to an image during dataset generation. Furthermore, the maximum strengths of augments that define one, such as the maximum rotation angle for the rotation augment, are also part of the search space. 
 
 The epochs that should be trained for are also part of the search space. The validation data in the datasets used here can be similar to the training data since both are formed from \ac{ArUco} frame dataseries. The hyperparameter optimization can therefore choose an earlier stopping point for the training, should further training not increase the score on the given test data. 
 
 % Finally, the random seed for the dataset creation is also part of the search space, such that 
 
 The randomness for each configuration of augmentation parameters could be handled by %not including the random seed in the search space and instead 
-doing an ensemble run with random random seeds for a given configuration inside the objective function. Doing multiple training runs on an configuration and taking the average score should converge towards the actual average score for that configuration and therefore lead to more stable optimization. However, the hyperparameter optimization is already time consuming and pairing the optimization with ensemble runs would increase the needed runtime further. I therefore chose to model the random seed as part of the search space similarly to how Bethard proposes it for model performance comparisons \cite{bethard2022need}. Due to this, the best training run from the optimization is also fully reproducible given the optimal found search space values. 
+doing an ensemble run with random random seeds for a given configuration inside the objective function. Doing multiple training runs on a configuration and taking the average score should converge towards the actual average score for that configuration and therefore lead to more stable optimization. However, the hyperparameter optimization is already time-consuming and pairing the optimization with ensemble runs would increase the needed runtime further. I therefore chose to model the random seed as part of the search space similarly to how Bethard proposes it for model performance comparisons \cite{bethard2022need}. Due to this, the best training run from the optimization is also fully reproducible given the optimal found search space values. 
 
 \section{Marker Corner Detection}
 
-This section describes the development of the second part of the detection pipeline. After the areas of interest were found by a fitted model which works on the whole image, this part finds the corner points of the marker within that area of interest.
+This section describes the development of the second part of the detection pipeline. After the areas of interest were found by a fitted model that works on the whole image, this part finds the corner points of the marker within that area of interest.
 
 \subsection{Point Head Approach}
 
-For this approach, I mainly used MobileNetV2 as a base since this part should also be lightweight and added custom head layers to the network architecture. For testing of larger models, I also tested a VGG16 \ac{CNN} as the base network architecture. The custom heads output eight numbers, which are interpreted as the x- and y-coordinates of the 4 corner points of the marker. I implemented different head architectures, such as a fully convolutional head, a two linear layer head and a three linear layer head.
+For this approach, I mainly used MobileNetV2 as a base since this part should also be lightweight and added custom head layers to the network architecture. For testing of larger models, I also tested a VGG16 \ac{CNN} as the base network architecture. The custom heads output eight numbers, which are interpreted as the x- and y-coordinates of the 4 corner points of the marker. I implemented different head architectures, such as a fully convolutional head, a two-linear-layer head and a three-linear-layer head.
 
 The training dataloader for this approach uses an Albumentations augmentation pipeline for the images and keypoint labels. The augmentations used include image shifting, rotation, scaling and perspective effects, as well as changes in brightness, contrast, hue and saturation, to simulate different situations in real world data. 
 
@@ -1135,7 +1135,7 @@ The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019int
 \end{figure}
 
 % TODO: Mention VGG16 based unet?
-As an alternative, I also implemented an u-net approach. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total number of around 3 million parameter. The implemented u-net instead uses a total number of around 44 million parameters. It is therefore around 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
+As an alternative, I also implemented an u-net approach. Except for changing the loss to dice loss for the segmentation masks, the rest of the approach stayed the same. The same albumentations augmentations used above also work on segmentation masks. However, it is worth noting that the MobileNetV2 with a custom head has a total of around 3 million parameters. The implemented u-net instead uses a total of around 44 million parameters. It is therefore around 14 times larger. Furthermore, there is extra logic required for interpreting the segmentation mask. 
 %Nonetheless, the prediction results of rotated markers fit closer to the marker corners even after rotation, as seen in \figureref{fig:segpet_preds_example}. 
 Examples for the u-net output on validation data can be seen in \figureref{fig:segpet_preds_example}. 
 
