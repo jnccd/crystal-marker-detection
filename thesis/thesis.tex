@@ -345,7 +345,7 @@ In most use cases, \ac{ArUco} markers can be detected by the \acp{OpenCV} detect
 
 \subsection{UAV pose estimation}
 
-Another use case in which robust detection of \ac{ArUco} markers is essential, is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here, camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based detection systems can be more robust than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original 4000x2250 pixel images were resized to 1000x562 pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of it with occlusion ratios from 10\% to 40\%. 
+Another use case in which robust detection of \ac{ArUco} markers is essential, is for the control of \acp{UAV} during landing \cite{li2020aruco}. Here, camera pose estimation can help locate the \ac{UAV} if \ac{ArUco} markers are layed out on the landing field. However during real world usage, markers can become occluded. Furthermore, other visual artifacts can make detection difficult. Therefore, Li et al. used fine tuned versions of \ac{YOLO}v3-spp and \ac{YOLO}v3-tiny as marker detectors, since these \ac{CNN} based detection systems can be more robust than classic detection systems. For training, the \ac{UAV} took off, floated and landed repeatedly and images were taken. The original $4000 \times 2250$ pixel images were resized to $1000 \times 562$ pixel for higher subsequent processing speed. To make the training data more realistic, black and white objects were placed on the floor to simulate occluding objects. For the test set, images were taken similarly, but markers were partly occluded by laying a white paper cutout on top of it with occlusion ratios from 10\% to 40\%. 
 
 Markers in test images which had occluded borders still had high detection rates even at high cover ratios, while markers with an occluded middle had worse detection rates. This shows that the marker pattern itself was most important for the detection in this case \cite{li2020aruco}.
 
@@ -406,7 +406,7 @@ by removing any image augmentation \cite{elgendi2020performance, elgendi2021effe
 
 \subsection{Comparison of augmentations on aerial image labeling}
 
-As part of the paper that introduced Albumentations, Buslaev et al. showed the usefulness of Albumentations augmentations on the Inria Aerial Image Labeling dataset \cite{info11020125,maggiori2017can}. They applied random crop to a random square patch size of $[384;640]$ and resized the cropped region to an image size of 512x512 pixels. Afterwards, they used augmentations bundled into the configurations none, light, medium and heavy on the images.
+As part of the paper that introduced Albumentations, Buslaev et al. showed the usefulness of Albumentations augmentations on the Inria Aerial Image Labeling dataset \cite{info11020125,maggiori2017can}. They applied random crop to a random square patch size of $[384;640]$ and resized the cropped region to an image size of $512 \times 512$ pixels. Afterwards, they used augmentations bundled into the configurations none, light, medium and heavy on the images.
 
 \begin{enumerate}
   \item No augmentations: no further changes to the image
@@ -595,7 +595,7 @@ The idea of the histogram approach is that the pixel gradient histogram distribu
   \label{fig:markeryness_scores}
 \end{figure}
 
-For this approach, the image is firstly scaled in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards, the image is traversed with a 64x64 pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \figurereft{fig:markeryness_scores}{(a)}. 
+For this approach, the image is firstly scaled in an image pyramid. For each entry in the image pyramid, a thresholded version is computed using adaptive thresholding, as well as the image gradients in x and y direction and polar coordinate versions of the gradients. Afterwards, the image is traversed with a $64 \times 64$ pixel window on a 2 pixel step width on the x and y axis. Then the script checks for each such window on the image if it is a candidate for the marker by checking the ratio of white to black pixels. If the window around a point in the image passes the candidate check, a histogram of size 20 is computed from the angles of the pixels in the window of the polar gradient array. Then the histogram difference between the known histogram on the middle of the marker on the top left and the current histogram is computed. The result of that computation can be seen in \figurereft{fig:markeryness_scores}{(a)}. 
 
 There are many possible variations of this approach, such as also using the magnitude of the gradients as weights in the histogram computation or thresholding the gradients to reduce noise. One further variation is using a different scoring for the histogram, that instead checks for two peaks. Having two large peaks in the histogram with some minimum distance would mean that there are two directions in which gradients mainly occur in the window. In this case, two mainly occurring gradient directions could refer to the edges of an \ac{ArUco} marker. The score calculation used for this case is $((\sum_{p \in (h_i)^1_{i=0}}p) - (\sum_{p \in (h_i)^n_{i=2}}p)) * 4 - |h_0 - h_1|$, given a sorted number series of length $n$ of the highest peaks in the histogram $h$. Peaks are defined here as numbers in the histogram that are the highest in a 2 number large window around them. However, this also results in inconclusive scores as seen in \figurereft{fig:markeryness_scores}{(b)}.
 
@@ -1052,7 +1052,7 @@ The inference on test data using previously trained models happens in the evalua
 
 One such technique is \ac{SAHI}. 
 %However, since each type of model has its own evaluate script, because each type of model works slightly differently, certain techniques have to be implemented separately. Therefore, \ac{SAHI} is currently not supported for \ac{YOLO}-NAS within this project. 
-I set the \ac{SAHI} window size to 640x640 pixels since this is the native input size for the used \ac{YOLO} models. Furthermore, I used a window overlap of 20\% on the x and y axis.
+I set the \ac{SAHI} window size to $640 \times 640$ pixels since this is the native input size for the used \ac{YOLO} models. Furthermore, I used a window overlap of 20\% on the x and y axis.
 
 \subsection{Bounding Box Filters}
 
@@ -1516,7 +1516,7 @@ For the U-Net mask interpretations, the Hough transform based interpretation alm
    Hough transform based interpretation of U-Net masks  & 3.98 & 36.83 \\
    \hline
   \end{tabular}
-  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different marker corner detection approaches. The mean point distance is given in percentage of the image size. The image size refers to the images width and height in pixels, which are the same for the images in the validation data. The sinkhorn loss is not normalized and works on 224x224 pixel images for the keypoint detection networks and 160x160 pixel images for the U-Net case. }
+  \caption{\label{tab:pet_valdata_results}Comparison of Sinkhorn loss and mean point distance on validation data for different marker corner detection approaches. The mean point distance is given in percentage of the image size. The image size refers to the images width and height in pixels, which are the same for the images in the validation data. The sinkhorn loss is not normalized and works on $224 \times 224$ pixel images for the keypoint detection networks and $160 \times 160$ pixel images for the U-Net case. }
 \end{table}
 
 \section{Discussion}
