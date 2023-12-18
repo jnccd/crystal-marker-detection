@@ -804,7 +804,7 @@ def segment_img(img: Mat, polys: List[Polygon], axis: Literal[0,1], min_cut_dist
 
       # Generate segment
       segment_polys: List[Polygon] = get_polys_in_segment(polys, last_end, end)
-      segment_img: Mat = get_img_slice(last_end, end, axis)
+      segment_img: Mat = get_img_slice_on_axis(last_end, end, axis)
       segments.append(Segment(end, segment_polys, segment_img))
 
   # Generate last image segment analogously with end being the image size
