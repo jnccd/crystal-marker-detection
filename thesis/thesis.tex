@@ -610,18 +610,20 @@ There are many possible variations of this approach, such as also using the magn
 
 \begin{figure}
   \caption{Detections of the marker middle using the \ac{SIFT} approach with a sliding window and postprocessing.}
-  \includegraphics[width=0.5\textwidth]{image/classic_sift_final_matches}
+  \includegraphics[width=0.55\textwidth]{image/classic_sift_final_matches}
   \label{fig:classic_sift_final_matches}
 \end{figure}
 
 \begin{figure}
   \caption{Adaptive thresholding on a cropped part of an image from the test set.}
-  \includegraphics[width=0.4\textwidth]{image/classic_sift_thresh_on_finger}
+  \includegraphics[width=0.35\textwidth]{image/classic_sift_thresh_on_finger}
   \label{fig:classic_sift_thresh_on_finger}
 \end{figure}
 
 Since the output of adaptive thresholding on the image in the histogram approach segments the parts of the \ac{ArUco} marker well, as seen in \figureref{fig:classic_sift_matches}, I also used a feature matcher on the thresholded image and an image of the \ac{ArUco} marker to detect the marker positions. Due to familiarity, I used \acp{OpenCV} implementation of \ac{SIFT} with the brute-force matcher for this task. Since feature matching in this way will separate the matches across the repeating marker structures, as seen in \figureref{fig:classic_sift_matches}, I applied a sliding window around the matching process. Finally, the positions of the matches in the image are moved based on their position in the marker image to cluster them. % TODO: Make this more understandable
-The results of that process can be seen in \figureref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. However, when using this matching process on an image of the real test set, nothing is detected since the thresholded image there does not preserve the structure of the \ac{ArUco} marker enough for the \ac{SIFT} matching, as seen in \figureref{fig:classic_sift_thresh_on_finger}.
+The results of that process can be seen in \figureref{fig:classic_sift_final_matches}, where the majority of the matches land on or near the middle of a \ac{ArUco} marker in the image. 
+
+However, when using this matching process on an image of the real test set, nothing is detected since the thresholded image there does not preserve the structure of the \ac{ArUco} marker enough for the \ac{SIFT} matching, as seen in \figureref{fig:classic_sift_thresh_on_finger}.
 
 \subsection{Conclusion}
 
@@ -629,7 +631,9 @@ While I cannot try out all combinations of data transformations and image algori
 
 \section{Software Architecture}
 
-Python has support for the structuring of script files into modules, in which data can be primarily exchanged between components through function call arguments. However, for this work, I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage of that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore, should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, such as retraining a model.
+Python has support for the structuring of script files into modules, in which data can be primarily exchanged between components through function call arguments. 
+
+However, for this work, I chose to structure the project as loose script files that exchange data primarily through the filesystem. The advantage of that approach is that all intermediate results of the script pipeline necessarily stay in the filesystem and can be used for validation later. Furthermore, should there be an error in the execution of a script later in the pipeline, that script can easily be started again with adapted code and tested on the input data it failed on without having to run all previous steps, such as retraining a model.
 
 \subsection{Data Pipeline Overview}
 
@@ -886,9 +890,9 @@ The smart grid shuffle augmentation cuts and reassembles the image such that as 
 \begin{figure}
   \centering
   \subcaptionbox{before augmentation}
-     {\includegraphics[width=0.3\textwidth]{image/aug_pld_before}}
+     {\includegraphics[width=0.35\textwidth]{image/aug_pld_before}}
   \subcaptionbox{after augmentation}
-     {\includegraphics[width=0.3\textwidth]{image/aug_pld_after}}
+     {\includegraphics[width=0.35\textwidth]{image/aug_pld_after}}
   \caption{An example for label dropout on a cropped part of a training image.}
   \label{fig:aug_pld_example}
 \end{figure}
@@ -991,9 +995,9 @@ These changes help the reinserted label blend in in its new position, as seen in
 \begin{figure}
   \centering
   \subcaptionbox{before augmentation}
-     {\includegraphics[width=0.45\textwidth]{image/aug_bd_before}}
+     {\includegraphics[width=0.35\textwidth]{image/aug_bd_before}}
   \subcaptionbox{after augmentation}
-     {\includegraphics[width=0.45\textwidth]{image/aug_bd_after}}
+     {\includegraphics[width=0.35\textwidth]{image/aug_bd_after}}
   \caption{An example for black dot augmentation on a training image.}
   \label{fig:aug_bd_example}
 \end{figure}
@@ -1035,7 +1039,7 @@ Gaussian noise adds noise to each pixel in the image, with the strength of the n
 
 \begin{figure}
   \caption{Position of evaluation inference in the pipeline.}
-  \includegraphics[width=0.75\textwidth]{graph/arch_train_eval_focus}
+  \includegraphics[width=0.7\textwidth]{graph/arch_train_eval_focus}
   \label{fig:arch_train_eval_focus}
 \end{figure}
 
@@ -1050,7 +1054,9 @@ I set the \ac{SAHI} window size to $640 \times 640$ pixels since this is the nat
 \subsection{Bounding Box Filters}
 
 %Furthermore, the bounding boxes from the inference results can be filtered independently of the model they come from. 
-The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this, the size of a border along the image bounds can be set. All bounding box predictions that fall within this border are filtered out. Additionally, to filter predictions that are not square enough, %, which the \ac{ArUco} marker usually are, 
+The application of \ac{SAHI} can result in an increased amount of false detections along the border of the image. To prevent this, the size of a border along the image bounds can be set. All bounding box predictions that fall within this border are filtered out. 
+
+Additionally, to filter predictions that are not square enough, %, which the \ac{ArUco} marker usually are, 
 a minimum squareness can be set. Squareness is here defined as $$ 
 s(w,h)=
 \begin{dcases}
@@ -1115,13 +1121,13 @@ The loss used here is Sinkhorn loss from the geomloss library \cite{feydy2019int
 \begin{figure}
   \centering
   \subcaptionbox{Validation data}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_1_in}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_1_in}}
   \subcaptionbox{Predictions on validation data}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_1_pred}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_1_pred}}
   \subcaptionbox{Validation data}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_3_in}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_3_in}}
   \subcaptionbox{Predictions on validation data}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_3_pred}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_3_pred}}
   \caption{Examples of segmentation approach output.}
   \label{fig:segpet_preds_example}
 \end{figure}
@@ -1133,27 +1139,27 @@ Examples for the u-net output on validation data can be seen in \figureref{fig:s
 
 \subsubsection{Harris Corner Based Mask Interpretation}
 
-\begin{figure}
-  \centering
-  \subcaptionbox{Harris Corner Ouput}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_8_pred_corners}}
-  \subcaptionbox{Rectangle prediction on the input image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_8_pred_rect}}
-  \subcaptionbox{Harris Corner Ouput}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_10_pred_corners}}
-  \subcaptionbox{Rectangle prediction on the input image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_10_pred_rect}}
-  \subcaptionbox{Harris Corner Ouput}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_6_pred_corners}}
-  \subcaptionbox{Rectangle prediction on the input image}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_6_pred_rect}}
-  \caption{Examples of the segmentation mask interpretation output.}
-  \label{fig:segpet_rect_interp}
-\end{figure}
-
 Using the output of \acp{OpenCV} implementation of the Harris corner detector, each triplet of corner points is considered a candidate for the marker. Each point triplet $A,B,C$ is scored based on the dot product between $\overline{BA}$ and $\overline{BC}$, the length ratio of $\overline{BA}$ and $\overline{BC}$, the length of $\overline{BA}$ and $\overline{BC}$ and the distance between the midpoint of $A$ and $C$ and the midpoint of the image. After the largest and most rectangle like triplet of points has been found, the last point of the rectangle is computed as follows: $D = A + \overline{BC}$, completing the marker rectangle points $A,B,C,D$, as seen in \figureref{fig:segpet_rect_interp}. 
 
 The computation of $D$ uses the assumption that the opposite sides of the marker are parallel, which may not hold true due to perspective distortion. However, this distortion should be small in the small image cutouts considered here. Furthermore, the detection is more stable if only three of the marker corners have to be correctly identified by the u-net and the Harris corner algorithm. 
+
+\begin{figure}
+  \centering
+  \subcaptionbox{Harris Corner Ouput}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_8_pred_corners}}
+  \subcaptionbox{Rectangle prediction on the input image}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_8_pred_rect}}
+  \subcaptionbox{Harris Corner Ouput}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_10_pred_corners}}
+  \subcaptionbox{Rectangle prediction on the input image}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_10_pred_rect}}
+  \subcaptionbox{Harris Corner Ouput}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_6_pred_corners}}
+  \subcaptionbox{Rectangle prediction on the input image}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_6_pred_rect}}
+  \caption{Examples of the segmentation mask interpretation output.}
+  \label{fig:segpet_rect_interp}
+\end{figure}
 
 % It is worth noting, that using point triplets and predicting the last point comes with the disadvantage of perspective transformed markers not being detected correctly since in that case $\overline{BC}$ and $\overline{AD}$ are not the same. However, using three points improves the stability since a whole corner may be misidentified in the segmentation mask.
 
@@ -1165,13 +1171,13 @@ The computation of $D$ uses the assumption that the opposite sides of the marker
 \begin{figure}
   \centering
   \subcaptionbox{Harris corner ouput}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_pred_corners}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_2_pred_corners}}
   \subcaptionbox{Rectangle prediction based on Harris corners}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_pred_rect}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_2_pred_rect}}
   \subcaptionbox{Hough transform output lines and line intersections}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_pred_intersects}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_2_pred_intersects}}
   \subcaptionbox{Rectangle prediction based on line intersections}
-     {\includegraphics[width=0.2\textwidth]{image/segpet_mask_2_lines_pred_rect}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_mask_2_lines_pred_rect}}
   \caption{Example of improved mask interpretation using Hough transform.}
   \label{fig:segpet_lines_improvement}
 \end{figure}
@@ -1182,7 +1188,7 @@ The \ac{OpenCV} implementation of Hough transform results in predicted lines on 
 
 \begin{figure}
   \caption{Pixel comparisons between the \ac{ArUco} marker image in the first column, the thresholded image snippet in the second column and their difference in the third column.}
-  \includegraphics[width=0.3\textwidth]{image/pet_point_sorting_compare}
+  \includegraphics[width=0.4\textwidth]{image/pet_point_sorting_compare}
   \label{fig:pet_point_sorting_compare}
 \end{figure}
 
@@ -1457,7 +1463,7 @@ For the training of models for this part, I took new photos of the \ac{ArUco} ma
 
 \begin{figure}
   \caption{Addition of new dataset types for marker corner detection training.}
-  \includegraphics[width=0.5\textwidth]{graph/arch_data_pet_focus}
+  \includegraphics[width=0.56\textwidth]{graph/arch_data_pet_focus}
   \label{fig:arch_data_pet_focus}
 \end{figure}
 
@@ -1470,13 +1476,13 @@ A Pet dataset does not use the full photo for a data instance. Instead, the imag
 \begin{figure}
   \centering
   \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.18\textwidth]{image/segpet_example_in}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_example_in}}
   \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.18\textwidth]{image/segpet_example_seg}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_example_seg}}
   \subcaptionbox{SegPet input image}
-     {\includegraphics[width=0.18\textwidth]{image/segpet_example_2_in}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_example_2_in}}
   \subcaptionbox{SegPet mask image}
-     {\includegraphics[width=0.18\textwidth]{image/segpet_example_2_seg}}
+     {\includegraphics[width=0.22\textwidth]{image/segpet_example_2_seg}}
   \caption{Example of SegPet training images and their masks.}
   \label{fig:segpet_example}
 \end{figure}
